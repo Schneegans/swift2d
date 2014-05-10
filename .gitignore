@@ -1,0 +1,30 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+*.out
+*.gv
+*.dot
+*.gsm
+
+*.opensdf
+
+build
+lib
+doc/html
+guarc/guarc
+scripts/Swift2D.sublime-workspace
+tags
+.nfs*
+.vim.custom
+tests/tests

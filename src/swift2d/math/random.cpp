@@ -1,0 +1,66 @@
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// This file is part of Swift2D.                                              //
+//                                                                            //
+// Copyright: (c) 2011-2014 Simon Schneegans & Felix Lauer                    //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+// header
+#include <swift2d/math/random.hpp>
+
+// external headers
+#include <cstdlib>
+#include <ctime>
+
+namespace swift {
+namespace math {
+namespace random {
+namespace {
+
+////////////////////////////////////////////////////////////////////////////////
+
+unsigned int init_seed() {
+
+  unsigned int seed = static_cast<unsigned int>(std::time(nullptr));
+  std::srand(seed);
+  return seed;
+}
+
+unsigned int global_seed = init_seed();
+
+////////////////////////////////////////////////////////////////////////////////
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void set_seed(unsigned int seed) {
+
+  std::srand(seed);
+  global_seed = seed;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+unsigned int get_seed() { return global_seed; }
+
+////////////////////////////////////////////////////////////////////////////////
+
+float get(float begin, float end) {
+
+  return static_cast<float>(std::rand()) / RAND_MAX * (end - begin) + begin;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+int get(int begin, int end) {
+
+  return std::rand() % (end - begin + 1) + begin;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+}
+}
+}
