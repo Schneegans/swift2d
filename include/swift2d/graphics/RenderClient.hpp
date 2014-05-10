@@ -35,13 +35,17 @@ class RenderClient {
  public:
 
   template <typename F>
-  RenderClient(F&& fun) : fps_counter(20), forever_(), double_buffer_() {
+  RenderClient(F&& fun)
+    : fps_counter(20)
+    , forever_()
+    , double_buffer_()
+    , running_(true) {
 
 
     forever_ = boost::thread([this, fun]() {
       this->fps_counter.start();
 
-      while (true) {
+      while (running_) {
         auto sg = this->double_buffer_.read();
         fun(sg);
         this->fps_counter.step();
@@ -60,11 +64,16 @@ class RenderClient {
     double_buffer_.write_blocked(scene_graphs);
   }
 
+  void stop() {
+    running_ = false;
+  }
+
  ///////////////////////////////////////////////////////////////////////////////
  // -------------------------------------------------------- protected interface
  private:
   boost::thread    forever_;
   DoubleBuffer<T>  double_buffer_;
+  bool             running_;
 };
 
 }

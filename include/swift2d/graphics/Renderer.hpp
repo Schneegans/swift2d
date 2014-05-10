@@ -45,6 +45,8 @@ class Renderer {
 
   void queue_draw(std::vector<Scene const*> const& scenes);
 
+  void stop();
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:

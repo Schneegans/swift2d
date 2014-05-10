@@ -8,6 +8,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/Window.hpp>
+#include <swift2d/graphics/WindowManager.hpp>
 #include <swift2d/utils/Logger.hpp>
 
 #include <GLFW/glfw3.h>
@@ -24,14 +25,17 @@ Window::~Window() {
 
 void Window::open() {
 
-
-
   if (!window_) {
     window_ = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
 
-    set_active(true);
+    WindowManager::windows[window_] = this;
 
+    set_active(true);
     glewInit();
+
+    glfwSetWindowCloseCallback(window_, [](GLFWwindow* w){
+      WindowManager::windows[w]->on_close.emit();
+    });
   }
 }
 

@@ -42,13 +42,13 @@ class Window {
     return std::make_shared<Window>();
   }
 
+  Signal<> on_close;
+
   void open();
   bool is_open() { return window_ != nullptr; }
 
   void process_input();
-
   void set_active(bool active);
-
   void display();
 
   RenderContext const& get_context() const { return render_context_; };

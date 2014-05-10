@@ -58,13 +58,19 @@ int main(int argc, char** argv) {
   // main loop -----------------------------------------------------------------
   Timer timer;
   timer.start();
-  Ticker ticker(1.0 / 60.0);
+  Ticker ticker(1.0 / 5.0);
   ticker.on_tick.connect([&]() {
     window->process_input();
     renderer.queue_draw({scene.get()});
   });
 
   MainLoop loop;
+
+  window->on_close.connect([&](){
+    renderer.stop();
+    loop.stop();
+  });
+
   loop.start();
 
   return 0;
