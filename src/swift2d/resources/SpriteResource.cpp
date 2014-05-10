@@ -55,7 +55,7 @@ void SpriteResource::upload_to(RenderContext const& ctx) const {
     "out vec4 fragColor;"
     "void main(void){"
     "  vec4 color = texture2D(texture, tex_coords).rgba;"
-    "  fragColor = vec4(color.rgb*color.a, 1.0);"
+    "  fragColor = vec4(color.rgb, color.a);"
     "}"
   );
 

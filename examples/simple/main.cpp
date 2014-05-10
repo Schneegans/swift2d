@@ -27,6 +27,11 @@ int main(int argc, char** argv) {
   sprite->pTexture.set("diffuse.png");
   sprite->pDepth.set(0.0f);
 
+  auto sprite2 = planet->add_component<SpriteComponent>();
+  sprite2->pTexture.set("diffuse.png");
+  sprite2->pDepth.set(1.0f);
+  sprite2->pTransform = math::make_translate(0.5, 0.5) * math::make_scale(0.3);
+
   // rendering pipeline --------------------------------------------------------
   auto window = Window::create();
   // window->pFullscreen = true;

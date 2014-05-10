@@ -40,7 +40,7 @@ void Pipeline::draw(std::vector<ConstSerializedScenePtr> const& scenes) {
       new_size_ = size;
     });
 
-    window_->get_context().gl.Disable(oglplus::Capability::DepthTest);
+
   }
 
   if (new_size_ != math::vec2i(-1, -1)) {

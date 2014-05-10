@@ -58,15 +58,20 @@ void Window::set_active(bool active) {
 void Window::display() {
   if (window_) {
     glfwSwapBuffers(window_);
+    render_context_.gl.Clear().ColorBuffer();
   }
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Window::open_() {
 
   if (!window_) {
+
+    // glfwWindowHint(GLFW_RED_BITS, 24);
+    // glfwWindowHint(GLFW_GREEN_BITS, 24);
+    // glfwWindowHint(GLFW_BLUE_BITS, 24);
+    // glfwWindowHint(GLFW_ALPHA_BITS, 8);
 
     window_ = glfwCreateWindow(
       640, 480,
@@ -78,6 +83,14 @@ void Window::open_() {
 
     set_active(true);
     glewInit();
+
+    render_context_.gl.Disable(oglplus::Capability::DepthTest);
+    render_context_.gl.Enable(oglplus::Capability::Blend);
+    render_context_.gl.ClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+    render_context_.gl.BlendFunc(
+      oglplus::BlendFunction::SrcAlpha,
+      oglplus::BlendFunction::OneMinusSrcAlpha
+    );
 
     glfwSetWindowCloseCallback(window_, [](GLFWwindow* w) {
       WindowManager::windows[w]->on_close.emit();
@@ -91,18 +104,14 @@ void Window::open_() {
       WindowManager::windows[w]->on_key_press.emit(static_cast<Key>(key), scancode, action, mods);
     });
 
+
+
     // apply vsync -------------------------------------------------------------
     auto on_vsync_change = [&](bool val) {
       glfwSwapInterval(val ? 1 : 0);
     };
     on_vsync_change(pVSync.get());
     pVSync.on_change().connect(on_vsync_change);
-
-    // apply fullscreen --------------------------------------------------------
-    auto on_fullscreen_change = [&](bool val) {
-
-    };
-    pFullscreen.on_change().connect(on_fullscreen_change);
   }
 }
 
