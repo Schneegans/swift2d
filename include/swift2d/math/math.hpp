@@ -21,6 +21,8 @@ namespace math {
 
 typedef oglplus::Mat3f mat3;
 
+typedef oglplus::Vector<GLint, 2> vec2i;
+
 // Methods for matrix creation
 glm::mat4 make_scale(glm::vec3 const& scale);
 glm::mat4 make_scale(float scale);

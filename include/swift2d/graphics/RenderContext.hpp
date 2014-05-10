@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/opengl.hpp>
+#include <swift2d/math.hpp>
 
 namespace swift {
 
@@ -22,9 +23,7 @@ namespace swift {
 struct RenderContext {
 
   oglplus::Context gl;
-
-  int width;
-  int height;
+  glm::ivec2 size;
 };
 
 }

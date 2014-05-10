@@ -41,6 +41,8 @@ class Pipeline {
  // ----------------------------------------------------------- public interface
  public:
 
+  Pipeline();
+
   static PipelinePtr create() {
     return std::make_shared<Pipeline>();
   }
@@ -60,6 +62,8 @@ class Pipeline {
     SpriteResource* sprite_;
     TextureResource* tex_;
     WindowPtr window_;
+
+    glm::ivec2 new_size_;
 };
 
 }

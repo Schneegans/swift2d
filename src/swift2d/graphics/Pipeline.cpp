@@ -25,6 +25,11 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+Pipeline::Pipeline()
+  : new_size_(-1, -1) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Pipeline::set_output_window(WindowPtr const& window) {
   window_ = window;
 }
@@ -35,9 +40,20 @@ void Pipeline::process(std::vector<std::unique_ptr<const Scene>> const& scenes) 
 
   if (!window_->is_open()) {
     window_->open();
+
+    window_->on_resize.connect([&](glm::ivec2 const& size){
+      new_size_ = size;
+    });
+
     sprite_ = new SpriteResource();
     tex_ = new TextureResource("diffuse.png");
     window_->get_context().gl.Disable(oglplus::Capability::DepthTest);
+  }
+
+  if (new_size_ != glm::ivec2(-1, -1)) {
+    window_->get_context().size = new_size_;
+    window_->get_context().gl.Viewport(new_size_.x, new_size_.y);
+    new_size_ = glm::ivec2(-1, -1);
   }
 
   for (auto& s: scenes) {

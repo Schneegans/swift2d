@@ -43,6 +43,7 @@ class Window {
   }
 
   Signal<> on_close;
+  Signal<glm::ivec2> on_resize;
 
   void open();
   bool is_open() { return window_ != nullptr; }
@@ -52,12 +53,11 @@ class Window {
   void display();
 
   RenderContext const& get_context() const { return render_context_; };
+  RenderContext& get_context() { return render_context_; };
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-
-    void on_resize(int width, int height);
 
     RenderContext render_context_;
     GLFWwindow* window_;

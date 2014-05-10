@@ -33,8 +33,12 @@ void Window::open() {
     set_active(true);
     glewInit();
 
-    glfwSetWindowCloseCallback(window_, [](GLFWwindow* w){
+    glfwSetWindowCloseCallback(window_, [](GLFWwindow* w) {
       WindowManager::windows[w]->on_close.emit();
+    });
+
+    glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
+      WindowManager::windows[w]->on_resize.emit(glm::ivec2(width, height));
     });
   }
 }
@@ -72,19 +76,6 @@ void Window::display() {
   if (window_) {
     glfwSwapBuffers(window_);
   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Window::on_resize(int width, int height) {
-  if (width != render_context_.width || height != render_context_.height) {
-
-    render_context_.width = width;
-    render_context_.height = height;
-
-    render_context_.gl.Viewport(width, height);
-  }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////

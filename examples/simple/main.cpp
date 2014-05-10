@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
   // main loop -----------------------------------------------------------------
   Timer timer;
   timer.start();
-  Ticker ticker(1.0 / 5.0);
+  Ticker ticker(1.0 / 60.0);
   ticker.on_tick.connect([&]() {
     renderer.queue_draw({scene.get()});
     window->process_input();
