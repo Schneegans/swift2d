@@ -6,27 +6,13 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_RENDERCONTEXT_HPP
-#define SWIFT2D_RENDERCONTEXT_HPP
+#ifndef SWIFT2D_OPENGL_HPP
+#define SWIFT2D_OPENGL_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/opengl.hpp>
+#include <GL/glew.h>
+#include <oglplus/all.hpp>
+#include <oglplus/opt/smart_enums.hpp>
+#include <oglplus/bound/texture.hpp>
 
-namespace swift {
-
-////////////////////////////////////////////////////////////////////////////////
-// Stores all relevant information on a OpenGL context.                       //
-////////////////////////////////////////////////////////////////////////////////
-
-// -----------------------------------------------------------------------------
-struct RenderContext {
-
-  oglplus::Context gl;
-
-  int width;
-  int height;
-};
-
-}
-
-#endif // SWIFT2D_RENDERCONTEXT_HPP
+#endif  // SWIFT2D_OPENGL_HPP

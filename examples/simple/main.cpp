@@ -52,7 +52,6 @@ int main(int argc, char** argv) {
     .set_screen_left(screen->get_paths()[0])
     .set_scene("main_scene");
 
-
   Renderer renderer({pipeline});
 
   // main loop -----------------------------------------------------------------
@@ -61,7 +60,6 @@ int main(int argc, char** argv) {
   Ticker ticker(1.0 / 5.0);
   ticker.on_tick.connect([&]() {
     renderer.queue_draw({scene.get()});
-
     window->process_input();
   });
 

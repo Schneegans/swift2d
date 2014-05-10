@@ -10,12 +10,16 @@
 #define SWIFT2D_MATH_HPP
 
 // includes  -------------------------------------------------------------------
+#include <swift2d/opengl.hpp>
 #include <swift2d/math/stream.hpp>
 
 #include <glm/glm.hpp>
 
+
 namespace swift {
 namespace math {
+
+typedef oglplus::Mat3f mat3;
 
 // Methods for matrix creation
 glm::mat4 make_scale(glm::vec3 const& scale);

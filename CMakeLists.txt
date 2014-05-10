@@ -26,7 +26,7 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 # Configure and find libraries
 ################################################################
 
-pkg_check_modules(GLFW REQUIRED libglfw3)
+pkg_check_modules(GLFW REQUIRED glfw3)
 pkg_check_modules(GLEW REQUIRED glew)
 pkg_check_modules(PNG REQUIRED libpng)
 
@@ -54,17 +54,21 @@ set(LIB_PATHS
 )
 link_directories(${LIB_PATHS})
 
-set(INCLUDE_PATHS
+set(OWN_INCLUDE_PATHS
     ${CMAKE_CURRENT_SOURCE_DIR}/build
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/include
+)
+include_directories(${OWN_INCLUDE_PATHS})
+
+set(INCLUDE_PATHS
     ${EV_INCLUDE_DIRS}
     ${GLFW_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${GLEW_INCLUDE_DIRS}
     ${PNG_INCLUDE_DIRS}
 )
-include_directories(${INCLUDE_PATHS})
+include_directories(SYSTEM ${INCLUDE_PATHS})
 
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
