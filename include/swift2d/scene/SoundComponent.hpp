@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/scene/TransformableComponent.hpp>
 
+#include <swift2d/resources/SoundResource.hpp>
 #include <swift2d/openal.hpp>
 #include <iostream>
 
@@ -37,12 +38,6 @@ class SoundComponent : public TransformableComponent {
  // ----------------------------------------------------------- public interface
  public:
 
-  SoundComponent() {
-    oalplus::ALUtilityToolkit alut(false);
-    buffer_ = alut.CreateBufferHelloWorld();
-    source_.Buffer(buffer_);
-  }
-
   ~SoundComponent() {
     source_.DetachBuffers();
   }
@@ -58,11 +53,20 @@ class SoundComponent : public TransformableComponent {
     source_.Play();
   }
 
+  // TODO: make shared!
+  void set_sound(SoundResource* sound) {
+    sound_ = sound;
+    source_.Stop();
+    source_.Buffer(sound_->get_buffer());
+  }
+
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  SoundResource* sound_;
   oalplus::Source source_;
-  oalplus::Buffer buffer_;
+
 };
 
 // -----------------------------------------------------------------------------
