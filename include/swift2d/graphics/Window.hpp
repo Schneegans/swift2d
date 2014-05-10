@@ -16,9 +16,7 @@
 #include <memory>
 
 // forward declares ------------------------------------------------------------
-namespace sf {
-  class Window;
-}
+class GLFWwindow;
 
 namespace swift {
 
@@ -37,6 +35,8 @@ class Window {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  ~Window();
 
   static WindowPtr create() {
     return std::make_shared<Window>();
@@ -60,7 +60,7 @@ class Window {
     void on_resize(int width, int height);
 
     RenderContext render_context_;
-    std::shared_ptr<sf::Window> window_;
+    GLFWwindow* window_;
 };
 
 }

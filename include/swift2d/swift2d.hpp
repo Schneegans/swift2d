@@ -25,6 +25,7 @@ namespace swift {
  */
 
 void init(int argc, char** argv);
+
 }
 
 #endif  // SWIFT2D_HPP

@@ -26,7 +26,7 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 # Configure and find libraries
 ################################################################
 
-pkg_check_modules(SFML REQUIRED sfml-all)
+pkg_check_modules(GLFW REQUIRED libglfw3)
 pkg_check_modules(GLEW REQUIRED glew)
 pkg_check_modules(PNG REQUIRED libpng)
 
@@ -39,7 +39,7 @@ include(find_ev)
 
 set(LIBS
     ${EV_LIBRARIES}
-    ${SFML_LIBRARIES}
+    ${GLFW_LIBRARIES}
     ${Boost_LIBRARIES}
     ${GLEW_LIBRARIES}
     ${PNG_LIBRARIES}
@@ -47,7 +47,7 @@ set(LIBS
 link_libraries(${LIBS})
 
 set(LIB_PATHS
-    ${SFML_LIBRARY_DIRS}
+    ${GLFW_LIBRARY_DIRS}
     ${Boost_LIBRARY_DIRS}
     ${GLEW_LIBRARY_DIRS}
     ${PNG_LIBRARY_DIRS}
@@ -59,7 +59,7 @@ set(INCLUDE_PATHS
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/include
     ${EV_INCLUDE_DIRS}
-    ${SFML_INCLUDE_DIRS}
+    ${GLFW_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${GLEW_INCLUDE_DIRS}
     ${PNG_INCLUDE_DIRS}
@@ -106,9 +106,9 @@ message( " ev:" )
 message( "   library: ${EV_LIBRARIES}" )
 message( "   include: ${EV_INCLUDE_DIRS}" )
 message( "" )
-message( " sfml:" )
-message( "   library: ${SFML_LIBRARIES}" )
-message( "   include: ${SFML_INCLUDE_DIRS}" )
+message( " glfw3:" )
+message( "   library: ${GLFW_LIBRARIES}" )
+message( "   include: ${GLFW_INCLUDE_DIRS}" )
 message( "" )
 message( " glew:" )
 message( "   library: ${GLEW_LIBRARIES}" )
