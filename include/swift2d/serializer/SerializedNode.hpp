@@ -10,7 +10,7 @@
 #define SWIFT2D_SERIALIZED_NODE_HPP
 
 // swift2d headers
-#include <swift2d/math/math.hpp>
+#include <swift2d/math.hpp>
 
 namespace swift {
 
@@ -19,11 +19,11 @@ namespace swift {
  *
  * This is a struct used for serializing the graph.
  *
- * essentially the same as a std::pair<math::mat4, configuration_type>
+ * essentially the same as a std::pair<math::mat3, configuration_type>
  */
 template <typename configuration_type> struct SerializedNode {
 
-  SerializedNode() : transform(glm::mat4(1.0f)), data() {}
+  SerializedNode() : transform(), data() {}
 
   /**
    * Constructor.
@@ -33,18 +33,18 @@ template <typename configuration_type> struct SerializedNode {
    * \param transform        The global transformation of this node.
    * \param color            The color of the light.
    */
-  SerializedNode(glm::mat4 const& t, configuration_type const& d)
+  SerializedNode(math::mat3 const& t, configuration_type const& d)
       : transform(t), data(d) {}
 
   /**
    * The global transformation of this node.
    */
-  glm::mat4 transform;
+  math::mat3 transform;
   configuration_type data;
 };
 
 template <typename T>
-inline SerializedNode<T> make_serialized_node(glm::mat4 const& t, T const& d)
+inline SerializedNode<T> make_serialized_node(math::mat3 const& t, T const& d)
 {
   return SerializedNode<T>(t, d);
 }

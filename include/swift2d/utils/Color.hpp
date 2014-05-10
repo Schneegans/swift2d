@@ -9,7 +9,7 @@
 #ifndef COLOR_3F_HPP
 #define COLOR_3F_HPP
 
-#include <swift2d/math/math.hpp>
+#include <swift2d/math.hpp>
 #include <swift2d/events/Properties.hpp>
 
 namespace swift {
@@ -82,7 +82,7 @@ struct Color {
    */
   Color const brightened() const;
 
-  glm::vec3 const vec3() const;
+  math::vec3 const vec3() const;
 
   /**
    * Returns a randomly generated Color.

@@ -23,7 +23,7 @@ namespace swift {
 struct RenderContext {
 
   oglplus::Context gl;
-  glm::ivec2 size;
+  math::vec2i size;
 };
 
 }

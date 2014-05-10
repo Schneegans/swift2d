@@ -12,7 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/scene/Core.hpp>
 #include <swift2d/utils/configuration_macro.hpp>
-#include <swift2d/math/math.hpp>
+#include <swift2d/math.hpp>
 #include <swift2d/events.hpp>
 
 namespace swift {
@@ -44,7 +44,7 @@ class Screen : public Core {
     Config(){}
 
     // the world space size of the screen
-    SWIFT2D_ADD_CONFIG_PROPERTY(Vec2, size, glm::vec2(1.f, 1.f));
+    SWIFT2D_ADD_CONFIG_PROPERTY(Vec2, size, math::vec2(1.f, 1.f));
   };
 
   /* virtual */ Config& config() { return config_; }

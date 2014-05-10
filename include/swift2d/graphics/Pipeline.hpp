@@ -63,7 +63,7 @@ class Pipeline {
     TextureResource* tex_;
     WindowPtr window_;
 
-    glm::ivec2 new_size_;
+    math::vec2i new_size_;
 };
 
 }

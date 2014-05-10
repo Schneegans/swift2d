@@ -12,7 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/scene/Core.hpp>
 #include <swift2d/utils/configuration_macro.hpp>
-#include <swift2d/math/math.hpp>
+#include <swift2d/math.hpp>
 #include <swift2d/events.hpp>
 
 namespace swift {
@@ -43,14 +43,14 @@ class Transformation : public Core {
   struct Config: public Core::Config {
     Config() {}
 
-    SWIFT2D_ADD_CONFIG_PROPERTY(Mat4, transform, glm::mat4(1.0f));
+    SWIFT2D_ADD_CONFIG_PROPERTY(Mat3, transform, math::mat3());
   };
   Config & config() { return config_; }
 
   // ------------------------------------------------------- traversal interface
 
   struct TraversalState : public Core::TraversalState {
-    glm::mat4 world_transform;
+    math::mat3 world_transform;
   };
 
   // ----------------------------------------------------- contruction interface

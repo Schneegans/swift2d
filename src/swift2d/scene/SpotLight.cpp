@@ -38,7 +38,7 @@ void SpotLight::serialize(
 
   // TODO: Culling
 
-  glm::mat4 transform(glm::mat4(1.f));
+  math::mat3 transform;
 
   auto tranform_state = state.get<Transformation::TraversalState>();
   if (tranform_state) {

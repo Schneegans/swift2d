@@ -12,7 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/scene/Core.hpp>
 #include <swift2d/utils/configuration_macro.hpp>
-#include <swift2d/math/math.hpp>
+#include <swift2d/math.hpp>
 #include <swift2d/events.hpp>
 
 #include <string>
@@ -53,7 +53,7 @@ class Sprite : public Core {
 
   struct SerializedState: public Core::SerializedState {
     Config config;
-    glm::mat4 transform;
+    math::mat3 transform;
   };
 
   // ----------------------------------------------------- contruction interface

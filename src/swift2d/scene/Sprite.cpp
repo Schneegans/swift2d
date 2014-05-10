@@ -36,7 +36,7 @@ void Sprite::serialize(
   TraversalStateStack& state,
   SerializedScene& serialized) const {
 
-  glm::mat4 transform(glm::mat4(1.0f));
+  math::mat3 transform;
 
   auto tranform_state = state.get<Transformation::TraversalState>();
   if (tranform_state) {

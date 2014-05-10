@@ -11,7 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/scene/Node.hpp>
-#include <swift2d/math/math.hpp>
+#include <swift2d/math.hpp>
 #include <swift2d/events/Properties.hpp>
 
 #include <string>

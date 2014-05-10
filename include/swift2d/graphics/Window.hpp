@@ -43,7 +43,7 @@ class Window {
   }
 
   Signal<> on_close;
-  Signal<glm::ivec2> on_resize;
+  Signal<math::vec2i> on_resize;
 
   void open();
   bool is_open() { return window_ != nullptr; }

@@ -38,7 +38,7 @@ void Window::open() {
     });
 
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
-      WindowManager::windows[w]->on_resize.emit(glm::ivec2(width, height));
+      WindowManager::windows[w]->on_resize.emit(math::vec2i(width, height));
     });
   }
 }

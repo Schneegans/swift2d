@@ -32,15 +32,15 @@ int main(int argc, char** argv) {
   // create a view point
   auto eye = Node::create();
   eye->add_core<Transformation>()->config()
-    .set_transform(math::make_translate(0.f, 0.f, 1.5f));
+    .set_transform(math::make_translate(0.f, 1.5f));
   eye->add_core<View>();
 
   // create a screen
   auto screen = scene->add_node(Node::create());
   screen->add_core<Transformation>()->config()
-    .set_transform(math::make_translate(0.f, 0.f, 1.f));
+    .set_transform(math::make_translate(0.f, 1.f));
   screen->add_core<Screen>()->config()
-    .set_size(glm::vec2(1.6f, 0.9f));
+    .set_size(swift::math::vec2(1.6f, 0.9f));
   screen->add_core<Group>()->add_node(eye);
 
   // rendering pipeline --------------------------------------------------------

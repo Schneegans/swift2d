@@ -47,20 +47,20 @@ float Color::s() const {
     return ((v() - std::min(std::min(r_, g_), b_)) / v());
 }
 
-void Color::r(float red) { r_ = glm::clamp(red, 0.0f, 1.0f); }
+void Color::r(float red) { r_ = math::clamp(red, 0.0f, 1.0f); }
 
-void Color::g(float green) { g_ = glm::clamp(green, 0.0f, 1.0f); }
+void Color::g(float green) { g_ = math::clamp(green, 0.0f, 1.0f); }
 
-void Color::b(float blue) { b_ = glm::clamp(blue, 0.0f, 1.0f); }
+void Color::b(float blue) { b_ = math::clamp(blue, 0.0f, 1.0f); }
 
 void Color::h(float hue) { set_hsv(hue, s(), v()); }
 
 void Color::s(float saturation) {
-  set_hsv(h(), glm::clamp(saturation, 0.0f, 1.0f), v());
+  set_hsv(h(), math::clamp(saturation, 0.0f, 1.0f), v());
 }
 
 void Color::v(float value) {
-  set_hsv(h(), s(), glm::clamp(value, 0.0f, 1.0f));
+  set_hsv(h(), s(), math::clamp(value, 0.0f, 1.0f));
 }
 
 void Color::set_hsv(float hue, float saturation, float value) {
@@ -129,7 +129,7 @@ Color const Color::brightened() const {
   return brightened;
 }
 
-glm::vec3 const Color::vec3() const { return glm::vec3(r_, g_, b_); }
+math::vec3 const Color::vec3() const { return math::vec3(r_, g_, b_); }
 
 Color const Color::random() {
 

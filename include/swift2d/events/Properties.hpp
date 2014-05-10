@@ -11,7 +11,7 @@
 
 #include <swift2d/events/properties/NumericProperty.hpp>
 #include <swift2d/events/properties/LogicalProperty.hpp>
-#include <swift2d/math/math.hpp>
+#include <swift2d/math.hpp>
 
 #include <string>
 
@@ -24,9 +24,9 @@ typedef NumericProperty<char>           Char;
 typedef NumericProperty<unsigned>       UInt;
 typedef NumericProperty<unsigned char>  UChar;
 
-typedef NumericProperty<glm::vec3>      Vec3;
-typedef NumericProperty<glm::vec2>      Vec2;
-typedef NumericProperty<glm::mat4>      Mat4;
+typedef NumericProperty<math::vec3>     Vec3;
+typedef NumericProperty<math::vec2>     Vec2;
+typedef NumericProperty<math::mat3>     Mat3;
 
 typedef LogicalProperty<bool>           Bool;
 

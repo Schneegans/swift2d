@@ -10,7 +10,7 @@
 #define SWIFT2D_PICK_RESULT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/math/math.hpp>
+#include <swift2d/math.hpp>
 
 namespace swift {
 
@@ -33,12 +33,12 @@ struct PickResult {
                  PICK_ONLY_FIRST_FACE     = 1<<2,
                  GET_WORLD_NORMALS        = 1<<3};
 
-  PickResult(float d, Node* o, glm::vec3 const& n, bool w)
+  PickResult(float d, Node* o, math::vec3 const& n, bool w)
     : distance(d), object(o), normal(n), is_world_normal(w) {}
 
   float             distance;
   Node*             object;
-  mutable glm::vec3 normal;
+  mutable math::vec3 normal;
   mutable bool      is_world_normal;
 
   bool operator<(PickResult const& lhs) const {
