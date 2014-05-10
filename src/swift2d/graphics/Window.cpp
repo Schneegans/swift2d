@@ -87,6 +87,10 @@ void Window::open_() {
       WindowManager::windows[w]->on_resize.emit(math::vec2i(width, height));
     });
 
+    glfwSetKeyCallback(window_, [](GLFWwindow* w, int key, int scancode, int action, int mods) {
+      WindowManager::windows[w]->on_key_press.emit(static_cast<Key>(key), scancode, action, mods);
+    });
+
     // apply vsync -------------------------------------------------------------
     auto on_vsync_change = [&](bool val) {
       glfwSwapInterval(val ? 1 : 0);

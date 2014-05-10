@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/events.hpp>
 #include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/input/keys.hpp>
 
 #include <memory>
 
@@ -41,6 +42,12 @@ class Window {
   Bool pVSync;
   Bool pFullscreen;
 
+  // ------------------------------------------------------------------- signals
+  Signal<> on_close;
+  Signal<Key, int, int, int> on_key_press;
+  Signal<math::vec2i> on_resize;
+
+  // ---------------------------------------------------- construction interface
   Window();
   ~Window();
 
@@ -48,9 +55,7 @@ class Window {
     return std::make_shared<Window>();
   }
 
-  Signal<> on_close;
-  Signal<math::vec2i> on_resize;
-
+  // ------------------------------------------------------------ public methods
   void process_input();
   void set_active(bool active);
   void display();

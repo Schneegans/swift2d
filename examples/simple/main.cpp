@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 
   // rendering pipeline --------------------------------------------------------
   auto window = Window::create();
-  window->pFullscreen = true;
+  // window->pFullscreen = true;
   auto pipeline = Pipeline::create();
   pipeline->set_output_window(window);
 
@@ -53,6 +53,13 @@ int main(int argc, char** argv) {
   window->on_close.connect([&](){
     renderer.stop();
     loop.stop();
+  });
+
+  window->on_key_press.connect([&](swift::Key key, int scancode, int action, int mods) {
+    if (key == swift::Key::ESCAPE) {
+      renderer.stop();
+      loop.stop();
+    }
   });
 
   loop.start();
