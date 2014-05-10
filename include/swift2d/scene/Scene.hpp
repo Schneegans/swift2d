@@ -21,9 +21,6 @@
 
 namespace swift {
 
-// forward declares ------------------------------------------------------------
-class Frustum;
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +61,7 @@ class Scene {
   }
 
   // serializes this scene for a given camera
-  SerializedScene serialize(Frustum const& frustum) const;
+  SerializedScene serialize() const;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

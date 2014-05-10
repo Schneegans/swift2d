@@ -34,7 +34,7 @@ Scene Scene::deep_copy() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SerializedScene Scene::serialize(Frustum const& frustum) const {
+SerializedScene Scene::serialize() const {
 
   SerializedScene scene;
   // scene.frustum_ = frustum;

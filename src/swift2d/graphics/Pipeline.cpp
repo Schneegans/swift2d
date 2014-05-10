@@ -57,20 +57,20 @@ void Pipeline::process(std::vector<std::unique_ptr<const Scene>> const& scenes) 
 
   for (auto& s: scenes) {
 
-    // auto serialized_scene(s->serialize(frustum));
+    auto serialized_scene(s->serialize());
 
-    // for (auto& cs: serialized_scene.cores) {
-    //   if (cs.first == typeid(cores::Sprite::SerializedState)) {
-    //     for (auto c: cs.second) {
-    //       auto state = reinterpret_cast<cores::Sprite::SerializedState*>(c);
-    //       auto texture = state->config.texture;
-    //       auto transform = state->transform;
+    for (auto& cs: serialized_scene.cores) {
+      if (cs.first == typeid(cores::Sprite::SerializedState)) {
+        for (auto c: cs.second) {
+          auto state = reinterpret_cast<cores::Sprite::SerializedState*>(c);
+          auto texture = state->config.texture;
+          auto transform = state->transform;
 
-    //       tex_->bind(window_->get_context(), 0);
-    //       sprite_->draw(window_->get_context());
-    //     }
-    //   }
-    // }
+          tex_->bind(window_->get_context(), 0);
+          sprite_->draw(window_->get_context());
+        }
+      }
+    }
   }
 
   window_->display();
