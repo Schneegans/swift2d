@@ -66,10 +66,6 @@ Renderer::Renderer(std::vector<PipelinePtr> const& pipelines)
 
 void Renderer::queue_draw(std::vector<Scene const*> const& scenes) {
 
-  // for (auto scene : scenes) {
-  //   scene->update_cache();
-  // }
-
   auto sgs = garbage_collected_copy(scenes);
   for (auto& rclient : render_clients_) {
     rclient->queue_draw(sgs);

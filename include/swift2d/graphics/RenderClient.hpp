@@ -41,7 +41,6 @@ class RenderClient {
     , double_buffer_()
     , running_(true) {
 
-
     forever_ = boost::thread([this, fun]() {
       this->fps_counter.start();
 
@@ -53,7 +52,7 @@ class RenderClient {
     });
   }
 
-  ~RenderClient() { forever_.detach(); }
+  ~RenderClient() { stop(); }
 
   FPSCounter fps_counter;
 
@@ -66,6 +65,8 @@ class RenderClient {
 
   void stop() {
     running_ = false;
+    double_buffer_.write_blocked(T());
+    forever_.join();
   }
 
  ///////////////////////////////////////////////////////////////////////////////

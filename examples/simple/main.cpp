@@ -60,8 +60,9 @@ int main(int argc, char** argv) {
   timer.start();
   Ticker ticker(1.0 / 5.0);
   ticker.on_tick.connect([&]() {
-    window->process_input();
     renderer.queue_draw({scene.get()});
+
+    window->process_input();
   });
 
   MainLoop loop;
