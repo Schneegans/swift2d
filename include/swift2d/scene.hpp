@@ -11,15 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/scene/Scene.hpp>
-#include <swift2d/scene/Material.hpp>
-#include <swift2d/scene/Sprite.hpp>
-#include <swift2d/scene/Group.hpp>
-#include <swift2d/scene/PointLight.hpp>
-#include <swift2d/scene/Screen.hpp>
-#include <swift2d/scene/View.hpp>
-#include <swift2d/scene/SpotLight.hpp>
-#include <swift2d/scene/Group.hpp>
-#include <swift2d/scene/Label.hpp>
-#include <swift2d/scene/Transformation.hpp>
+#include <swift2d/scene/SceneObject.hpp>
+#include <swift2d/scene/SpriteComponent.hpp>
 
 #endif  // SWIFT2D_INCLUDE_SCENE_HPP

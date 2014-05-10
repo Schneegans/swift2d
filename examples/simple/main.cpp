@@ -11,7 +11,6 @@
 #include <iostream>
 
 using namespace swift;
-using namespace swift::cores;
 
 int main(int argc, char** argv) {
 
@@ -20,37 +19,18 @@ int main(int argc, char** argv) {
 
   // example scene setup -------------------------------------------------------
   auto scene = Scene::create();
-  scene->name.set("main_scene");
-
-  // create a light source
-  auto light = scene->add_node(Node::create());
-  light->add_core<Transformation>()->config()
-    .set_transform(math::make_scale(0.5f));
-  light->add_core<Sprite>()->config()
-    .set_texture("data/test.png");
-
-  // create a view point
-  auto eye = Node::create();
-  eye->add_core<Transformation>()->config()
-    .set_transform(math::make_translate(0.f, 1.5f));
-  eye->add_core<View>();
+  scene->pName.set("main_scene");
 
   // create a screen
-  auto screen = scene->add_node(Node::create());
-  screen->add_core<Transformation>()->config()
-    .set_transform(math::make_translate(0.f, 1.f));
-  screen->add_core<Screen>()->config()
-    .set_size(swift::math::vec2(1.6f, 0.9f));
-  screen->add_core<Group>()->add_node(eye);
+  auto planet = scene->add_object();
+  auto sprite = planet->add_component<SpriteComponent>();
+  sprite->pTexture.set("diffuse.png");
+  sprite->pDepth.set(0.0f);
 
   // rendering pipeline --------------------------------------------------------
   auto window = Window::create();
   auto pipeline = Pipeline::create();
   pipeline->set_output_window(window);
-  pipeline->camera
-    .set_eye_left(eye->get_paths()[0])
-    .set_screen_left(screen->get_paths()[0])
-    .set_scene("main_scene");
 
   Renderer renderer({pipeline});
 
@@ -59,7 +39,7 @@ int main(int argc, char** argv) {
   timer.start();
   Ticker ticker(1.0 / 60.0);
   ticker.on_tick.connect([&]() {
-    renderer.queue_draw({scene.get()});
+    renderer.queue_draw({scene});
     window->process_input();
   });
 

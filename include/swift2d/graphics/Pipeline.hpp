@@ -11,7 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/events.hpp>
-#include <swift2d/scene/Camera.hpp>
+#include <swift2d/scene/SerializedScene.hpp>
 
 #include <memory>
 #include <vector>
@@ -19,8 +19,6 @@
 namespace swift {
 
 // forward declares ------------------------------------------------------------
-class SpriteResource;
-class TextureResource;
 class Scene;
 class Window;
 typedef std::shared_ptr<Window> WindowPtr;
@@ -50,17 +48,13 @@ class Pipeline {
   Float application_fps;
   Float rendering_fps;
 
-  Camera camera;
-
   void set_output_window(WindowPtr const& window);
 
-  void process(std::vector<std::unique_ptr<const Scene>> const& scenes);
+  void draw(std::vector<ConstSerializedScenePtr> const& scenes);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-    SpriteResource* sprite_;
-    TextureResource* tex_;
     WindowPtr window_;
 
     math::vec2i new_size_;

@@ -9,40 +9,25 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/scene/Scene.hpp>
 
-#include <swift2d/scene/TraversalStateStack.hpp>
-#include <swift2d/serializer/SerializedScene.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Scene Scene::deep_copy() const {
-
-  Scene copy;
-  copy.name.set(name.get());
-
-  for (auto const& node: nodes_) {
-    copy.add_node(node->create_copy());
+void Scene::update() {
+  for (auto& object: objects_) {
+    object->update();
   }
-
-  for (auto const& node: nodes_) {
-    node->clear_copy();
-  }
-
-  return copy;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SerializedScene Scene::serialize() const {
+SerializedScenePtr Scene::serialize() const {
 
-  SerializedScene scene;
-  // scene.frustum_ = frustum;
+  auto scene(SerializedScene::create());
 
-  TraversalStateStack state;
-
-  for (auto const& node: nodes_) {
-    node->serialize(state, scene);
+  for (auto& object: objects_) {
+    object->serialize(scene);
   }
 
   return scene;

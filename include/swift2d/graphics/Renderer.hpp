@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/FPSCounter.hpp>
 #include <swift2d/graphics/RenderClient.hpp>
+#include <swift2d/scene/SerializedScene.hpp>
 #include <vector>
 #include <string>
 #include <memory>
@@ -23,6 +24,9 @@ class Scene;
 class Pipeline;
 
 typedef std::shared_ptr<Pipeline>     PipelinePtr;
+typedef std::shared_ptr<const Scene>  ConstScenePtr;
+
+typedef std::shared_ptr<Scene>        ScenePtr;
 typedef std::shared_ptr<const Scene>  ConstScenePtr;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,13 +41,10 @@ class Renderer {
  // ----------------------------------------------------------- public interface
  public:
 
-  typedef std::vector<std::unique_ptr<const Scene>> scene_vec_t;
-  typedef scene_vec_t const const_scene_vec_t;
-
   Renderer(std::vector<PipelinePtr> const& pipelines);
   virtual ~Renderer();
 
-  void queue_draw(std::vector<Scene const*> const& scenes);
+  void queue_draw(std::vector<ScenePtr> const& scenes);
 
   void stop();
 
@@ -51,10 +52,8 @@ class Renderer {
  // ---------------------------------------------------------- private interface
  private:
 
-  typedef RenderClient<std::shared_ptr<const_scene_vec_t>> render_client_t;
-
-  std::vector<render_client_t*> render_clients_;
-  FPSCounter                    application_fps_;
+  std::vector<RenderClient<std::vector<ConstSerializedScenePtr>>*> render_clients_;
+  FPSCounter                                                       application_fps_;
 };
 
 }
