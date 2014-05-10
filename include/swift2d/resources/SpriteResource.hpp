@@ -34,7 +34,7 @@ class SpriteResource : public GeometryResource {
   SpriteResource();
 
   // Draws the SpriteResource to the given context.
-  void draw(RenderContext const& context) const;
+  void draw(RenderContext const& context, math::mat3 const& transform) const;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

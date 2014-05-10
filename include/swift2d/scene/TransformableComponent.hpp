@@ -6,43 +6,51 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_GEOMETRY_RESOURCE_HPP
-#define SWIFT2D_GEOMETRY_RESOURCE_HPP
+#ifndef SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
+#define SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/math/types.hpp>
-
-#include <string>
-#include <vector>
+#include <swift2d/scene/Component.hpp>
+#include <swift2d/math.hpp>
 
 namespace swift {
 
-// forward declares ------------------------------------------------------------
-struct RenderContext;
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// Base class for different geometries.                                       //
-////////////////////////////////////////////////////////////////////////////////
+// shared pointer type definition ----------------------------------------------
+class TransformableComponent;
+typedef std::shared_ptr<TransformableComponent>       TransformableComponentPtr;
+typedef std::shared_ptr<const TransformableComponent> ConstTransformableComponentPtr;
 
 // -----------------------------------------------------------------------------
-class GeometryResource {
+class TransformableComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // Draws the GeometryResource.
-  virtual void draw(RenderContext const& context, math::mat3 const& transform) const = 0;
+  // ---------------------------------------------------------------- properties
+  Mat3 pTransform;
+  Mat3 pWorldTransform;
 
-  // Interface to implement pre-draw tasks (occlusion queries, LOD etc.)
-  virtual void predraw(RenderContext const& context) const {}
+  // ------------------------------------------------------------ public methods
+  virtual void update() {
+    if (pUser.get()) {
+      pWorldTransform = pTransform.get() * pUser.get()->pWorldTransform.get();
+    } else {
+      pWorldTransform = pTransform.get();
+    }
+  }
 
  ///////////////////////////////////////////////////////////////////////////////
  // -------------------------------------------------------- protected interface
  protected:
+  TransformableComponent() {}
 
 };
 
 }
 
-#endif  // SWIFT2D_GEOMETRY_RESOURCE_HPP
+#endif  // SWIFT2D_TRANSFORMABLE_COMPONENT_HPP

@@ -6,43 +6,40 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_GEOMETRY_RESOURCE_HPP
-#define SWIFT2D_GEOMETRY_RESOURCE_HPP
+#ifndef SWIFT2D_DRAWABLE_COMPONENT_HPP
+#define SWIFT2D_DRAWABLE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/math/types.hpp>
-
-#include <string>
-#include <vector>
+#include <swift2d/scene/TransformableComponent.hpp>
 
 namespace swift {
 
-// forward declares ------------------------------------------------------------
-struct RenderContext;
+////////////////////////////////////////////////////////////////////////////////
+// A screen core represents a rectangular, virtual screen. Combined with a    //
+// view core it defines the viewing frustum.                                  //
+////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// Base class for different geometries.                                       //
-////////////////////////////////////////////////////////////////////////////////
+// forward declares ------------------------------------------------------------
+class RenderContext;
+
+// shared pointer type definition ----------------------------------------------
+class DrawableComponent;
+typedef std::shared_ptr<DrawableComponent>       DrawableComponentPtr;
+typedef std::shared_ptr<const DrawableComponent> ConstDrawableComponentPtr;
 
 // -----------------------------------------------------------------------------
-class GeometryResource {
+class DrawableComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // Draws the GeometryResource.
-  virtual void draw(RenderContext const& context, math::mat3 const& transform) const = 0;
-
-  // Interface to implement pre-draw tasks (occlusion queries, LOD etc.)
-  virtual void predraw(RenderContext const& context) const {}
-
- ///////////////////////////////////////////////////////////////////////////////
- // -------------------------------------------------------- protected interface
- protected:
-
+  // ------------------------------------------------------------ public methods
+  virtual void draw(RenderContext const& ctx) = 0;
 };
+
+// -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_GEOMETRY_RESOURCE_HPP
+#endif  // SWIFT2D_DRAWABLE_COMPONENT_HPP

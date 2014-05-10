@@ -39,6 +39,10 @@ int main(int argc, char** argv) {
   timer.start();
   Ticker ticker(1.0 / 60.0);
   ticker.on_tick.connect([&]() {
+
+    sprite->pTransform = math::make_rotate(timer.get_elapsed()*0.1)
+                       * math::make_scale(std::sin(timer.get_elapsed())*0.3 + 1);
+
     renderer.queue_draw({scene});
     window->process_input();
   });

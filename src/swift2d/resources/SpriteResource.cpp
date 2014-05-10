@@ -100,7 +100,7 @@ void SpriteResource::upload_to(RenderContext const& ctx) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SpriteResource::draw(RenderContext const& ctx) const {
+void SpriteResource::draw(RenderContext const& ctx, math::mat3 const& transform) const {
 
   // upload to GPU if neccessary
   if (!prog.IsLinked()) {
@@ -110,9 +110,7 @@ void SpriteResource::draw(RenderContext const& ctx) const {
   rectangle.Bind();
   prog.Use();
 
-  (prog/"transform") = oglplus::Mat3f(1, 0, 0.5,
-                                      0, 1, 0,
-                                      0, 0, 1);
+  (prog/"transform") = math::mat3(transform);
   (prog/"texture") = 0;
 
   ctx.gl.DrawArrays(oglplus::PrimitiveType::TriangleStrip, 0, 4);
