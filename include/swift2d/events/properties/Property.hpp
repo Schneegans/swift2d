@@ -92,6 +92,8 @@ class Property {
 
   bool operator!=(T const& rhs) const { return Property<T>::get() != rhs; }
 
+  T const& operator()() const { return Property<T>::get(); }
+
  private:
   T value_;
   Signal<T> on_change_;

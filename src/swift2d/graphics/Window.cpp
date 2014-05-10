@@ -17,49 +17,32 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Window::~Window() {
-  glfwDestroyWindow(window_);
+Window::Window()
+  : pVSync(true)
+  , pFullscreen(false) {
+
+  pOpen.on_change().connect([&](bool val) {
+    if (val) {
+      open_();
+    } else {
+      close_();
+    }
+  });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Window::open() {
-
-  if (!window_) {
-    window_ = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-
-    WindowManager::windows[window_] = this;
-
-    set_active(true);
-    glewInit();
-
-    glfwSetWindowCloseCallback(window_, [](GLFWwindow* w) {
-      WindowManager::windows[w]->on_close.emit();
-    });
-
-    glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
-      WindowManager::windows[w]->on_resize.emit(math::vec2i(width, height));
-    });
-  }
+Window::~Window() {
+  close_();
+  glfwDestroyWindow(window_);
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Window::process_input() {
 
   glfwPollEvents();
-
-  // if (window_) {
-  //   sf::Event event;
-  //   while (window_->pollEvent(event)) {
-  //     if (event.type == sf::Event::Closed) {
-  //       std::cout << "close" << std::endl;
-  //     } else if (event.type == sf::Event::Resized) {
-  //       std::cout << "resize" << std::endl;
-  //       // on_resize(event.size.width, event.size.height);
-  //     }
-  //   }
-  // }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -75,6 +58,56 @@ void Window::set_active(bool active) {
 void Window::display() {
   if (window_) {
     glfwSwapBuffers(window_);
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Window::open_() {
+
+  if (!window_) {
+
+    window_ = glfwCreateWindow(
+      640, 480,
+      "Hello World",
+      pFullscreen.get() ? glfwGetPrimaryMonitor() : nullptr,
+      nullptr);
+
+    WindowManager::windows[window_] = this;
+
+    set_active(true);
+    glewInit();
+
+    glfwSetWindowCloseCallback(window_, [](GLFWwindow* w) {
+      WindowManager::windows[w]->on_close.emit();
+    });
+
+    glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
+      WindowManager::windows[w]->on_resize.emit(math::vec2i(width, height));
+    });
+
+    // apply vsync -------------------------------------------------------------
+    auto on_vsync_change = [&](bool val) {
+      glfwSwapInterval(val ? 1 : 0);
+    };
+    on_vsync_change(pVSync.get());
+    pVSync.on_change().connect(on_vsync_change);
+
+    // apply fullscreen --------------------------------------------------------
+    auto on_fullscreen_change = [&](bool val) {
+
+    };
+    pFullscreen.on_change().connect(on_fullscreen_change);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Window::close_() {
+  if (window_) {
+    glfwDestroyWindow(window_);
+    window_ = nullptr;
   }
 }
 

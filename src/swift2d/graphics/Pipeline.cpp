@@ -33,8 +33,8 @@ void Pipeline::set_output_window(WindowPtr const& window) {
 
 void Pipeline::draw(std::vector<ConstSerializedScenePtr> const& scenes) {
 
-  if (!window_->is_open()) {
-    window_->open();
+  if (!window_->pOpen()) {
+    window_->pOpen = true;
 
     window_->on_resize.connect([&](math::vec2i const& size){
       new_size_ = size;

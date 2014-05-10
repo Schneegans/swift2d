@@ -29,6 +29,7 @@ int main(int argc, char** argv) {
 
   // rendering pipeline --------------------------------------------------------
   auto window = Window::create();
+  window->pFullscreen = true;
   auto pipeline = Pipeline::create();
   pipeline->set_output_window(window);
 

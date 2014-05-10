@@ -36,6 +36,12 @@ class Window {
  // ----------------------------------------------------------- public interface
  public:
 
+  // ---------------------------------------------------------------- properties
+  Bool pOpen;
+  Bool pVSync;
+  Bool pFullscreen;
+
+  Window();
   ~Window();
 
   static WindowPtr create() {
@@ -44,9 +50,6 @@ class Window {
 
   Signal<> on_close;
   Signal<math::vec2i> on_resize;
-
-  void open();
-  bool is_open() { return window_ != nullptr; }
 
   void process_input();
   void set_active(bool active);
@@ -58,6 +61,9 @@ class Window {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+
+    void open_();
+    void close_();
 
     RenderContext render_context_;
     GLFWwindow* window_;
