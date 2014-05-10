@@ -10,6 +10,7 @@
 #include <swift2d/swift2d.hpp>
 #include <swift2d/utils/Logger.hpp>
 
+#include <swift2d/openal.hpp>
 #include <GLFW/glfw3.h>
 
 namespace swift {
@@ -19,10 +20,13 @@ namespace {
   class Swift2DContext {
 
     public:
-      Swift2DContext() {
+      Swift2DContext()
+        : audio_device_()
+        , audio_context_(audio_device_) {
+
         Logger::LOG_MESSAGE << "Booting Swift2D..." << std::endl;
 
-        // init glfw -----------------------------------------------------------------
+        // init glfw -----------------------------------------------------------
         if (!glfwInit()) {
           Logger::LOG_ERROR << "Failed to initialize glfw3!" << std::endl;
         }
@@ -41,6 +45,9 @@ namespace {
 
         Logger::LOG_MESSAGE << "Bye!" << std::endl;
       }
+
+      oalplus::Device audio_device_;
+      oalplus::CurrentContext audio_context_;
   };
 
 }

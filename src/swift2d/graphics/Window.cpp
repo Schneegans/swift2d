@@ -68,13 +68,8 @@ void Window::open_() {
 
   if (!window_) {
 
-    // glfwWindowHint(GLFW_RED_BITS, 24);
-    // glfwWindowHint(GLFW_GREEN_BITS, 24);
-    // glfwWindowHint(GLFW_BLUE_BITS, 24);
-    // glfwWindowHint(GLFW_ALPHA_BITS, 8);
-
     window_ = glfwCreateWindow(
-      640, 480,
+      1600, 960,
       "Hello World",
       pFullscreen.get() ? glfwGetPrimaryMonitor() : nullptr,
       nullptr);
@@ -103,8 +98,6 @@ void Window::open_() {
     glfwSetKeyCallback(window_, [](GLFWwindow* w, int key, int scancode, int action, int mods) {
       WindowManager::windows[w]->on_key_press.emit(static_cast<Key>(key), scancode, action, mods);
     });
-
-
 
     // apply vsync -------------------------------------------------------------
     auto on_vsync_change = [&](bool val) {

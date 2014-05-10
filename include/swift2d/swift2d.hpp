@@ -14,6 +14,7 @@
 #include <swift2d/math.hpp>
 #include <swift2d/scene.hpp>
 #include <swift2d/renderer.hpp>
+#include <swift2d/utils/Logger.hpp>
 #include <swift2d/input/keys.hpp>
 
 namespace swift {

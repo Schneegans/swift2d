@@ -44,7 +44,7 @@ class Renderer {
   Renderer(std::vector<PipelinePtr> const& pipelines);
   virtual ~Renderer();
 
-  void queue_draw(std::vector<ScenePtr> const& scenes);
+  void process(std::vector<ScenePtr> const& scenes);
 
   void stop();
 

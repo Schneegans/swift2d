@@ -9,10 +9,10 @@
 // class header
 #include <swift2d/graphics/Renderer.hpp>
 
-// guacamole headers
 #include <swift2d/scene.hpp>
 #include <swift2d/graphics/RenderClient.hpp>
 #include <swift2d/graphics/Pipeline.hpp>
+#include <swift2d/utils/Logger.hpp>
 #include <memory>
 
 namespace swift {
@@ -48,7 +48,7 @@ Renderer::Renderer(std::vector<PipelinePtr> const& pipelines)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Renderer::queue_draw(std::vector<ScenePtr> const& scenes) {
+void Renderer::process(std::vector<ScenePtr> const& scenes) {
 
   for (auto& scene: scenes) {
     scene->update();

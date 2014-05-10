@@ -29,6 +29,8 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 pkg_check_modules(GLFW REQUIRED glfw3)
 pkg_check_modules(GLEW REQUIRED glew)
 pkg_check_modules(PNG REQUIRED libpng)
+pkg_check_modules(OPENAL REQUIRED openal)
+pkg_check_modules(ALUT REQUIRED freealut)
 
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
@@ -43,6 +45,8 @@ set(LIBS
     ${Boost_LIBRARIES}
     ${GLEW_LIBRARIES}
     ${PNG_LIBRARIES}
+    ${OPENAL_LIBRARIES}
+    ${ALUT_LIBRARIES}
 )
 link_libraries(${LIBS})
 
@@ -51,6 +55,8 @@ set(LIB_PATHS
     ${Boost_LIBRARY_DIRS}
     ${GLEW_LIBRARY_DIRS}
     ${PNG_LIBRARY_DIRS}
+    ${OPENAL_LIBRARY_DIRS}
+    ${ALUT_LIBRARY_DIRS}
 )
 link_directories(${LIB_PATHS})
 
@@ -67,6 +73,8 @@ set(INCLUDE_PATHS
     ${Boost_INCLUDE_DIRS}
     ${GLEW_INCLUDE_DIRS}
     ${PNG_INCLUDE_DIRS}
+    ${OPENAL_INCLUDE_DIRS}
+    ${ALUT_INCLUDE_DIRS}
 )
 include_directories(SYSTEM ${INCLUDE_PATHS})
 
@@ -121,4 +129,12 @@ message( "" )
 message( " png:" )
 message( "   library: ${PNG_LIBRARIES}" )
 message( "   include: ${PNG_INCLUDE_DIRS}" )
+message( "" )
+message( " openal:" )
+message( "   library: ${OPENAL_LIBRARIES}" )
+message( "   include: ${OPENAL_INCLUDE_DIRS}" )
+message( "" )
+message( " alut:" )
+message( "   library: ${ALUT_LIBRARIES}" )
+message( "   include: ${ALUT_INCLUDE_DIRS}" )
 message( "" )

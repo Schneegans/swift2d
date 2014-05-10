@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_RENDERCONTEXT_HPP
-#define SWIFT2D_RENDERCONTEXT_HPP
+#ifndef SWIFT2D_RENDER_CONTEXT_HPP
+#define SWIFT2D_RENDER_CONTEXT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/opengl.hpp>
@@ -28,4 +28,4 @@ struct RenderContext {
 
 }
 
-#endif // SWIFT2D_RENDERCONTEXT_HPP
+#endif // SWIFT2D_RENDER_CONTEXT_HPP

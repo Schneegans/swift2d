@@ -21,16 +21,23 @@ int main(int argc, char** argv) {
   auto scene = Scene::create();
   scene->pName.set("main_scene");
 
-  // create a screen
   auto planet = scene->add_object();
-  auto sprite = planet->add_component<SpriteComponent>();
-  sprite->pTexture.set("diffuse.png");
-  sprite->pDepth.set(0.0f);
+  auto sprite = planet->add<SpriteComponent>();
+       sprite->pDepth.set(0.0f);
+  auto sound = planet->add<SoundComponent>();
 
-  auto sprite2 = planet->add_component<SpriteComponent>();
-  sprite2->pTexture.set("diffuse.png");
-  sprite2->pDepth.set(1.0f);
-  sprite2->pTransform = math::make_translate(0.5, 0.5) * math::make_scale(0.3);
+  auto player = scene->add_object();
+       player->pTransform = math::make_scale(0.1);
+  auto listener = player->add<ListenerComponent>();
+       listener->pVolume = 10.0;
+  auto sprite2 = player->add<SpriteComponent>();
+       sprite2->pDepth.set(1.0f);
+
+  sprite->sprite_ = new SpriteResource();
+  sprite->tex_ = new TextureResource("diffuse.png");
+  sprite2->sprite_ = sprite->sprite_;
+  sprite2->tex_ = new TextureResource("icon.png");
+
 
   // rendering pipeline --------------------------------------------------------
   auto window = Window::create();
@@ -38,32 +45,35 @@ int main(int argc, char** argv) {
   auto pipeline = Pipeline::create();
   pipeline->set_output_window(window);
 
-  Renderer renderer({pipeline});
+  Renderer graphics({pipeline});
 
   // main loop -----------------------------------------------------------------
   Timer timer;
   timer.start();
-  Ticker ticker(1.0 / 60.0);
+  Ticker ticker(1.0 / 90.0);
   ticker.on_tick.connect([&]() {
 
-    sprite->pTransform = math::make_rotate(timer.get_elapsed()*0.1)
-                       * math::make_scale(std::sin(timer.get_elapsed())*0.3 + 1);
+    planet->pTransform = math::make_rotate(timer.get_elapsed()*0.1)
+                       * math::make_scale(std::sin(timer.get_elapsed())*0.1 + 0.3)
+                       * math::make_translate(std::sin(timer.get_elapsed())*3, 0);
 
-    renderer.queue_draw({scene});
+    graphics.process({scene});
     window->process_input();
   });
 
   MainLoop loop;
 
   window->on_close.connect([&](){
-    renderer.stop();
+    graphics.stop();
     loop.stop();
   });
 
   window->on_key_press.connect([&](swift::Key key, int scancode, int action, int mods) {
     if (key == swift::Key::ESCAPE) {
-      renderer.stop();
+      graphics.stop();
       loop.stop();
+    } else if (key == swift::Key::SPACE && action == 0) {
+      sound->play();
     }
   });
 

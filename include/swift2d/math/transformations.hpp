@@ -37,6 +37,8 @@ mat3 rotated    (mat3 const& mat, float angle);
 mat3 translated (mat3 const& mat, vec2 const& delta);
 mat3 translated (mat3 const& mat, float x, float y);
 
+vec2 get_position (mat3 const& mat);
+
 }
 }
 

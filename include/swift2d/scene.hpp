@@ -13,5 +13,7 @@
 #include <swift2d/scene/Scene.hpp>
 #include <swift2d/scene/SceneObject.hpp>
 #include <swift2d/scene/SpriteComponent.hpp>
+#include <swift2d/scene/ListenerComponent.hpp>
+#include <swift2d/scene/SoundComponent.hpp>
 
 #endif  // SWIFT2D_INCLUDE_SCENE_HPP

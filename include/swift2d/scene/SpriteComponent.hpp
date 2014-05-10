@@ -15,6 +15,8 @@
 #include <swift2d/resources/SpriteResource.hpp>
 #include <swift2d/resources/TextureResource.hpp>
 
+#include <iostream>
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -34,8 +36,7 @@ class SpriteComponent : public DrawableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  String pTexture;
-  Float  pDepth;
+  Float pDepth;
 
   // ----------------------------------------------------- contruction interface
   SpriteComponent() : sprite_(nullptr), tex_(nullptr) {}
@@ -51,12 +52,6 @@ class SpriteComponent : public DrawableComponent {
 
   // ------------------------------------------------------------ public methods
   void draw(RenderContext const& ctx) {
-
-    if (!sprite_ || !tex_) {
-      sprite_ = new SpriteResource();
-      tex_ = new TextureResource(pTexture.get());
-    }
-
     tex_->bind(ctx, 0);
     sprite_->draw(ctx, pWorldTransform.get());
   }
@@ -65,11 +60,12 @@ class SpriteComponent : public DrawableComponent {
     scene->objects[pDepth.get()] = create_copy();
   }
 
+  SpriteResource* sprite_;
+  TextureResource* tex_;
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  SpriteResource* sprite_;
-  TextureResource* tex_;
 
 };
 

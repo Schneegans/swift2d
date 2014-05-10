@@ -18,8 +18,21 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 SpriteResource::SpriteResource()
-  : vs(oglplus::ShaderType::Vertex)
-  , fs(oglplus::ShaderType::Fragment) {}
+  : vs(nullptr)
+  , fs(nullptr)
+  , prog(nullptr)
+  , rectangle(nullptr)
+  , verts(nullptr) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SpriteResource::~SpriteResource() {
+  if (vs) delete vs;
+  if (fs) delete fs;
+  if (prog) delete prog;
+  if (rectangle) delete rectangle;
+  if (verts) delete verts;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -38,10 +51,10 @@ void SpriteResource::upload_to(RenderContext const& ctx) const {
     "  gl_Position = vec4(pos.xy, 0.0, 1.0);"
     "}"
   );
-
-  vs.Source(oglplus::GLSLSource::FromStream(vs_source));
+  vs = new oglplus::Shader(oglplus::ShaderType::Vertex);
+  vs->Source(oglplus::GLSLSource::FromStream(vs_source));
   try {
-    vs.Compile();
+    vs->Compile();
   } catch (oglplus::CompileError& e) {
     LOG_ERROR << "Failed to compile Vertex Shader!" << std::endl;
     LOG_ERROR << e.Log() << std::endl;
@@ -59,27 +72,30 @@ void SpriteResource::upload_to(RenderContext const& ctx) const {
     "}"
   );
 
-  fs.Source(oglplus::GLSLSource::FromStream(fs_source));
+  fs = new oglplus::Shader(oglplus::ShaderType::Fragment);
+  fs->Source(oglplus::GLSLSource::FromStream(fs_source));
   try {
-    fs.Compile();
+    fs->Compile();
   } catch (oglplus::CompileError& e) {
     LOG_ERROR << "Failed to compile Fragment Shader!" << std::endl;
     LOG_ERROR << e.Log() << std::endl;
   }
 
   // attach the shaders to the program
-  prog.AttachShader(vs);
-  prog.AttachShader(fs);
+  prog = new oglplus::Program();
+  prog->AttachShader(*vs);
+  prog->AttachShader(*fs);
   // link and use it
   try {
-    prog.Link();
+    prog->Link();
   } catch (oglplus::LinkError& e) {
     LOG_ERROR << e.Log() << std::endl;
   }
 
   // ---------------------------------------------------------------------------
   // bind the VAO for the rectangle
-  rectangle.Bind();
+  rectangle = new oglplus::VertexArray();
+  rectangle->Bind();
 
   GLfloat rectangle_verts[8] = {
     -1.0f, -1.0f,
@@ -89,12 +105,13 @@ void SpriteResource::upload_to(RenderContext const& ctx) const {
   };
 
   // bind the VBO for the rectangle vertices
-  verts.Bind(oglplus::Buffer::Target::Array);
+  verts = new oglplus::Buffer();
+  verts->Bind(oglplus::Buffer::Target::Array);
   // upload the data
   oglplus::Buffer::Data(oglplus::Buffer::Target::Array, 8, rectangle_verts);
 
   // setup the vertex attribs array for the vertices
-  oglplus::VertexAttribArray vert_attr(prog, "position");
+  oglplus::VertexAttribArray vert_attr(*prog, "position");
   vert_attr.Setup<oglplus::Vec2f>().Enable();
 }
 
@@ -103,15 +120,15 @@ void SpriteResource::upload_to(RenderContext const& ctx) const {
 void SpriteResource::draw(RenderContext const& ctx, math::mat3 const& transform) const {
 
   // upload to GPU if neccessary
-  if (!prog.IsLinked()) {
+  if (!prog) {
     upload_to(ctx);
   }
 
-  rectangle.Bind();
-  prog.Use();
+  rectangle->Bind();
+  prog->Use();
 
-  (prog/"transform") = math::mat3(transform);
-  (prog/"texture") = 0;
+  (*prog/"transform") = math::mat3(transform);
+  (*prog/"texture") = 0;
 
   ctx.gl.DrawArrays(oglplus::PrimitiveType::TriangleStrip, 0, 4);
 }

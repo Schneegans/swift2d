@@ -32,6 +32,7 @@ class SpriteResource : public GeometryResource {
  public:
 
   SpriteResource();
+  ~SpriteResource();
 
   // Draws the SpriteResource to the given context.
   void draw(RenderContext const& context, math::mat3 const& transform) const;
@@ -41,14 +42,11 @@ class SpriteResource : public GeometryResource {
  private:
   void upload_to(RenderContext const& context) const;
 
-  mutable oglplus::Shader vs, fs;
-  // Program
-  mutable oglplus::Program prog;
-  // A vertex array object for the rendered rectangle
-  oglplus::VertexArray rectangle;
-  // VBOs for the rectangle's vertices and colors
-  oglplus::Buffer verts;
-  oglplus::Buffer colors;
+  mutable oglplus::Shader  *vs, *fs;
+  mutable oglplus::Program *prog;
+
+  mutable oglplus::VertexArray *rectangle;
+  mutable oglplus::Buffer      *verts;
 };
 
 }

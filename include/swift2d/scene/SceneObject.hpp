@@ -49,10 +49,10 @@ class SceneObject {
   // ------------------------------------------------------------ public methods
   // add an existing component to this object
   template<typename T>
-  typename std::shared_ptr<T> add_component(std::shared_ptr<T> const& component, int index = -1) {
+  typename std::shared_ptr<T> add(std::shared_ptr<T> const& component, int index = -1) {
 
     if (component->pUser.get() != nullptr) {
-      component->pUser.get()->remove_component(component);
+      component->pUser.get()->remove(component);
     }
 
     component->pUser = this;
@@ -68,13 +68,13 @@ class SceneObject {
 
   // create a new component for this object
   template<typename T>
-  typename std::shared_ptr<T> add_component(int index = -1) {
+  typename std::shared_ptr<T> add(int index = -1) {
     auto component = std::make_shared<T>();
-    return add_component(component, index);
+    return add(component, index);
   }
 
   // remove a component from this object
-  void remove_component(ComponentPtr const& component);
+  void remove(ComponentPtr const& component);
 
   // get all components of the given type
   template<typename T>
@@ -104,7 +104,7 @@ class SceneObject {
 
   // returns true, if a component of the given type exists in this object
   template<typename T>
-  bool has_component() const {
+  bool has() const {
     return get_component<T>() != nullptr;
   }
 

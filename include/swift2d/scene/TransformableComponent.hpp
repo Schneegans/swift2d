@@ -36,13 +36,10 @@ class TransformableComponent : public Component {
   Mat3 pWorldTransform;
 
   // ------------------------------------------------------------ public methods
-  virtual void update() {
-    if (pUser.get()) {
-      pWorldTransform = pTransform.get() * pUser.get()->pWorldTransform.get();
-    } else {
-      pWorldTransform = pTransform.get();
-    }
-  }
+  virtual void update();
+
+  virtual math::vec2 get_position() const;
+  virtual math::vec2 get_world_position() const;
 
  ///////////////////////////////////////////////////////////////////////////////
  // -------------------------------------------------------- protected interface

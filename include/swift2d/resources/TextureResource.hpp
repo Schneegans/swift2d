@@ -28,6 +28,7 @@ class TextureResource {
 
   TextureResource() {};
   TextureResource(std::string const& file_name);
+  ~TextureResource();
 
   // initializes the contained data from a given texture file.
   void load_from_file(std::string const& file_name);
@@ -41,7 +42,7 @@ class TextureResource {
  private:
   void upload_to(RenderContext const& context) const;
 
-  oglplus::Texture          texture_;
+  mutable oglplus::Texture *texture_;
 
   bool        needs_update_;
   std::string file_name_;

@@ -17,9 +17,16 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 TextureResource::TextureResource(std::string const& file_name)
-  : file_name_(file_name)
+  : texture_(nullptr)
+  , file_name_(file_name)
   , needs_update_(true)
 {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+TextureResource::~TextureResource() {
+  if (texture_) delete texture_;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -32,19 +39,10 @@ void TextureResource::load_from_file(std::string const& file_name) {
 
 void TextureResource::bind(RenderContext const& context, unsigned location) const {
   if (needs_update_) {
-
-    auto png  = oglplus::images::PNGImage(file_name_.c_str(), true, true);
-
-    context.gl.Bound(oglplus::smart_enums::_2D(), texture_)
-      .Image2D(png)
-      .MinFilter(oglplus::smart_enums::Linear())
-      .MagFilter(oglplus::smart_enums::Linear())
-      .Anisotropy(2.0f)
-      .WrapS(oglplus::smart_enums::Repeat())
-      .WrapT(oglplus::smart_enums::Repeat());
+    upload_to(context);
   }
 
-  context.gl.Bound(oglplus::smart_enums::_2D(), texture_);
+  context.gl.Bound(oglplus::smart_enums::_2D(), *texture_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +54,18 @@ void TextureResource::unbind() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 void TextureResource::upload_to(RenderContext const& context) const {
+  if (texture_) delete texture_;
+  texture_ = new oglplus::Texture();
 
+  auto png  = oglplus::images::PNGImage(file_name_.c_str(), true, true);
+
+  context.gl.Bound(oglplus::smart_enums::_2D(), *texture_)
+    .Image2D(png)
+    .MinFilter(oglplus::smart_enums::Linear())
+    .MagFilter(oglplus::smart_enums::Linear())
+    .Anisotropy(2.0f)
+    .WrapS(oglplus::smart_enums::Repeat())
+    .WrapT(oglplus::smart_enums::Repeat());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
