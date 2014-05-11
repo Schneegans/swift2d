@@ -21,22 +21,30 @@ int main(int argc, char** argv) {
 
   // example scene setup -------------------------------------------------------
   auto scene = SceneObject::create();
-  scene->pName.set("main_scene");
 
+  // planet
   auto planet = scene->add();
+
   auto sprite = planet->add<SpriteComponent>();
-       sprite->pDepth.set(0.0f);
+       sprite->pDepth = 0.0f;
        sprite->sprite_ = new SpriteResource();
        sprite->tex_ = new TextureResource("diffuse.png");
+
   auto boing = planet->add<SoundComponent>();
        boing->set_sound(new SoundResource("sound.wav"));
 
+  // player
   auto player = scene->add();
        player->pTransform = math::make_scale(0.1);
+
+  auto mover = planet->add<MoveBehavior>();
+       mover->pSpeed = math::vec2(-0.005, 0.00);
+
   auto listener = player->add<ListenerComponent>();
        listener->pVolume = 10.0;
+
   auto ship = player->add<SpriteComponent>();
-       ship->pDepth.set(-1.0f);
+       ship->pDepth = -1.0f;
        ship->sprite_ = sprite->sprite_;
        ship->tex_ = new TextureResource("icon.png");
 
@@ -46,30 +54,26 @@ int main(int argc, char** argv) {
   auto pipeline = Pipeline::create();
   pipeline->set_output_window(window);
 
-  Renderer graphics(pipeline);
+  Renderer renderer(pipeline);
 
   // main loop -----------------------------------------------------------------
   Timer timer;
   timer.start();
+
   Ticker ticker(1.0 / 90.0);
   ticker.on_tick.connect([&]() {
-
-    planet->pTransform = math::make_rotate(timer.get_elapsed()*0.3)
-                       * math::make_scale(std::sin(timer.get_elapsed())*0.1 + 0.3)
-                       * math::make_translate(std::sin(timer.get_elapsed())*3, 0);
-
-    graphics.process(scene);
+    renderer.process(scene, timer.get_elapsed());
     window->process_input();
   });
 
   window->on_close.connect([&](){
-    graphics.stop();
+    renderer.stop();
     loop.stop();
   });
 
   window->on_key_press.connect([&](swift::Key key, int scancode, int action, int mods) {
     if (key == swift::Key::ESCAPE) {
-      graphics.stop();
+      renderer.stop();
       loop.stop();
     } else if (key == swift::Key::SPACE && action == 0) {
       boing->play();

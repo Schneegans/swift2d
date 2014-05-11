@@ -10,7 +10,7 @@
 #define SWIFT2D_SOUND_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/scene/TransformableComponent.hpp>
+#include <swift2d/components/TransformableComponent.hpp>
 
 #include <swift2d/resources/SoundResource.hpp>
 #include <swift2d/openal.hpp>
@@ -44,8 +44,8 @@ class SoundComponent : public TransformableComponent {
   }
 
   // ------------------------------------------------------------ public methods
-  virtual void update() {
-    TransformableComponent::update();
+  virtual void update(double time) {
+    TransformableComponent::update(time);
     auto pos(get_world_position());
     source_.Position(pos.x(), pos.y(), 0);
   }

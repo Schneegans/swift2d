@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // class header
-#include <swift2d/scene/TransformableComponent.hpp>
+#include <swift2d/components/TransformableComponent.hpp>
 
 #include <swift2d/scene/SceneObject.hpp>
 
@@ -15,9 +15,9 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TransformableComponent::update() {
-  if (pUser.get()) {
-    pWorldTransform = pTransform.get() * pUser.get()->pWorldTransform.get();
+void TransformableComponent::update(double time) {
+  if (get_user()) {
+    pWorldTransform = pTransform.get() * get_user()->pWorldTransform.get();
   } else {
     pWorldTransform = pTransform.get();
   }

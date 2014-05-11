@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // class header
-#include <swift2d/scene/ListenerComponent.hpp>
+#include <swift2d/components/ListenerComponent.hpp>
 
 #include <swift2d/scene/SceneObject.hpp>
 
@@ -26,8 +26,8 @@ ListenerComponent::ListenerComponent() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ListenerComponent::update() {
-  TransformableComponent::update();
+void ListenerComponent::update(double time) {
+  TransformableComponent::update(time);
 
   auto pos(get_world_position());
   listener_.Position(pos.x(), pos.y(), 0);

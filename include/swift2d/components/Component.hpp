@@ -30,10 +30,8 @@ typedef std::shared_ptr<const SerializedScene> ConstSerializedScenePtr;
 typedef Property<SceneObject*>             SceneObjectProperty;
 
 ////////////////////////////////////////////////////////////////////////////////
-// SceneObjects are made of multiple Components. A core encapsulates fine-grained         //
-// functionality, data or behaviors. During scene traversal and serialization //
-// each core may influence the result and may pass information to subsequent  //
-// cores.                                                                     //
+// SceneObjects are made of multiple Components. A component encapsulates     //
+// fine-grained functionality, data or behaviors.                             //
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
@@ -49,8 +47,7 @@ class Component {
 
   // ---------------------------------------------------------------- properties
   // True, if this core should be processed in the serialization and traversal.
-  Bool                pEnabled;
-  SceneObjectProperty pUser;
+  Bool pEnabled;
 
 
   // ----------------------------------------------------- contruction interface
@@ -58,15 +55,22 @@ class Component {
   virtual ~Component() {}
 
   // ------------------------------------------------------------ public methods
-  virtual void update() {}
+  virtual void update(double time) {}
 
   virtual void serialize(SerializedScenePtr& scene) const {};
+
+  void set_user(SceneObject* u) { user_ = u; }
+  SceneObject* get_user() const { return user_; }
 
  ///////////////////////////////////////////////////////////////////////////////
  // -------------------------------------------------------- protected interface
  protected:
-  Component() : pEnabled(true), pUser(nullptr) {}
+  Component() : pEnabled(true), user_(nullptr) {}
 
+ ///////////////////////////////////////////////////////////////////////////////
+ // -------------------------------------------------------- protected interface
+ private:
+  SceneObject* user_;
 };
 
 }

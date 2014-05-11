@@ -10,7 +10,7 @@
 #define SWIFT2D_DRAWABLE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/scene/TransformableComponent.hpp>
+#include <swift2d/components/TransformableComponent.hpp>
 
 namespace swift {
 

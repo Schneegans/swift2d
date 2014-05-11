@@ -10,7 +10,7 @@
 #define SWIFT2D_SPRITE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/scene/DrawableComponent.hpp>
+#include <swift2d/components/DrawableComponent.hpp>
 
 #include <swift2d/resources/SpriteResource.hpp>
 #include <swift2d/resources/TextureResource.hpp>

@@ -19,11 +19,32 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+SceneObjectPtr SceneObject::add() {
+  auto object(SceneObject::create());
+  objects_.insert(object);
+  return object;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObjectPtr const& SceneObject::add(SceneObjectPtr const& object) {
+  objects_.insert(object);
+  return object;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void SceneObject::remove(SceneObjectPtr const& object) {
+  objects_.erase(object);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void SceneObject::remove(ComponentPtr const& component) {
   auto delete_pos(std::remove(components_.begin(), components_.end(), component));
 
   if (delete_pos != components_.end()) {
-    (*delete_pos)->pUser = nullptr;
+    (*delete_pos)->set_user(nullptr);
     components_.erase(delete_pos, components_.end());
   }
 }
@@ -54,7 +75,7 @@ void SceneObject::serialize(SerializedScenePtr& scene) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SceneObject::update() {
+void SceneObject::update(double time) {
 
   if (pParent.get()) {
     pWorldTransform = pTransform.get() * pParent.get()->pWorldTransform.get();
@@ -64,12 +85,12 @@ void SceneObject::update() {
 
   for (auto const& component: components_) {
     if (component->pEnabled.get()) {
-      component->update();
+      component->update(time);
     }
   }
 
   for (auto const& object: objects_) {
-    object->update();
+    object->update(time);
   }
 }
 

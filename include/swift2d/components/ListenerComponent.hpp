@@ -10,7 +10,7 @@
 #define SWIFT2D_LISTENER_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/scene/TransformableComponent.hpp>
+#include <swift2d/components/TransformableComponent.hpp>
 #include <swift2d/openal.hpp>
 
 namespace swift {
@@ -38,7 +38,7 @@ class ListenerComponent : public TransformableComponent {
   Float pVolume;
 
   // ------------------------------------------------------------ public methods
-  virtual void update();
+  virtual void update(double time);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

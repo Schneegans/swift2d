@@ -6,11 +6,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
-#define SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
+#ifndef SWIFT2D_BEHAVIOR_HPP
+#define SWIFT2D_BEHAVIOR_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/scene/Component.hpp>
+#include <swift2d/components/Component.hpp>
 #include <swift2d/math.hpp>
 
 namespace swift {
@@ -20,34 +20,40 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class TransformableComponent;
-typedef std::shared_ptr<TransformableComponent>       TransformableComponentPtr;
-typedef std::shared_ptr<const TransformableComponent> ConstTransformableComponentPtr;
+// class Behavior;
+// typedef std::shared_ptr<Behavior>       BehaviorPtr;
+// typedef std::shared_ptr<const Behavior> ConstBehaviorPtr;
 
 // -----------------------------------------------------------------------------
-class TransformableComponent : public Component {
+template<typename UserType>
+class Behavior : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ---------------------------------------------------------------- properties
-  Mat3 pTransform;
-  Mat3 pWorldTransform;
 
   // ------------------------------------------------------------ public methods
-  virtual void update();
+  virtual void update(double time) = 0;
 
-  virtual math::vec2 get_position() const;
-  virtual math::vec2 get_world_position() const;
+  void set_user(UserType u) {
+    Component::set_user(u);
+    user_ = u;
+  }
+
+  UserType get_user() const {
+    return user_;
+  }
 
  ///////////////////////////////////////////////////////////////////////////////
  // -------------------------------------------------------- protected interface
  protected:
-  TransformableComponent() {}
+  Behavior() {}
 
+  UserType user_;
 };
 
 }
 
-#endif  // SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
+#endif  // SWIFT2D_BEHAVIOR_HPP

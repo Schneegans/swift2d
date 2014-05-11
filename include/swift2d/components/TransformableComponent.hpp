@@ -6,53 +6,48 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_RENDERER_HPP
-#define SWIFT2D_RENDERER_HPP
+#ifndef SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
+#define SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/utils/FPSCounter.hpp>
-#include <swift2d/graphics/RenderClient.hpp>
-#include <swift2d/scene/SerializedScene.hpp>
-#include <vector>
-#include <string>
-#include <memory>
+#include <swift2d/components/Component.hpp>
+#include <swift2d/math.hpp>
 
 namespace swift {
 
-// forward declares ------------------------------------------------------------
-class Pipeline;
-typedef std::shared_ptr<Pipeline> PipelinePtr;
-
-class SceneObject;
-typedef std::shared_ptr<SceneObject>       SceneObjectPtr;
-
 ////////////////////////////////////////////////////////////////////////////////
-// Manages the rendering on multiple contexts.                                //
-// This class is used to provide a renderer frontend interface to the user.   //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
+
+// shared pointer type definition ----------------------------------------------
+class TransformableComponent;
+typedef std::shared_ptr<TransformableComponent>       TransformableComponentPtr;
+typedef std::shared_ptr<const TransformableComponent> ConstTransformableComponentPtr;
 
 // -----------------------------------------------------------------------------
-class Renderer {
+class TransformableComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Renderer(PipelinePtr const& pipeline);
-  virtual ~Renderer();
+  // ---------------------------------------------------------------- properties
+  Mat3 pTransform;
+  Mat3 pWorldTransform;
 
-  void process(SceneObjectPtr const& scene, double time);
+  // ------------------------------------------------------------ public methods
+  virtual void update(double time);
 
-  void stop();
+  virtual math::vec2 get_position() const;
+  virtual math::vec2 get_world_position() const;
 
  ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
- private:
+ // -------------------------------------------------------- protected interface
+ protected:
+  TransformableComponent() {}
 
-  RenderClient<ConstSerializedScenePtr>* render_client_;
-  FPSCounter                             application_fps_;
 };
 
 }
 
-#endif  // SWIFT2D_RENDERER_HPP
+#endif  // SWIFT2D_TRANSFORMABLE_COMPONENT_HPP

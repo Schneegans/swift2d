@@ -10,7 +10,7 @@
 #define SWIFT2D_SCENE_OBJECT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/scene/Component.hpp>
+#include <swift2d/components/Component.hpp>
 
 #include <unordered_set>
 #include <vector>
@@ -37,7 +37,6 @@ class SceneObject {
  public:
 
   // ---------------------------------------------------------------- properties
-  String              pName;
   SceneObjectProperty pParent;
   Mat3                pTransform;
   Mat3                pWorldTransform;
@@ -52,33 +51,24 @@ class SceneObject {
 
   //----------------------------------------------------- scene object interface
   // adds a new object to the scene and returns a shared pointer
-  SceneObjectPtr add() {
-    auto object(SceneObject::create());
-    objects_.insert(object);
-    return object;
-  }
-
-  // removes a given object from this scene
-  void remove(SceneObjectPtr const& object) {
-    objects_.erase(object);
-  }
+  SceneObjectPtr add();
 
   // adds an existing object to the scene and returns a shared pointer
-  SceneObjectPtr const& add(SceneObjectPtr const& object) {
-    objects_.insert(object);
-    return object;
-  }
+  SceneObjectPtr const& add(SceneObjectPtr const& object);
+
+  // removes a given object from this scene
+  void remove(SceneObjectPtr const& object);
 
   //-------------------------------------------------------- component interface
   // add an existing component to this object
   template<typename T>
   typename std::shared_ptr<T> add(std::shared_ptr<T> const& component, int index = -1) {
 
-    if (component->pUser.get() != nullptr) {
-      component->pUser.get()->remove(component);
+    if (component->get_user() != nullptr) {
+      component->get_user()->remove(component);
     }
 
-    component->pUser = this;
+    component->set_user(this);
 
     if (index < 0 || index >= components_.size()) {
       components_.push_back(component);
@@ -131,12 +121,16 @@ class SceneObject {
     return get_component<T>() != nullptr;
   }
 
-  // calls serialize() on all enabled components
+  // calls serialize() on all enabled components and objects --- the provided
+  // SerializedScene is extended
   virtual void serialize(SerializedScenePtr& scene) const;
 
+  // calls serialize() on all enabled components and objects --- a new
+  // SerializedScene is create
   virtual SerializedScenePtr serialize() const;
 
-  virtual void update();
+  // calls update() on all components and objects
+  virtual void update(double time);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

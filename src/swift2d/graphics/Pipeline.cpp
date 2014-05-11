@@ -9,8 +9,8 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/Pipeline.hpp>
 
+#include <swift2d/components/SpriteComponent.hpp>
 #include <swift2d/graphics/Window.hpp>
-#include <swift2d/scene/SpriteComponent.hpp>
 #include <swift2d/utils/Logger.hpp>
 #include <thread>
 

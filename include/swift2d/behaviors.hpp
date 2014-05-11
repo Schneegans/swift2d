@@ -6,31 +6,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_HPP
-#define SWIFT2D_HPP
+#ifndef SWIFT2D_INCLUDE_BEHAVIOR_HPP
+#define SWIFT2D_INCLUDE_BEHAVIOR_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/events.hpp>
-#include <swift2d/math.hpp>
-#include <swift2d/scene.hpp>
-#include <swift2d/components.hpp>
-#include <swift2d/behaviors.hpp>
-#include <swift2d/renderer.hpp>
-#include <swift2d/utils/Logger.hpp>
-#include <swift2d/input/keys.hpp>
+#include <swift2d/behaviors/Behavior.hpp>
+#include <swift2d/behaviors/MoveBehavior.hpp>
 
-namespace swift {
-
-/**
- * Initialize swift2d.
- *
- * This should be called once at the beginning of every application
- * using swift2d.
- */
-
-void init(int argc, char** argv);
-
-}
-
-#endif  // SWIFT2D_HPP
-
+#endif  // SWIFT2D_INCLUDE_BEHAVIOR_HPP

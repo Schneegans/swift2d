@@ -42,9 +42,9 @@ Renderer::Renderer(PipelinePtr const& pipeline)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Renderer::process(SceneObjectPtr const& scene) {
+void Renderer::process(SceneObjectPtr const& scene, double time) {
 
-  scene->update();
+  scene->update(time);
 
   render_client_->queue_draw(scene->serialize());
 
