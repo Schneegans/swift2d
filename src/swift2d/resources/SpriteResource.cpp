@@ -114,8 +114,6 @@ void SpriteResource::upload_to(RenderContext const& ctx) const {
   // setup the vertex attribs array for the vertices
   oglplus::VertexAttribArray vert_attr(*prog, "position");
   vert_attr.Setup<oglplus::Vec2f>().Enable();
-
-  Logger::LOG_DEBUG << "uploaded! " << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
