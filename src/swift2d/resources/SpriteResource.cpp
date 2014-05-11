@@ -43,10 +43,11 @@ void SpriteResource::upload_to(RenderContext const& ctx) const {
   std::stringstream vs_source(
     "#version 330\n"
     "in vec2 position;"
+    "uniform mat3 projection;"
     "uniform mat3 transform;"
     "out vec2 tex_coords;"
     "void main(void){"
-    "  vec3 pos = transform * vec3(position, 1.0);"
+    "  vec3 pos = projection * transform * vec3(position, 1.0);"
     "  tex_coords = position*0.5 + 0.5;"
     "  gl_Position = vec4(pos.xy, 0.0, 1.0);"
     "}"
@@ -113,6 +114,8 @@ void SpriteResource::upload_to(RenderContext const& ctx) const {
   // setup the vertex attribs array for the vertices
   oglplus::VertexAttribArray vert_attr(*prog, "position");
   vert_attr.Setup<oglplus::Vec2f>().Enable();
+
+  Logger::LOG_DEBUG << "uploaded! " << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -127,6 +130,7 @@ void SpriteResource::draw(RenderContext const& ctx, math::mat3 const& transform)
   rectangle->Bind();
   prog->Use();
 
+  (*prog/"projection") = math::mat3(ctx.projection_matrix);
   (*prog/"transform") = math::mat3(transform);
   (*prog/"texture") = 0;
 

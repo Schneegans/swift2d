@@ -44,8 +44,8 @@ class TextureResource {
 
   mutable oglplus::Texture *texture_;
 
-  bool        needs_update_;
-  std::string file_name_;
+  mutable bool needs_update_;
+  std::string  file_name_;
 
 };
 

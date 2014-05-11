@@ -24,6 +24,7 @@ struct RenderContext {
 
   oglplus::Context gl;
   math::vec2i size;
+  math::mat3 projection_matrix;
 };
 
 }

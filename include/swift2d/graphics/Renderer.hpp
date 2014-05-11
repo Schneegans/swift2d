@@ -24,7 +24,7 @@ class Pipeline;
 typedef std::shared_ptr<Pipeline> PipelinePtr;
 
 class SceneObject;
-typedef std::shared_ptr<SceneObject>       SceneObjectPtr;
+typedef std::shared_ptr<SceneObject> SceneObjectPtr;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Manages the rendering on multiple contexts.                                //
@@ -41,7 +41,9 @@ class Renderer {
   Renderer(PipelinePtr const& pipeline);
   virtual ~Renderer();
 
-  void process(SceneObjectPtr const& scene, double time);
+  void process(SceneObjectPtr const& scene,
+               CameraComponentPtr const& camera,
+               double time);
 
   void stop();
 

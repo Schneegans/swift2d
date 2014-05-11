@@ -10,6 +10,7 @@
 #include <swift2d/scene/SceneObject.hpp>
 
 #include <swift2d/scene/SerializedScene.hpp>
+#include <swift2d/components/CameraComponent.hpp>
 
 #include <iostream>
 #include <algorithm>
@@ -51,9 +52,10 @@ void SceneObject::remove(ComponentPtr const& component) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SerializedScenePtr SceneObject::serialize() const {
+SerializedScenePtr SceneObject::serialize(CameraComponentPtr const& camera) const {
 
   auto scene(SerializedScene::create());
+  scene->camera = camera->create_copy();
   serialize(scene);
 
   return scene;

@@ -22,12 +22,21 @@ int main(int argc, char** argv) {
   // example scene setup -------------------------------------------------------
   auto scene = SceneObject::create();
 
+  auto bg = scene->add<SpriteComponent>();
+       bg->pDepth = -1000.0f;
+       bg->sprite_ = new SpriteResource();
+       bg->tex_ = new TextureResource("bg.png");
+       bg->pTransform = math::make_scale(2.f);
+
+  auto camera = scene->add<CameraComponent>();
+  camera->pSize = math::vec2(2.f, 2.f);
+
   // planet
   auto planet = scene->add();
 
   auto sprite = planet->add<SpriteComponent>();
        sprite->pDepth = 0.0f;
-       sprite->sprite_ = new SpriteResource();
+       sprite->sprite_ = bg->sprite_;
        sprite->tex_ = new TextureResource("diffuse.png");
 
   auto boing = planet->add<SoundComponent>();
@@ -45,8 +54,8 @@ int main(int argc, char** argv) {
 
   auto ship = player->add<SpriteComponent>();
        ship->pDepth = -1.0f;
-       ship->sprite_ = sprite->sprite_;
-       ship->tex_ = new TextureResource("icon.png");
+       ship->sprite_ = bg->sprite_;
+       ship->tex_ = new TextureResource("ship.png");
 
   // rendering pipeline --------------------------------------------------------
   auto window = Window::create();
@@ -60,15 +69,22 @@ int main(int argc, char** argv) {
   Timer timer;
   timer.start();
 
-  Ticker ticker(1.0 / 90.0);
+  Ticker ticker(1.0 / 60.0);
   ticker.on_tick.connect([&]() {
-    renderer.process(scene, timer.get_elapsed());
+    renderer.process(scene, camera, timer.get_elapsed());
     window->process_input();
   });
 
   window->on_close.connect([&](){
     renderer.stop();
     loop.stop();
+  });
+
+  window->on_resize.connect([&](math::vec2i const& size){
+    // float height = 2;
+    // float aspect = 1.0f * size.x() / size.y();
+    // math::vec2 camera_size(height*aspect, height);
+    // camera->pSize = camera_size;
   });
 
   window->on_key_press.connect([&](swift::Key key, int scancode, int action, int mods) {

@@ -16,8 +16,10 @@ namespace swift {
 
 // forward declares ------------------------------------------------------------
 class DrawableComponent;
-typedef std::shared_ptr<DrawableComponent>       DrawableComponentPtr;
-typedef std::shared_ptr<const DrawableComponent> ConstDrawableComponentPtr;
+typedef std::shared_ptr<DrawableComponent> DrawableComponentPtr;
+
+class CameraComponent;
+typedef std::shared_ptr<CameraComponent> CameraComponentPtr;
 
 // shared pointer type definition ----------------------------------------------
 class SerializedScene;
@@ -35,6 +37,7 @@ class SerializedScene {
     return std::make_shared<SerializedScene>();
   }
 
+  CameraComponentPtr camera;
   std::map<float, DrawableComponentPtr> objects;
 
 };

@@ -69,7 +69,7 @@ void Window::open_() {
   if (!window_) {
 
     window_ = glfwCreateWindow(
-      1600, 960,
+      800, 800,
       "Hello World",
       pFullscreen.get() ? glfwGetPrimaryMonitor() : nullptr,
       nullptr);

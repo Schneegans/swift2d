@@ -42,11 +42,11 @@ Renderer::Renderer(PipelinePtr const& pipeline)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Renderer::process(SceneObjectPtr const& scene, double time) {
+void Renderer::process(SceneObjectPtr const& scene, CameraComponentPtr const& camera, double time) {
 
   scene->update(time);
 
-  render_client_->queue_draw(scene->serialize());
+  render_client_->queue_draw(scene->serialize(camera));
 
   application_fps_.step();
 }

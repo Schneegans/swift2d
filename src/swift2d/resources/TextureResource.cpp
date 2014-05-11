@@ -54,7 +54,11 @@ void TextureResource::unbind() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 void TextureResource::upload_to(RenderContext const& context) const {
-  if (texture_) delete texture_;
+
+  if (texture_) {
+    delete texture_;
+  }
+
   texture_ = new oglplus::Texture();
 
   auto png  = oglplus::images::PNGImage(file_name_.c_str(), true, true);
@@ -66,6 +70,8 @@ void TextureResource::upload_to(RenderContext const& context) const {
     .Anisotropy(2.0f)
     .WrapS(oglplus::smart_enums::Repeat())
     .WrapT(oglplus::smart_enums::Repeat());
+
+  needs_update_ = false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
