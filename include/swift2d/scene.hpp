@@ -10,7 +10,6 @@
 #define SWIFT2D_INCLUDE_SCENE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/scene/Scene.hpp>
 #include <swift2d/scene/SceneObject.hpp>
 #include <swift2d/scene/SpriteComponent.hpp>
 #include <swift2d/scene/ListenerComponent.hpp>

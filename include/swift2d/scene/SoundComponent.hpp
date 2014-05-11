@@ -39,6 +39,7 @@ class SoundComponent : public TransformableComponent {
  public:
 
   ~SoundComponent() {
+    stop();
     source_.DetachBuffers();
   }
 
@@ -53,10 +54,14 @@ class SoundComponent : public TransformableComponent {
     source_.Play();
   }
 
+  virtual void stop() {
+    source_.Stop();
+  }
+
   // TODO: make shared!
   void set_sound(SoundResource* sound) {
+    stop();
     sound_ = sound;
-    source_.Stop();
     source_.Buffer(sound_->get_buffer());
   }
 

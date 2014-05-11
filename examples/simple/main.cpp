@@ -20,10 +20,10 @@ int main(int argc, char** argv) {
   MainLoop loop;
 
   // example scene setup -------------------------------------------------------
-  auto scene = Scene::create();
+  auto scene = SceneObject::create();
   scene->pName.set("main_scene");
 
-  auto planet = scene->add_object();
+  auto planet = scene->add();
   auto sprite = planet->add<SpriteComponent>();
        sprite->pDepth.set(0.0f);
        sprite->sprite_ = new SpriteResource();
@@ -31,12 +31,12 @@ int main(int argc, char** argv) {
   auto boing = planet->add<SoundComponent>();
        boing->set_sound(new SoundResource("sound.wav"));
 
-  auto player = scene->add_object();
+  auto player = scene->add();
        player->pTransform = math::make_scale(0.1);
   auto listener = player->add<ListenerComponent>();
        listener->pVolume = 10.0;
   auto ship = player->add<SpriteComponent>();
-       ship->pDepth.set(1.0f);
+       ship->pDepth.set(-1.0f);
        ship->sprite_ = sprite->sprite_;
        ship->tex_ = new TextureResource("icon.png");
 
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
   auto pipeline = Pipeline::create();
   pipeline->set_output_window(window);
 
-  Renderer graphics({pipeline});
+  Renderer graphics(pipeline);
 
   // main loop -----------------------------------------------------------------
   Timer timer;
@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
                        * math::make_scale(std::sin(timer.get_elapsed())*0.1 + 0.3)
                        * math::make_translate(std::sin(timer.get_elapsed())*3, 0);
 
-    graphics.process({scene});
+    graphics.process(scene);
     window->process_input();
   });
 

@@ -9,6 +9,8 @@
 // class header
 #include <swift2d/scene/SceneObject.hpp>
 
+#include <swift2d/scene/SerializedScene.hpp>
+
 #include <iostream>
 #include <algorithm>
 
@@ -28,6 +30,16 @@ void SceneObject::remove(ComponentPtr const& component) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+SerializedScenePtr SceneObject::serialize() const {
+
+  auto scene(SerializedScene::create());
+  serialize(scene);
+
+  return scene;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void SceneObject::serialize(SerializedScenePtr& scene) const {
   for (auto const& component: components_) {
     if (component->pEnabled.get()) {
@@ -35,8 +47,8 @@ void SceneObject::serialize(SerializedScenePtr& scene) const {
     }
   }
 
-  for (auto const& child: children_) {
-    child->serialize(scene);
+  for (auto const& object: objects_) {
+    object->serialize(scene);
   }
 }
 
@@ -56,8 +68,8 @@ void SceneObject::update() {
     }
   }
 
-  for (auto const& child: children_) {
-    child->update();
+  for (auto const& object: objects_) {
+    object->update();
   }
 }
 

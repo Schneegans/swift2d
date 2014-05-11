@@ -10,7 +10,6 @@
 #include <swift2d/graphics/Pipeline.hpp>
 
 #include <swift2d/graphics/Window.hpp>
-#include <swift2d/scene/Scene.hpp>
 #include <swift2d/scene/SpriteComponent.hpp>
 #include <swift2d/utils/Logger.hpp>
 #include <thread>
@@ -31,7 +30,7 @@ void Pipeline::set_output_window(WindowPtr const& window) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Pipeline::draw(std::vector<ConstSerializedScenePtr> const& scenes) {
+void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   if (!window_->pOpen()) {
     window_->pOpen = true;
@@ -49,10 +48,8 @@ void Pipeline::draw(std::vector<ConstSerializedScenePtr> const& scenes) {
     new_size_ = math::vec2i(-1, -1);
   }
 
-  for (auto& scene: scenes) {
-    for (auto& object: scene->objects) {
-      object.second->draw(window_->get_context());
-    }
+  for (auto& object: scene->objects) {
+    object.second->draw(window_->get_context());
   }
 
   window_->display();

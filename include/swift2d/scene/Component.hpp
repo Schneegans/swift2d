@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/events.hpp>
+#include <swift2d/scene/SerializedScene.hpp>
 
 #include <vector>
 #include <memory>
@@ -60,9 +61,6 @@ class Component {
   virtual void update() {}
 
   virtual void serialize(SerializedScenePtr& scene) const {};
-
-  // SceneObject is friend, as it calls traverse and serialze methods.
-  friend class ::swift::SceneObject;
 
  ///////////////////////////////////////////////////////////////////////////////
  // -------------------------------------------------------- protected interface

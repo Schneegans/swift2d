@@ -19,7 +19,6 @@
 namespace swift {
 
 // forward declares ------------------------------------------------------------
-class Scene;
 class Window;
 typedef std::shared_ptr<Window> WindowPtr;
 
@@ -50,7 +49,7 @@ class Pipeline {
 
   void set_output_window(WindowPtr const& window);
 
-  void draw(std::vector<ConstSerializedScenePtr> const& scenes);
+  void draw(ConstSerializedScenePtr const& scene);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

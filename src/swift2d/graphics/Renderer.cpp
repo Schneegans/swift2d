@@ -20,49 +20,33 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Renderer::~Renderer() {
-  for (auto rc : render_clients_) {
-    if (rc) delete rc;
-  }
+  delete render_client_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Renderer::Renderer(std::vector<PipelinePtr> const& pipelines)
-  : render_clients_()
+Renderer::Renderer(PipelinePtr const& pipeline)
+  : render_client_()
   , application_fps_(20) {
 
   application_fps_.start();
 
-  for (auto& pipeline : pipelines) {
+  auto fun = [pipeline, this](ConstSerializedScenePtr const& scene) {
+    pipeline->draw(scene);
+  };
 
-    auto fun = [pipeline, this](std::vector<ConstSerializedScenePtr> const& scenes) {
-      pipeline->draw(scenes);
-    };
-
-    auto render_client = new RenderClient<std::vector<ConstSerializedScenePtr>>(fun);
-    pipeline->application_fps.connect_from(this->application_fps_.fps);
-    pipeline->rendering_fps.connect_from(render_client->fps_counter.fps);
-    render_clients_.push_back(render_client);
-  }
+  render_client_ = new RenderClient<ConstSerializedScenePtr>(fun);
+  pipeline->application_fps.connect_from(this->application_fps_.fps);
+  pipeline->rendering_fps.connect_from(render_client_->fps_counter.fps);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Renderer::process(std::vector<ScenePtr> const& scenes) {
+void Renderer::process(SceneObjectPtr const& scene) {
 
-  for (auto& scene: scenes) {
-    scene->update();
-  }
+  scene->update();
 
-  std::vector<ConstSerializedScenePtr> serialized_scenes;
-
-  for (auto& scene: scenes) {
-    serialized_scenes.push_back(scene->serialize());
-  }
-
-  for (auto& rclient : render_clients_) {
-    rclient->queue_draw(serialized_scenes);
-  }
+  render_client_->queue_draw(scene->serialize());
 
   application_fps_.step();
 }
@@ -70,10 +54,7 @@ void Renderer::process(std::vector<ScenePtr> const& scenes) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Renderer::stop() {
-
-  for (auto& rclient : render_clients_) {
-    rclient->stop();
-  }
+  render_client_->stop();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

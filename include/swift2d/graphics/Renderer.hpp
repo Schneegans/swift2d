@@ -20,14 +20,11 @@
 namespace swift {
 
 // forward declares ------------------------------------------------------------
-class Scene;
 class Pipeline;
+typedef std::shared_ptr<Pipeline> PipelinePtr;
 
-typedef std::shared_ptr<Pipeline>     PipelinePtr;
-typedef std::shared_ptr<const Scene>  ConstScenePtr;
-
-typedef std::shared_ptr<Scene>        ScenePtr;
-typedef std::shared_ptr<const Scene>  ConstScenePtr;
+class SceneObject;
+typedef std::shared_ptr<SceneObject>       SceneObjectPtr;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Manages the rendering on multiple contexts.                                //
@@ -41,10 +38,10 @@ class Renderer {
  // ----------------------------------------------------------- public interface
  public:
 
-  Renderer(std::vector<PipelinePtr> const& pipelines);
+  Renderer(PipelinePtr const& pipeline);
   virtual ~Renderer();
 
-  void process(std::vector<ScenePtr> const& scenes);
+  void process(SceneObjectPtr const& scene);
 
   void stop();
 
@@ -52,8 +49,8 @@ class Renderer {
  // ---------------------------------------------------------- private interface
  private:
 
-  std::vector<RenderClient<std::vector<ConstSerializedScenePtr>>*> render_clients_;
-  FPSCounter                                                       application_fps_;
+  RenderClient<ConstSerializedScenePtr>* render_client_;
+  FPSCounter                             application_fps_;
 };
 
 }

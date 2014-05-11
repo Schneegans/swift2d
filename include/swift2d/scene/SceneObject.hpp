@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/scene/Component.hpp>
 
+#include <unordered_set>
 #include <vector>
 #include <memory>
 
@@ -36,7 +37,7 @@ class SceneObject {
  public:
 
   // ---------------------------------------------------------------- properties
-  // True, if this core should be processed in the serialization and traversal.
+  String              pName;
   SceneObjectProperty pParent;
   Mat3                pTransform;
   Mat3                pWorldTransform;
@@ -47,6 +48,28 @@ class SceneObject {
   }
 
   // ------------------------------------------------------------ public methods
+
+
+  //----------------------------------------------------- scene object interface
+  // adds a new object to the scene and returns a shared pointer
+  SceneObjectPtr add() {
+    auto object(SceneObject::create());
+    objects_.insert(object);
+    return object;
+  }
+
+  // removes a given object from this scene
+  void remove(SceneObjectPtr const& object) {
+    objects_.erase(object);
+  }
+
+  // adds an existing object to the scene and returns a shared pointer
+  SceneObjectPtr const& add(SceneObjectPtr const& object) {
+    objects_.insert(object);
+    return object;
+  }
+
+  //-------------------------------------------------------- component interface
   // add an existing component to this object
   template<typename T>
   typename std::shared_ptr<T> add(std::shared_ptr<T> const& component, int index = -1) {
@@ -111,16 +134,20 @@ class SceneObject {
   // calls serialize() on all enabled components
   virtual void serialize(SerializedScenePtr& scene) const;
 
+  virtual SerializedScenePtr serialize() const;
+
   virtual void update();
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
 
-  std::vector<ComponentPtr>   components_;
+  // a collection of all objects attached to this object
+  std::unordered_set<SceneObjectPtr> objects_;
 
-  SceneObject*                parent_;
-  std::vector<SceneObjectPtr> children_;
+  // a collection of all components attached to this object
+  std::vector<ComponentPtr> components_;
+
 };
 
 }
