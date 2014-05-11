@@ -32,11 +32,15 @@ class MoveBehavior : public Behavior<SceneObject*> {
  public:
 
   // ---------------------------------------------------------------- properties
-  Vec2 pSpeed;
+  Float pLinearSpeed;
+  Float pAngularSpeed;
 
   // ------------------------------------------------------------ public methods
   virtual void update(double time) {
-    get_user()->pTransform.set(math::translated(get_user()->pTransform.get(), pSpeed.get() * time));
+    auto user_transform(get_user()->pTransform.get());
+    math::rotate(user_transform, pAngularSpeed.get() * time);
+    math::translate(user_transform, pLinearSpeed.get() * time, 0);
+    get_user()->pTransform.set(user_transform);
   }
 
 };

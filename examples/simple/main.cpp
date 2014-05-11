@@ -19,6 +19,34 @@ int main(int argc, char** argv) {
 
   MainLoop loop;
 
+  auto window = Window::create();
+  // window->pFullscreen = true;
+
+
+  class Mover: public MoveBehavior {
+   public:
+    Mover() {}
+    Mover(WindowPtr const& w) {
+      w->on_key_press.connect([&](Key key, int scancode, int action, int mods){
+        if (key == Key::W) {
+          pLinearSpeed = action != 0 ? 10 : 0;
+        }
+
+        if (key == Key::A) {
+          pAngularSpeed = action != 0 ? -1 : 0;
+        }
+
+        if (key == Key::D) {
+          pAngularSpeed = action != 0 ? 1 : 0;
+        }
+      });
+    }
+  };
+
+
+
+
+
   // example scene setup -------------------------------------------------------
   auto scene = SceneObject::create();
 
@@ -46,8 +74,8 @@ int main(int argc, char** argv) {
   auto player = scene->add();
        player->pTransform = math::make_scale(0.1);
 
-  auto mover = planet->add<MoveBehavior>();
-       mover->pSpeed = math::vec2(-0.005, 0.00);
+  auto mover = std::make_shared<Mover>(window);
+  player->add(mover);
 
   auto listener = player->add<ListenerComponent>();
        listener->pVolume = 10.0;
@@ -58,8 +86,7 @@ int main(int argc, char** argv) {
        ship->tex_ = new TextureResource("ship.png");
 
   // rendering pipeline --------------------------------------------------------
-  auto window = Window::create();
-  // window->pFullscreen = true;
+
   auto pipeline = Pipeline::create();
   pipeline->set_output_window(window);
 
@@ -72,6 +99,7 @@ int main(int argc, char** argv) {
   Ticker ticker(1.0 / 60.0);
   ticker.on_tick.connect([&]() {
     renderer.process(scene, camera, timer.get_elapsed());
+    timer.reset();
     window->process_input();
   });
 
