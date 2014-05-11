@@ -14,7 +14,7 @@ using namespace swift;
 
 int main(int argc, char** argv) {
 
-  // initialize FibreGlass3D
+  // initialize Swift2D
   init(argc, argv);
 
   MainLoop loop;
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
        listener->pVolume = 10.0;
 
   auto ship = player->add<SpriteComponent>();
-       ship->pDepth = -1.0f;
+       ship->pDepth = 1.0f;
        ship->sprite_ = bg->sprite_;
        ship->tex_ = new TextureResource("ship.png");
 
@@ -81,10 +81,10 @@ int main(int argc, char** argv) {
   });
 
   window->on_resize.connect([&](math::vec2i const& size){
-    // float height = 2;
-    // float aspect = 1.0f * size.x() / size.y();
-    // math::vec2 camera_size(height*aspect, height);
-    // camera->pSize = camera_size;
+    float height = 2;
+    float aspect = 1.0f * size.x() / size.y();
+    math::vec2 camera_size(height*aspect, height);
+    camera->pSize = camera_size;
   });
 
   window->on_key_press.connect([&](swift::Key key, int scancode, int action, int mods) {
