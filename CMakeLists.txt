@@ -82,8 +82,8 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-set(CMAKE_CXX_FLAGS_RELEASE "-s -O4 --std=c++0x")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall --std=c++0x")
+set(CMAKE_CXX_FLAGS_RELEASE "-s -O4 --std=c++0x -fPIC")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall --std=c++0x -fPIC")
 
 ################################################################
 # Create libraries
@@ -138,3 +138,4 @@ message( " alut:" )
 message( "   library: ${ALUT_LIBRARIES}" )
 message( "   include: ${ALUT_INCLUDE_DIRS}" )
 message( "" )
+
