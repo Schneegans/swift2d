@@ -17,7 +17,7 @@ namespace swift {
 
 void TransformableComponent::update(double time) {
   if (get_user()) {
-    pWorldTransform = pTransform.get() * get_user()->pWorldTransform.get();
+    pWorldTransform = get_user()->pWorldTransform.get() * pTransform.get();
   } else {
     pWorldTransform = pTransform.get();
   }
