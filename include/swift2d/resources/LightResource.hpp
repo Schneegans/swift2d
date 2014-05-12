@@ -6,43 +6,48 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_GEOMETRY_RESOURCE_HPP
-#define SWIFT2D_GEOMETRY_RESOURCE_HPP
+#ifndef FIBRGLASS_LIGHT_RESOURCE_HPP
+#define FIBRGLASS_LIGHT_RESOURCE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/math/types.hpp>
+#include <swift2d/graphics/RenderContext.hpp>
 
-#include <string>
+#include <mutex>
+#include <thread>
 #include <vector>
 
 namespace swift {
 
-// forward declares ------------------------------------------------------------
-struct RenderContext;
-
 ////////////////////////////////////////////////////////////////////////////////
-// Base class for different geometries.                                       //
+// Stores geometry data. A mesh can be loaded from an Assimp mesh and the     //
+// draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class GeometryResource {
+class LightResource {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // Draws the GeometryResource.
-  virtual void draw(RenderContext const& context, math::mat3 const& transform) const = 0;
+  LightResource();
+  ~LightResource();
 
-  // Interface to implement pre-draw tasks (occlusion queries, LOD etc.)
-  virtual void predraw(RenderContext const& context) const {}
+  // Draws the LightResource to the given context.
+  void draw(RenderContext const& context, math::mat3 const& transform) const;
 
  ///////////////////////////////////////////////////////////////////////////////
- // -------------------------------------------------------- protected interface
- protected:
+ // ---------------------------------------------------------- private interface
+ private:
+  void upload_to(RenderContext const& context) const;
 
+  mutable oglplus::Shader  *vs, *fs;
+  mutable oglplus::Program *prog;
+
+  mutable oglplus::VertexArray *rectangle;
+  mutable oglplus::Buffer      *verts;
 };
 
 }
 
-#endif  // SWIFT2D_GEOMETRY_RESOURCE_HPP
+#endif // FIBRGLASS_LIGHT_RESOURCE_HPP

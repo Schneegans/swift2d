@@ -18,7 +18,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Window::Window()
-  : pVSync(true)
+  : pVSync(false)
   , pFullscreen(false) {
 
   pOpen.on_change().connect([&](bool val) {
@@ -68,8 +68,10 @@ void Window::open_() {
 
   if (!window_) {
 
+    render_context_.size = math::vec2i(800, 800);
+
     window_ = glfwCreateWindow(
-      800, 800,
+      render_context_.size.x(), render_context_.size.y(),
       "Hello World",
       pFullscreen.get() ? glfwGetPrimaryMonitor() : nullptr,
       nullptr);
@@ -92,6 +94,7 @@ void Window::open_() {
     });
 
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
+      WindowManager::windows[w]->get_context().size = math::vec2i(width, height);
       WindowManager::windows[w]->on_resize.emit(math::vec2i(width, height));
     });
 

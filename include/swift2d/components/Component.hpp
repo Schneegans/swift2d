@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/events.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
+#include <swift2d/utils/Logger.hpp>
 
 #include <vector>
 #include <memory>

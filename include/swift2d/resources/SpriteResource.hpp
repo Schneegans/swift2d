@@ -11,7 +11,6 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
-#include <swift2d/resources/GeometryResource.hpp>
 
 #include <mutex>
 #include <thread>
@@ -25,7 +24,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class SpriteResource : public GeometryResource {
+class SpriteResource {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -35,7 +34,7 @@ class SpriteResource : public GeometryResource {
   ~SpriteResource();
 
   // Draws the SpriteResource to the given context.
-  void draw(RenderContext const& context, math::mat3 const& transform) const;
+  void draw(RenderContext const& context, math::mat3 const& transform, bool with_normals) const;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

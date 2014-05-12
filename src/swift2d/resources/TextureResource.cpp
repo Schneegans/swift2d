@@ -42,7 +42,8 @@ void TextureResource::bind(RenderContext const& context, unsigned location) cons
     upload_to(context);
   }
 
-  context.gl.Bound(oglplus::smart_enums::_2D(), *texture_);
+  texture_->Active(location);
+  context.gl.Bind(oglplus::smart_enums::_2D(), *texture_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -68,8 +69,8 @@ void TextureResource::upload_to(RenderContext const& context) const {
     .MinFilter(oglplus::smart_enums::Linear())
     .MagFilter(oglplus::smart_enums::Linear())
     .Anisotropy(2.0f)
-    .WrapS(oglplus::smart_enums::Repeat())
-    .WrapT(oglplus::smart_enums::Repeat());
+    .WrapS(oglplus::smart_enums::ClampToEdge())
+    .WrapT(oglplus::smart_enums::ClampToEdge());
 
   needs_update_ = false;
 }

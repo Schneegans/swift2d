@@ -12,6 +12,19 @@
 
 using namespace swift;
 
+class Mover: public MoveBehavior {
+ public:
+  Mover() {}
+  Mover(WindowPtr const& w) {
+    w->on_key_press.connect([&](Key key, int scancode, int action, int mods){
+      if (key == Key::W) pLinearSpeed =  action != 0 ? 10 : 0;
+      if (key == Key::S) pLinearSpeed =  action != 0 ? -10 : 0;
+      if (key == Key::A) pAngularSpeed = action != 0 ? -1 : 0;
+      if (key == Key::D) pAngularSpeed = action != 0 ?  1 : 0;
+    });
+  }
+};
+
 int main(int argc, char** argv) {
 
   // initialize Swift2D
@@ -22,38 +35,13 @@ int main(int argc, char** argv) {
   auto window = Window::create();
   // window->pFullscreen = true;
 
-
-  class Mover: public MoveBehavior {
-   public:
-    Mover() {}
-    Mover(WindowPtr const& w) {
-      w->on_key_press.connect([&](Key key, int scancode, int action, int mods){
-        if (key == Key::W) {
-          pLinearSpeed = action != 0 ? 10 : 0;
-        }
-
-        if (key == Key::A) {
-          pAngularSpeed = action != 0 ? -1 : 0;
-        }
-
-        if (key == Key::D) {
-          pAngularSpeed = action != 0 ? 1 : 0;
-        }
-      });
-    }
-  };
-
-
-
-
-
   // example scene setup -------------------------------------------------------
   auto scene = SceneObject::create();
 
   auto bg = scene->add<SpriteComponent>();
        bg->pDepth = -1000.0f;
        bg->sprite_ = new SpriteResource();
-       bg->tex_ = new TextureResource("bg.png");
+       bg->diffuse_ = new TextureResource("bg.png");
        bg->pTransform = math::make_scale(2.f);
 
   auto camera = scene->add<CameraComponent>();
@@ -65,7 +53,8 @@ int main(int argc, char** argv) {
   auto sprite = planet->add<SpriteComponent>();
        sprite->pDepth = 0.0f;
        sprite->sprite_ = bg->sprite_;
-       sprite->tex_ = new TextureResource("diffuse.png");
+       sprite->diffuse_ = new TextureResource("diffuse.png");
+       sprite->normal_ = new TextureResource("normal.png");
 
   auto boing = planet->add<SoundComponent>();
        boing->set_sound(new SoundResource("sound.wav"));
@@ -83,7 +72,19 @@ int main(int argc, char** argv) {
   auto ship = player->add<SpriteComponent>();
        ship->pDepth = 1.0f;
        ship->sprite_ = bg->sprite_;
-       ship->tex_ = new TextureResource("ship.png");
+       ship->diffuse_ = new TextureResource("ship.png");
+
+  auto light_object = scene->add();
+  auto light = light_object->add<PointLightComponent>();
+       light->pDepth = 1.0f;
+       light->sprite_ = new LightResource();
+       light->pTransform = math::make_scale(5);
+       light->tex_ = new TextureResource("light.png");
+
+  // todo: screen aligned sprites!
+  player->pTransform.on_change().connect([&](math::mat3 const& mat) {
+    light_object->pTransform.set(math::make_translate(math::get_position(mat)));
+  });
 
   // rendering pipeline --------------------------------------------------------
 

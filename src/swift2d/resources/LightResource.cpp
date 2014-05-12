@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/resources/SpriteResource.hpp>
+#include <swift2d/resources/LightResource.hpp>
 #include <swift2d/math.hpp>
 #include <swift2d/utils/Logger.hpp>
 
@@ -17,7 +17,7 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SpriteResource::SpriteResource()
+LightResource::LightResource()
   : vs(nullptr)
   , fs(nullptr)
   , prog(nullptr)
@@ -26,7 +26,7 @@ SpriteResource::SpriteResource()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SpriteResource::~SpriteResource() {
+LightResource::~LightResource() {
   if (vs) delete vs;
   if (fs) delete fs;
   if (prog) delete prog;
@@ -36,7 +36,7 @@ SpriteResource::~SpriteResource() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SpriteResource::upload_to(RenderContext const& ctx) const {
+void LightResource::upload_to(RenderContext const& ctx) const {
 
   // ---------------------------------------------------------------------------
   // set the vertex shader source
@@ -65,21 +65,26 @@ void SpriteResource::upload_to(RenderContext const& ctx) const {
   std::stringstream fs_source(
     "#version 330\n"
     "in vec2 tex_coords;"
-    "uniform sampler2D diffuse;"
-    "uniform sampler2D normal;"
-    "uniform bool with_normals;"
+    "uniform sampler2D light_tex;"
+    "uniform sampler2D diffuse_tex;"
+    "uniform sampler2D normal_tex;"
+    "uniform ivec2 screen_size;"
     ""
-    "layout (location = 0) out vec4 fragColor;"
-    "layout (location = 1) out vec4 fragNormal;"
+    "out vec4 fragColor;"
     ""
     "void main(void){"
-    "  if (!with_normals) {"
-    "    fragColor = texture2D(diffuse, tex_coords);"
-    "    fragNormal = vec4(0, 0, 0, 0);"
-    "  } else {"
-    "    fragColor = texture2D(diffuse, tex_coords);"
-    "    fragNormal = texture2D(normal, tex_coords);"
-    "  }"
+    "  vec3 color       = texture2D(diffuse_tex, gl_FragCoord.xy/screen_size).rgb;"
+    "  vec4 normal      = texture2D(normal_tex, gl_FragCoord.xy/screen_size);"
+    "  vec3 light       = texture2D(light_tex, tex_coords).rgb;"
+    ""
+    "  vec3 light_dir   = normalize(light.rgb - 0.5);"
+    "  vec3 surface_dir = normalize(normal.rgb - 0.5);"
+    ""
+    "  float spot       = pow(max(0, dot(light_dir, surface_dir)), 50);"
+    "  spot       = 0;"
+    "  float intensity  = max(0, dot(light_dir, surface_dir)) * normal.a;"
+    ""
+    "  fragColor        = vec4(color +  intensity, 1);"
     "}"
   );
 
@@ -129,7 +134,7 @@ void SpriteResource::upload_to(RenderContext const& ctx) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SpriteResource::draw(RenderContext const& ctx, math::mat3 const& transform, bool with_normals) const {
+void LightResource::draw(RenderContext const& ctx, math::mat3 const& transform) const {
 
   // upload to GPU if neccessary
   if (!prog) {
@@ -139,12 +144,12 @@ void SpriteResource::draw(RenderContext const& ctx, math::mat3 const& transform,
   rectangle->Bind();
   prog->Use();
 
-  (*prog/"diffuse") = 0;
-  (*prog/"normal") = 1;
+  (*prog/"light_tex") = 0;
+  (*prog/"diffuse_tex") = 2;
+  (*prog/"normal_tex") = 3;
+  (*prog/"screen_size") = math::vec2i(ctx.size);
   (*prog/"projection") = math::mat3(ctx.projection_matrix);
   (*prog/"transform") = math::mat3(transform);
-
-  (*prog/"with_normals") = (GLint)with_normals;
 
   ctx.gl.DrawArrays(oglplus::PrimitiveType::TriangleStrip, 0, 4);
 }

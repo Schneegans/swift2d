@@ -56,7 +56,11 @@ class Pipeline {
  private:
     WindowPtr window_;
 
-    math::vec2i new_size_;
+    oglplus::Framebuffer* fbo_;
+    oglplus::Texture* offscreen_color_;
+    oglplus::Texture* offscreen_normal_;
+
+    math::vec2i old_size_;
 };
 
 }
