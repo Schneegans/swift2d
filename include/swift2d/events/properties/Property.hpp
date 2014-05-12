@@ -64,7 +64,7 @@ class Property {
     }
   }
 
-  virtual void disconnect_autitors() {
+  virtual void disconnect_auditors() {
     on_change_.disconnect_all();
   }
 
