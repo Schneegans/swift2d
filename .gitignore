@@ -20,7 +20,7 @@
 *.opensdf
 
 build
-lib
+./lib
 doc/html
 guarc/guarc
 scripts/Swift2D.sublime-workspace
