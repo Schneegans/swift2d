@@ -84,7 +84,7 @@ void LightResource::upload_to(RenderContext const& ctx) const {
     "  spot       = 0;"
     "  float intensity  = max(0, dot(light_dir, surface_dir)) * normal.a;"
     ""
-    "  fragColor        = vec4(color +  intensity, 1);"
+    "  fragColor        = vec4(vec3(intensity), 1);"
     "}"
   );
 

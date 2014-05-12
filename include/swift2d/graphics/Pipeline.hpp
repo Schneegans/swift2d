@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/events.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
+#include <swift2d/resources/SpriteResource.hpp>
 
 #include <memory>
 #include <vector>
@@ -59,6 +60,9 @@ class Pipeline {
     oglplus::Framebuffer* fbo_;
     oglplus::Texture* offscreen_color_;
     oglplus::Texture* offscreen_normal_;
+    oglplus::Texture* offscreen_light_;
+
+    SpriteResourcePtr fullscreen_quad_;
 
     math::vec2i old_size_;
 };

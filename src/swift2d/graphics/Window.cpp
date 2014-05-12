@@ -88,10 +88,6 @@ void Window::open_() {
     render_context_.gl.Disable(oglplus::Capability::DepthTest);
     render_context_.gl.Enable(oglplus::Capability::Blend);
     render_context_.gl.ClearColor(0.1f, 0.1f, 0.1f, 0.0f);
-    render_context_.gl.BlendFunc(
-      oglplus::BlendFunction::SrcAlpha,
-      oglplus::BlendFunction::OneMinusSrcAlpha
-    );
 
     glfwSetWindowCloseCallback(window_, [](GLFWwindow* w) {
       WindowManager::windows[w]->on_close.emit();

@@ -23,6 +23,11 @@ namespace swift {
 // draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
+// shared pointer type definition ----------------------------------------------
+class SpriteResource;
+typedef std::shared_ptr<SpriteResource>       SpriteResourcePtr;
+typedef std::shared_ptr<const SpriteResource> ConstSpriteResourcePtr;
+
 // -----------------------------------------------------------------------------
 class SpriteResource {
 
