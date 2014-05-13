@@ -36,7 +36,9 @@ class PointLightComponent : public DrawableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float pDepth;
+  Float                   Depth;
+  LightResourceProperty   Sprite;
+  TextureResourceProperty Tex;
 
   // ----------------------------------------------------- contruction interface
   PointLightComponent() : Sprite(nullptr), Tex(nullptr) {}
@@ -53,15 +55,13 @@ class PointLightComponent : public DrawableComponent {
   // ------------------------------------------------------------ public methods
   void draw(RenderContext const& ctx) {
     Tex()->bind(ctx, 0);
-    Sprite()->draw(ctx, pWorldTransform.get());
+    Sprite()->draw(ctx, WorldTransform.get());
   }
 
   void serialize(SerializedScenePtr& scene) const {
-    scene->lights.insert(std::make_pair(pDepth.get(), create_copy()));
+    scene->lights.insert(std::make_pair(Depth.get(), create_copy()));
   }
 
-  LightResourceProperty   Sprite;
-  TextureResourceProperty Tex;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

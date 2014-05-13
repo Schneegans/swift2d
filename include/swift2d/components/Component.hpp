@@ -48,7 +48,7 @@ class Component {
 
   // ---------------------------------------------------------------- properties
   // True, if this core should be processed in the serialization and traversal.
-  Bool pEnabled;
+  Bool Enabled;
 
 
   // ----------------------------------------------------- contruction interface
@@ -66,7 +66,7 @@ class Component {
  ///////////////////////////////////////////////////////////////////////////////
  // -------------------------------------------------------- protected interface
  protected:
-  Component() : pEnabled(true), user_(nullptr) {}
+  Component() : Enabled(true), user_(nullptr) {}
 
  ///////////////////////////////////////////////////////////////////////////////
  // -------------------------------------------------------- protected interface

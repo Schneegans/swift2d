@@ -35,7 +35,7 @@ class ListenerComponent : public TransformableComponent {
   ListenerComponent();
 
   // ---------------------------------------------------------------- properties
-  Float pVolume;
+  Float Volume;
 
   // ------------------------------------------------------------ public methods
   virtual void update(double time);

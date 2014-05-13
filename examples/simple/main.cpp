@@ -33,29 +33,29 @@ int main(int argc, char** argv) {
   MainLoop loop;
 
   auto window = Window::create();
-  // window->pFullscreen = true;
+  // window->Fullscreen = true;
 
   // example scene setup -------------------------------------------------------
   auto scene = SceneObject::create();
   auto sun = scene->add<PointLightComponent>();
        sun->Sprite = LightResource::create();
-       sun->pTransform = math::make_scale(5) * math::make_translate(-0.5, 0.5);
+       sun->Transform = math::make_scale(5) * math::make_translate(-0.5, 0.5);
        sun->Tex = TextureResource::create("light.png");
 
   auto bg = scene->add<SpriteComponent>();
-       bg->pDepth = -1000.0f;
+       bg->Depth = -1000.0f;
        bg->Sprite = SpriteResource::create();
        bg->Diffuse = TextureResource::create("bg.png");
-       bg->pTransform = math::make_scale(2.f);
+       bg->Transform = math::make_scale(2.f);
 
   auto camera = scene->add<CameraComponent>();
-  camera->pSize = math::vec2(2.f, 2.f);
+  camera->Size = math::vec2(2.f, 2.f);
 
   // planet
   auto planet = scene->add();
 
   auto sprite = planet->add<SpriteComponent>();
-       sprite->pDepth = 0.0f;
+       sprite->Depth = 0.0f;
        sprite->Sprite = bg->Sprite;
        sprite->Diffuse = TextureResource::create("diffuse.png");
        sprite->Normal = TextureResource::create("normal.png");
@@ -65,29 +65,29 @@ int main(int argc, char** argv) {
 
   // player
   auto player = scene->add();
-       player->pTransform = math::make_scale(0.1);
+       player->Transform = math::make_scale(0.1);
 
   auto mover = std::make_shared<Mover>(window);
   player->add(mover);
 
   auto listener = player->add<ListenerComponent>();
-       listener->pVolume = 10.0;
+       listener->Volume = 10.0;
 
   auto ship = player->add<SpriteComponent>();
-       ship->pDepth = 1.0f;
+       ship->Depth = 1.0f;
        ship->Sprite = bg->Sprite;
        ship->Diffuse = TextureResource::create("ship.png");
 
   auto light_object = scene->add();
   auto light = light_object->add<PointLightComponent>();
-       light->pDepth = 1.0f;
+       light->Depth = 1.0f;
        light->Sprite = LightResource::create();
-       light->pTransform = math::make_scale(3);
+       light->Transform = math::make_scale(3);
        light->Tex = TextureResource::create("light.png");
 
   // todo: screen aligned sprites!
-  player->pTransform.on_change().connect([&](math::mat3 const& mat) {
-    light_object->pTransform.set(math::make_translate(math::get_position(mat)));
+  player->Transform.on_change().connect([&](math::mat3 const& mat) {
+    light_object->Transform.set(math::make_translate(math::get_position(mat)));
   });
 
   // rendering pipeline --------------------------------------------------------
@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
     float height = 2;
     float aspect = 1.0f * size.x() / size.y();
     math::vec2 camera_size(height*aspect, height);
-    camera->pSize = camera_size;
+    camera->Size = camera_size;
   });
 
   window->on_key_press.connect([&](swift::Key key, int scancode, int action, int mods) {

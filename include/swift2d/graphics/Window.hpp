@@ -38,14 +38,14 @@ class Window {
  public:
 
   // ---------------------------------------------------------------- properties
-  Bool pOpen;
-  Bool pVSync;
-  Bool pFullscreen;
+  Bool Open;
+  Bool VSync;
+  Bool Fullscreen;
 
   // ------------------------------------------------------------------- signals
-  Signal<> on_close;
-  Signal<Key, int, int, int> on_key_press;
-  Signal<math::vec2i> on_resize;
+  Signal<>                    on_close;
+  Signal<Key, int, int, int>  on_key_press;
+  Signal<math::vec2i>         on_resize;
 
   // ---------------------------------------------------- construction interface
   Window();

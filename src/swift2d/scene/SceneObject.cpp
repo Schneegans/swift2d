@@ -65,7 +65,7 @@ SerializedScenePtr SceneObject::serialize(CameraComponentPtr const& camera) cons
 
 void SceneObject::serialize(SerializedScenePtr& scene) const {
   for (auto const& component: components_) {
-    if (component->pEnabled.get()) {
+    if (component->Enabled.get()) {
       component->serialize(scene);
     }
   }
@@ -79,14 +79,14 @@ void SceneObject::serialize(SerializedScenePtr& scene) const {
 
 void SceneObject::update(double time) {
 
-  if (pParent.get()) {
-    pWorldTransform = pTransform.get() * pParent.get()->pWorldTransform.get();
+  if (Parent.get()) {
+    WorldTransform = Transform.get() * Parent.get()->WorldTransform.get();
   } else {
-    pWorldTransform = pTransform.get();
+    WorldTransform = Transform.get();
   }
 
   for (auto const& component: components_) {
-    if (component->pEnabled.get()) {
+    if (component->Enabled.get()) {
       component->update(time);
     }
   }

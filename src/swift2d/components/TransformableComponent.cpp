@@ -17,22 +17,22 @@ namespace swift {
 
 void TransformableComponent::update(double time) {
   if (get_user()) {
-    pWorldTransform = get_user()->pWorldTransform.get() * pTransform.get();
+    WorldTransform = get_user()->WorldTransform.get() * Transform.get();
   } else {
-    pWorldTransform = pTransform.get();
+    WorldTransform = Transform.get();
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 math::vec2 TransformableComponent::get_position() const {
-  return math::get_position(pTransform.get());
+  return math::get_position(Transform.get());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 math::vec2 TransformableComponent::get_world_position() const {
-  return math::get_position(pWorldTransform.get());
+  return math::get_position(WorldTransform.get());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -31,10 +31,10 @@ class CameraComponent : public TransformableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Vec2 pSize;
+  Vec2 Size;
 
   // ----------------------------------------------------- contruction interface
-  CameraComponent() : pSize(math::vec2(1.f, 1.f)) {}
+  CameraComponent() : Size(math::vec2(1.f, 1.f)) {}
 
   // Creates a new component and returns a shared pointer.
   static CameraComponentPtr create() {

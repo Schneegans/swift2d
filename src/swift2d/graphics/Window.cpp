@@ -18,10 +18,11 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Window::Window()
-  : pVSync(false)
-  , pFullscreen(false) {
+  : VSync(false)
+  , Open(false)
+  , Fullscreen(false) {
 
-  pOpen.on_change().connect([&](bool val) {
+  Open.on_change().connect([&](bool val) {
     if (val) {
       open_();
     } else {
@@ -73,7 +74,7 @@ void Window::open_() {
     window_ = glfwCreateWindow(
       render_context_.size.x(), render_context_.size.y(),
       "Hello World",
-      pFullscreen.get() ? glfwGetPrimaryMonitor() : nullptr,
+      Fullscreen.get() ? glfwGetPrimaryMonitor() : nullptr,
       nullptr);
 
     WindowManager::windows[window_] = this;
@@ -106,8 +107,8 @@ void Window::open_() {
     auto on_vsync_change = [&](bool val) {
       glfwSwapInterval(val ? 1 : 0);
     };
-    on_vsync_change(pVSync.get());
-    pVSync.on_change().connect(on_vsync_change);
+    on_vsync_change(VSync.get());
+    VSync.on_change().connect(on_vsync_change);
   }
 }
 

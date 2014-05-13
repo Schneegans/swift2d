@@ -107,8 +107,8 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
 
   // create & update window ----------------------------------------------------
-  if (!window_->pOpen()) {
-    window_->pOpen = true;
+  if (!window_->Open()) {
+    window_->Open = true;
   }
 
   if (old_size_ != window_->get_context().size) {
@@ -119,8 +119,8 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   }
 
   // setup projection matrix ---------------------------------------------------
-  math::mat3 view_matrix(scene->camera->pWorldTransform.get());
-  math::scale(view_matrix, scene->camera->pSize.get());
+  math::mat3 view_matrix(scene->camera->WorldTransform.get());
+  math::scale(view_matrix, scene->camera->Size.get());
   window_->get_context().projection_matrix = math::inversed(view_matrix);
 
   // draw opaque objects -------------------------------------------------------

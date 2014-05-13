@@ -32,8 +32,8 @@ class TransformableComponent : public Component {
  public:
 
   // ---------------------------------------------------------------- properties
-  Mat3 pTransform;
-  Mat3 pWorldTransform;
+  Mat3 Transform;
+  Mat3 WorldTransform;
 
   // ------------------------------------------------------------ public methods
   virtual void update(double time);

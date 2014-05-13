@@ -37,9 +37,9 @@ class SceneObject {
  public:
 
   // ---------------------------------------------------------------- properties
-  SceneObjectProperty pParent;
-  Mat3                pTransform;
-  Mat3                pWorldTransform;
+  SceneObjectProperty Parent;
+  Mat3                Transform;
+  Mat3                WorldTransform;
 
   // ----------------------------------------------------- contruction interface
   static SceneObjectPtr create() {

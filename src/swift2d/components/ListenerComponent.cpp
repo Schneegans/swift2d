@@ -17,11 +17,11 @@ namespace swift {
 
 ListenerComponent::ListenerComponent() {
 
-  pVolume.on_change().connect([&](float val){
+  Volume.on_change().connect([&](float val){
     listener_.Gain(val);
   });
 
-  pVolume = 1.0f;
+  Volume = 1.0f;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

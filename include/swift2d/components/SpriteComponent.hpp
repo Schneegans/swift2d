@@ -36,7 +36,10 @@ class SpriteComponent : public DrawableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float pDepth;
+  Float                   Depth;
+  SpriteResourceProperty  Sprite;
+  TextureResourceProperty Diffuse;
+  TextureResourceProperty Normal;
 
   // ----------------------------------------------------- contruction interface
   SpriteComponent() : Sprite(nullptr), Diffuse(nullptr), Normal(nullptr) {}
@@ -55,16 +58,12 @@ class SpriteComponent : public DrawableComponent {
     Diffuse()->bind(ctx, 0);
     if (Normal()) Normal()->bind(ctx, 1);
 
-    Sprite()->draw(ctx, pWorldTransform.get(), Normal() != nullptr);
+    Sprite()->draw(ctx, WorldTransform.get(), Normal() != nullptr);
   }
 
   void serialize(SerializedScenePtr& scene) const {
-    scene->objects.insert(std::make_pair(pDepth.get(), create_copy()));
+    scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
   }
-
-  SpriteResourceProperty  Sprite;
-  TextureResourceProperty Diffuse;
-  TextureResourceProperty Normal;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
