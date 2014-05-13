@@ -42,7 +42,7 @@ void LightResource::upload_to(RenderContext const& ctx) const {
   // set the vertex shader source
   std::stringstream vs_source(
     "#version 330\n"
-    "in vec2 position;"
+    "layout(location=0) in vec2 position;"
     "uniform mat3 projection;"
     "uniform mat3 transform;"
     "out vec2 tex_coords;"
@@ -126,9 +126,8 @@ void LightResource::upload_to(RenderContext const& ctx) const {
   oglplus::Buffer::Data(oglplus::Buffer::Target::Array, 8, rectangle_verts);
 
   // setup the vertex attribs array for the vertices
-  oglplus::VertexAttribArray vert_attr(*prog, "position");
+  oglplus::VertexAttribArray vert_attr(0);
   vert_attr.Setup<oglplus::Vec2f>().Enable();
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////

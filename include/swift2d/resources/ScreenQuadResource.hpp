@@ -6,61 +6,58 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_PIPELINE_HPP
-#define SWIFT2D_PIPELINE_HPP
+#ifndef FIBRGLASS_SCREEN_QUAD_RESOURCE_HPP
+#define FIBRGLASS_SCREEN_QUAD_RESOURCE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/events.hpp>
-#include <swift2d/scene/SerializedScene.hpp>
-#include <swift2d/graphics/Compositor.hpp>
+#include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/events/properties.hpp>
 
-#include <memory>
+#include <mutex>
+#include <thread>
 #include <vector>
 
 namespace swift {
 
-// forward declares ------------------------------------------------------------
-class Window;
-typedef std::shared_ptr<Window> WindowPtr;
-
 ////////////////////////////////////////////////////////////////////////////////
-//                                                                            //
+// Stores geometry data. A mesh can be loaded from an Assimp mesh and the     //
+// draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class Pipeline;
-typedef std::shared_ptr<Pipeline>       PipelinePtr;
-typedef std::shared_ptr<const Pipeline> ConstPipelinePtr;
+class ScreenQuadResource;
+typedef std::shared_ptr<ScreenQuadResource>       ScreenQuadResourcePtr;
+typedef std::shared_ptr<const ScreenQuadResource> ConstScreenQuadResourcePtr;
+typedef Property<ScreenQuadResourcePtr>           ScreenQuadResourceProperty;
 
 // -----------------------------------------------------------------------------
-class Pipeline {
+class ScreenQuadResource {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Pipeline();
-
-  static PipelinePtr create() {
-    return std::make_shared<Pipeline>();
+  // ---------------------------------------------------- construction interface
+  template <typename... Args>
+  static ScreenQuadResourcePtr create(Args&& ... a) {
+    return std::make_shared<ScreenQuadResource>(a...);
   }
 
-  Float application_fps;
-  Float rendering_fps;
+  ScreenQuadResource();
+  ~ScreenQuadResource();
 
-  void set_output_window(WindowPtr const& window);
-
-  void draw(ConstSerializedScenePtr const& scene);
+  // Draws the ScreenQuadResource to the given context.
+  void draw(RenderContext const& context) const;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-    WindowPtr window_;
-    math::vec2i old_size_;
+  void upload_to(RenderContext const& context) const;
 
-    CompositorPtr compositor_;
+  mutable oglplus::VertexArray* rectangle_;
+  mutable oglplus::Buffer*      verts_;
 };
 
 }
 
-#endif  // SWIFT2D_PIPELINE_HPP
+#endif // FIBRGLASS_SCREEN_QUAD_RESOURCE_HPP
