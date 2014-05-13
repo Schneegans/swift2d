@@ -32,7 +32,7 @@ class ListenerComponent : public TransformableComponent {
  // ----------------------------------------------------------- public interface
  public:
 
-  // ------------------------------------------------------ constrution interface
+  // ----------------------------------------------------- constrution interface
   ListenerComponent();
 
   // Creates a new component and returns a shared pointer.

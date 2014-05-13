@@ -17,10 +17,10 @@ class Mover: public MoveBehavior {
   Mover() {}
   Mover(WindowPtr const& w) {
     w->on_key_press.connect([&](Key key, int scancode, int action, int mods){
-      if (key == Key::W) pLinearSpeed =  action != 0 ? 10 : 0;
-      if (key == Key::S) pLinearSpeed =  action != 0 ? -10 : 0;
-      if (key == Key::A) pAngularSpeed = action != 0 ? -1 : 0;
-      if (key == Key::D) pAngularSpeed = action != 0 ?  1 : 0;
+      if (key == Key::W) LinearSpeed =  action != 0 ? 10 : 0;
+      if (key == Key::S) LinearSpeed =  action != 0 ? -10 : 0;
+      if (key == Key::A) AngularSpeed = action != 0 ? -1 : 0;
+      if (key == Key::D) AngularSpeed = action != 0 ?  1 : 0;
     });
   }
 };

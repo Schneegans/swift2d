@@ -32,14 +32,26 @@ class MoveBehavior : public Behavior<SceneObject*> {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float pLinearSpeed;
-  Float pAngularSpeed;
+  Float LinearSpeed;
+  Float AngularSpeed;
+
+  // ----------------------------------------------------- constrution interface
+  // Creates a new component and returns a shared pointer.
+  template <typename... Args>
+  static MoveBehaviorPtr create(Args&& ... a) {
+    return std::make_shared<MoveBehavior>(a...);
+  }
+
+  // creates a copy from this
+  MoveBehaviorPtr create_copy() const {
+    return std::make_shared<MoveBehavior>(*this);
+  }
 
   // ------------------------------------------------------------ public methods
   virtual void update(double time) {
     auto user_transform(get_user()->Transform.get());
-    math::rotate(user_transform, pAngularSpeed.get() * time);
-    math::translate(user_transform, pLinearSpeed.get() * time, 0);
+    math::rotate(user_transform, AngularSpeed.get() * time);
+    math::translate(user_transform, LinearSpeed.get() * time, 0);
     get_user()->Transform.set(user_transform);
   }
 
