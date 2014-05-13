@@ -32,7 +32,19 @@ class ListenerComponent : public TransformableComponent {
  // ----------------------------------------------------------- public interface
  public:
 
+  // ------------------------------------------------------ constrution interface
   ListenerComponent();
+
+  // Creates a new component and returns a shared pointer.
+  template <typename... Args>
+  static ListenerComponentPtr create(Args&& ... a) {
+    return std::make_shared<ListenerComponent>(a...);
+  }
+
+  // creates a copy from this
+  ListenerComponentPtr create_copy() const {
+    return std::make_shared<ListenerComponent>(*this);
+  }
 
   // ---------------------------------------------------------------- properties
   Float Volume;

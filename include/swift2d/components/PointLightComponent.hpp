@@ -44,10 +44,12 @@ class PointLightComponent : public DrawableComponent {
   PointLightComponent() : Sprite(nullptr), Tex(nullptr) {}
 
   // Creates a new component and returns a shared pointer.
-  static PointLightComponentPtr create() {
-    return std::make_shared<PointLightComponent>();
+  template <typename... Args>
+  static PointLightComponentPtr create(Args&& ... a) {
+    return std::make_shared<PointLightComponent>(a...);
   }
 
+  // creates a copy from this
   PointLightComponentPtr create_copy() const {
     return std::make_shared<PointLightComponent>(*this);
   }

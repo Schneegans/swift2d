@@ -38,13 +38,14 @@ class LightResource {
  public:
 
   // ---------------------------------------------------- construction interface
+  LightResource();
+  ~LightResource();
+
+  // Creates a new component and returns a shared pointer.
   template <typename... Args>
   static LightResourcePtr create(Args&& ... a) {
     return std::make_shared<LightResource>(a...);
   }
-
-  LightResource();
-  ~LightResource();
 
   // Draws the LightResource to the given context.
   void draw(RenderContext const& context, math::mat3 const& transform) const;

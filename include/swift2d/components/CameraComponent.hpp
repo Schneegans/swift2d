@@ -37,10 +37,12 @@ class CameraComponent : public TransformableComponent {
   CameraComponent() : Size(math::vec2(1.f, 1.f)) {}
 
   // Creates a new component and returns a shared pointer.
-  static CameraComponentPtr create() {
-    return std::make_shared<CameraComponent>();
+  template <typename... Args>
+  static CameraComponentPtr create(Args&& ... a) {
+    return std::make_shared<CameraComponent>(a...);
   }
 
+  // creates a copy from this
   CameraComponentPtr create_copy() const {
     return std::make_shared<CameraComponent>(*this);
   }

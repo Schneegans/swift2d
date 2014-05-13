@@ -45,10 +45,12 @@ class SpriteComponent : public DrawableComponent {
   SpriteComponent() : Sprite(nullptr), Diffuse(nullptr), Normal(nullptr) {}
 
   // Creates a new component and returns a shared pointer.
-  static SpriteComponentPtr create() {
-    return std::make_shared<SpriteComponent>();
+  template <typename... Args>
+  static SpriteComponentPtr create(Args&& ... a) {
+    return std::make_shared<SpriteComponent>(a...);
   }
 
+  // creates a copy from this
   SpriteComponentPtr create_copy() const {
     return std::make_shared<SpriteComponent>(*this);
   }
@@ -64,10 +66,6 @@ class SpriteComponent : public DrawableComponent {
   void serialize(SerializedScenePtr& scene) const {
     scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
   }
-
- ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
- private:
 
 };
 

@@ -38,31 +38,46 @@ class SoundComponent : public TransformableComponent {
  // ----------------------------------------------------------- public interface
  public:
 
+  // ---------------------------------------------------- construction interface
+  SoundComponent() : sound_(nullptr), source_(new oalplus::Source()) {}
+
   ~SoundComponent() {
     stop();
-    source_.DetachBuffers();
+    source_->DetachBuffers();
+    delete source_;
+  }
+
+  // Creates a new component and returns a shared pointer.
+  template <typename... Args>
+  static SoundComponentPtr create(Args&& ... a) {
+    return std::make_shared<SoundComponent>(a...);
+  }
+
+  // creates a copy from this
+  SoundComponentPtr create_copy() const {
+    return std::make_shared<SoundComponent>(*this);
   }
 
   // ------------------------------------------------------------ public methods
   virtual void update(double time) {
     TransformableComponent::update(time);
     auto pos(get_world_position());
-    source_.Position(pos.x(), pos.y(), 0);
+    source_->Position(pos.x(), pos.y(), 0);
   }
 
   virtual void play() {
-    source_.Play();
+    source_->Play();
   }
 
   virtual void stop() {
-    source_.Stop();
+    source_->Stop();
   }
 
   // TODO: make shared!
   void set_sound(SoundResource* sound) {
     stop();
     sound_ = sound;
-    source_.Buffer(sound_->get_buffer());
+    source_->Buffer(sound_->get_buffer());
   }
 
 
@@ -70,7 +85,7 @@ class SoundComponent : public TransformableComponent {
  // ---------------------------------------------------------- private interface
  private:
   SoundResource* sound_;
-  oalplus::Source source_;
+  oalplus::Source* source_;
 
 };
 
