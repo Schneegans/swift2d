@@ -39,7 +39,7 @@ class SpriteComponent : public DrawableComponent {
   Float pDepth;
 
   // ----------------------------------------------------- contruction interface
-  SpriteComponent() : sprite_(nullptr), diffuse_(nullptr), normal_(nullptr) {}
+  SpriteComponent() : Sprite(nullptr), Diffuse(nullptr), Normal(nullptr) {}
 
   // Creates a new component and returns a shared pointer.
   static SpriteComponentPtr create() {
@@ -52,19 +52,19 @@ class SpriteComponent : public DrawableComponent {
 
   // ------------------------------------------------------------ public methods
   void draw(RenderContext const& ctx) {
-    diffuse_->bind(ctx, 0);
-    if (normal_) normal_->bind(ctx, 1);
+    Diffuse()->bind(ctx, 0);
+    if (Normal()) Normal()->bind(ctx, 1);
 
-    sprite_->draw(ctx, pWorldTransform.get(), normal_ != nullptr);
+    Sprite()->draw(ctx, pWorldTransform.get(), Normal() != nullptr);
   }
 
   void serialize(SerializedScenePtr& scene) const {
     scene->objects.insert(std::make_pair(pDepth.get(), create_copy()));
   }
 
-  SpriteResource* sprite_;
-  TextureResource* diffuse_;
-  TextureResource* normal_;
+  SpriteResourceProperty  Sprite;
+  TextureResourceProperty Diffuse;
+  TextureResourceProperty Normal;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

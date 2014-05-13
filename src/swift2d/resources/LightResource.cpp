@@ -80,11 +80,10 @@ void LightResource::upload_to(RenderContext const& ctx) const {
     "  vec3 light_dir   = normalize(light.rgb - 0.5);"
     "  vec3 surface_dir = normalize(normal.rgb - 0.5);"
     ""
-    "  float spot       = pow(max(0, dot(light_dir, surface_dir)), 50);"
-    "  spot       = 0;"
+    "  float spot       = pow(max(0, dot(vec3(0, 0, -1), reflect(-light_dir, surface_dir))), 10) * normal.a;"
     "  float intensity  = max(0, dot(light_dir, surface_dir)) * normal.a;"
     ""
-    "  fragColor        = vec4(vec3(intensity), 1);"
+    "  fragColor        = vec4(intensity, spot, 0, 1);"
     "}"
   );
 

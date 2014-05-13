@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/events/properties.hpp>
 
 #include <mutex>
 #include <thread>
@@ -23,12 +24,24 @@ namespace swift {
 // draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
+// shared pointer type definition ----------------------------------------------
+class LightResource;
+typedef std::shared_ptr<LightResource>       LightResourcePtr;
+typedef std::shared_ptr<const LightResource> ConstLightResourcePtr;
+typedef Property<LightResourcePtr>           LightResourceProperty;
+
 // -----------------------------------------------------------------------------
 class LightResource {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  // ---------------------------------------------------- construction interface
+  template <typename... Args>
+  static LightResourcePtr create(Args&& ... a) {
+    return std::make_shared<LightResource>(a...);
+  }
 
   LightResource();
   ~LightResource();

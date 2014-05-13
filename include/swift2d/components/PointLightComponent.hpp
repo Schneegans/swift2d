@@ -39,7 +39,7 @@ class PointLightComponent : public DrawableComponent {
   Float pDepth;
 
   // ----------------------------------------------------- contruction interface
-  PointLightComponent() : sprite_(nullptr), tex_(nullptr) {}
+  PointLightComponent() : Sprite(nullptr), Tex(nullptr) {}
 
   // Creates a new component and returns a shared pointer.
   static PointLightComponentPtr create() {
@@ -52,16 +52,16 @@ class PointLightComponent : public DrawableComponent {
 
   // ------------------------------------------------------------ public methods
   void draw(RenderContext const& ctx) {
-    tex_->bind(ctx, 0);
-    sprite_->draw(ctx, pWorldTransform.get());
+    Tex()->bind(ctx, 0);
+    Sprite()->draw(ctx, pWorldTransform.get());
   }
 
   void serialize(SerializedScenePtr& scene) const {
     scene->lights.insert(std::make_pair(pDepth.get(), create_copy()));
   }
 
-  LightResource* sprite_;
-  TextureResource* tex_;
+  LightResourceProperty   Sprite;
+  TextureResourceProperty Tex;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

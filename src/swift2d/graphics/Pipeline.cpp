@@ -154,11 +154,6 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   GLfloat clear[4] = {0.f, 0.f, 0.f, 0.f};
   window_->get_context().gl.ClearColorBuffer(0, clear);
 
-  // oglplus::Texture::Active(2);
-  // window_->get_context().gl.Bind(oglplus::smart_enums::_2D(), *offscreen_color_);
-  // oglplus::Texture::Active(3);
-  // window_->get_context().gl.Bind(oglplus::smart_enums::_2D(), *offscreen_normal_);
-
   for (auto& light: scene->lights) {
     light.second->draw(window_->get_context());
   }

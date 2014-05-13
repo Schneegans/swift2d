@@ -37,11 +37,15 @@ int main(int argc, char** argv) {
 
   // example scene setup -------------------------------------------------------
   auto scene = SceneObject::create();
+  auto sun = scene->add<PointLightComponent>();
+       sun->Sprite = LightResource::create();
+       sun->pTransform = math::make_scale(5) * math::make_translate(-0.5, 0.5);
+       sun->Tex = TextureResource::create("light.png");
 
   auto bg = scene->add<SpriteComponent>();
        bg->pDepth = -1000.0f;
-       bg->sprite_ = new SpriteResource();
-       bg->diffuse_ = new TextureResource("bg.png");
+       bg->Sprite = SpriteResource::create();
+       bg->Diffuse = TextureResource::create("bg.png");
        bg->pTransform = math::make_scale(2.f);
 
   auto camera = scene->add<CameraComponent>();
@@ -52,9 +56,9 @@ int main(int argc, char** argv) {
 
   auto sprite = planet->add<SpriteComponent>();
        sprite->pDepth = 0.0f;
-       sprite->sprite_ = bg->sprite_;
-       sprite->diffuse_ = new TextureResource("diffuse.png");
-       sprite->normal_ = new TextureResource("normal.png");
+       sprite->Sprite = bg->Sprite;
+       sprite->Diffuse = TextureResource::create("diffuse.png");
+       sprite->Normal = TextureResource::create("normal.png");
 
   auto boing = planet->add<SoundComponent>();
        boing->set_sound(new SoundResource("sound.wav"));
@@ -71,15 +75,15 @@ int main(int argc, char** argv) {
 
   auto ship = player->add<SpriteComponent>();
        ship->pDepth = 1.0f;
-       ship->sprite_ = bg->sprite_;
-       ship->diffuse_ = new TextureResource("ship.png");
+       ship->Sprite = bg->Sprite;
+       ship->Diffuse = TextureResource::create("ship.png");
 
   auto light_object = scene->add();
   auto light = light_object->add<PointLightComponent>();
        light->pDepth = 1.0f;
-       light->sprite_ = new LightResource();
-       light->pTransform = math::make_scale(5);
-       light->tex_ = new TextureResource("light.png");
+       light->Sprite = LightResource::create();
+       light->pTransform = math::make_scale(3);
+       light->Tex = TextureResource::create("light.png");
 
   // todo: screen aligned sprites!
   player->pTransform.on_change().connect([&](math::mat3 const& mat) {

@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/events/properties.hpp>
 
 #include <mutex>
 #include <thread>
@@ -27,6 +28,7 @@ namespace swift {
 class SpriteResource;
 typedef std::shared_ptr<SpriteResource>       SpriteResourcePtr;
 typedef std::shared_ptr<const SpriteResource> ConstSpriteResourcePtr;
+typedef Property<SpriteResourcePtr>           SpriteResourceProperty;
 
 // -----------------------------------------------------------------------------
 class SpriteResource {
@@ -34,6 +36,12 @@ class SpriteResource {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  // ---------------------------------------------------- construction interface
+  template <typename... Args>
+  static SpriteResourcePtr create(Args&& ... a) {
+    return std::make_shared<SpriteResource>(a...);
+  }
 
   SpriteResource();
   ~SpriteResource();

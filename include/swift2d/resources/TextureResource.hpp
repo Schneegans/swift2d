@@ -11,6 +11,9 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/events/properties.hpp>
+
+#include <memory>
 
 namespace swift {
 
@@ -19,12 +22,24 @@ namespace swift {
 // draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
+// shared pointer type definition ----------------------------------------------
+class TextureResource;
+typedef std::shared_ptr<TextureResource>       TextureResourcePtr;
+typedef std::shared_ptr<const TextureResource> ConstTextureResourcePtr;
+typedef Property<TextureResourcePtr>           TextureResourceProperty;
+
 // -----------------------------------------------------------------------------
 class TextureResource {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  // ---------------------------------------------------- construction interface
+  template <typename... Args>
+  static TextureResourcePtr create(Args&& ... a) {
+    return std::make_shared<TextureResource>(a...);
+  }
 
   TextureResource() {};
   TextureResource(std::string const& file_name);
