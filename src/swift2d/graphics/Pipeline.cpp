@@ -40,6 +40,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   if (!window_->Open()) {
     window_->Open = true;
     compositor_ = Compositor::create();
+    compositor_->EnableDynamicLighting = false;
   }
 
   // update window size

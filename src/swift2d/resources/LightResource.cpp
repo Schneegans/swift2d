@@ -27,11 +27,11 @@ LightResource::LightResource()
 ////////////////////////////////////////////////////////////////////////////////
 
 LightResource::~LightResource() {
-  if (vs) delete vs;
-  if (fs) delete fs;
-  if (prog) delete prog;
-  if (rectangle) delete rectangle;
-  if (verts) delete verts;
+  if (vs)         delete vs;
+  if (fs)         delete fs;
+  if (prog)       delete prog;
+  if (rectangle)  delete rectangle;
+  if (verts)      delete verts;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ void LightResource::upload_to(RenderContext const& ctx) const {
     "uniform sampler2D normal_tex;"
     "uniform ivec2 screen_size;"
     ""
-    "out vec4 fragColor;"
+    "out vec3 fragColor;"
     ""
     "void main(void){"
     "  vec3 color       = texture2D(diffuse_tex, gl_FragCoord.xy/screen_size).rgb;"
@@ -80,10 +80,10 @@ void LightResource::upload_to(RenderContext const& ctx) const {
     "  vec3 light_dir   = normalize(light.rgb - 0.5);"
     "  vec3 surface_dir = normalize(normal.rgb - 0.5);"
     ""
-    "  float spot       = pow(max(0, dot(vec3(0, 0, -1), reflect(-light_dir, surface_dir))), 10) * normal.a;"
+    "  float spot       = pow(max(0, dot(vec3(0, 0, -1), reflect(-light_dir, surface_dir))), 50) * normal.a;"
     "  float intensity  = max(0, dot(light_dir, surface_dir)) * normal.a;"
     ""
-    "  fragColor        = vec4(intensity, spot, 0, 1);"
+    "  fragColor        = vec3(min(1, intensity*0.5 + spot));"
     "}"
   );
 
@@ -100,6 +100,7 @@ void LightResource::upload_to(RenderContext const& ctx) const {
   prog = new oglplus::Program();
   prog->AttachShader(*vs);
   prog->AttachShader(*fs);
+
   // link and use it
   try {
     prog->Link();

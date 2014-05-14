@@ -17,7 +17,8 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Compositor::Compositor()
-  : vs_(nullptr)
+  : EnableDynamicLighting(false)
+  , vs_(nullptr)
   , fs_(nullptr)
   , prog_(nullptr)
   , fbo_(nullptr)
@@ -37,102 +38,108 @@ void Compositor::init(RenderContext const& ctx) {
 
   clean_up();
 
-  fullscreen_quad_ = ScreenQuadResource::create();
+  if (EnableDynamicLighting()) {
+    fullscreen_quad_ = ScreenQuadResource::create();
 
-  // create textures for G-Buffer and L-Buffer ---------------------------------
-  offscreen_color_  = new oglplus::Texture();
-  offscreen_normal_ = new oglplus::Texture();
-  offscreen_light_  = new oglplus::Texture();
+    // create textures for G-Buffer and L-Buffer ---------------------------------
+    offscreen_color_  = new oglplus::Texture();
+    offscreen_normal_ = new oglplus::Texture();
+    offscreen_light_  = new oglplus::Texture();
 
-  auto create_texture = [&](oglplus::Texture* tex, int loc,
-                            oglplus::enums::PixelDataInternalFormat i_format,
-                            oglplus::enums::PixelDataFormat p_format){
+    auto create_texture = [&](oglplus::Texture* tex, int loc,
+                              oglplus::enums::PixelDataInternalFormat i_format,
+                              oglplus::enums::PixelDataFormat p_format){
 
-    oglplus::Texture::Active(loc);
-    ctx.gl.Bound(oglplus::Texture::Target::_2D, *tex)
-      .MinFilter(oglplus::TextureMinFilter::Nearest)
-      .MagFilter(oglplus::TextureMagFilter::Nearest)
-      .WrapS(oglplus::TextureWrap::ClampToEdge)
-      .WrapT(oglplus::TextureWrap::ClampToEdge)
-      .Image2D(0, i_format, ctx.size.x(), ctx.size.y(),
-        0, p_format, oglplus::PixelDataType::Float, nullptr
-      );
-  };
+      oglplus::Texture::Active(loc);
+      ctx.gl.Bound(oglplus::Texture::Target::_2D, *tex)
+        .MinFilter(oglplus::TextureMinFilter::Nearest)
+        .MagFilter(oglplus::TextureMagFilter::Nearest)
+        .WrapS(oglplus::TextureWrap::ClampToEdge)
+        .WrapT(oglplus::TextureWrap::ClampToEdge)
+        .Image2D(0, i_format, ctx.size.x(), ctx.size.y(),
+          0, p_format, oglplus::PixelDataType::Float, nullptr
+        );
+    };
 
-  create_texture(offscreen_color_,  2, oglplus::PixelDataInternalFormat::RGBA,
-                 oglplus::PixelDataFormat::RGBA);
-  create_texture(offscreen_normal_, 3, oglplus::PixelDataInternalFormat::RGBA,
-                 oglplus::PixelDataFormat::RGBA);
-  create_texture(offscreen_light_,  4, oglplus::PixelDataInternalFormat::RGBA,
-                 oglplus::PixelDataFormat::RGBA);
-
-
-  // create framebuffer object -------------------------------------------------
-  fbo_ = new oglplus::Framebuffer();
-  fbo_->Bind(oglplus::Framebuffer::Target::Draw);
-  oglplus::Framebuffer::AttachColorTexture(oglplus::Framebuffer::Target::Draw,
-                                           0, *offscreen_color_, 0);
-  oglplus::Framebuffer::AttachColorTexture(oglplus::Framebuffer::Target::Draw,
-                                           1, *offscreen_normal_, 0);
-  oglplus::Framebuffer::AttachColorTexture(oglplus::Framebuffer::Target::Draw,
-                                           2, *offscreen_light_, 0);
+    create_texture(offscreen_color_,  2, oglplus::PixelDataInternalFormat::RGB,
+                   oglplus::PixelDataFormat::RGB);
+    create_texture(offscreen_normal_, 3, oglplus::PixelDataInternalFormat::RGB,
+                   oglplus::PixelDataFormat::RGB);
+    create_texture(offscreen_light_,  4, oglplus::PixelDataInternalFormat::RGB,
+                   oglplus::PixelDataFormat::RGB);
 
 
-  // create shaders ------------------------------------------------------------
-  // set the vertex shader source
-  std::stringstream vs_source(
-    "#version 330\n"
-    "layout(location=0) in vec2 position;"
-    "uniform mat3 transform;"
-    "out vec2 tex_coords;"
-    "void main(void){"
-    "  tex_coords = position*0.5 + 0.5;"
-    "  gl_Position = vec4(position, 0.0, 1.0);"
-    "}"
-  );
-  vs_ = new oglplus::Shader(oglplus::ShaderType::Vertex);
-  vs_->Source(oglplus::GLSLSource::FromStream(vs_source));
-  try {
-    vs_->Compile();
-  } catch (oglplus::CompileError& e) {
-    LOG_ERROR << "Failed to compile Vertex Shader!" << std::endl;
-    LOG_ERROR << e.Log() << std::endl;
-  }
+    // create framebuffer object -------------------------------------------------
+    fbo_ = new oglplus::Framebuffer();
+    fbo_->Bind(oglplus::Framebuffer::Target::Draw);
+    oglplus::Framebuffer::AttachColorTexture(oglplus::Framebuffer::Target::Draw,
+                                             0, *offscreen_color_, 0);
+    oglplus::Framebuffer::AttachColorTexture(oglplus::Framebuffer::Target::Draw,
+                                             1, *offscreen_normal_, 0);
+    oglplus::Framebuffer::AttachColorTexture(oglplus::Framebuffer::Target::Draw,
+                                             2, *offscreen_light_, 0);
 
-  // set the fragment shader source
-  std::stringstream fs_source(
-    "#version 330\n"
-    "in vec2 tex_coords;"
-    "uniform sampler2D diffuse;"
-    "uniform sampler2D light;"
-    ""
-    "layout (location = 0) out vec4 fragColor;"
-    ""
-    "void main(void){"
-    "  vec4 light_color = texture2D(light, tex_coords);"
-    "  fragColor   = texture2D(diffuse, tex_coords) + light_color;"
-    "}"
-  );
 
-  fs_ = new oglplus::Shader(oglplus::ShaderType::Fragment);
-  fs_->Source(oglplus::GLSLSource::FromStream(fs_source));
-  try {
-    fs_->Compile();
-  } catch (oglplus::CompileError& e) {
-    LOG_ERROR << "Failed to compile Fragment Shader!" << std::endl;
-    LOG_ERROR << e.Log() << std::endl;
-  }
+    // create shaders ------------------------------------------------------------
+    // set the vertex shader source
+    std::stringstream vs_source(
+      "#version 330\n"
+      "layout(location=0) in vec2 position;"
+      "uniform mat3 transform;"
+      "out vec2 tex_coords;"
+      "void main(void){"
+      "  tex_coords = position*0.5 + 0.5;"
+      "  gl_Position = vec4(position, 0.0, 1.0);"
+      "}"
+    );
+    vs_ = new oglplus::Shader(oglplus::ShaderType::Vertex);
+    vs_->Source(oglplus::GLSLSource::FromStream(vs_source));
+    try {
+      vs_->Compile();
+    } catch (oglplus::CompileError& e) {
+      LOG_ERROR << "Failed to compile Vertex Shader!" << std::endl;
+      LOG_ERROR << e.Log() << std::endl;
+    }
 
-  // attach the shaders to the program
-  prog_ = new oglplus::Program();
-  prog_->AttachShader(*vs_);
-  prog_->AttachShader(*fs_);
+    // set the fragment shader source
+    std::stringstream fs_source(
+      "#version 330\n"
+      "in vec2 tex_coords;"
+      "uniform sampler2D diffuse;"
+      "uniform sampler2D light;"
+      "uniform bool      debug;"
+      ""
+      "layout (location = 0) out vec4 fragColor;"
+      ""
+      "void main(void){"
+      "  vec4 light_color = texture2D(light, tex_coords);"
+      "  fragColor   = texture2D(diffuse, tex_coords) * light_color;"
+      "  if (debug) {"
+      "    fragColor   = texture2D(diffuse, tex_coords);"
+      "  }"
+      "}"
+    );
 
-  // link it
-  try {
-    prog_->Link();
-  } catch (oglplus::LinkError& e) {
-    LOG_ERROR << e.Log() << std::endl;
+    fs_ = new oglplus::Shader(oglplus::ShaderType::Fragment);
+    fs_->Source(oglplus::GLSLSource::FromStream(fs_source));
+    try {
+      fs_->Compile();
+    } catch (oglplus::CompileError& e) {
+      LOG_ERROR << "Failed to compile Fragment Shader!" << std::endl;
+      LOG_ERROR << e.Log() << std::endl;
+    }
+
+    // attach the shaders to the program
+    prog_ = new oglplus::Program();
+    prog_->AttachShader(*vs_);
+    prog_->AttachShader(*fs_);
+
+    // link it
+    try {
+      prog_->Link();
+    } catch (oglplus::LinkError& e) {
+      LOG_ERROR << e.Log() << std::endl;
+    }
   }
 }
 
@@ -144,16 +151,26 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
     oglplus::BlendFunction::OneMinusSrcAlpha
   );
 
-  // oglplus::DefaultFramebuffer::Bind(oglplus::Framebuffer::Target::Draw);
-  // ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
+  if (EnableDynamicLighting()) {
+    if (!fullscreen_quad_) {
+      init(ctx);
+    }
 
-  fbo_->Bind(oglplus::Framebuffer::Target::Draw);
+    fbo_->Bind(oglplus::Framebuffer::Target::Draw);
 
-  oglplus::Context::ColorBuffer draw_buffs[2] =  {
-    oglplus::FramebufferColorAttachment::_0,
-    oglplus::FramebufferColorAttachment::_1
-  };
-  ctx.gl.DrawBuffers(draw_buffs);
+    oglplus::Context::ColorBuffer draw_buffs[2] =  {
+      oglplus::FramebufferColorAttachment::_0,
+      oglplus::FramebufferColorAttachment::_1
+    };
+    ctx.gl.DrawBuffers(draw_buffs);
+
+    GLfloat clear[3] = {0.5f, 0.5f, 0.f};
+    ctx.gl.ClearColorBuffer(1, clear);
+
+  } else {
+    oglplus::DefaultFramebuffer::Bind(oglplus::Framebuffer::Target::Draw);
+    ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
+  }
 
   for (auto& object: scene->objects) {
     object.second->draw(ctx);
@@ -163,39 +180,56 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
 ////////////////////////////////////////////////////////////////////////////////
 
 void Compositor::draw_lights(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
-  ctx.gl.BlendFunc(
-    oglplus::BlendFunction::One,
-    oglplus::BlendFunction::One
-  );
+  if (EnableDynamicLighting()) {
+    if (!fullscreen_quad_) {
+      init(ctx);
+    }
 
-  ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_2);
+    ctx.gl.BlendFunc(
+      oglplus::BlendFunction::One,
+      oglplus::BlendFunction::One
+    );
 
-  GLfloat clear[4] = {0.f, 0.f, 0.f, 0.f};
-  ctx.gl.ClearColorBuffer(0, clear);
+    ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_2);
 
-  for (auto& light: scene->lights) {
-    light.second->draw(ctx);
+    GLfloat clear[3] = {0.f, 0.f, 0.f};
+    ctx.gl.ClearColorBuffer(0, clear);
+
+    for (auto& light: scene->lights) {
+      light.second->draw(ctx);
+    }
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
-  oglplus::DefaultFramebuffer::Bind(oglplus::Framebuffer::Target::Draw);
-  ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
+  if (EnableDynamicLighting()) {
+    if (!fullscreen_quad_) {
+      init(ctx);
+    }
 
-  oglplus::Texture::Active(0);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_color_);
+    oglplus::DefaultFramebuffer::Bind(oglplus::Framebuffer::Target::Draw);
+    ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
 
-  oglplus::Texture::Active(1);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_light_);
+    oglplus::Texture::Active(0);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_color_);
 
-  prog_->Use();
+    oglplus::Texture::Active(1);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_light_);
 
-  (*prog_/"diffuse") = 0;
-  (*prog_/"light") = 1;
+    oglplus::Texture::Active(2);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_normal_);
 
-  fullscreen_quad_->draw(ctx);
+    prog_->Use();
+
+    (*prog_/"diffuse") = 0;
+    (*prog_/"light") = 1;
+
+    (*prog_/"debug") = 0;
+
+    fullscreen_quad_->draw(ctx);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

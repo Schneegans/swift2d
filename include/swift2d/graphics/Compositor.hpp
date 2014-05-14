@@ -29,6 +29,9 @@ class Compositor {
  // ----------------------------------------------------------- public interface
  public:
 
+  // ---------------------------------------------------------------- properties
+  Bool EnableDynamicLighting;
+
   // ---------------------------------------------------- construction interface
   template <typename... Args>
   static CompositorPtr create(Args&& ... a) {

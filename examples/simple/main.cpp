@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
   auto light = light_object->add<PointLightComponent>();
        light->Depth = 1.0f;
        light->Sprite = LightResource::create();
-       light->Transform = math::make_scale(3);
+       light->Transform = math::make_scale(1);
        light->Tex = TextureResource::create("light.png");
 
   // todo: screen aligned sprites!
