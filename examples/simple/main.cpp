@@ -59,6 +59,7 @@ int main(int argc, char** argv) {
        bg->Diffuse = TextureResource::create("bg.png");
        bg->Transform = math::make_scale(2.f);
 
+
   auto camera = scene->add<CameraComponent>();
   camera->Size = math::vec2(2.f, 2.f);
 

@@ -262,6 +262,7 @@ void Compositor::clean_up() {
   if(offscreen_color_)  delete offscreen_color_;
   if(offscreen_normal_) delete offscreen_normal_;
   if(offscreen_light_)  delete offscreen_light_;
+  if(offscreen_emit_)   delete offscreen_emit_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

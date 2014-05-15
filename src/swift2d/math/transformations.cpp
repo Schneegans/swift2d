@@ -161,5 +161,19 @@ vec2 get_position (mat3 const& mat) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+vec2 get_scale (mat3 const& mat) {
+  return vec2((vec2(mat.At(0, 0), mat.At(0, 1))).Length(),
+              (vec2(mat.At(1, 0), mat.At(1, 1))).Length());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+float get_rotation (mat3 const& mat) {
+  float tmp(-std::atan2(mat.At(0, 0), mat.At(0, 1)) + M_PI/2);
+  return tmp >= 0 ? tmp : tmp + 2*M_PI;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 }
 }
