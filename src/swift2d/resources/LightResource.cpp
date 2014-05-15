@@ -66,15 +66,15 @@ void LightResource::upload_to(RenderContext const& ctx) const {
     "#version 330\n"
     "in vec2 tex_coords;"
     "uniform sampler2D light_tex;"
-    "uniform sampler2D diffuse_tex;"
-    "uniform sampler2D normal_tex;"
+    "uniform sampler2D g_buffer_diffuse;"
+    "uniform sampler2D g_buffer_normal;"
     "uniform ivec2 screen_size;"
     ""
     "out vec3 fragColor;"
     ""
     "void main(void){"
-    "  vec3 color       = texture2D(diffuse_tex, gl_FragCoord.xy/screen_size).rgb;"
-    "  vec4 normal      = texture2D(normal_tex, gl_FragCoord.xy/screen_size);"
+    "  vec3 color       = texture2D(g_buffer_diffuse, gl_FragCoord.xy/screen_size).rgb;"
+    "  vec4 normal      = texture2D(g_buffer_normal, gl_FragCoord.xy/screen_size);"
     "  vec3 light       = texture2D(light_tex, tex_coords).rgb;"
     ""
     "  vec3 light_dir   = normalize(light.rgb - 0.5);"
@@ -144,8 +144,8 @@ void LightResource::draw(RenderContext const& ctx, math::mat3 const& transform) 
   prog->Use();
 
   (*prog/"light_tex") = 0;
-  (*prog/"diffuse_tex") = 2;
-  (*prog/"normal_tex") = 3;
+  (*prog/"g_buffer_diffuse") = 1;
+  (*prog/"g_buffer_normal") = 2;
   (*prog/"screen_size") = math::vec2i(ctx.size);
   (*prog/"projection") = math::mat3(ctx.projection_matrix);
   (*prog/"transform") = math::mat3(transform);

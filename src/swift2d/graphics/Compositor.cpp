@@ -24,7 +24,8 @@ Compositor::Compositor()
   , fbo_(nullptr)
   , offscreen_color_(nullptr)
   , offscreen_normal_(nullptr)
-  , offscreen_light_(nullptr) {}
+  , offscreen_light_(nullptr)
+  , offscreen_emit_(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -45,6 +46,7 @@ void Compositor::init(RenderContext const& ctx) {
     offscreen_color_  = new oglplus::Texture();
     offscreen_normal_ = new oglplus::Texture();
     offscreen_light_  = new oglplus::Texture();
+    offscreen_emit_   = new oglplus::Texture();
 
     auto create_texture = [&](oglplus::Texture* tex, int loc,
                               oglplus::enums::PixelDataInternalFormat i_format,
@@ -61,11 +63,13 @@ void Compositor::init(RenderContext const& ctx) {
         );
     };
 
-    create_texture(offscreen_color_,  2, oglplus::PixelDataInternalFormat::RGB,
+    create_texture(offscreen_color_,  0, oglplus::PixelDataInternalFormat::RGB,
                    oglplus::PixelDataFormat::RGB);
-    create_texture(offscreen_normal_, 3, oglplus::PixelDataInternalFormat::RGB,
+    create_texture(offscreen_normal_, 1, oglplus::PixelDataInternalFormat::RGB,
                    oglplus::PixelDataFormat::RGB);
-    create_texture(offscreen_light_,  4, oglplus::PixelDataInternalFormat::RGB,
+    create_texture(offscreen_emit_,   2, oglplus::PixelDataInternalFormat::RGB,
+                   oglplus::PixelDataFormat::RGB);
+    create_texture(offscreen_light_,  3, oglplus::PixelDataInternalFormat::RGB,
                    oglplus::PixelDataFormat::RGB);
 
 
@@ -77,7 +81,9 @@ void Compositor::init(RenderContext const& ctx) {
     oglplus::Framebuffer::AttachColorTexture(oglplus::Framebuffer::Target::Draw,
                                              1, *offscreen_normal_, 0);
     oglplus::Framebuffer::AttachColorTexture(oglplus::Framebuffer::Target::Draw,
-                                             2, *offscreen_light_, 0);
+                                             2, *offscreen_emit_, 0);
+    oglplus::Framebuffer::AttachColorTexture(oglplus::Framebuffer::Target::Draw,
+                                             3, *offscreen_light_, 0);
 
 
     // create shaders ------------------------------------------------------------
@@ -105,17 +111,20 @@ void Compositor::init(RenderContext const& ctx) {
     std::stringstream fs_source(
       "#version 330\n"
       "in vec2 tex_coords;"
-      "uniform sampler2D diffuse;"
-      "uniform sampler2D light;"
+      "uniform sampler2D g_buffer_diffuse;"
+      "uniform sampler2D g_buffer_light;"
+      "uniform sampler2D g_buffer_emit;"
       "uniform bool      debug;"
       ""
-      "layout (location = 0) out vec4 fragColor;"
+      "layout (location = 0) out vec3 fragColor;"
       ""
       "void main(void){"
-      "  vec4 light_color = texture2D(light, tex_coords);"
-      "  fragColor   = texture2D(diffuse, tex_coords) * light_color;"
+      "  vec3 diffuse  = texture2D(g_buffer_diffuse, tex_coords).rgb;"
+      "  vec3 light    = texture2D(g_buffer_light, tex_coords).rgb;"
+      "  vec3 emit     = texture2D(g_buffer_emit, tex_coords).rgb;"
+      "  fragColor     = emit.r * diffuse + (1 - emit.r) * light * diffuse;"
       "  if (debug) {"
-      "    fragColor   = texture2D(diffuse, tex_coords);"
+      "    fragColor   = texture2D(g_buffer_diffuse, tex_coords).rgb;"
       "  }"
       "}"
     );
@@ -158,9 +167,10 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
 
     fbo_->Bind(oglplus::Framebuffer::Target::Draw);
 
-    oglplus::Context::ColorBuffer draw_buffs[2] =  {
+    oglplus::Context::ColorBuffer draw_buffs[3] =  {
       oglplus::FramebufferColorAttachment::_0,
-      oglplus::FramebufferColorAttachment::_1
+      oglplus::FramebufferColorAttachment::_1,
+      oglplus::FramebufferColorAttachment::_2
     };
     ctx.gl.DrawBuffers(draw_buffs);
 
@@ -190,10 +200,16 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene, RenderContext
       oglplus::BlendFunction::One
     );
 
-    ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_2);
+    ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_3);
 
     GLfloat clear[3] = {0.f, 0.f, 0.f};
     ctx.gl.ClearColorBuffer(0, clear);
+
+    oglplus::Texture::Active(1);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_color_);
+
+    oglplus::Texture::Active(2);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_normal_);
 
     for (auto& light: scene->lights) {
       light.second->draw(ctx);
@@ -219,12 +235,16 @@ void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext c
     ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_light_);
 
     oglplus::Texture::Active(2);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_emit_);
+
+    oglplus::Texture::Active(3);
     ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_normal_);
 
     prog_->Use();
 
-    (*prog_/"diffuse") = 0;
-    (*prog_/"light") = 1;
+    (*prog_/"g_buffer_diffuse") = 0;
+    (*prog_/"g_buffer_light") = 1;
+    (*prog_/"g_buffer_emit") = 2;
 
     (*prog_/"debug") = 0;
 

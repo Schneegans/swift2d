@@ -23,14 +23,17 @@ class Mover: public MoveBehavior {
         if (key == Key::A) AngularSpeed.set(0, 0.1);
         if (key == Key::D) AngularSpeed.set(0, 0.1);
       } else if (action == 1) {
-        if (key == Key::W) LinearSpeed.set(  20, 2);
-        if (key == Key::S) LinearSpeed.set( -20, 2);
+        if (key == Key::W) LinearSpeed.set(  40, 1);
+        if (key == Key::S) LinearSpeed.set( -40, 1);
         if (key == Key::A) AngularSpeed.set(-2 , 0.5);
         if (key == Key::D) AngularSpeed.set( 2 , 0.5);
       }
     });
   }
 };
+
+
+
 
 int main(int argc, char** argv) {
 
@@ -51,6 +54,7 @@ int main(int argc, char** argv) {
 
   auto bg = scene->add<SpriteComponent>();
        bg->Depth = -1000.0f;
+       bg->Emit = 1.0f;
        bg->Sprite = SpriteResource::create();
        bg->Diffuse = TextureResource::create("bg.png");
        bg->Transform = math::make_scale(2.f);

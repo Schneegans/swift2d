@@ -47,7 +47,7 @@ class SpriteResource {
   ~SpriteResource();
 
   // Draws the SpriteResource to the given context.
-  void draw(RenderContext const& context, math::mat3 const& transform, bool with_normals) const;
+  void draw(RenderContext const& context, math::mat3 const& transform, bool with_normals, float emit) const;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

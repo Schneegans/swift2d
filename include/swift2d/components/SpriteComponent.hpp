@@ -40,9 +40,10 @@ class SpriteComponent : public DrawableComponent {
   SpriteResourceProperty  Sprite;
   TextureResourceProperty Diffuse;
   TextureResourceProperty Normal;
+  Float                   Emit;
 
   // ----------------------------------------------------- contruction interface
-  SpriteComponent() : Sprite(nullptr), Diffuse(nullptr), Normal(nullptr) {}
+  SpriteComponent() : Sprite(nullptr), Diffuse(nullptr), Normal(nullptr), Emit(0) {}
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
@@ -60,7 +61,7 @@ class SpriteComponent : public DrawableComponent {
     Diffuse()->bind(ctx, 0);
     if (Normal()) Normal()->bind(ctx, 1);
 
-    Sprite()->draw(ctx, WorldTransform.get(), Normal() != nullptr);
+    Sprite()->draw(ctx, WorldTransform.get(), Normal() != nullptr, Emit.get());
   }
 
   void serialize(SerializedScenePtr& scene) const {

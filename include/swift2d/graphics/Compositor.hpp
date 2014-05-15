@@ -63,6 +63,7 @@ class Compositor {
   oglplus::Texture*     offscreen_color_;
   oglplus::Texture*     offscreen_normal_;
   oglplus::Texture*     offscreen_light_;
+  oglplus::Texture*     offscreen_emit_;
 
   ScreenQuadResourcePtr fullscreen_quad_;
 };

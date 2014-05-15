@@ -67,18 +67,22 @@ void SpriteResource::upload_to(RenderContext const& ctx) const {
     "in vec2 tex_coords;"
     "uniform sampler2D diffuse;"
     "uniform sampler2D normal;"
+    "uniform float emit;"
     "uniform bool with_normals;"
     ""
     "layout (location = 0) out vec4 fragColor;"
     "layout (location = 1) out vec4 fragNormal;"
+    "layout (location = 2) out vec4 fragEmit;"
     ""
     "void main(void){"
     "  if (!with_normals) {"
     "    fragColor = texture2D(diffuse, tex_coords);"
-    "    fragNormal = vec4(0, 0, 0, 0);"
+    "    fragNormal = vec4(0.5, 0.5, 0, fragColor.a);"
+    "    fragEmit = vec4(emit, 0, 0, fragColor.a);"
     "  } else {"
     "    fragColor = texture2D(diffuse, tex_coords);"
     "    fragNormal = texture2D(normal, tex_coords);"
+    "    fragEmit = vec4(emit, 0, 0, fragColor.a);"
     "  }"
     "}"
   );
@@ -129,7 +133,7 @@ void SpriteResource::upload_to(RenderContext const& ctx) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SpriteResource::draw(RenderContext const& ctx, math::mat3 const& transform, bool with_normals) const {
+void SpriteResource::draw(RenderContext const& ctx, math::mat3 const& transform, bool with_normals, float emit) const {
 
   // upload to GPU if neccessary
   if (!prog) {
@@ -145,6 +149,7 @@ void SpriteResource::draw(RenderContext const& ctx, math::mat3 const& transform,
   (*prog/"transform") = math::mat3(transform);
 
   (*prog/"with_normals") = (GLint)with_normals;
+  (*prog/"emit") = (GLfloat)emit;
 
   ctx.gl.DrawArrays(oglplus::PrimitiveType::TriangleStrip, 0, 4);
 }
