@@ -11,6 +11,7 @@
 
 #include <swift2d/events/properties/NumericProperty.hpp>
 #include <swift2d/events/properties/LogicalProperty.hpp>
+#include <swift2d/events/properties/AnimatedProperty.hpp>
 #include <swift2d/math.hpp>
 
 #include <string>
@@ -31,6 +32,11 @@ typedef NumericProperty<math::mat3>     Mat3;
 typedef LogicalProperty<bool>           Bool;
 
 typedef StreamableProperty<std::string> String;
+
+
+typedef AnimatedProperty<double>        AnimatedDouble;
+typedef AnimatedProperty<float>         AnimatedFloat;
+
 }
 
 #endif /* SWIFT2D_EVENTS_PROPERTIES_HPP */

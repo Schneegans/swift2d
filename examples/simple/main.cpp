@@ -91,7 +91,6 @@ int main(int argc, char** argv) {
   });
 
   // rendering pipeline --------------------------------------------------------
-
   auto pipeline = Pipeline::create();
   pipeline->set_output_window(window);
 

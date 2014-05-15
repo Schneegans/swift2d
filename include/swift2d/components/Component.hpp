@@ -28,7 +28,7 @@ class SerializedScene;
 typedef std::shared_ptr<SerializedScene>       SerializedScenePtr;
 typedef std::shared_ptr<const SerializedScene> ConstSerializedScenePtr;
 
-typedef Property<SceneObject*>             SceneObjectProperty;
+typedef Property<SceneObject*>                 SceneObjectProperty;
 
 ////////////////////////////////////////////////////////////////////////////////
 // SceneObjects are made of multiple Components. A component encapsulates     //
@@ -69,7 +69,7 @@ class Component {
   Component() : Enabled(true), user_(nullptr) {}
 
  ///////////////////////////////////////////////////////////////////////////////
- // -------------------------------------------------------- protected interface
+ // ---------------------------------------------------------- private interface
  private:
   SceneObject* user_;
 };
