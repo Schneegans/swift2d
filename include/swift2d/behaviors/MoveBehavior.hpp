@@ -32,10 +32,12 @@ class MoveBehavior : public Behavior<SceneObject*> {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float LinearSpeed;
-  Float AngularSpeed;
+  AnimatedFloat LinearSpeed;
+  AnimatedFloat AngularSpeed;
 
   // ----------------------------------------------------- constrution interface
+  MoveBehavior() : LinearSpeed(0), AngularSpeed(0) {}
+
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
   static MoveBehaviorPtr create(Args&& ... a) {
@@ -49,6 +51,10 @@ class MoveBehavior : public Behavior<SceneObject*> {
 
   // ------------------------------------------------------------ public methods
   virtual void update(double time) {
+
+    LinearSpeed.update(time);
+    AngularSpeed.update(time);
+
     auto user_transform(get_user()->Transform.get());
     math::rotate(user_transform, AngularSpeed.get() * time);
     math::translate(user_transform, LinearSpeed.get() * time, 0);

@@ -43,7 +43,16 @@ class AnimatedProperty: public NumericProperty<T> {
     , duration_(0)
     , exp_(0.0) {}
 
-  AnimatedProperty(T const& start, T const& end, double duration = 1.0,
+  AnimatedProperty(T value)
+    : NumericProperty<T>(value)
+    , direction_(IN_OUT)
+    , start_(value)
+    , end_(value)
+    , state_(-1.0)
+    , duration_(0)
+    , exp_(0.0) {}
+
+  AnimatedProperty(T start, T end, double duration = 1.0,
                    Direction direction = IN_OUT, double exponent = 0.0)
     : NumericProperty<T>(start)
     , direction_(direction)
@@ -54,14 +63,14 @@ class AnimatedProperty: public NumericProperty<T> {
     , exp_(exponent) {}
 
   // ------------------------------------------------------------ public methods
-  void set(T const& value, double duration) {
+  void set(T value, double duration) {
     start_ = this->get();
     end_ = value;
     duration_ = duration;
     state_ = 0.0;
   }
 
-  /* virtual */ void set(T const& value) {
+  /* virtual */ void set(T value) {
     start_ = this->get();
     end_ = value;
     duration_ = 0.0;
@@ -97,30 +106,30 @@ class AnimatedProperty: public NumericProperty<T> {
     }
   }
 
-  inline T const& start() const { return start_; }
-  inline T const& end()   const { return end_; }
+  inline T start() const { return start_; }
+  inline T end()   const { return end_; }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  T updateLinear(T const& t, T const& s, double e) {
+  T updateLinear(T t, T s, double e) {
     return (s + t * (e-s));
   }
 
-  T updateEaseIn(T const& t, T const& s, double e) {
+  T updateEaseIn(T t, T s, double e) {
     return (s + (t * t * ((exp_+1) * t - exp_)) * (e-s));
   }
 
-  T updateEaseOut(T const& t, T const& s, double e) {
+  T updateEaseOut(T t, T s, double e) {
     return (s + ((t-1) * (t-1) * ((exp_+1) * (t-1) + exp_) + 1) * (e-s));
   }
 
-  T updateEaseInOut(T const& t, T const& s, double e) {
+  T updateEaseInOut(T t, T s, double e) {
     if (state_ < 0.5f) return updateEaseIn(t*2, s, e - (e-s) * 0.5f);
     else               return updateEaseOut(t*2 - 1, s + (e-s) * 0.5f, e);
   }
 
-  T updateEaseOutIn(T const& t, T const& s, double e) {
+  T updateEaseOutIn(T t, T s, double e) {
     if (state_ < 0.5f) return updateEaseOut(t*2, s, e - (e-s) * 0.5f);
     else               return updateEaseIn(t*2 - 1, s + (e-s) * 0.5f, e);
   }
