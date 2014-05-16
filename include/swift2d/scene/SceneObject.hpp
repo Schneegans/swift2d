@@ -56,6 +56,10 @@ class SceneObject {
   // adds an existing object to the scene and returns a shared pointer
   SceneObjectPtr const& add(SceneObjectPtr const& object);
 
+  // adds an existing object to the top level node of the scene and
+  // returns a shared pointer
+  SceneObjectPtr const& add_at_root(SceneObjectPtr const& object);
+
   // removes a given object from this scene
   void remove(SceneObjectPtr const& object);
 

@@ -35,6 +35,16 @@ SceneObjectPtr const& SceneObject::add(SceneObjectPtr const& object) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+SceneObjectPtr const& SceneObject::add_at_root(SceneObjectPtr const& object) {
+  if (Parent()) {
+    return Parent()->add_at_root(object);
+  } else {
+    return add(object);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void SceneObject::remove(SceneObjectPtr const& object) {
   objects_.erase(object);
 }

@@ -18,13 +18,13 @@ class Mover: public MoveBehavior {
   Mover(WindowPtr const& w) {
     w->on_key_press.connect([&](Key key, int scancode, int action, int mods){
       if (action == 0) {
-        if (key == Key::W) LinearSpeed.set( 0, 1);
-        if (key == Key::S) LinearSpeed.set( 0, 1);
+        if (key == Key::W) LinearSpeed.set(0, 0.5);
+        if (key == Key::S) LinearSpeed.set(0, 0.5);
         if (key == Key::A) AngularSpeed.set(0, 0.1);
         if (key == Key::D) AngularSpeed.set(0, 0.1);
       } else if (action == 1) {
-        if (key == Key::W) LinearSpeed.set(  40, 1);
-        if (key == Key::S) LinearSpeed.set( -40, 1);
+        if (key == Key::W) LinearSpeed.set( 20, 1);
+        if (key == Key::S) LinearSpeed.set(-20, 1);
         if (key == Key::A) AngularSpeed.set(-2 , 0.5);
         if (key == Key::D) AngularSpeed.set( 2 , 0.5);
       }
