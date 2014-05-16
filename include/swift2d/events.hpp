@@ -10,7 +10,6 @@
 #define SWIFT2D_INCLUDE_EVENTS_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/events/properties.hpp>
 #include <swift2d/events/MainLoop.hpp>
 #include <swift2d/events/Scheduler.hpp>
 #include <swift2d/events/Signal.hpp>

@@ -11,7 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
-#include <swift2d/events/properties.hpp>
+#include <swift2d/properties.hpp>
 
 #include <memory>
 

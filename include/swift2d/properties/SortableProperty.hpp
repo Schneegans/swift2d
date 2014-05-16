@@ -9,7 +9,7 @@
 #ifndef SWIFT2D_EVENTS_SORTABLE_PROPERTY_HPP
 #define SWIFT2D_EVENTS_SORTABLE_PROPERTY_HPP
 
-#include <swift2d/events/properties/Property.hpp>
+#include <swift2d/properties/Property.hpp>
 
 namespace swift {
 

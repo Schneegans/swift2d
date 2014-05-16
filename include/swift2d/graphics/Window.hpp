@@ -10,7 +10,7 @@
 #define SWIFT2D_WINDOW_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/events.hpp>
+#include <swift2d/properties.hpp>
 #include <swift2d/graphics/RenderContext.hpp>
 #include <swift2d/input/keys.hpp>
 

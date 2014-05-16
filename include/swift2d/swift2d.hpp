@@ -10,13 +10,14 @@
 #define SWIFT2D_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/events.hpp>
+#include <swift2d/utils/Logger.hpp>
 #include <swift2d/math.hpp>
+#include <swift2d/events.hpp>
+#include <swift2d/properties.hpp>
 #include <swift2d/scene.hpp>
 #include <swift2d/components.hpp>
 #include <swift2d/behaviors.hpp>
 #include <swift2d/renderer.hpp>
-#include <swift2d/utils/Logger.hpp>
 #include <swift2d/input/keys.hpp>
 
 namespace swift {

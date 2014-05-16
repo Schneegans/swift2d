@@ -10,7 +10,7 @@
 #define COLOR_3F_HPP
 
 #include <swift2d/math.hpp>
-#include <swift2d/events/properties.hpp>
+#include <swift2d/properties.hpp>
 
 namespace swift {
 

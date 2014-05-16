@@ -23,7 +23,7 @@
 #define SWIFT2D_FPS_COUNTER_HPP
 
 #include <swift2d/events/Timer.hpp>
-#include <swift2d/events/properties.hpp>
+#include <swift2d/properties.hpp>
 
 namespace swift {
 

@@ -9,8 +9,8 @@
 #ifndef SWIFT2D_EVENTS_NUMERIC_PROPERTY_HPP
 #define SWIFT2D_EVENTS_NUMERIC_PROPERTY_HPP
 
-#include <swift2d/events/properties/SortableProperty.hpp>
-#include <swift2d/events/properties/StreamableProperty.hpp>
+#include <swift2d/properties/SortableProperty.hpp>
+#include <swift2d/properties/StreamableProperty.hpp>
 
 namespace swift {
 

@@ -10,7 +10,7 @@
 #define SWIFT2D_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/events.hpp>
+#include <swift2d/properties.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
 #include <swift2d/utils/Logger.hpp>
 

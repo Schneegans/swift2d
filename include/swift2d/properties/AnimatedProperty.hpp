@@ -10,7 +10,7 @@
 #define SWIFT2D_ANIMATED_PROPERTY_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/events/properties.hpp>
+#include <swift2d/properties.hpp>
 
 namespace swift {
 

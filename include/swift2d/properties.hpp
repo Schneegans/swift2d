@@ -9,9 +9,9 @@
 #ifndef SWIFT2D_EVENTS_PROPERTIES_HPP
 #define SWIFT2D_EVENTS_PROPERTIES_HPP
 
-#include <swift2d/events/properties/NumericProperty.hpp>
-#include <swift2d/events/properties/LogicalProperty.hpp>
-#include <swift2d/events/properties/AnimatedProperty.hpp>
+#include <swift2d/properties/NumericProperty.hpp>
+#include <swift2d/properties/LogicalProperty.hpp>
+#include <swift2d/properties/AnimatedProperty.hpp>
 #include <swift2d/math.hpp>
 
 #include <string>
