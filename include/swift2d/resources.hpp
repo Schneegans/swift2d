@@ -6,35 +6,13 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_HPP
-#define SWIFT2D_HPP
+#ifndef SWIFT2D_INCLUDE_RESOURCES_HPP
+#define SWIFT2D_INCLUDE_RESOURCES_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/utils/Logger.hpp>
-#include <swift2d/math.hpp>
-#include <swift2d/events.hpp>
-#include <swift2d/properties.hpp>
-#include <swift2d/scene.hpp>
-#include <swift2d/components.hpp>
-#include <swift2d/behaviors.hpp>
-#include <swift2d/shapes.hpp>
-#include <swift2d/renderer.hpp>
-#include <swift2d/resources.hpp>
-#include <swift2d/input/keys.hpp>
-#include <swift2d/triggers/ShapeTrigger.hpp>
+#include <swift2d/resources/LightDatabase.hpp>
+#include <swift2d/resources/SpriteDatabase.hpp>
+#include <swift2d/resources/TextureDatabase.hpp>
+#include <swift2d/resources/SoundDatabase.hpp>
 
-namespace swift {
-
-/**
- * Initialize swift2d.
- *
- * This should be called once at the beginning of every application
- * using swift2d.
- */
-
-void init(int argc, char** argv);
-
-}
-
-#endif  // SWIFT2D_HPP
-
+#endif // SWIFT2D_INCLUDE_RESOURCES_HPP

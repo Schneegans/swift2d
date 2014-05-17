@@ -49,18 +49,13 @@ class Database {
   }
 
   // Check for existance of a key.
-  bool is_supported(key_type const& k) const {
+  bool has(key_type const& k) const {
     return keys_.find(k) != keys_.end();
   }
 
   // Gets an entry from the Database
-  mapped_type lookup(key_type const& k) {
+  mapped_type get(key_type const& k) {
     auto result(data_.find(k));
-    if (result == data_.end()) {
-      load(k);
-
-      result = data_.find(k);
-    }
 
     if (result == data_.end()) {
       LOG_WARNING << "There is no entry " << k << " in the database!" << std::endl;
@@ -72,9 +67,6 @@ class Database {
 
   // Lists all supported keys.
   inline std::set<key_type> const& list_all() const { return keys_; }
-
-  // This function gets called when a not-stored item is requested.
-  virtual void load(key_type const& k) {};
 
  ///////////////////////////////////////////////////////////////////////////////
  // -------------------------------------------------------- protected interface

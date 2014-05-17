@@ -44,21 +44,20 @@ class Bullet: public SceneObject {
     auto tex = add<SpriteComponent>();
          tex->Depth = 10.0f;
          tex->Emit = 1.0f;
-         tex->Sprite = SpriteResource::create();
-         tex->Diffuse = TextureResource::create("bullet.png");
+         tex->Sprite = SpriteDatabase::instance()->get("normal");
+         tex->Diffuse = TextureDatabase::instance()->get("bullet");
          tex->Transform = math::make_scale(1.5f);
 
     auto light = add<PointLightComponent>();
          light->Depth = 1.0f;
-         light->Sprite = LightResource::create();
-         light->Transform = math::make_scale(10.0f);
-         light->Tex = TextureResource::create("light.png");
+         light->Sprite = LightDatabase::instance()->get("light");
+         light->Transform = math::make_scale(5.0f);
+         light->Tex = TextureDatabase::instance()->get("light");
 
     auto shape = add<CircularShape>();
 
     auto deleter = add<DeleteOnLeaveBehavior>();
          deleter->set_shapes(shape, scene->get_component<CircularShape>());
-
   }
 };
 
@@ -75,6 +74,18 @@ int main(int argc, char** argv) {
 
   MainLoop loop;
 
+  // load resources ------------------------------------------------------------
+  LightDatabase::instance()->add("light", LightResource::create());
+  SpriteDatabase::instance()->add("normal", SpriteResource::create());
+  TextureDatabase::instance()->add("light", TextureResource::create("light.png"));
+  TextureDatabase::instance()->add("bullet", TextureResource::create("bullet.png"));
+  TextureDatabase::instance()->add("background", TextureResource::create("bg.png"));
+  TextureDatabase::instance()->add("diffuse", TextureResource::create("diffuse.png"));
+  TextureDatabase::instance()->add("normal", TextureResource::create("normal.png"));
+  TextureDatabase::instance()->add("ship", TextureResource::create("ship.png"));
+
+
+  // window setup --------------------------------------------------------------
   auto window = Window::create();
   // window->Fullscreen = true;
 
@@ -85,15 +96,15 @@ int main(int argc, char** argv) {
        field->Transform = math::make_scale(2);
 
   auto sun = scene->add<PointLightComponent>();
-       sun->Sprite = LightResource::create();
+       sun->Sprite = LightDatabase::instance()->get("light");
        sun->Transform = math::make_scale(5) * math::make_translate(-0.5, 0.5);
-       sun->Tex = TextureResource::create("light.png");
+       sun->Tex = TextureDatabase::instance()->get("light");
 
   auto bg = scene->add<SpriteComponent>();
        bg->Depth = -1000.0f;
        bg->Emit = 1.0f;
-       bg->Sprite = SpriteResource::create();
-       bg->Diffuse = TextureResource::create("bg.png");
+       bg->Sprite = SpriteDatabase::instance()->get("normal");
+       bg->Diffuse = TextureDatabase::instance()->get("background");
        bg->Transform = math::make_scale(2.f);
 
 
@@ -106,8 +117,8 @@ int main(int argc, char** argv) {
   auto sprite = planet->add<SpriteComponent>();
        sprite->Depth = 0.0f;
        sprite->Sprite = bg->Sprite;
-       sprite->Diffuse = TextureResource::create("diffuse.png");
-       sprite->Normal = TextureResource::create("normal.png");
+       sprite->Diffuse = TextureDatabase::instance()->get("diffuse");
+       sprite->Normal = TextureDatabase::instance()->get("normal");
 
   auto boing = planet->add<SoundComponent>();
        boing->set_sound(new SoundResource("sound.wav"));
@@ -125,14 +136,14 @@ int main(int argc, char** argv) {
   auto ship = player->add<SpriteComponent>();
        ship->Depth = 1.0f;
        ship->Sprite = bg->Sprite;
-       ship->Diffuse = TextureResource::create("ship.png");
+       ship->Diffuse = TextureDatabase::instance()->get("ship");
 
   auto light_object = scene->add_object();
   auto light = light_object->add<PointLightComponent>();
        light->Depth = 1.0f;
-       light->Sprite = LightResource::create();
+       light->Sprite = LightDatabase::instance()->get("light");
        light->Transform = math::make_scale(1);
-       light->Tex = TextureResource::create("light.png");
+       light->Tex = TextureDatabase::instance()->get("light");
 
   // todo: screen aligned sprites!
   player->Transform.on_change().connect([&](math::mat3 const& mat) {
