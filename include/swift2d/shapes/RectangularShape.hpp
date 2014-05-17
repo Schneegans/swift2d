@@ -6,54 +6,47 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_BEHAVIOR_HPP
-#define SWIFT2D_BEHAVIOR_HPP
+#ifndef SWIFT2D_RECTANGULAR_SHAPE_HPP
+#define SWIFT2D_RECTANGULAR_SHAPE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/Component.hpp>
-#include <swift2d/math.hpp>
+#include <swift2d/shapes/Shape.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-//                                                                            //
+// A screen core represents a rectangular, virtual screen. Combined with a    //
+// view core it defines the viewing frustum.                                  //
 ////////////////////////////////////////////////////////////////////////////////
 
+// forward declares ------------------------------------------------------------
+class CircularShape;
+typedef std::shared_ptr<CircularShape>       CircularShapePtr;
+
 // shared pointer type definition ----------------------------------------------
-// class Behavior;
-// typedef std::shared_ptr<Behavior>       BehaviorPtr;
-// typedef std::shared_ptr<const Behavior> ConstBehaviorPtr;
+class RectangularShape;
+typedef std::shared_ptr<RectangularShape>       RectangularShapePtr;
+typedef std::shared_ptr<const RectangularShape> ConstRectangularShapePtr;
 
 // -----------------------------------------------------------------------------
-template<typename UserType>
-class Behavior : public Component {
+class RectangularShape : public Shape {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ---------------------------------------------------------------- properties
-
   // ------------------------------------------------------------ public methods
-  virtual void update(double time) {};
+  /*virtual*/ bool contains(CircularShapePtr const& other) {
 
-  void set_user(UserType u) {
-    Component::set_user(u);
-    user_ = u;
-  }
+  };
 
-  UserType get_user() const {
-    return user_;
-  }
+  /*virtual*/ bool contains(RectangularShapePtr const& other) {
 
- ///////////////////////////////////////////////////////////////////////////////
- // -------------------------------------------------------- protected interface
- protected:
-  Behavior() : user_(nullptr) {}
-
-  UserType user_;
+  };
 };
+
+// -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_BEHAVIOR_HPP
+#endif  // SWIFT2D_RECTANGULAR_SHAPE_HPP

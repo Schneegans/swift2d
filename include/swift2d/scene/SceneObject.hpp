@@ -46,24 +46,32 @@ class SceneObject {
     return std::make_shared<SceneObject>();
   }
 
+  SceneObject() : Parent(nullptr), remove_flag_(false) {}
+
   // ------------------------------------------------------------ public methods
 
+  // removes this scene object from its parent
+  void detach();
 
   //----------------------------------------------------- scene object interface
+
   // adds a new object to the scene and returns a shared pointer
-  SceneObjectPtr add();
+  SceneObjectPtr add_object();
 
   // adds an existing object to the scene and returns a shared pointer
-  SceneObjectPtr const& add(SceneObjectPtr const& object);
+  SceneObjectPtr const& add_object(SceneObjectPtr const& object);
 
   // adds an existing object to the top level node of the scene and
   // returns a shared pointer
   SceneObjectPtr const& add_at_root(SceneObjectPtr const& object);
 
   // removes a given object from this scene
-  void remove(SceneObjectPtr const& object);
+  void remove(SceneObjectPtr const& object, bool force = false);
+  void remove(SceneObject* object, bool force = false);
+
 
   //-------------------------------------------------------- component interface
+
   // add an existing component to this object
   template<typename T>
   typename std::shared_ptr<T> add(std::shared_ptr<T> const& component, int index = -1) {
@@ -91,7 +99,7 @@ class SceneObject {
   }
 
   // remove a component from this object
-  void remove(ComponentPtr const& component);
+  void remove(ComponentPtr const& component, bool force = false);
 
   // get all components of the given type
   template<typename T>
@@ -125,6 +133,10 @@ class SceneObject {
     return get_component<T>() != nullptr;
   }
 
+
+  // --------------------------------------------------- serialization interface
+
+
   // calls serialize() on all enabled components and objects --- the provided
   // SerializedScene is extended
   virtual void serialize(SerializedScenePtr& scene) const;
@@ -145,6 +157,8 @@ class SceneObject {
 
   // a collection of all components attached to this object
   std::vector<ComponentPtr> components_;
+
+  bool remove_flag_;
 
 };
 

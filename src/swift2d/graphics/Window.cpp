@@ -20,7 +20,8 @@ namespace swift {
 Window::Window()
   : VSync(false)
   , Open(false)
-  , Fullscreen(false) {
+  , Fullscreen(false)
+  , window_(nullptr) {
 
   Open.on_change().connect([&](bool val) {
     if (val) {
@@ -71,6 +72,11 @@ void Window::open_() {
 
     render_context_.size = math::vec2i(800, 800);
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     window_ = glfwCreateWindow(
       render_context_.size.x(), render_context_.size.y(),
       "Hello World",
@@ -80,7 +86,10 @@ void Window::open_() {
     WindowManager::windows[window_] = this;
 
     set_active(true);
-    glewInit();
+
+    // init glew... seems a bit hacky, but works this way
+    glewExperimental = GL_TRUE;
+    glewInit(); glGetError();
 
     Logger::LOG_DEBUG << "Created OpenGL context with version "
                       << render_context_.gl.MajorVersion()

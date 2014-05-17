@@ -6,54 +6,48 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_BEHAVIOR_HPP
-#define SWIFT2D_BEHAVIOR_HPP
+#ifndef SWIFT2D_SHAPER_TRIGGER_HPP
+#define SWIFT2D_SHAPER_TRIGGER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/Component.hpp>
-#include <swift2d/math.hpp>
+#include <swift2d/events.hpp>
+#include <swift2d/shapes.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-// shared pointer type definition ----------------------------------------------
-// class Behavior;
-// typedef std::shared_ptr<Behavior>       BehaviorPtr;
-// typedef std::shared_ptr<const Behavior> ConstBehaviorPtr;
-
 // -----------------------------------------------------------------------------
-template<typename UserType>
-class Behavior : public Component {
+class ShapeTrigger {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ---------------------------------------------------------------- properties
+  // ------------------------------------------------------------------- signals
+  Signal<> on_leave;
+  Signal<> on_enter;
+
+  // ----------------------------------------------------- contruction interface
+  ~ShapeTrigger();
 
   // ------------------------------------------------------------ public methods
-  virtual void update(double time) {};
-
-  void set_user(UserType u) {
-    Component::set_user(u);
-    user_ = u;
-  }
-
-  UserType get_user() const {
-    return user_;
-  }
+  void set_shapes(CircularShapePtr const& a, CircularShapePtr const& b);
 
  ///////////////////////////////////////////////////////////////////////////////
- // -------------------------------------------------------- protected interface
- protected:
-  Behavior() : user_(nullptr) {}
+ // ---------------------------------------------------------- private interface
+ private:
+  void check();
+  void callback(math::mat3 const& v);
 
-  UserType user_;
+  CircularShapePtr a_, b_;
+  int a_callback_, b_callback_;
+  bool intersects_;
 };
+
+// -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_BEHAVIOR_HPP
+#endif  // SWIFT2D_SHAPER_TRIGGER_HPP

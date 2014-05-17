@@ -19,7 +19,6 @@ class Ticker {
  public:
   Ticker(double tick_time);
   ~Ticker() {}
-  ;
 
   Signal<> on_tick;
 

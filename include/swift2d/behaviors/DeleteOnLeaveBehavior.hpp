@@ -6,12 +6,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_MOVE_BEHAVIOR_HPP
-#define SWIFT2D_MOVE_BEHAVIOR_HPP
+#ifndef SWIFT2D_DELETE_ON_LEAVE_BEHAVIOR_HPP
+#define SWIFT2D_DELETE_ON_LEAVE_BEHAVIOR_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/behaviors/Behavior.hpp>
-#include <swift2d/math.hpp>
+#include <swift2d/triggers/ShapeTrigger.hpp>
 
 namespace swift {
 
@@ -20,55 +20,51 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class MoveBehavior;
-typedef std::shared_ptr<MoveBehavior>       MoveBehaviorPtr;
-typedef std::shared_ptr<const MoveBehavior> ConstMoveBehaviorPtr;
+class DeleteOnLeaveBehavior;
+typedef std::shared_ptr<DeleteOnLeaveBehavior>       DeleteOnLeaveBehaviorPtr;
+typedef std::shared_ptr<const DeleteOnLeaveBehavior> ConstDeleteOnLeaveBehaviorPtr;
 
 // -----------------------------------------------------------------------------
-class MoveBehavior : public Behavior<SceneObject*> {
+class DeleteOnLeaveBehavior : public Behavior<SceneObject*> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ---------------------------------------------------------------- properties
-  AnimatedFloat LinearSpeed;
-  AnimatedFloat AngularSpeed;
-
   // ----------------------------------------------------- constrution interface
-  MoveBehavior()
-    : LinearSpeed()
-    , AngularSpeed() {
-
-    LinearSpeed.set(0);
-    AngularSpeed.set(0);
+  DeleteOnLeaveBehavior() {
+    int callback;
+    callback = trigger_.on_leave.connect([&](){
+      if (get_user()) {
+        trigger_.on_leave.disconnect(callback);
+        get_user()->detach();
+      }
+    });
   }
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static MoveBehaviorPtr create(Args&& ... a) {
-    return std::make_shared<MoveBehavior>(a...);
+  static DeleteOnLeaveBehaviorPtr create(Args&& ... a) {
+    return std::make_shared<DeleteOnLeaveBehavior>(a...);
   }
 
   // creates a copy from this
-  MoveBehaviorPtr create_copy() const {
-    return std::make_shared<MoveBehavior>(*this);
+  DeleteOnLeaveBehaviorPtr create_copy() const {
+    return std::make_shared<DeleteOnLeaveBehavior>(*this);
   }
 
   // ------------------------------------------------------------ public methods
-  virtual void update(double time) {
-
-    LinearSpeed.update(time);
-    AngularSpeed.update(time);
-
-    auto user_transform(get_user()->Transform.get());
-    math::rotate(user_transform, AngularSpeed.get() * time);
-    math::translate(user_transform, LinearSpeed.get() * time, 0);
-    get_user()->Transform.set(user_transform);
+  void set_shapes(CircularShapePtr const& a, CircularShapePtr const& b) {
+    trigger_.set_shapes(a, b);
   }
+
+ ///////////////////////////////////////////////////////////////////////////////
+ // ---------------------------------------------------------- private interface
+ private:
+  ShapeTrigger trigger_;
 
 };
 
 }
 
-#endif  // SWIFT2D_MOVE_BEHAVIOR_HPP
+#endif  // SWIFT2D_DELETE_ON_LEAVE_BEHAVIOR_HPP

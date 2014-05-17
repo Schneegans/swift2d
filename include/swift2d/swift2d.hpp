@@ -17,8 +17,10 @@
 #include <swift2d/scene.hpp>
 #include <swift2d/components.hpp>
 #include <swift2d/behaviors.hpp>
+#include <swift2d/shapes.hpp>
 #include <swift2d/renderer.hpp>
 #include <swift2d/input/keys.hpp>
+#include <swift2d/triggers/ShapeTrigger.hpp>
 
 namespace swift {
 

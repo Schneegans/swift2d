@@ -7,33 +7,53 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // class header
-#include <swift2d/events/Timer.hpp>
-
-// external headers
-#include <iostream>
-#include <chrono>
+#include <swift2d/triggers/ShapeTrigger.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Timer::start() { start_ = get_now(); }
+ShapeTrigger::~ShapeTrigger() {
+  if (a_) a_->WorldTransform.on_change().disconnect(a_callback_);
+  if (b_) b_->WorldTransform.on_change().disconnect(b_callback_);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Timer::reset() { start_ = get_now(); }
+void ShapeTrigger::set_shapes(CircularShapePtr const& a, CircularShapePtr const& b) {
+
+  if (a_) a_->WorldTransform.on_change().disconnect(a_callback_);
+  if (b_) b_->WorldTransform.on_change().disconnect(b_callback_);
+
+  a_ = a;
+  b_ = b;
+
+  check();
+
+  a_callback_ = a_->WorldTransform.on_change().connect(
+        std::bind(&swift::ShapeTrigger::callback, this, std::placeholders::_1));
+  b_callback_ = b_->WorldTransform.on_change().connect(
+        std::bind(&swift::ShapeTrigger::callback, this, std::placeholders::_1));
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-double Timer::get_elapsed() const { return get_now() - start_; }
+void ShapeTrigger::callback(math::mat3 const& v) {
+  check();
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-double Timer::get_now() {
+void ShapeTrigger::check() {
 
-  auto time = std::chrono::system_clock::now();
-  auto since_epoch = time.time_since_epoch();
-  return std::chrono::duration_cast<std::chrono::microseconds>(since_epoch).count() * 0.000001;
+  bool intersects(a_->intersects(b_));
+
+  if (intersects != intersects_) {
+    intersects_ = intersects;
+
+    if (intersects) on_enter.emit();
+    else            on_leave.emit();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

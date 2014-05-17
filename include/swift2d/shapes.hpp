@@ -6,12 +6,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_INCLUDE_BEHAVIORS_HPP
-#define SWIFT2D_INCLUDE_BEHAVIORS_HPP
+#ifndef SWIFT2D_INCLUDE_SHAPES_HPP
+#define SWIFT2D_INCLUDE_SHAPES_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/behaviors/Behavior.hpp>
-#include <swift2d/behaviors/MoveBehavior.hpp>
-#include <swift2d/behaviors/DeleteOnLeaveBehavior.hpp>
+#include <swift2d/shapes/RectangularShape.hpp>
+#include <swift2d/shapes/CircularShape.hpp>
 
-#endif  // SWIFT2D_INCLUDE_BEHAVIORS_HPP
+#endif  // SWIFT2D_INCLUDE_SHAPES_HPP

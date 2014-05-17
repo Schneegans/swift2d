@@ -20,16 +20,31 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SceneObjectPtr SceneObject::add() {
+void SceneObject::detach() {
+  if (Parent()) {
+    Parent()->remove(this);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObjectPtr SceneObject::add_object() {
   auto object(SceneObject::create());
   objects_.insert(object);
+  object->Parent = this;
   return object;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SceneObjectPtr const& SceneObject::add(SceneObjectPtr const& object) {
+SceneObjectPtr const& SceneObject::add_object(SceneObjectPtr const& object) {
   objects_.insert(object);
+
+  if (object->Parent()) {
+    object->detach();
+  }
+
+  object->Parent = this;
   return object;
 }
 
@@ -39,24 +54,47 @@ SceneObjectPtr const& SceneObject::add_at_root(SceneObjectPtr const& object) {
   if (Parent()) {
     return Parent()->add_at_root(object);
   } else {
-    return add(object);
+    return add_object(object);
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SceneObject::remove(SceneObjectPtr const& object) {
-  objects_.erase(object);
+void SceneObject::remove(SceneObjectPtr const& object, bool force) {
+  if (force) {
+    objects_.erase(object);
+  } else {
+    object->remove_flag_ = true;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SceneObject::remove(ComponentPtr const& component) {
-  auto delete_pos(std::remove(components_.begin(), components_.end(), component));
+void SceneObject::remove(SceneObject* object, bool force) {
+  if (force) {
+    for (auto& ptr: objects_) {
+      if (ptr.get() == object) {
+        objects_.erase(ptr);
+        break;
+      }
+    }
+  } else {
+    object->remove_flag_ = true;
+  }
+}
 
-  if (delete_pos != components_.end()) {
-    (*delete_pos)->set_user(nullptr);
-    components_.erase(delete_pos, components_.end());
+////////////////////////////////////////////////////////////////////////////////
+
+void SceneObject::remove(ComponentPtr const& component, bool force) {
+  if (force) {
+    auto delete_pos(std::remove(components_.begin(), components_.end(), component));
+
+    if (delete_pos != components_.end()) {
+      (*delete_pos)->set_user(nullptr);
+      components_.erase(delete_pos, components_.end());
+    }
+  } else {
+    component->remove_flag_ = true;
   }
 }
 
@@ -95,14 +133,24 @@ void SceneObject::update(double time) {
     WorldTransform = Transform.get();
   }
 
-  for (auto const& component: components_) {
-    if (component->Enabled.get()) {
-      component->update(time);
+  for (auto current(components_.begin()), next(current);
+       current != components_.end(); current = next) {
+    ++next;
+    if ((*current)->remove_flag_) {
+      components_.erase(current);
+    } else if ((*current)->Enabled.get()) {
+      (*current)->update(time);
     }
   }
 
-  for (auto const& object: objects_) {
-    object->update(time);
+  for (auto current(objects_.begin()), next(current);
+       current != objects_.end(); current = next) {
+    ++next;
+    if ((*current)->remove_flag_) {
+      objects_.erase(current);
+    } else {
+      (*current)->update(time);
+    }
   }
 }
 

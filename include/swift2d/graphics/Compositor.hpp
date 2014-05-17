@@ -60,10 +60,10 @@ class Compositor {
   mutable oglplus::Program *prog_;
 
   oglplus::Framebuffer* fbo_;
-  oglplus::Texture*     offscreen_color_;
-  oglplus::Texture*     offscreen_normal_;
-  oglplus::Texture*     offscreen_light_;
-  oglplus::Texture*     offscreen_emit_;
+  oglplus::Texture* offscreen_color_;
+  oglplus::Texture* offscreen_normal_;
+  oglplus::Texture* offscreen_light_;
+  oglplus::Texture* offscreen_emit_;
 
   ScreenQuadResourcePtr fullscreen_quad_;
 };

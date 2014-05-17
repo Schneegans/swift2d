@@ -4,6 +4,7 @@ SET(EV_INCLUDE_SEARCH_DIRS
 
 SET(EV_LIBRARY_SEARCH_DIRS
     /usr/lib
+    /usr/lib/x86_64-linux-gnu
 )
 
 message("-- checking for ev")
@@ -26,7 +27,7 @@ IF (NOT EV_INCLUDE_DIRS)
     IF (NOT _EV_FOUND_INC_DIRS)
         MESSAGE(FATAL_ERROR "find_ev.cmake: unable to find ev headers")
     ENDIF (NOT _EV_FOUND_INC_DIRS)
-    
+
     FOREACH(_INC_DIR ${_EV_FOUND_INC_DIRS})
         LIST(APPEND EV_INCLUDE_DIRS ${_INC_DIR})
     ENDFOREACH(_INC_DIR ${_BOOST_FOUND_INC_DIRS})
@@ -55,11 +56,11 @@ IF (        EV_INCLUDE_DIRS
     ELSE (NOT _EV_FOUND_LIB_DIR)
         message("--  found matching version")
     ENDIF (NOT _EV_FOUND_LIB_DIR)
-    
+
     FOREACH(_LIB_DIR ${_EV_FOUND_LIB_DIR})
         LIST(APPEND EV_LIBRARIES ${_LIB_DIR}/libev.so)
     ENDFOREACH(_LIB_DIR ${_EV_FOUND_INC_DIRS})
-    
+
 
 ENDIF(        EV_INCLUDE_DIRS
       AND NOT EV_LIBRARIES)

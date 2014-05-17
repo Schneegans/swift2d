@@ -6,54 +6,36 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_BEHAVIOR_HPP
-#define SWIFT2D_BEHAVIOR_HPP
+#ifndef SWIFT2D_SHAPE_HPP
+#define SWIFT2D_SHAPE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/Component.hpp>
-#include <swift2d/math.hpp>
+#include <swift2d/components/TransformableComponent.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-// class Behavior;
-// typedef std::shared_ptr<Behavior>       BehaviorPtr;
-// typedef std::shared_ptr<const Behavior> ConstBehaviorPtr;
+class Shape;
+typedef std::shared_ptr<Shape>       ShapePtr;
+typedef std::shared_ptr<const Shape> ConstShapePtr;
 
 // -----------------------------------------------------------------------------
-template<typename UserType>
-class Behavior : public Component {
+class Shape : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ---------------------------------------------------------------- properties
-
   // ------------------------------------------------------------ public methods
-  virtual void update(double time) {};
-
-  void set_user(UserType u) {
-    Component::set_user(u);
-    user_ = u;
-  }
-
-  UserType get_user() const {
-    return user_;
-  }
-
- ///////////////////////////////////////////////////////////////////////////////
- // -------------------------------------------------------- protected interface
- protected:
-  Behavior() : user_(nullptr) {}
-
-  UserType user_;
+  virtual bool contains(ShapePtr const& other) = 0;
+  virtual bool intersects(ShapePtr const& other) = 0;
 };
+
+// -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_BEHAVIOR_HPP
+#endif  // SWIFT2D_SHAPE_HPP

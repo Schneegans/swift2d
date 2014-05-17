@@ -34,6 +34,39 @@ class Mover: public MoveBehavior {
 
 
 
+class Bullet: public SceneObject {
+ public:
+  Bullet(SceneObjectPtr const& scene) {
+
+    auto move = add<MoveBehavior>();
+         move->LinearSpeed.set(10);
+
+    auto tex = add<SpriteComponent>();
+         tex->Depth = 10.0f;
+         tex->Emit = 1.0f;
+         tex->Sprite = SpriteResource::create();
+         tex->Diffuse = TextureResource::create("bullet.png");
+         tex->Transform = math::make_scale(1.5f);
+
+    auto light = add<PointLightComponent>();
+         light->Depth = 1.0f;
+         light->Sprite = LightResource::create();
+         light->Transform = math::make_scale(10.0f);
+         light->Tex = TextureResource::create("light.png");
+
+    auto shape = add<CircularShape>();
+
+    auto deleter = add<DeleteOnLeaveBehavior>();
+         deleter->set_shapes(shape, scene->get_component<CircularShape>());
+
+  }
+};
+
+
+
+
+
+
 
 int main(int argc, char** argv) {
 
@@ -47,6 +80,10 @@ int main(int argc, char** argv) {
 
   // example scene setup -------------------------------------------------------
   auto scene = SceneObject::create();
+
+  auto field = scene->add<CircularShape>();
+       field->Transform = math::make_scale(2);
+
   auto sun = scene->add<PointLightComponent>();
        sun->Sprite = LightResource::create();
        sun->Transform = math::make_scale(5) * math::make_translate(-0.5, 0.5);
@@ -64,7 +101,7 @@ int main(int argc, char** argv) {
   camera->Size = math::vec2(2.f, 2.f);
 
   // planet
-  auto planet = scene->add();
+  auto planet = scene->add_object();
 
   auto sprite = planet->add<SpriteComponent>();
        sprite->Depth = 0.0f;
@@ -76,7 +113,7 @@ int main(int argc, char** argv) {
        boing->set_sound(new SoundResource("sound.wav"));
 
   // player
-  auto player = scene->add();
+  auto player = scene->add_object();
        player->Transform = math::make_scale(0.1);
 
   auto mover = std::make_shared<Mover>(window);
@@ -90,7 +127,7 @@ int main(int argc, char** argv) {
        ship->Sprite = bg->Sprite;
        ship->Diffuse = TextureResource::create("ship.png");
 
-  auto light_object = scene->add();
+  auto light_object = scene->add_object();
   auto light = light_object->add<PointLightComponent>();
        light->Depth = 1.0f;
        light->Sprite = LightResource::create();
@@ -135,8 +172,12 @@ int main(int argc, char** argv) {
     if (key == swift::Key::ESCAPE) {
       renderer.stop();
       loop.stop();
-    } else if (key == swift::Key::SPACE && action == 0) {
-      boing->play();
+    } else if (key == swift::Key::SPACE && action != 1) {
+      // boing->play();
+
+      auto bullet = std::make_shared<Bullet>(scene);
+      scene->add_object(bullet);
+      bullet->Transform = player->Transform();
     }
   });
 

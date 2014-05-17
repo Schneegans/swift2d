@@ -50,7 +50,6 @@ class Component {
   // True, if this core should be processed in the serialization and traversal.
   Bool Enabled;
 
-
   // ----------------------------------------------------- contruction interface
   // Contstructor is protected --- do not instantiate this class directly
   virtual ~Component() {}
@@ -63,15 +62,19 @@ class Component {
   void set_user(SceneObject* u) { user_ = u; }
   SceneObject* get_user() const { return user_; }
 
+  friend class SceneObject;
+
  ///////////////////////////////////////////////////////////////////////////////
  // -------------------------------------------------------- protected interface
  protected:
-  Component() : Enabled(true), user_(nullptr) {}
+  Component() : Enabled(true), user_(nullptr), remove_flag_(false) {}
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   SceneObject* user_;
+
+  bool remove_flag_;
 };
 
 }
