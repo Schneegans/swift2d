@@ -65,8 +65,7 @@ class LightMaterial : public Material {
                          math::mat3 const& object_transform) const {
     Texture()->bind(ctx, 0);
     LightShader::instance()->use(ctx);
-    LightShader::instance()->set_uniform("projection", ctx.projection_matrix);
-    LightShader::instance()->set_uniform("transform", object_transform);
+    LightShader::instance()->set_common_uniforms(ctx, object_transform);
     LightShader::instance()->set_uniform("screen_size", ctx.size);
     LightShader::instance()->set_uniform("g_buffer_normal", 2);
     LightShader::instance()->set_uniform("light_tex", 0);

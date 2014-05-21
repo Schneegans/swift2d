@@ -7,40 +7,36 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/ShadelessTextureShader.hpp>
 #include <swift2d/materials/shader_snippets.hpp>
 
 namespace swift {
+namespace shader_snippets {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ShadelessTextureShader::ShadelessTextureShader()
-  : Shader(
-    // vertex shader
-    shader_snippets::get_quad_vertext_shader(),
-    // fragment shader
-    R"(
-      #version 330
+std::string get_quad_vertext_shader() {
+  return R"(
+    #version 330
 
-      // varyings
-      in vec2 tex_coords;
+    // input
+    layout(location=0) in vec2 position;
 
-      // uniforms
-      uniform sampler2D diffuse;
+    // uniforms
+    uniform mat3 projection;
+    uniform mat3 transform;
 
-      // output
-      layout (location = 0) out vec4 fragColor;
-      layout (location = 1) out vec4 fragNormal;
-      layout (location = 2) out vec4 fragEmit;
+    // varyings
+    out vec2 tex_coords;
 
-      void main(void){
-        fragColor  = texture2D(diffuse, tex_coords);
-        fragNormal = vec4(0.5, 0.5, 0, fragColor.a);
-        fragEmit   = vec4(1.0, 0, 0, fragColor.a);
-      }
-    )"
-  ) {}
+    void main(void) {
+      vec3 pos    = projection * transform * vec3(position, 1.0);
+      tex_coords  = position*0.5 + 0.5;
+      gl_Position = vec4(pos.xy, 0.0, 1.0);
+    }
+  )";
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
+}
 }

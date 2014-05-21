@@ -6,12 +6,25 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_INCLUDE_MATERIALS_HPP
-#define SWIFT2D_INCLUDE_MATERIALS_HPP
+#ifndef SWIFT2D_SHADER_SNIPPETS_HPP
+#define SWIFT2D_SHADER_SNIPPETS_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/ShadelessTextureMaterial.hpp>
-#include <swift2d/materials/BumpTextureMaterial.hpp>
-#include <swift2d/materials/LightMaterial.hpp>
+#include <string>
 
-#endif // SWIFT2D_INCLUDE_MATERIALS_HPP
+namespace swift {
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+// -----------------------------------------------------------------------------
+namespace shader_snippets {
+  std::string get_quad_vertext_shader();
+}
+
+
+// -----------------------------------------------------------------------------
+
+}
+
+#endif // SWIFT2D_SHADER_SNIPPETS_HPP

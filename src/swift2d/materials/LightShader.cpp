@@ -8,6 +8,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/LightShader.hpp>
+#include <swift2d/materials/shader_snippets.hpp>
 
 namespace swift {
 
@@ -15,36 +16,21 @@ namespace swift {
 
 LightShader::LightShader()
   : Shader(
-    // vertex shader -----------------------------------------------------------
+    // vertex shader
+    shader_snippets::get_quad_vertext_shader(),
+    // fragment shader
     R"(
       #version 330
-
-      // input
-      layout(location=0) in vec2 position;
-
-      // uniforms
-      uniform mat3 projection;
-      uniform mat3 transform;
 
       // varyings
-      out vec2 tex_coords;
-
-      void main(void) {
-        vec3 pos    = projection * transform * vec3(position, 1.0);
-        tex_coords  = position*0.5 + 0.5;
-        gl_Position = vec4(pos.xy, 0.0, 1.0);
-      }
-    )",
-    // fragment shader ---------------------------------------------------------
-    R"(
-      #version 330
-
       in vec2 tex_coords;
 
+      // uniforms
       uniform ivec2 screen_size;
       uniform sampler2D light_tex;
       uniform sampler2D g_buffer_normal;
 
+      // output
       out vec3 fragColor;
 
       void main(void){

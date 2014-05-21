@@ -68,19 +68,13 @@ int main(int argc, char** argv) {
   MainLoop loop;
 
   // load resources ------------------------------------------------------------
-  TextureDatabase::instance()->add("bullet", Texture::create("bullet.png"));
-  TextureDatabase::instance()->add("background", Texture::create("bg.png"));
-  TextureDatabase::instance()->add("diffuse", Texture::create("diffuse.png"));
-  TextureDatabase::instance()->add("normal", Texture::create("normal.png"));
-  TextureDatabase::instance()->add("ship", Texture::create("ship.png"));
+  MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_file("bg.png"));
+  MaterialDatabase::instance()->add("ship",       ShadelessTextureMaterial::create_from_file("ship.png"));
+  MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_file("bullet.png"));
 
-  MaterialDatabase::instance()->add("planet", ShadelessTextureMaterial::create_from_database("diffuse"));
-  MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_database("background"));
-  MaterialDatabase::instance()->add("ship", ShadelessTextureMaterial::create_from_database("ship"));
-  MaterialDatabase::instance()->add("bullet", ShadelessTextureMaterial::create_from_database("bullet"));
+  MaterialDatabase::instance()->add("planet",     BumpTextureMaterial::create_from_files("diffuse.png", "normal.png"));
 
-  MaterialDatabase::instance()->add("light", LightMaterial::create_from_file("light.png"));
-
+  MaterialDatabase::instance()->add("light",      LightMaterial::create_from_file("light.png"));
 
 
   // window setup --------------------------------------------------------------

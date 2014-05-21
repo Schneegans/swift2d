@@ -7,14 +7,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/ShadelessTextureShader.hpp>
+#include <swift2d/materials/BumpTextureShader.hpp>
 #include <swift2d/materials/shader_snippets.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ShadelessTextureShader::ShadelessTextureShader()
+BumpTextureShader::BumpTextureShader()
   : Shader(
     // vertex shader
     shader_snippets::get_quad_vertext_shader(),
@@ -27,6 +27,8 @@ ShadelessTextureShader::ShadelessTextureShader()
 
       // uniforms
       uniform sampler2D diffuse;
+      uniform sampler2D normal;
+      uniform float     emit;
 
       // output
       layout (location = 0) out vec4 fragColor;
@@ -35,8 +37,8 @@ ShadelessTextureShader::ShadelessTextureShader()
 
       void main(void){
         fragColor  = texture2D(diffuse, tex_coords);
-        fragNormal = vec4(0.5, 0.5, 0, fragColor.a);
-        fragEmit   = vec4(1.0, 0, 0, fragColor.a);
+        fragNormal  = texture2D(normal, tex_coords);
+        fragEmit   = vec4(emit, 0, 0, fragColor.a);
       }
     )"
   ) {}

@@ -6,12 +6,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SHADELESS_TEXTURE_MATERIAL_HPP
-#define SWIFT2D_SHADELESS_TEXTURE_MATERIAL_HPP
+#ifndef SWIFT2D_BUMP_TEXTURE_MATERIAL_HPP
+#define SWIFT2D_BUMP_TEXTURE_MATERIAL_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Material.hpp>
-#include <swift2d/materials/ShadelessTextureShader.hpp>
+#include <swift2d/materials/BumpTextureShader.hpp>
 #include <swift2d/resources/Texture.hpp>
 
 namespace swift {
@@ -20,13 +20,13 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class ShadelessTextureMaterial;
-typedef std::shared_ptr<ShadelessTextureMaterial>       ShadelessTextureMaterialPtr;
-typedef std::shared_ptr<const ShadelessTextureMaterial> ConstShadelessTextureMaterialPtr;
-typedef Property<ShadelessTextureMaterialPtr>           ShadelessTextureMaterialProperty;
+class BumpTextureMaterial;
+typedef std::shared_ptr<BumpTextureMaterial>       BumpTextureMaterialPtr;
+typedef std::shared_ptr<const BumpTextureMaterial> ConstBumpTextureMaterialPtr;
+typedef Property<BumpTextureMaterialPtr>           BumpTextureMaterialProperty;
 
 // -----------------------------------------------------------------------------
-class ShadelessTextureMaterial : public Material {
+class BumpTextureMaterial : public Material {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -34,28 +34,38 @@ class ShadelessTextureMaterial : public Material {
 
   // ---------------------------------------------------------------- properties
   TextureProperty Texture;
+  TextureProperty NormalMap;
+  Float           Emit;
 
   // ----------------------------------------------------- contruction interface
   // Creates a new material and returns a shared pointer.
-  static ShadelessTextureMaterialPtr create() {
-    return std::make_shared<ShadelessTextureMaterial>();
+  static BumpTextureMaterialPtr create() {
+    return std::make_shared<BumpTextureMaterial>();
   }
 
-  static ShadelessTextureMaterialPtr create_from_file(std::string const& file) {
-    auto mat(std::make_shared<ShadelessTextureMaterial>());
-    mat->Texture = Texture::create(file);
+  static BumpTextureMaterialPtr create_from_files(std::string const& texture,
+                                                  std::string const& normal_texture,
+                                                  float emit = 0.f) {
+    auto mat(std::make_shared<BumpTextureMaterial>());
+    mat->Texture = Texture::create(texture);
+    mat->NormalMap = Texture::create(normal_texture);
+    mat->Emit = emit;
     return mat;
   }
 
-  static ShadelessTextureMaterialPtr create_from_database(std::string const& id) {
-    auto mat(std::make_shared<ShadelessTextureMaterial>());
+  static BumpTextureMaterialPtr create_from_database(std::string const& id,
+                                                     std::string const& normal_id,
+                                                     float emit = 0.f) {
+    auto mat(std::make_shared<BumpTextureMaterial>());
     mat->Texture = TextureDatabase::instance()->get(id);
+    mat->NormalMap = TextureDatabase::instance()->get(normal_id);
+    mat->Emit = emit;
     return mat;
   }
 
   // creates a copy from this
-  ShadelessTextureMaterialPtr create_copy() const {
-    return std::make_shared<ShadelessTextureMaterial>(*this);
+  BumpTextureMaterialPtr create_copy() const {
+    return std::make_shared<BumpTextureMaterial>(*this);
   }
 
   // ------------------------------------------------------------ public methods
@@ -63,9 +73,12 @@ class ShadelessTextureMaterial : public Material {
   /* virtual */ void use(RenderContext const& ctx,
                          math::mat3 const& object_transform) const {
     Texture()->bind(ctx, 0);
-    ShadelessTextureShader::instance()->use(ctx);
-    ShadelessTextureShader::instance()->set_common_uniforms(ctx, object_transform);
-    ShadelessTextureShader::instance()->set_uniform("diffuse", 0);
+    NormalMap()->bind(ctx, 1);
+    BumpTextureShader::instance()->use(ctx);
+    BumpTextureShader::instance()->set_common_uniforms(ctx, object_transform);
+    BumpTextureShader::instance()->set_uniform("diffuse", 0);
+    BumpTextureShader::instance()->set_uniform("normal", 1);
+    BumpTextureShader::instance()->set_uniform("emit", Emit());
   }
 };
 
@@ -73,4 +86,4 @@ class ShadelessTextureMaterial : public Material {
 
 }
 
-#endif // SWIFT2D_SHADELESS_TEXTURE_MATERIAL_HPP
+#endif // SWIFT2D_BUMP_TEXTURE_MATERIAL_HPP
