@@ -11,11 +11,8 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/utils/Singleton.hpp>
 #include <swift2d/properties.hpp>
-
-#include <mutex>
-#include <thread>
-#include <vector>
 
 namespace swift {
 
@@ -24,35 +21,25 @@ namespace swift {
 // draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
-// shared pointer type definition ----------------------------------------------
-class LightResource;
-typedef std::shared_ptr<LightResource>       LightResourcePtr;
-typedef std::shared_ptr<const LightResource> ConstLightResourcePtr;
-typedef Property<LightResourcePtr>           LightResourceProperty;
-
 // -----------------------------------------------------------------------------
-class LightResource {
+class LightResource: public Singleton<LightResource> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ---------------------------------------------------- construction interface
-  LightResource();
-  ~LightResource();
-
-  // Creates a new component and returns a shared pointer.
-  template <typename... Args>
-  static LightResourcePtr create(Args&& ... a) {
-    return std::make_shared<LightResource>(a...);
-  }
-
   // Draws the LightResource to the given context.
   void draw(RenderContext const& context, math::mat3 const& transform) const;
+
+  friend class Singleton<LightResource>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  // this class is a Singleton --- private c'tor and d'tor
+  LightResource();
+  ~LightResource();
+
   void upload_to(RenderContext const& context) const;
 
   mutable oglplus::Shader  *vs, *fs;

@@ -13,7 +13,7 @@
 #include <swift2d/components/DrawableComponent.hpp>
 
 #include <swift2d/resources/LightResource.hpp>
-#include <swift2d/resources/TextureResource.hpp>
+#include <swift2d/resources/Texture.hpp>
 
 #include <iostream>
 
@@ -36,12 +36,11 @@ class PointLightComponent : public DrawableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float                   Depth;
-  LightResourceProperty   Sprite;
-  TextureResourceProperty Tex;
+  Float           Depth;
+  TextureProperty Tex;
 
   // ----------------------------------------------------- contruction interface
-  PointLightComponent() : Sprite(nullptr), Tex(nullptr) {}
+  PointLightComponent() : Tex(nullptr) {}
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
@@ -57,17 +56,12 @@ class PointLightComponent : public DrawableComponent {
   // ------------------------------------------------------------ public methods
   void draw(RenderContext const& ctx) {
     Tex()->bind(ctx, 0);
-    Sprite()->draw(ctx, WorldTransform.get());
+    LightResource::instance()->draw(ctx, WorldTransform.get());
   }
 
   void serialize(SerializedScenePtr& scene) const {
     scene->lights.insert(std::make_pair(Depth.get(), create_copy()));
   }
-
-
- ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
- private:
 
 };
 

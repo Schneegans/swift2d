@@ -6,7 +6,6 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-// class header
 #include <swift2d/components/ListenerComponent.hpp>
 
 #include <swift2d/scene/SceneObject.hpp>

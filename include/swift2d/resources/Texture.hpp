@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FIBRGLASS_TEXTURE_RESOURCE_HPP
-#define FIBRGLASS_TEXTURE_RESOURCE_HPP
+#ifndef FIBRGLASS_TEXTURE_HPP
+#define FIBRGLASS_TEXTURE_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
@@ -23,13 +23,13 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class TextureResource;
-typedef std::shared_ptr<TextureResource>       TextureResourcePtr;
-typedef std::shared_ptr<const TextureResource> ConstTextureResourcePtr;
-typedef Property<TextureResourcePtr>           TextureResourceProperty;
+class Texture;
+typedef std::shared_ptr<Texture>       TexturePtr;
+typedef std::shared_ptr<const Texture> ConstTexturePtr;
+typedef Property<TexturePtr>           TextureProperty;
 
 // -----------------------------------------------------------------------------
-class TextureResource {
+class Texture {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -37,13 +37,13 @@ class TextureResource {
 
   // ---------------------------------------------------- construction interface
   template <typename... Args>
-  static TextureResourcePtr create(Args&& ... a) {
-    return std::make_shared<TextureResource>(a...);
+  static TexturePtr create(Args&& ... a) {
+    return std::make_shared<Texture>(a...);
   }
 
-  TextureResource() {};
-  TextureResource(std::string const& file_name);
-  ~TextureResource();
+  Texture() {};
+  Texture(std::string const& file_name);
+  ~Texture();
 
   // initializes the contained data from a given texture file.
   void load_from_file(std::string const& file_name);
@@ -66,4 +66,4 @@ class TextureResource {
 
 }
 
-#endif // FIBRGLASS_TEXTURE_RESOURCE_HPP
+#endif // FIBRGLASS_TEXTURE_HPP

@@ -11,11 +11,8 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/utils/Singleton.hpp>
 #include <swift2d/properties.hpp>
-
-#include <mutex>
-#include <thread>
-#include <vector>
 
 namespace swift {
 
@@ -24,34 +21,25 @@ namespace swift {
 // draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
-// shared pointer type definition ----------------------------------------------
-class ScreenQuadResource;
-typedef std::shared_ptr<ScreenQuadResource>       ScreenQuadResourcePtr;
-typedef std::shared_ptr<const ScreenQuadResource> ConstScreenQuadResourcePtr;
-typedef Property<ScreenQuadResourcePtr>           ScreenQuadResourceProperty;
-
 // -----------------------------------------------------------------------------
-class ScreenQuadResource {
+class ScreenQuadResource: public Singleton<ScreenQuadResource> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ---------------------------------------------------- construction interface
-  template <typename... Args>
-  static ScreenQuadResourcePtr create(Args&& ... a) {
-    return std::make_shared<ScreenQuadResource>(a...);
-  }
-
-  ScreenQuadResource();
-  ~ScreenQuadResource();
-
   // Draws the ScreenQuadResource to the given context.
   void draw(RenderContext const& context) const;
+
+  friend class Singleton<ScreenQuadResource>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  // this class is a Singleton --- private c'tor and d'tor
+  ScreenQuadResource();
+  ~ScreenQuadResource();
+
   void upload_to(RenderContext const& context) const;
 
   mutable oglplus::VertexArray* rectangle_;

@@ -10,8 +10,6 @@
 #define SWIFT2D_INCLUDE_RESOURCES_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/resources/LightDatabase.hpp>
-#include <swift2d/resources/SpriteDatabase.hpp>
 #include <swift2d/resources/TextureDatabase.hpp>
 #include <swift2d/resources/SoundDatabase.hpp>
 

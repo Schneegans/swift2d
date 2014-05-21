@@ -10,9 +10,7 @@
 
 namespace swift {
 
-Scheduler::Scheduler() {}
-
-Scheduler::~Scheduler() {}
+////////////////////////////////////////////////////////////////////////////////
 
 void Scheduler::execute_delayed(std::function<void()> callback, double delay) {
 
@@ -23,6 +21,9 @@ void Scheduler::execute_delayed(std::function<void()> callback, double delay) {
   tasks_.insert(std::make_pair(timer, callback));
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+
 void Scheduler::self_callback(ev::timer& timer, int revents) {
   auto callback(tasks_.find(&timer));
 
@@ -32,5 +33,8 @@ void Scheduler::self_callback(ev::timer& timer, int revents) {
     delete& timer;
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
 
 }

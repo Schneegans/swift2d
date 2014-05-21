@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/resources/TextureResource.hpp>
+#include <swift2d/resources/Texture.hpp>
 
 #include <oglplus/images/png.hpp>
 #include <oglplus/images/newton.hpp>
@@ -16,7 +16,7 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TextureResource::TextureResource(std::string const& file_name)
+Texture::Texture(std::string const& file_name)
   : texture_(nullptr)
   , file_name_(file_name)
   , needs_update_(true)
@@ -24,20 +24,20 @@ TextureResource::TextureResource(std::string const& file_name)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TextureResource::~TextureResource() {
+Texture::~Texture() {
   if (texture_) delete texture_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TextureResource::load_from_file(std::string const& file_name) {
+void Texture::load_from_file(std::string const& file_name) {
   file_name_ = file_name_;
   needs_update_ = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TextureResource::bind(RenderContext const& context, unsigned location) const {
+void Texture::bind(RenderContext const& context, unsigned location) const {
   if (needs_update_) {
     upload_to(context);
   }
@@ -48,13 +48,13 @@ void TextureResource::bind(RenderContext const& context, unsigned location) cons
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TextureResource::unbind() const {
+void Texture::unbind() const {
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TextureResource::upload_to(RenderContext const& context) const {
+void Texture::upload_to(RenderContext const& context) const {
 
   if (texture_) {
     delete texture_;

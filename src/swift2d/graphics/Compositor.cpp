@@ -9,6 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/Compositor.hpp>
 #include <swift2d/components/DrawableComponent.hpp>
+#include <swift2d/resources/ScreenQuadResource.hpp>
 
 #include <sstream>
 
@@ -40,7 +41,6 @@ void Compositor::init(RenderContext const& ctx) {
   clean_up();
 
   if (EnableDynamicLighting()) {
-    fullscreen_quad_ = ScreenQuadResource::create();
 
     // create textures for G-Buffer and L-Buffer ---------------------------------
     offscreen_color_  = new oglplus::Texture();
@@ -161,7 +161,7 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
   );
 
   if (EnableDynamicLighting()) {
-    if (!fullscreen_quad_) {
+    if (!fbo_) {
       init(ctx);
     }
 
@@ -191,7 +191,7 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
 
 void Compositor::draw_lights(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
   if (EnableDynamicLighting()) {
-    if (!fullscreen_quad_) {
+    if (!fbo_) {
       init(ctx);
     }
 
@@ -221,7 +221,7 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene, RenderContext
 
 void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
   if (EnableDynamicLighting()) {
-    if (!fullscreen_quad_) {
+    if (!fbo_) {
       init(ctx);
     }
 
@@ -248,21 +248,21 @@ void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext c
 
     (*prog_/"debug") = 0;
 
-    fullscreen_quad_->draw(ctx);
+    ScreenQuadResource::instance()->draw(ctx);
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Compositor::clean_up() {
-  if(vs_)               delete vs_;
-  if(fs_)               delete fs_;
-  if(prog_)             delete prog_;
-  if(fbo_)              delete fbo_;
-  if(offscreen_color_)  delete offscreen_color_;
-  if(offscreen_normal_) delete offscreen_normal_;
-  if(offscreen_light_)  delete offscreen_light_;
-  if(offscreen_emit_)   delete offscreen_emit_;
+  if(vs_)               delete vs_;                 vs_ = nullptr;
+  if(fs_)               delete fs_;                 fs_ = nullptr;
+  if(prog_)             delete prog_;               prog_ = nullptr;
+  if(fbo_)              delete fbo_;                fbo_ = nullptr;
+  if(offscreen_color_)  delete offscreen_color_;    offscreen_color_ = nullptr;
+  if(offscreen_normal_) delete offscreen_normal_;   offscreen_normal_ = nullptr;
+  if(offscreen_light_)  delete offscreen_light_;    offscreen_light_ = nullptr;
+  if(offscreen_emit_)   delete offscreen_emit_;     offscreen_emit_ = nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

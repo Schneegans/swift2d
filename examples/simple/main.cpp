@@ -44,13 +44,11 @@ class Bullet: public SceneObject {
     auto tex = add<SpriteComponent>();
          tex->Depth = 10.0f;
          tex->Emit = 1.0f;
-         tex->Sprite = SpriteDatabase::instance()->get("normal");
          tex->Diffuse = TextureDatabase::instance()->get("bullet");
          tex->Transform = math::make_scale(1.5f);
 
     auto light = add<PointLightComponent>();
          light->Depth = 1.0f;
-         light->Sprite = LightDatabase::instance()->get("light");
          light->Transform = math::make_scale(5.0f);
          light->Tex = TextureDatabase::instance()->get("light");
 
@@ -75,14 +73,12 @@ int main(int argc, char** argv) {
   MainLoop loop;
 
   // load resources ------------------------------------------------------------
-  LightDatabase::instance()->add("light", LightResource::create());
-  SpriteDatabase::instance()->add("normal", SpriteResource::create());
-  TextureDatabase::instance()->add("light", TextureResource::create("light.png"));
-  TextureDatabase::instance()->add("bullet", TextureResource::create("bullet.png"));
-  TextureDatabase::instance()->add("background", TextureResource::create("bg.png"));
-  TextureDatabase::instance()->add("diffuse", TextureResource::create("diffuse.png"));
-  TextureDatabase::instance()->add("normal", TextureResource::create("normal.png"));
-  TextureDatabase::instance()->add("ship", TextureResource::create("ship.png"));
+  TextureDatabase::instance()->add("light", Texture::create("light.png"));
+  TextureDatabase::instance()->add("bullet", Texture::create("bullet.png"));
+  TextureDatabase::instance()->add("background", Texture::create("bg.png"));
+  TextureDatabase::instance()->add("diffuse", Texture::create("diffuse.png"));
+  TextureDatabase::instance()->add("normal", Texture::create("normal.png"));
+  TextureDatabase::instance()->add("ship", Texture::create("ship.png"));
 
 
   // window setup --------------------------------------------------------------
@@ -96,14 +92,12 @@ int main(int argc, char** argv) {
        field->Transform = math::make_scale(2);
 
   auto sun = scene->add<PointLightComponent>();
-       sun->Sprite = LightDatabase::instance()->get("light");
        sun->Transform = math::make_scale(5) * math::make_translate(-0.5, 0.5);
        sun->Tex = TextureDatabase::instance()->get("light");
 
   auto bg = scene->add<SpriteComponent>();
        bg->Depth = -1000.0f;
        bg->Emit = 1.0f;
-       bg->Sprite = SpriteDatabase::instance()->get("normal");
        bg->Diffuse = TextureDatabase::instance()->get("background");
        bg->Transform = math::make_scale(2.f);
 
@@ -116,12 +110,11 @@ int main(int argc, char** argv) {
 
   auto sprite = planet->add<SpriteComponent>();
        sprite->Depth = 0.0f;
-       sprite->Sprite = bg->Sprite;
        sprite->Diffuse = TextureDatabase::instance()->get("diffuse");
        sprite->Normal = TextureDatabase::instance()->get("normal");
 
   auto boing = planet->add<SoundComponent>();
-       boing->set_sound(new SoundResource("sound.wav"));
+       boing->set_sound(new Sound("sound.wav"));
 
   // player
   auto player = scene->add_object();
@@ -135,13 +128,11 @@ int main(int argc, char** argv) {
 
   auto ship = player->add<SpriteComponent>();
        ship->Depth = 1.0f;
-       ship->Sprite = bg->Sprite;
        ship->Diffuse = TextureDatabase::instance()->get("ship");
 
   auto light_object = scene->add_object();
   auto light = light_object->add<PointLightComponent>();
        light->Depth = 1.0f;
-       light->Sprite = LightDatabase::instance()->get("light");
        light->Transform = math::make_scale(1);
        light->Tex = TextureDatabase::instance()->get("light");
 

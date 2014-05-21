@@ -12,7 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/TransformableComponent.hpp>
 
-#include <swift2d/resources/SoundResource.hpp>
+#include <swift2d/resources/Sound.hpp>
 #include <swift2d/openal.hpp>
 #include <iostream>
 
@@ -74,7 +74,7 @@ class SoundComponent : public TransformableComponent {
   }
 
   // TODO: make shared!
-  void set_sound(SoundResource* sound) {
+  void set_sound(Sound* sound) {
     stop();
     sound_ = sound;
     source_->Buffer(sound_->get_buffer());
@@ -84,7 +84,7 @@ class SoundComponent : public TransformableComponent {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  SoundResource* sound_;
+  Sound* sound_;
   oalplus::Source* source_;
 
 };

@@ -11,11 +11,8 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/utils/Singleton.hpp>
 #include <swift2d/properties.hpp>
-
-#include <mutex>
-#include <thread>
-#include <vector>
 
 namespace swift {
 
@@ -24,34 +21,25 @@ namespace swift {
 // draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
-// shared pointer type definition ----------------------------------------------
-class SpriteResource;
-typedef std::shared_ptr<SpriteResource>       SpriteResourcePtr;
-typedef std::shared_ptr<const SpriteResource> ConstSpriteResourcePtr;
-typedef Property<SpriteResourcePtr>           SpriteResourceProperty;
-
 // -----------------------------------------------------------------------------
-class SpriteResource {
+class SpriteResource: public Singleton<SpriteResource> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ---------------------------------------------------- construction interface
-  template <typename... Args>
-  static SpriteResourcePtr create(Args&& ... a) {
-    return std::make_shared<SpriteResource>(a...);
-  }
-
-  SpriteResource();
-  ~SpriteResource();
-
   // Draws the SpriteResource to the given context.
   void draw(RenderContext const& context, math::mat3 const& transform, bool with_normals, float emit) const;
+
+  friend class Singleton<SpriteResource>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  // this class is a Singleton --- private c'tor and d'tor
+  SpriteResource();
+  ~SpriteResource();
+
   void upload_to(RenderContext const& context) const;
 
   mutable oglplus::Shader  *vs, *fs;

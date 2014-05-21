@@ -12,7 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
-#include <swift2d/resources/ScreenQuadResource.hpp>
+#include <swift2d/properties.hpp>
 
 namespace swift {
 
@@ -64,8 +64,6 @@ class Compositor {
   oglplus::Texture* offscreen_normal_;
   oglplus::Texture* offscreen_light_;
   oglplus::Texture* offscreen_emit_;
-
-  ScreenQuadResourcePtr fullscreen_quad_;
 };
 
 }

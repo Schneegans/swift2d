@@ -12,7 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Singleton.hpp>
 #include <swift2d/resources/Database.hpp>
-#include <swift2d/resources/SoundResource.hpp>
+#include <swift2d/resources/Sound.hpp>
 
 namespace swift {
 
@@ -20,7 +20,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class SoundDatabase : public Database<SoundResource>,
+class SoundDatabase : public Database<Sound>,
                       public Singleton<SoundDatabase> {
 
  ///////////////////////////////////////////////////////////////////////////////

@@ -6,37 +6,46 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_LIGHT_DATABASE_HPP
-#define SWIFT2D_LIGHT_DATABASE_HPP
+#ifndef FIBRGLASS_SOUND_HPP
+#define FIBRGLASS_SOUND_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/utils/Singleton.hpp>
-#include <swift2d/resources/Database.hpp>
-#include <swift2d/resources/LightResource.hpp>
+#include <swift2d/openal.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
+// Stores geometry data. A mesh can be loaded from an Assimp mesh and the     //
+// draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class LightDatabase : public Database<LightResource>,
-                      public Singleton<LightDatabase> {
+class Sound {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-  friend class Singleton<LightDatabase>;
+
+  Sound() {};
+  Sound(std::string const& file_name) {
+    load_from_file(file_name);
+  }
+
+  // initializes the contained data from a given texture file.
+  void load_from_file(std::string const& file_name) {
+    oalplus::ALUtilityToolkit alut(false);
+    buffer_ = alut.CreateBufferFromFile(file_name.c_str());
+  }
+
+  oalplus::Buffer const& get_buffer() const { return buffer_; }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  // this class is a Singleton --- private c'tor and d'tor
-  LightDatabase() {}
-  ~LightDatabase() {}
+  oalplus::Buffer buffer_;
 
 };
 
 }
 
-#endif  // SWIFT2D_LIGHT_DATABASE_HPP
+#endif // FIBRGLASS_SOUND_HPP
