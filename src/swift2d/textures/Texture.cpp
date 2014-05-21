@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/resources/Texture.hpp>
+#include <swift2d/textures/Texture.hpp>
 
 #include <oglplus/images/png.hpp>
 #include <oglplus/images/newton.hpp>

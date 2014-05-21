@@ -13,7 +13,7 @@
 #include <swift2d/materials/Material.hpp>
 #include <swift2d/materials/LightShader.hpp>
 #include <swift2d/databases/TextureDatabase.hpp>
-#include <swift2d/resources/Texture.hpp>
+#include <swift2d/textures/Texture.hpp>
 
 namespace swift {
 

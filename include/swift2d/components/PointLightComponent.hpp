@@ -13,7 +13,7 @@
 #include <swift2d/components/DrawableComponent.hpp>
 #include <swift2d/geometries/Quad.hpp>
 #include <swift2d/materials/LightMaterial.hpp>
-#include <swift2d/resources/Texture.hpp>
+#include <swift2d/textures/Texture.hpp>
 
 #include <iostream>
 

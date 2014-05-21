@@ -12,7 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Singleton.hpp>
 #include <swift2d/databases/Database.hpp>
-#include <swift2d/resources/Texture.hpp>
+#include <swift2d/textures/Texture.hpp>
 
 namespace swift {
 

@@ -12,7 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Material.hpp>
 #include <swift2d/materials/BumpTextureShader.hpp>
-#include <swift2d/resources/Texture.hpp>
+#include <swift2d/textures/Texture.hpp>
 
 namespace swift {
 
