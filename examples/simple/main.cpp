@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
   MainLoop loop;
 
   // load resources ------------------------------------------------------------
-  MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_file("bg.png"));
+  MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_file("bg.jpg"));
   MaterialDatabase::instance()->add("ship",       ShadelessTextureMaterial::create_from_file("ship.png"));
   MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_file("bullet.png"));
 

@@ -11,6 +11,9 @@
 
 #include <oglplus/images/png.hpp>
 #include <oglplus/images/newton.hpp>
+#include <stb_image/stb_image.h>
+#include <istream>
+#include <streambuf>
 
 namespace swift {
 
@@ -27,6 +30,7 @@ Texture::Texture(std::string const& file_name)
 Texture::~Texture() {
   if (texture_) delete texture_;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -60,17 +64,38 @@ void Texture::upload_to(RenderContext const& context) const {
     delete texture_;
   }
 
-  texture_ = new oglplus::Texture();
+  int width(0), height(0), channels(0);
+  unsigned char* data(stbi_load(file_name_.c_str(), &width, &height,
+                                &channels, STBI_default));
 
-  auto png  = oglplus::images::PNGImage(file_name_.c_str(), true, true);
+  bool success(data && width && height);
 
-  context.gl.Bound(oglplus::smart_enums::_2D(), *texture_)
-    .Image2D(png)
-    .MinFilter(oglplus::smart_enums::Linear())
-    .MagFilter(oglplus::smart_enums::Linear())
-    .Anisotropy(2.0f)
-    .WrapS(oglplus::smart_enums::ClampToEdge())
-    .WrapT(oglplus::smart_enums::ClampToEdge());
+  if (success) {
+    auto internal_format(channels > 3 ? oglplus::InternalFormat::RGBA : oglplus::InternalFormat::RGB);
+    auto format(channels > 3 ? oglplus::Format::RGBA : oglplus::Format::RGB);
+
+    texture_ = new oglplus::Texture();
+
+    context.gl.Bound(oglplus::smart_enums::_2D(), *texture_)
+      .Image2D(0,
+               internal_format,
+               width,
+               height,
+               0,
+               format,
+               oglplus::DataType::UnsignedByte,
+               data)
+
+      .MinFilter(oglplus::smart_enums::Linear())
+      .MagFilter(oglplus::smart_enums::Linear())
+      .Anisotropy(2.0f)
+      .WrapS(oglplus::smart_enums::ClampToEdge())
+      .WrapT(oglplus::smart_enums::ClampToEdge());
+
+  }
+
+  stbi_image_free(data);
+
 
   needs_update_ = false;
 }
