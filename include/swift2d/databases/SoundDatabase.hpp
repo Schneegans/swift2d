@@ -6,13 +6,13 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TEXTURE_DATABASE_HPP
-#define SWIFT2D_TEXTURE_DATABASE_HPP
+#ifndef SWIFT2D_SOUND_DATABASE_HPP
+#define SWIFT2D_SOUND_DATABASE_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Singleton.hpp>
-#include <swift2d/resources/Database.hpp>
-#include <swift2d/resources/Texture.hpp>
+#include <swift2d/databases/Database.hpp>
+#include <swift2d/resources/Sound.hpp>
 
 namespace swift {
 
@@ -20,23 +20,23 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class TextureDatabase : public Database<Texture>,
-                        public Singleton<TextureDatabase> {
+class SoundDatabase : public Database<Sound>,
+                      public Singleton<SoundDatabase> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-  friend class Singleton<TextureDatabase>;
+  friend class Singleton<SoundDatabase>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  TextureDatabase() {}
-  ~TextureDatabase() {}
+  SoundDatabase() {}
+  ~SoundDatabase() {}
 
 };
 
 }
 
-#endif  // SWIFT2D_TEXTURE_DATABASE_HPP
+#endif  // SWIFT2D_SOUND_DATABASE_HPP

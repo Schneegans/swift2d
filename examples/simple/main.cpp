@@ -38,13 +38,15 @@ class Bullet: public SceneObject {
  public:
   Bullet(SceneObjectPtr const& scene) {
 
+    auto mat = ShadelessTextureMaterial::create();
+    mat->Texture = TextureDatabase::instance()->get("diffuse");
+
     auto move = add<MoveBehavior>();
          move->LinearSpeed.set(10);
 
     auto tex = add<SpriteComponent>();
          tex->Depth = 10.0f;
-         tex->Emit = 1.0f;
-         tex->Diffuse = TextureDatabase::instance()->get("bullet");
+         tex->Material = MaterialDatabase::instance()->get("bullet");
          tex->Transform = math::make_scale(1.5f);
 
     auto light = add<PointLightComponent>();
@@ -58,10 +60,6 @@ class Bullet: public SceneObject {
          deleter->set_shapes(shape, scene->get_component<CircularShape>());
   }
 };
-
-
-
-
 
 
 
@@ -80,6 +78,12 @@ int main(int argc, char** argv) {
   TextureDatabase::instance()->add("normal", Texture::create("normal.png"));
   TextureDatabase::instance()->add("ship", Texture::create("ship.png"));
 
+  MaterialDatabase::instance()->add("planet", ShadelessTextureMaterial::create_from_database("diffuse"));
+  MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_database("background"));
+  MaterialDatabase::instance()->add("ship", ShadelessTextureMaterial::create_from_database("ship"));
+  MaterialDatabase::instance()->add("bullet", ShadelessTextureMaterial::create_from_database("bullet"));
+
+
 
   // window setup --------------------------------------------------------------
   auto window = Window::create();
@@ -97,8 +101,7 @@ int main(int argc, char** argv) {
 
   auto bg = scene->add<SpriteComponent>();
        bg->Depth = -1000.0f;
-       bg->Emit = 1.0f;
-       bg->Diffuse = TextureDatabase::instance()->get("background");
+       bg->Material = MaterialDatabase::instance()->get("background");
        bg->Transform = math::make_scale(2.f);
 
 
@@ -110,8 +113,7 @@ int main(int argc, char** argv) {
 
   auto sprite = planet->add<SpriteComponent>();
        sprite->Depth = 0.0f;
-       sprite->Diffuse = TextureDatabase::instance()->get("diffuse");
-       sprite->Normal = TextureDatabase::instance()->get("normal");
+       sprite->Material = MaterialDatabase::instance()->get("planet");
 
   auto boing = planet->add<SoundComponent>();
        boing->set_sound(new Sound("sound.wav"));
@@ -128,7 +130,7 @@ int main(int argc, char** argv) {
 
   auto ship = player->add<SpriteComponent>();
        ship->Depth = 1.0f;
-       ship->Diffuse = TextureDatabase::instance()->get("ship");
+       ship->Material = MaterialDatabase::instance()->get("ship");
 
   auto light_object = scene->add_object();
   auto light = light_object->add<PointLightComponent>();

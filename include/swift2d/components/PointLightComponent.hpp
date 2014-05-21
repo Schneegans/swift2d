@@ -11,7 +11,6 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/DrawableComponent.hpp>
-
 #include <swift2d/resources/LightResource.hpp>
 #include <swift2d/resources/Texture.hpp>
 

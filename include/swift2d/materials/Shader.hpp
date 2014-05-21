@@ -6,13 +6,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SOUND_DATABASE_HPP
-#define SWIFT2D_SOUND_DATABASE_HPP
+#ifndef SWIFT2D_SHADER_HPP
+#define SWIFT2D_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/utils/Singleton.hpp>
-#include <swift2d/resources/Database.hpp>
-#include <swift2d/resources/Sound.hpp>
+#include <swift2d/graphics/RenderContext.hpp>
 
 namespace swift {
 
@@ -20,23 +18,38 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class SoundDatabase : public Database<Sound>,
-                      public Singleton<SoundDatabase> {
+class Shader {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-  friend class Singleton<SoundDatabase>;
+
+  Shader(std::string const& v_source, std::string const& f_source);
+  ~Shader();
+
+  // uses the Shader on the given context.
+  void use(RenderContext const& ctx) const;
+
+  template<typename T>
+  void set_uniform(std::string name, T const& val) {
+    oglplus::Uniform<T>(*program_, name).Set(val);
+  }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  // this class is a Singleton --- private c'tor and d'tor
-  SoundDatabase() {}
-  ~SoundDatabase() {}
+  void upload_to(RenderContext const& ctx) const;
 
+  mutable oglplus::Shader  *v_shader_;
+  mutable oglplus::Shader  *f_shader_;
+  mutable oglplus::Program *program_;
+
+  std::string v_source_;
+  std::string f_source_;
 };
+
+// -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_SOUND_DATABASE_HPP
+#endif // SWIFT2D_SHADER_HPP

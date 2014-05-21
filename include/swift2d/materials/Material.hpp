@@ -6,46 +6,43 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SOUND_HPP
-#define SWIFT2D_SOUND_HPP
+#ifndef SWIFT2D_MATERIAL_HPP
+#define SWIFT2D_MATERIAL_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/openal.hpp>
+#include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/properties.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-// Stores geometry data. A mesh can be loaded from an Assimp mesh and the     //
-// draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
+// shared pointer type definition ----------------------------------------------
+class Material;
+typedef std::shared_ptr<Material>       MaterialPtr;
+typedef std::shared_ptr<const Material> ConstMaterialPtr;
+typedef Property<MaterialPtr>           MaterialProperty;
+
 // -----------------------------------------------------------------------------
-class Sound {
+class Material {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Sound() {};
-  Sound(std::string const& file_name) {
-    load_from_file(file_name);
+  // uses the Material on the given context.
+  virtual void use(RenderContext const& context,
+                   math::mat3 const& object_transform) const = 0;
+
+  template<typename T>
+  void set_uniform(std::string name, T const& val) {
+
   }
-
-  // initializes the contained data from a given texture file.
-  void load_from_file(std::string const& file_name) {
-    oalplus::ALUtilityToolkit alut(false);
-    buffer_ = alut.CreateBufferFromFile(file_name.c_str());
-  }
-
-  oalplus::Buffer const& get_buffer() const { return buffer_; }
-
- ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
- private:
-  oalplus::Buffer buffer_;
-
 };
+
+// -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_SOUND_HPP
+#endif // SWIFT2D_MATERIAL_HPP

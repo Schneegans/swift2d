@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/resources/ScreenQuadResource.hpp>
+#include <swift2d/resources/QuadResource.hpp>
 #include <swift2d/math.hpp>
 #include <swift2d/utils/Logger.hpp>
 
@@ -17,20 +17,20 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ScreenQuadResource::ScreenQuadResource()
+QuadResource::QuadResource()
   : rectangle_(nullptr)
   , verts_(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ScreenQuadResource::~ScreenQuadResource() {
+QuadResource::~QuadResource() {
   if (rectangle_) delete rectangle_;
   if (verts_)     delete verts_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ScreenQuadResource::upload_to(RenderContext const& ctx) const {
+void QuadResource::upload_to(RenderContext const& ctx) const {
 
   // ---------------------------------------------------------------------------
   // bind the VAO for the rectangle_
@@ -57,7 +57,7 @@ void ScreenQuadResource::upload_to(RenderContext const& ctx) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ScreenQuadResource::draw(RenderContext const& ctx) const {
+void QuadResource::draw(RenderContext const& ctx) const {
 
   // upload to GPU if neccessary
   if (!verts_) {

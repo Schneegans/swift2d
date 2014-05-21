@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FIBRGLASS_TEXTURE_HPP
-#define FIBRGLASS_TEXTURE_HPP
+#ifndef SWIFT2D_TEXTURE_HPP
+#define SWIFT2D_TEXTURE_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
@@ -57,7 +57,7 @@ class Texture {
  private:
   void upload_to(RenderContext const& context) const;
 
-  mutable oglplus::Texture *texture_;
+  mutable oglplus::Texture* texture_;
 
   mutable bool needs_update_;
   std::string  file_name_;
@@ -66,4 +66,4 @@ class Texture {
 
 }
 
-#endif // FIBRGLASS_TEXTURE_HPP
+#endif // SWIFT2D_TEXTURE_HPP

@@ -11,11 +11,8 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/DrawableComponent.hpp>
-
-#include <swift2d/resources/SpriteResource.hpp>
-#include <swift2d/resources/Texture.hpp>
-
-#include <iostream>
+#include <swift2d/resources/QuadResource.hpp>
+#include <swift2d/materials/Material.hpp>
 
 namespace swift {
 
@@ -36,13 +33,11 @@ class SpriteComponent : public DrawableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float           Depth;
-  TextureProperty Diffuse;
-  TextureProperty Normal;
-  Float           Emit;
+  Float            Depth;
+  MaterialProperty Material;
 
   // ----------------------------------------------------- contruction interface
-  SpriteComponent() : Diffuse(nullptr), Normal(nullptr), Emit(0) {}
+  SpriteComponent() : Depth(0.f), Material(nullptr) {}
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
@@ -57,18 +52,16 @@ class SpriteComponent : public DrawableComponent {
 
   // ------------------------------------------------------------ public methods
   void draw(RenderContext const& ctx) {
-    Diffuse()->bind(ctx, 0);
-    if (Normal()) Normal()->bind(ctx, 1);
-
-    SpriteResource::instance()->draw(ctx, WorldTransform.get(), Normal() != nullptr, Emit.get());
+    Material()->use(ctx, WorldTransform());
+    QuadResource::instance()->draw(ctx);
   }
 
   void serialize(SerializedScenePtr& scene) const {
     scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
   }
-
-
 };
+
+// -----------------------------------------------------------------------------
 
 }
 

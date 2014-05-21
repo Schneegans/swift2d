@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FIBRGLASS_LIGHT_RESOURCE_HPP
-#define FIBRGLASS_LIGHT_RESOURCE_HPP
+#ifndef SWIFT2D_LIGHT_RESOURCE_HPP
+#define SWIFT2D_LIGHT_RESOURCE_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
@@ -51,4 +51,4 @@ class LightResource: public Singleton<LightResource> {
 
 }
 
-#endif // FIBRGLASS_LIGHT_RESOURCE_HPP
+#endif // SWIFT2D_LIGHT_RESOURCE_HPP

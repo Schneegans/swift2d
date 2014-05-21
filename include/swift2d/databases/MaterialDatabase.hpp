@@ -6,46 +6,37 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FIBRGLASS_SCREEN_QUAD_RESOURCE_HPP
-#define FIBRGLASS_SCREEN_QUAD_RESOURCE_HPP
+#ifndef SWIFT2D_MATERIAL_DATABASE_HPP
+#define SWIFT2D_MATERIAL_DATABASE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/graphics/RenderContext.hpp>
 #include <swift2d/utils/Singleton.hpp>
-#include <swift2d/properties.hpp>
+#include <swift2d/databases/Database.hpp>
+#include <swift2d/materials/Material.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-// Stores geometry data. A mesh can be loaded from an Assimp mesh and the     //
-// draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class ScreenQuadResource: public Singleton<ScreenQuadResource> {
+class MaterialDatabase : public Database<Material>,
+                         public Singleton<MaterialDatabase> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-
-  // Draws the ScreenQuadResource to the given context.
-  void draw(RenderContext const& context) const;
-
-  friend class Singleton<ScreenQuadResource>;
+  friend class Singleton<MaterialDatabase>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  ScreenQuadResource();
-  ~ScreenQuadResource();
+  MaterialDatabase() {}
+  ~MaterialDatabase() {}
 
-  void upload_to(RenderContext const& context) const;
-
-  mutable oglplus::VertexArray* rectangle_;
-  mutable oglplus::Buffer*      verts_;
 };
 
 }
 
-#endif // FIBRGLASS_SCREEN_QUAD_RESOURCE_HPP
+#endif  // SWIFT2D_MATERIAL_DATABASE_HPP

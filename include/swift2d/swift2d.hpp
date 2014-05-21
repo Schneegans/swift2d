@@ -19,7 +19,8 @@
 #include <swift2d/behaviors.hpp>
 #include <swift2d/shapes.hpp>
 #include <swift2d/renderer.hpp>
-#include <swift2d/resources.hpp>
+#include <swift2d/databases.hpp>
+#include <swift2d/materials.hpp>
 #include <swift2d/input/keys.hpp>
 #include <swift2d/triggers/ShapeTrigger.hpp>
 

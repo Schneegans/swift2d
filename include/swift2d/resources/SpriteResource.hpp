@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FIBRGLASS_SPRITE_RESOURCE_HPP
-#define FIBRGLASS_SPRITE_RESOURCE_HPP
+#ifndef SWIFT2D_SPRITE_RESOURCE_HPP
+#define SWIFT2D_SPRITE_RESOURCE_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
@@ -51,4 +51,4 @@ class SpriteResource: public Singleton<SpriteResource> {
 
 }
 
-#endif // FIBRGLASS_SPRITE_RESOURCE_HPP
+#endif // SWIFT2D_SPRITE_RESOURCE_HPP

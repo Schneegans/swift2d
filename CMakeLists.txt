@@ -31,6 +31,7 @@ pkg_check_modules(GLEW REQUIRED glew)
 pkg_check_modules(PNG REQUIRED libpng)
 pkg_check_modules(OPENAL REQUIRED openal)
 pkg_check_modules(ALUT REQUIRED freealut)
+pkg_check_modules(OPENGL REQUIRED gl)
 
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
@@ -47,6 +48,7 @@ set(LIBS
     ${PNG_LIBRARIES}
     ${OPENAL_LIBRARIES}
     ${ALUT_LIBRARIES}
+    ${OPENGL_LIBRARIES}
 )
 link_libraries(${LIBS})
 
@@ -57,6 +59,7 @@ set(LIB_PATHS
     ${PNG_LIBRARY_DIRS}
     ${OPENAL_LIBRARY_DIRS}
     ${ALUT_LIBRARY_DIRS}
+    ${OPENGL_LIBRARY_DIRS}
 )
 link_directories(${LIB_PATHS})
 
@@ -75,6 +78,7 @@ set(INCLUDE_PATHS
     ${PNG_INCLUDE_DIRS}
     ${OPENAL_INCLUDE_DIRS}
     ${ALUT_INCLUDE_DIRS}
+    ${OPENGL_INCLUDE_DIRS}
 )
 include_directories(SYSTEM ${INCLUDE_PATHS})
 
@@ -138,4 +142,7 @@ message( " alut:" )
 message( "   library: ${ALUT_LIBRARIES}" )
 message( "   include: ${ALUT_INCLUDE_DIRS}" )
 message( "" )
-
+message( " opengl:" )
+message( "   library: ${OPENGL_LIBRARIES}" )
+message( "   include: ${OPENGL_INCLUDE_DIRS}" )
+message( "" )

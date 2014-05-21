@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FIBRGLASS_COMPOSITOR_HPP
-#define FIBRGLASS_COMPOSITOR_HPP
+#ifndef SWIFT2D_COMPOSITOR_HPP
+#define SWIFT2D_COMPOSITOR_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
@@ -68,4 +68,4 @@ class Compositor {
 
 }
 
-#endif // FIBRGLASS_COMPOSITOR_HPP
+#endif // SWIFT2D_COMPOSITOR_HPP

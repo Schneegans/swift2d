@@ -6,46 +6,38 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SOUND_HPP
-#define SWIFT2D_SOUND_HPP
+#ifndef SWIFT2D_SHADELESS_TEXTURE_SHADER_HPP
+#define SWIFT2D_SHADELESS_TEXTURE_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/openal.hpp>
+#include <swift2d/materials/Shader.hpp>
+#include <swift2d/utils/Singleton.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-// Stores geometry data. A mesh can be loaded from an Assimp mesh and the     //
-// draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class Sound {
+class ShadelessTextureShader : public Shader,
+                               public Singleton<ShadelessTextureShader> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Sound() {};
-  Sound(std::string const& file_name) {
-    load_from_file(file_name);
-  }
-
-  // initializes the contained data from a given texture file.
-  void load_from_file(std::string const& file_name) {
-    oalplus::ALUtilityToolkit alut(false);
-    buffer_ = alut.CreateBufferFromFile(file_name.c_str());
-  }
-
-  oalplus::Buffer const& get_buffer() const { return buffer_; }
+  friend class Singleton<ShadelessTextureShader>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  oalplus::Buffer buffer_;
-
+  // this class is a Singleton --- private c'tor and d'tor
+  ShadelessTextureShader();
+  ~ShadelessTextureShader() {};
 };
+
+// -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_SOUND_HPP
+#endif // SWIFT2D_SHADELESS_TEXTURE_SHADER_HPP

@@ -6,11 +6,13 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SOUND_HPP
-#define SWIFT2D_SOUND_HPP
+#ifndef SWIFT2D_QUAD_RESOURCE_HPP
+#define SWIFT2D_QUAD_RESOURCE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/openal.hpp>
+#include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/utils/Singleton.hpp>
+#include <swift2d/properties.hpp>
 
 namespace swift {
 
@@ -20,32 +22,30 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class Sound {
+class QuadResource: public Singleton<QuadResource> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Sound() {};
-  Sound(std::string const& file_name) {
-    load_from_file(file_name);
-  }
+  // Draws the QuadResource to the given context.
+  void draw(RenderContext const& context) const;
 
-  // initializes the contained data from a given texture file.
-  void load_from_file(std::string const& file_name) {
-    oalplus::ALUtilityToolkit alut(false);
-    buffer_ = alut.CreateBufferFromFile(file_name.c_str());
-  }
-
-  oalplus::Buffer const& get_buffer() const { return buffer_; }
+  friend class Singleton<QuadResource>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  oalplus::Buffer buffer_;
+  // this class is a Singleton --- private c'tor and d'tor
+  QuadResource();
+  ~QuadResource();
 
+  void upload_to(RenderContext const& context) const;
+
+  mutable oglplus::VertexArray* rectangle_;
+  mutable oglplus::Buffer*      verts_;
 };
 
 }
 
-#endif // SWIFT2D_SOUND_HPP
+#endif // SWIFT2D_QUAD_RESOURCE_HPP
