@@ -40,9 +40,9 @@ mat3 translated (mat3 const& mat, vec2 const& delta);
 mat3 translated (mat3 const& mat, float x, float y);
 mat3 inversed   (mat3 const& mat);
 
-vec2  get_position (mat3 const& mat);
-vec2  get_scale    (mat3 const& mat);
-float get_rotation (mat3 const& mat);
+vec2  get_translate (mat3 const& mat);
+vec2  get_scale     (mat3 const& mat);
+float get_rotation  (mat3 const& mat);
 
 }
 }

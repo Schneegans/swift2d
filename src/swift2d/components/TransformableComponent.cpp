@@ -25,13 +25,13 @@ void TransformableComponent::update(double time) {
 ////////////////////////////////////////////////////////////////////////////////
 
 math::vec2 TransformableComponent::get_position() const {
-  return math::get_position(Transform.get());
+  return math::get_translate(Transform.get());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 math::vec2 TransformableComponent::get_world_position() const {
-  return math::get_position(WorldTransform.get());
+  return math::get_translate(WorldTransform.get());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -63,9 +63,13 @@ class LightMaterial : public Material {
   // uses the Material on the given context.
   /* virtual */ void use(RenderContext const& ctx,
                          math::mat3 const& object_transform) const {
+
+    auto transform(math::make_translate(math::get_translate(object_transform)));
+    transform = transform * math::make_scale(math::get_scale(object_transform));
+
     Texture()->bind(ctx, 0);
     LightShader::instance()->use(ctx);
-    LightShader::instance()->set_common_uniforms(ctx, object_transform);
+    LightShader::instance()->set_common_uniforms(ctx, transform);
     LightShader::instance()->set_uniform("screen_size", ctx.size);
     LightShader::instance()->set_uniform("g_buffer_normal", 2);
     LightShader::instance()->set_uniform("light_tex", 0);

@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
   auto music = scene->add<SoundComponent>();
        music->Sound = Sound::create_from_file("music.ogg");
        music->Volume = 0.1f;
-       music->play();
+       // music->play();
 
   auto field = scene->add<CircularShape>();
        field->Transform = math::make_scale(2);
@@ -128,16 +128,10 @@ int main(int argc, char** argv) {
        ship->Depth = 1.0f;
        ship->Material = MaterialDatabase::instance()->get("ship");
 
-  auto light_object = scene->add_object();
-  auto light = light_object->add<PointLightComponent>();
+  auto light = player->add<PointLightComponent>();
        light->Depth = 1.0f;
-       light->Transform = math::make_scale(1);
+       light->Transform = math::make_scale(10);
        light->Material = MaterialDatabase::instance()->get("light");
-
-  // todo: screen aligned sprites!
-  player->Transform.on_change().connect([&](math::mat3 const& mat) {
-    light_object->Transform.set(math::make_translate(math::get_position(mat)));
-  });
 
   // rendering pipeline --------------------------------------------------------
   auto pipeline = Pipeline::create();
@@ -173,7 +167,7 @@ int main(int argc, char** argv) {
       renderer.stop();
       loop.stop();
     } else if (key == swift::Key::SPACE && action != 1) {
-      boing->play();
+      // boing->play();
 
       auto bullet = std::make_shared<Bullet>(scene);
       scene->add_object(bullet);
