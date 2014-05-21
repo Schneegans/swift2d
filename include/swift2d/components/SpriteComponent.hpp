@@ -11,7 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/DrawableComponent.hpp>
-#include <swift2d/resources/QuadResource.hpp>
+#include <swift2d/geometries/Quad.hpp>
 #include <swift2d/materials/Material.hpp>
 
 namespace swift {
@@ -53,7 +53,7 @@ class SpriteComponent : public DrawableComponent {
   // ------------------------------------------------------------ public methods
   void draw(RenderContext const& ctx) {
     Material()->use(ctx, WorldTransform());
-    QuadResource::instance()->draw(ctx);
+    Quad::instance()->draw(ctx);
   }
 
   void serialize(SerializedScenePtr& scene) const {

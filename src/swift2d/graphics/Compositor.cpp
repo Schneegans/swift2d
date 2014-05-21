@@ -9,7 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/Compositor.hpp>
 #include <swift2d/components/DrawableComponent.hpp>
-#include <swift2d/resources/QuadResource.hpp>
+#include <swift2d/geometries/Quad.hpp>
 
 #include <sstream>
 
@@ -248,7 +248,7 @@ void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext c
 
     (*prog_/"debug") = 0;
 
-    QuadResource::instance()->draw(ctx);
+    Quad::instance()->draw(ctx);
   }
 }
 
