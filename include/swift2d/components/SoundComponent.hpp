@@ -36,9 +36,23 @@ class SoundComponent : public TransformableComponent {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  // ---------------------------------------------------------------- properties
+  SoundProperty Sound;
+  Float         Volume;
 
   // ---------------------------------------------------- construction interface
-  SoundComponent() : sound_(nullptr), source_(new oalplus::Source()) {}
+  SoundComponent()
+    : source_(new oalplus::Source()) {
+
+    Sound.on_change().connect([&](SoundPtr const& val) {
+      stop();
+      source_->Buffer(val->get_buffer());
+    });
+
+    Volume.on_change().connect([&](float val) {
+      source_->Gain(val);
+    });
+  }
 
   ~SoundComponent() {
     stop();
@@ -72,18 +86,9 @@ class SoundComponent : public TransformableComponent {
     source_->Stop();
   }
 
-  // TODO: make shared!
-  void set_sound(Sound* sound) {
-    stop();
-    sound_ = sound;
-    source_->Buffer(sound_->get_buffer());
-  }
-
-
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  Sound* sound_;
   oalplus::Source* source_;
 
 };

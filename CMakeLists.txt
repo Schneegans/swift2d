@@ -30,6 +30,7 @@ pkg_check_modules(GLFW REQUIRED glfw3)
 pkg_check_modules(GLEW REQUIRED glew)
 pkg_check_modules(PNG REQUIRED libpng)
 pkg_check_modules(OPENAL REQUIRED openal)
+pkg_check_modules(SNDFILE REQUIRED sndfile)
 pkg_check_modules(ALUT REQUIRED freealut)
 pkg_check_modules(OPENGL REQUIRED gl)
 
@@ -47,6 +48,7 @@ set(LIBS
     ${GLEW_LIBRARIES}
     ${PNG_LIBRARIES}
     ${OPENAL_LIBRARIES}
+    ${SNDFILE_LIBRARIES}
     ${ALUT_LIBRARIES}
     ${OPENGL_LIBRARIES}
 )
@@ -58,6 +60,7 @@ set(LIB_PATHS
     ${GLEW_LIBRARY_DIRS}
     ${PNG_LIBRARY_DIRS}
     ${OPENAL_LIBRARY_DIRS}
+    ${SNDFILE_LIBRARY_DIRS}
     ${ALUT_LIBRARY_DIRS}
     ${OPENGL_LIBRARY_DIRS}
 )
@@ -77,6 +80,7 @@ set(INCLUDE_PATHS
     ${GLEW_INCLUDE_DIRS}
     ${PNG_INCLUDE_DIRS}
     ${OPENAL_INCLUDE_DIRS}
+    ${SNDFILE_INCLUDE_DIRS}
     ${ALUT_INCLUDE_DIRS}
     ${OPENGL_INCLUDE_DIRS}
 )
@@ -137,6 +141,10 @@ message( "" )
 message( " openal:" )
 message( "   library: ${OPENAL_LIBRARIES}" )
 message( "   include: ${OPENAL_INCLUDE_DIRS}" )
+message( "" )
+message( " sndfile:" )
+message( "   library: ${SNDFILE_LIBRARIES}" )
+message( "   include: ${SNDFILE_INCLUDE_DIRS}" )
 message( "" )
 message( " alut:" )
 message( "   library: ${ALUT_LIBRARIES}" )

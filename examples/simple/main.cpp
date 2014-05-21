@@ -83,6 +83,10 @@ int main(int argc, char** argv) {
 
   // example scene setup -------------------------------------------------------
   auto scene = SceneObject::create();
+  auto music = scene->add<SoundComponent>();
+       music->Sound = Sound::create_from_file("music.ogg");
+       music->Volume = 0.1f;
+       music->play();
 
   auto field = scene->add<CircularShape>();
        field->Transform = math::make_scale(2);
@@ -108,7 +112,7 @@ int main(int argc, char** argv) {
        sprite->Material = MaterialDatabase::instance()->get("planet");
 
   auto boing = planet->add<SoundComponent>();
-       boing->set_sound(new Sound("sound.wav"));
+       boing->Sound = Sound::create_from_file("sound.wav");
 
   // player
   auto player = scene->add_object();
@@ -118,7 +122,7 @@ int main(int argc, char** argv) {
   player->add(mover);
 
   auto listener = player->add<ListenerComponent>();
-       listener->Volume = 10.0;
+       listener->Volume = 1.0;
 
   auto ship = player->add<SpriteComponent>();
        ship->Depth = 1.0f;
@@ -169,7 +173,7 @@ int main(int argc, char** argv) {
       renderer.stop();
       loop.stop();
     } else if (key == swift::Key::SPACE && action != 1) {
-      // boing->play();
+      boing->play();
 
       auto bullet = std::make_shared<Bullet>(scene);
       scene->add_object(bullet);

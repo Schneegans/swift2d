@@ -11,6 +11,9 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/openal.hpp>
+#include <swift2d/properties.hpp>
+
+#include <memory>
 
 namespace swift {
 
@@ -19,6 +22,12 @@ namespace swift {
 // draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
+// shared pointer type definition ----------------------------------------------
+class Sound;
+typedef std::shared_ptr<Sound>       SoundPtr;
+typedef std::shared_ptr<const Sound> ConstSoundPtr;
+typedef Property<SoundPtr>           SoundProperty;
+
 // -----------------------------------------------------------------------------
 class Sound {
 
@@ -26,15 +35,14 @@ class Sound {
  // ----------------------------------------------------------- public interface
  public:
 
-  Sound() {};
-  Sound(std::string const& file_name) {
-    load_from_file(file_name);
+  static SoundPtr create() {
+    return std::make_shared<Sound>();
   }
 
-  // initializes the contained data from a given texture file.
-  void load_from_file(std::string const& file_name) {
-    oalplus::ALUtilityToolkit alut(false);
-    buffer_ = alut.CreateBufferFromFile(file_name.c_str());
+  static SoundPtr create_from_file(std::string const& file_name) {
+    auto sound(std::make_shared<Sound>());
+    sound->load_from_file(file_name);
+    return sound;
   }
 
   oalplus::Buffer const& get_buffer() const { return buffer_; }
@@ -42,6 +50,9 @@ class Sound {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+
+  void load_from_file(std::string const& file_name);
+
   oalplus::Buffer buffer_;
 
 };
