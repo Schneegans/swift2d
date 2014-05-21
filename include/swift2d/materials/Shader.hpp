@@ -32,7 +32,7 @@ class Shader {
 
   template<typename T>
   void set_uniform(std::string name, T const& val) {
-    oglplus::Uniform<T>(*program_, name).Set(val);
+    oglplus::ProgramUniform<T>(*program_, name).Set(val);
   }
 
  ///////////////////////////////////////////////////////////////////////////////

@@ -38,9 +38,6 @@ class Bullet: public SceneObject {
  public:
   Bullet(SceneObjectPtr const& scene) {
 
-    auto mat = ShadelessTextureMaterial::create();
-    mat->Texture = TextureDatabase::instance()->get("diffuse");
-
     auto move = add<MoveBehavior>();
          move->LinearSpeed.set(10);
 
@@ -52,7 +49,7 @@ class Bullet: public SceneObject {
     auto light = add<PointLightComponent>();
          light->Depth = 1.0f;
          light->Transform = math::make_scale(5.0f);
-         light->Tex = TextureDatabase::instance()->get("light");
+         light->Material = MaterialDatabase::instance()->get("light");
 
     auto shape = add<CircularShape>();
 
@@ -71,7 +68,6 @@ int main(int argc, char** argv) {
   MainLoop loop;
 
   // load resources ------------------------------------------------------------
-  TextureDatabase::instance()->add("light", Texture::create("light.png"));
   TextureDatabase::instance()->add("bullet", Texture::create("bullet.png"));
   TextureDatabase::instance()->add("background", Texture::create("bg.png"));
   TextureDatabase::instance()->add("diffuse", Texture::create("diffuse.png"));
@@ -82,6 +78,8 @@ int main(int argc, char** argv) {
   MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_database("background"));
   MaterialDatabase::instance()->add("ship", ShadelessTextureMaterial::create_from_database("ship"));
   MaterialDatabase::instance()->add("bullet", ShadelessTextureMaterial::create_from_database("bullet"));
+
+  MaterialDatabase::instance()->add("light", LightMaterial::create_from_file("light.png"));
 
 
 
@@ -97,7 +95,7 @@ int main(int argc, char** argv) {
 
   auto sun = scene->add<PointLightComponent>();
        sun->Transform = math::make_scale(5) * math::make_translate(-0.5, 0.5);
-       sun->Tex = TextureDatabase::instance()->get("light");
+       sun->Material = MaterialDatabase::instance()->get("light");
 
   auto bg = scene->add<SpriteComponent>();
        bg->Depth = -1000.0f;
@@ -136,7 +134,7 @@ int main(int argc, char** argv) {
   auto light = light_object->add<PointLightComponent>();
        light->Depth = 1.0f;
        light->Transform = math::make_scale(1);
-       light->Tex = TextureDatabase::instance()->get("light");
+       light->Material = MaterialDatabase::instance()->get("light");
 
   // todo: screen aligned sprites!
   player->Transform.on_change().connect([&](math::mat3 const& mat) {

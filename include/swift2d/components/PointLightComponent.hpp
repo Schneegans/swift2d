@@ -11,7 +11,8 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/DrawableComponent.hpp>
-#include <swift2d/resources/LightResource.hpp>
+#include <swift2d/geometries/Quad.hpp>
+#include <swift2d/materials/LightMaterial.hpp>
 #include <swift2d/resources/Texture.hpp>
 
 #include <iostream>
@@ -35,11 +36,10 @@ class PointLightComponent : public DrawableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float           Depth;
-  TextureProperty Tex;
+  Float            Depth;
+  MaterialProperty Material;
 
   // ----------------------------------------------------- contruction interface
-  PointLightComponent() : Tex(nullptr) {}
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
@@ -54,15 +54,16 @@ class PointLightComponent : public DrawableComponent {
 
   // ------------------------------------------------------------ public methods
   void draw(RenderContext const& ctx) {
-    Tex()->bind(ctx, 0);
-    LightResource::instance()->draw(ctx, WorldTransform.get());
+    Material()->use(ctx, WorldTransform());
+    Quad::instance()->draw(ctx);
   }
 
   void serialize(SerializedScenePtr& scene) const {
     scene->lights.insert(std::make_pair(Depth.get(), create_copy()));
   }
-
 };
+
+// -----------------------------------------------------------------------------
 
 }
 
