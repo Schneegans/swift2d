@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
   auto music = scene->add<SoundComponent>();
        music->Sound = Sound::create_from_file("music.ogg");
        music->Volume = 0.1f;
-       // music->play();
+       music->play();
 
   auto field = scene->add<CircularShape>();
        field->Transform = math::make_scale(2);
@@ -167,7 +167,7 @@ int main(int argc, char** argv) {
       renderer.stop();
       loop.stop();
     } else if (key == swift::Key::SPACE && action != 1) {
-      // boing->play();
+      boing->play();
 
       auto bullet = std::make_shared<Bullet>(scene);
       scene->add_object(bullet);
