@@ -22,6 +22,7 @@ namespace swift {
 // draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
+
 // shared pointer type definition ----------------------------------------------
 class Texture;
 typedef std::shared_ptr<Texture>       TexturePtr;

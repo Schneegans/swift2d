@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
   // load resources ------------------------------------------------------------
   TextureDatabase::instance()->add("light", Texture::create("light.png"));
   TextureDatabase::instance()->add("bullet", Texture::create("bullet.png"));
-  TextureDatabase::instance()->add("background", Texture::create("bg.png"));
+  TextureDatabase::instance()->add("background", Texture::create("bg.jpg"));
   TextureDatabase::instance()->add("diffuse", Texture::create("diffuse.png"));
   TextureDatabase::instance()->add("normal", Texture::create("normal.png"));
   TextureDatabase::instance()->add("ship", Texture::create("ship.png"));
