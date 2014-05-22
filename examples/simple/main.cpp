@@ -25,8 +25,8 @@ class Mover: public MoveBehavior {
       } else if (action == 1) {
         if (key == Key::W) LinearSpeed.set( 20, 1);
         if (key == Key::S) LinearSpeed.set(-20, 1);
-        if (key == Key::A) AngularSpeed.set(-2 , 0.5);
-        if (key == Key::D) AngularSpeed.set( 2 , 0.5);
+        if (key == Key::A) AngularSpeed.set( 2 , 0.5);
+        if (key == Key::D) AngularSpeed.set(-2 , 0.5);
       }
     });
   }
@@ -48,7 +48,7 @@ class Bullet: public SceneObject {
 
     auto light = add<PointLightComponent>();
          light->Depth = 1.0f;
-         light->Transform = math::make_scale(5.0f);
+         light->Transform = math::make_scale(15.0f);
          light->Material = MaterialDatabase::instance()->get("light");
 
     auto shape = add<CircularShape>();
@@ -72,7 +72,8 @@ int main(int argc, char** argv) {
   MaterialDatabase::instance()->add("ship",       ShadelessTextureMaterial::create_from_file("ship.png"));
   MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_file("bullet.png"));
 
-  MaterialDatabase::instance()->add("planet",     BumpTextureMaterial::create_from_files("diffuse.png", "normal.png"));
+  MaterialDatabase::instance()->add("planet1",     BumpTextureMaterial::create_from_files("planet_diffuse2.png", "planet_normal2.png"));
+  MaterialDatabase::instance()->add("planet2",     BumpTextureMaterial::create_from_files("planet_diffuse.png", "planet_normal.png"));
 
   MaterialDatabase::instance()->add("light",      LightMaterial::create_from_file("light.png"));
 
@@ -92,7 +93,7 @@ int main(int argc, char** argv) {
        field->Transform = math::make_scale(2);
 
   auto sun = scene->add<PointLightComponent>();
-       sun->Transform = math::make_scale(5) * math::make_translate(-0.5, 0.5);
+       sun->Transform = math::make_scale(15) * math::make_translate(-0.2, 0.2);
        sun->Material = MaterialDatabase::instance()->get("light");
 
   auto bg = scene->add<SpriteComponent>();
@@ -105,14 +106,17 @@ int main(int argc, char** argv) {
   camera->Size = math::vec2(2.f, 2.f);
 
   // planet
-  auto planet = scene->add_object();
+  auto planet1 = scene->add_object();
+       planet1->Transform = math::make_translate(-0.9, -0.5);
+  auto sprite2 = planet1->add<SpriteComponent>();
+       sprite2->Depth = 0.0f;
+       sprite2->Material = MaterialDatabase::instance()->get("planet1");
 
-  auto sprite = planet->add<SpriteComponent>();
-       sprite->Depth = 0.0f;
-       sprite->Material = MaterialDatabase::instance()->get("planet");
-
-  auto boing = planet->add<SoundComponent>();
-       boing->Sound = Sound::create_from_file("sound.wav");
+  auto planet2 = scene->add_object();
+       planet2->Transform = math::make_translate(-1.2, 1.0);
+  auto sprite3 = planet2->add<SpriteComponent>();
+       sprite3->Depth = 0.0f;
+       sprite3->Material = MaterialDatabase::instance()->get("planet2");
 
   // player
   auto player = scene->add_object();
@@ -130,7 +134,7 @@ int main(int argc, char** argv) {
 
   auto light = player->add<PointLightComponent>();
        light->Depth = 1.0f;
-       light->Transform = math::make_scale(10);
+       light->Transform = math::make_scale(20);
        light->Material = MaterialDatabase::instance()->get("light");
 
   // rendering pipeline --------------------------------------------------------
@@ -167,8 +171,6 @@ int main(int argc, char** argv) {
       renderer.stop();
       loop.stop();
     } else if (key == swift::Key::SPACE && action != 1) {
-      boing->play();
-
       auto bullet = std::make_shared<Bullet>(scene);
       scene->add_object(bullet);
       bullet->Transform = player->Transform();

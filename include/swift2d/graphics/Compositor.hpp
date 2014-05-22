@@ -10,8 +10,8 @@
 #define SWIFT2D_COMPOSITOR_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/Shader.hpp>
 #include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/materials/Shader.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
 #include <swift2d/properties.hpp>
 

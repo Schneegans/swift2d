@@ -34,16 +34,17 @@ LightShader::LightShader()
       out vec3 fragColor;
 
       void main(void){
-        vec4 normal      = texture2D(g_buffer_normal, gl_FragCoord.xy/screen_size);
-        vec3 light       = texture2D(light_tex, tex_coords).rgb;
+        vec4 normal       = texture2D(g_buffer_normal, gl_FragCoord.xy/screen_size);
+        vec4 light        = texture2D(light_tex, tex_coords);
 
-        vec3 light_dir   = normalize(light.rgb - 0.5);
-        vec3 surface_dir = normalize(normal.rgb - 0.5);
+        vec3 light_dir    = normalize(light.rgb - 0.5);
+        vec3 surface_dir  = normalize(normal.rgb - 0.5);
+        float attenuation = light.a * normal.a;
 
-        float spot       = pow(max(0, dot(vec3(0, 0, -1), reflect(-light_dir, surface_dir))), 50) * normal.a;
-        float intensity  = max(0, dot(light_dir, surface_dir)) * normal.a;
+        float spot        = pow(max(0, dot(vec3(0, 0, 1), reflect(light_dir, surface_dir))), 50) * attenuation;
+        float intensity   = max(0, dot(light_dir, surface_dir)) * attenuation;
 
-        fragColor        = vec3(min(1, intensity*0.5 + spot));
+        fragColor         = vec3(intensity, spot, 0);
       }
     )"
   ) {}

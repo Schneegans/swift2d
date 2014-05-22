@@ -95,7 +95,7 @@ void Compositor::init(RenderContext const& ctx) {
       out vec2 tex_coords;
 
       void main(void){
-        tex_coords = position*0.5 + 0.5;
+        tex_coords = vec2(position.x + 1.0, 1.0 - position.y) * 0.5;
         gl_Position = vec4(position, 0.0, 1.0);
       }
     )", R"(
@@ -113,7 +113,7 @@ void Compositor::init(RenderContext const& ctx) {
         vec3 diffuse  = texture2D(g_buffer_diffuse, tex_coords).rgb;
         vec3 light    = texture2D(g_buffer_light, tex_coords).rgb;
         vec3 emit     = texture2D(g_buffer_emit, tex_coords).rgb;
-        fragColor     = emit.r * diffuse + (1 - emit.r) * light * diffuse;
+        fragColor     = emit.r * diffuse + (1 - emit.r) * (light.r * diffuse + light.g);
         if (debug) {
           fragColor   = texture2D(g_buffer_diffuse, tex_coords).rgb;
         }
