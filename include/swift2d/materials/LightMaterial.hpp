@@ -64,6 +64,7 @@ class LightMaterial : public Material {
   /* virtual */ void use(RenderContext const& ctx,
                          math::mat3 const& object_transform) const {
 
+    // disable rotation
     auto transform(math::make_translate(math::get_translate(object_transform)));
     transform = transform * math::make_scale(math::get_scale(object_transform));
 

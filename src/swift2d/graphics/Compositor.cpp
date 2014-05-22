@@ -19,9 +19,7 @@ namespace swift {
 
 Compositor::Compositor()
   : EnableDynamicLighting(false)
-  , vs_(nullptr)
-  , fs_(nullptr)
-  , prog_(nullptr)
+  , shader_(nullptr)
   , fbo_(nullptr)
   , offscreen_color_(nullptr)
   , offscreen_normal_(nullptr)
@@ -87,68 +85,40 @@ void Compositor::init(RenderContext const& ctx) {
 
 
     // create shaders ------------------------------------------------------------
-    // set the vertex shader source
-    std::stringstream vs_source(
-      "#version 330\n"
-      "layout(location=0) in vec2 position;"
-      "uniform mat3 transform;"
-      "out vec2 tex_coords;"
-      "void main(void){"
-      "  tex_coords = position*0.5 + 0.5;"
-      "  gl_Position = vec4(position, 0.0, 1.0);"
-      "}"
-    );
-    vs_ = new oglplus::Shader(oglplus::ShaderType::Vertex);
-    vs_->Source(oglplus::GLSLSource::FromStream(vs_source));
-    try {
-      vs_->Compile();
-    } catch (oglplus::CompileError& e) {
-      LOG_ERROR << "Failed to compile Vertex Shader!" << std::endl;
-      LOG_ERROR << e.Log() << std::endl;
-    }
 
-    // set the fragment shader source
-    std::stringstream fs_source(
-      "#version 330\n"
-      "in vec2 tex_coords;"
-      "uniform sampler2D g_buffer_diffuse;"
-      "uniform sampler2D g_buffer_light;"
-      "uniform sampler2D g_buffer_emit;"
-      "uniform bool      debug;"
-      ""
-      "layout (location = 0) out vec3 fragColor;"
-      ""
-      "void main(void){"
-      "  vec3 diffuse  = texture2D(g_buffer_diffuse, tex_coords).rgb;"
-      "  vec3 light    = texture2D(g_buffer_light, tex_coords).rgb;"
-      "  vec3 emit     = texture2D(g_buffer_emit, tex_coords).rgb;"
-      "  fragColor     = emit.r * diffuse + (1 - emit.r) * light * diffuse;"
-      "  if (debug) {"
-      "    fragColor   = texture2D(g_buffer_diffuse, tex_coords).rgb;"
-      "  }"
-      "}"
-    );
+    shader_ = new Shader(R"(
+      #version 330
 
-    fs_ = new oglplus::Shader(oglplus::ShaderType::Fragment);
-    fs_->Source(oglplus::GLSLSource::FromStream(fs_source));
-    try {
-      fs_->Compile();
-    } catch (oglplus::CompileError& e) {
-      LOG_ERROR << "Failed to compile Fragment Shader!" << std::endl;
-      LOG_ERROR << e.Log() << std::endl;
-    }
+      layout(location=0) in vec2 position;
 
-    // attach the shaders to the program
-    prog_ = new oglplus::Program();
-    prog_->AttachShader(*vs_);
-    prog_->AttachShader(*fs_);
+      uniform mat3 transform;
+      out vec2 tex_coords;
 
-    // link it
-    try {
-      prog_->Link();
-    } catch (oglplus::LinkError& e) {
-      LOG_ERROR << e.Log() << std::endl;
-    }
+      void main(void){
+        tex_coords = position*0.5 + 0.5;
+        gl_Position = vec4(position, 0.0, 1.0);
+      }
+    )", R"(
+      #version 330
+
+      in vec2 tex_coords;
+      uniform sampler2D g_buffer_diffuse;
+      uniform sampler2D g_buffer_light;
+      uniform sampler2D g_buffer_emit;
+      uniform bool      debug;
+
+      layout (location = 0) out vec3 fragColor;
+
+      void main(void){
+        vec3 diffuse  = texture2D(g_buffer_diffuse, tex_coords).rgb;
+        vec3 light    = texture2D(g_buffer_light, tex_coords).rgb;
+        vec3 emit     = texture2D(g_buffer_emit, tex_coords).rgb;
+        fragColor     = emit.r * diffuse + (1 - emit.r) * light * diffuse;
+        if (debug) {
+          fragColor   = texture2D(g_buffer_diffuse, tex_coords).rgb;
+        }
+      }
+    )");
   }
 }
 
@@ -240,13 +210,11 @@ void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext c
     oglplus::Texture::Active(3);
     ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_normal_);
 
-    prog_->Use();
-
-    (*prog_/"g_buffer_diffuse") = 0;
-    (*prog_/"g_buffer_light") = 1;
-    (*prog_/"g_buffer_emit") = 2;
-
-    (*prog_/"debug") = 0;
+    shader_->use(ctx);
+    shader_->set_uniform("g_buffer_diffuse", 0);
+    shader_->set_uniform("g_buffer_light", 1);
+    shader_->set_uniform("g_buffer_emit", 2);
+    shader_->set_uniform("debug", 0);
 
     Quad::instance()->draw(ctx);
   }
@@ -255,9 +223,7 @@ void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext c
 ////////////////////////////////////////////////////////////////////////////////
 
 void Compositor::clean_up() {
-  if(vs_)               delete vs_;                 vs_ = nullptr;
-  if(fs_)               delete fs_;                 fs_ = nullptr;
-  if(prog_)             delete prog_;               prog_ = nullptr;
+  if(shader_)           delete shader_;             shader_ = nullptr;
   if(fbo_)              delete fbo_;                fbo_ = nullptr;
   if(offscreen_color_)  delete offscreen_color_;    offscreen_color_ = nullptr;
   if(offscreen_normal_) delete offscreen_normal_;   offscreen_normal_ = nullptr;

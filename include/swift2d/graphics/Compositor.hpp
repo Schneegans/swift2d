@@ -10,6 +10,7 @@
 #define SWIFT2D_COMPOSITOR_HPP
 
 // includes  -------------------------------------------------------------------
+#include <swift2d/materials/Shader.hpp>
 #include <swift2d/graphics/RenderContext.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
 #include <swift2d/properties.hpp>
@@ -56,9 +57,7 @@ class Compositor {
   void upload_to(RenderContext const& context) const;
   void clean_up();
 
-  mutable oglplus::Shader  *vs_, *fs_;
-  mutable oglplus::Program *prog_;
-
+  mutable Shader* shader_;
   oglplus::Framebuffer* fbo_;
   oglplus::Texture* offscreen_color_;
   oglplus::Texture* offscreen_normal_;
