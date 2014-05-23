@@ -6,13 +6,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_POINT_LIGHT_COMPONENT_HPP
-#define SWIFT2D_POINT_LIGHT_COMPONENT_HPP
+#ifndef SWIFT2D_LIGHT_COMPONENT_HPP
+#define SWIFT2D_LIGHT_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/DrawableComponent.hpp>
 #include <swift2d/geometries/Quad.hpp>
-#include <swift2d/materials/LightMaterial.hpp>
 #include <swift2d/textures/Texture.hpp>
 
 #include <iostream>
@@ -24,12 +23,12 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class PointLightComponent;
-typedef std::shared_ptr<PointLightComponent>       PointLightComponentPtr;
-typedef std::shared_ptr<const PointLightComponent> ConstPointLightComponentPtr;
+class LightComponent;
+typedef std::shared_ptr<LightComponent>       LightComponentPtr;
+typedef std::shared_ptr<const LightComponent> ConstLightComponentPtr;
 
 // -----------------------------------------------------------------------------
-class PointLightComponent : public DrawableComponent {
+class LightComponent : public DrawableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -43,13 +42,13 @@ class PointLightComponent : public DrawableComponent {
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static PointLightComponentPtr create(Args&& ... a) {
-    return std::make_shared<PointLightComponent>(a...);
+  static LightComponentPtr create(Args&& ... a) {
+    return std::make_shared<LightComponent>(a...);
   }
 
   // creates a copy from this
-  PointLightComponentPtr create_copy() const {
-    return std::make_shared<PointLightComponent>(*this);
+  LightComponentPtr create_copy() const {
+    return std::make_shared<LightComponent>(*this);
   }
 
   // ------------------------------------------------------------ public methods
@@ -67,4 +66,4 @@ class PointLightComponent : public DrawableComponent {
 
 }
 
-#endif  // SWIFT2D_POINT_LIGHT_COMPONENT_HPP
+#endif  // SWIFT2D_LIGHT_COMPONENT_HPP

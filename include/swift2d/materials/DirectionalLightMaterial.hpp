@@ -6,12 +6,13 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SHADELESS_TEXTURE_MATERIAL_HPP
-#define SWIFT2D_SHADELESS_TEXTURE_MATERIAL_HPP
+#ifndef SWIFT2D_DIRECTIONAL_LIGHT_MATERIAL_HPP
+#define SWIFT2D_DIRECTIONAL_LIGHT_MATERIAL_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Material.hpp>
-#include <swift2d/materials/ShadelessTextureShader.hpp>
+#include <swift2d/materials/DirectionalLightShader.hpp>
+#include <swift2d/databases/TextureDatabase.hpp>
 #include <swift2d/textures/Texture.hpp>
 
 namespace swift {
@@ -20,53 +21,53 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class ShadelessTextureMaterial;
-typedef std::shared_ptr<ShadelessTextureMaterial>       ShadelessTextureMaterialPtr;
-typedef std::shared_ptr<const ShadelessTextureMaterial> ConstShadelessTextureMaterialPtr;
-typedef Property<ShadelessTextureMaterialPtr>           ShadelessTextureMaterialProperty;
+class DirectionalLightMaterial;
+typedef std::shared_ptr<DirectionalLightMaterial>       DirectionalLightMaterialPtr;
+typedef std::shared_ptr<const DirectionalLightMaterial> ConstDirectionalLightMaterialPtr;
+typedef Property<DirectionalLightMaterialPtr>           DirectionalLightMaterialProperty;
 
 // -----------------------------------------------------------------------------
-class ShadelessTextureMaterial : public Material {
+class DirectionalLightMaterial : public Material {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ---------------------------------------------------------------- properties
-  TextureProperty Texture;
+  Vec3 Direction;
 
   // ----------------------------------------------------- contruction interface
   // Creates a new material and returns a shared pointer.
-  static ShadelessTextureMaterialPtr create() {
-    return std::make_shared<ShadelessTextureMaterial>();
+  static DirectionalLightMaterialPtr create() {
+    return std::make_shared<DirectionalLightMaterial>();
   }
 
-  static ShadelessTextureMaterialPtr create_from_file(std::string const& file) {
-    auto mat(std::make_shared<ShadelessTextureMaterial>());
-    mat->Texture = Texture::create(file);
-    return mat;
-  }
-
-  static ShadelessTextureMaterialPtr create_from_database(std::string const& id) {
-    auto mat(std::make_shared<ShadelessTextureMaterial>());
-    mat->Texture = TextureDatabase::instance()->get(id);
+  static DirectionalLightMaterialPtr create(math::vec3 const& direction) {
+    auto mat(std::make_shared<DirectionalLightMaterial>());
+    mat->Direction = direction;
     return mat;
   }
 
   // creates a copy from this
-  ShadelessTextureMaterialPtr create_copy() const {
-    return std::make_shared<ShadelessTextureMaterial>(*this);
+  DirectionalLightMaterialPtr create_copy() const {
+    return std::make_shared<DirectionalLightMaterial>(*this);
   }
 
   // ------------------------------------------------------------ public methods
   // uses the Material on the given context.
   /* virtual */ void use(RenderContext const& ctx,
                          math::mat3 const& object_transform) const {
-    Texture()->bind(ctx, 0);
-    ShadelessTextureShader::instance()->use(ctx);
-    ShadelessTextureShader::instance()->set_uniform("projection", ctx.projection_matrix);
-    ShadelessTextureShader::instance()->set_uniform("transform", object_transform);
-    ShadelessTextureShader::instance()->set_uniform("diffuse", 0);
+
+    // disable rotation
+    // auto transform(math::make_translate(math::get_translate(object_transform)));
+    // transform = transform * math::make_scale(math::get_scale(object_transform));
+
+    DirectionalLightShader::instance()->use(ctx);
+    DirectionalLightShader::instance()->set_uniform("projection", math::mat3());
+    DirectionalLightShader::instance()->set_uniform("transform", math::mat3());
+    DirectionalLightShader::instance()->set_uniform("screen_size", ctx.size);
+    DirectionalLightShader::instance()->set_uniform("g_buffer_normal", 2);
+    DirectionalLightShader::instance()->set_uniform("light_dir", math::normalized(Direction()));
   }
 };
 
@@ -74,4 +75,4 @@ class ShadelessTextureMaterial : public Material {
 
 }
 
-#endif // SWIFT2D_SHADELESS_TEXTURE_MATERIAL_HPP
+#endif // SWIFT2D_DIRECTIONAL_LIGHT_MATERIAL_HPP

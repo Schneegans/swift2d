@@ -6,11 +6,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SHADER_HPP
-#define SWIFT2D_SHADER_HPP
+#ifndef SWIFT2D_POINT_LIGHT_SHADER_HPP
+#define SWIFT2D_POINT_LIGHT_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/materials/Shader.hpp>
+#include <swift2d/utils/Singleton.hpp>
 
 namespace swift {
 
@@ -18,38 +19,25 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class Shader {
+class PointLightShader : public Shader,
+                         public Singleton<PointLightShader> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Shader(std::string const& v_source, std::string const& f_source);
-  ~Shader();
-
-  // uses the Shader on the given context.
-  void use(RenderContext const& ctx) const;
-
-  template<typename T>
-  void set_uniform(std::string name, T const& val) {
-    oglplus::ProgramUniform<T>(*program_, name).Set(val);
-  }
+  friend class Singleton<PointLightShader>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void upload_to(RenderContext const& ctx) const;
-
-  mutable oglplus::Shader  *v_shader_;
-  mutable oglplus::Shader  *f_shader_;
-  mutable oglplus::Program *program_;
-
-  std::string v_source_;
-  std::string f_source_;
+  // this class is a Singleton --- private c'tor and d'tor
+  PointLightShader();
+  ~PointLightShader() {};
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_SHADER_HPP
+#endif // SWIFT2D_POINT_LIGHT_SHADER_HPP

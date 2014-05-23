@@ -44,6 +44,12 @@ vec2  get_translate (mat3 const& mat);
 vec2  get_scale     (mat3 const& mat);
 float get_rotation  (mat3 const& mat);
 
+vec3 normalized(vec3 const& vec);
+vec2 normalized(vec2 const& vec);
+
+void normalize(vec3& vec);
+void normalize(vec2& vec);
+
 }
 }
 

@@ -6,12 +6,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_LIGHT_MATERIAL_HPP
-#define SWIFT2D_LIGHT_MATERIAL_HPP
+#ifndef SWIFT2D_POINT_LIGHT_MATERIAL_HPP
+#define SWIFT2D_POINT_LIGHT_MATERIAL_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Material.hpp>
-#include <swift2d/materials/LightShader.hpp>
+#include <swift2d/materials/PointLightShader.hpp>
 #include <swift2d/databases/TextureDatabase.hpp>
 #include <swift2d/textures/Texture.hpp>
 
@@ -21,13 +21,13 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class LightMaterial;
-typedef std::shared_ptr<LightMaterial>       LightMaterialPtr;
-typedef std::shared_ptr<const LightMaterial> ConstLightMaterialPtr;
-typedef Property<LightMaterialPtr>           LightMaterialProperty;
+class PointLightMaterial;
+typedef std::shared_ptr<PointLightMaterial>       PointLightMaterialPtr;
+typedef std::shared_ptr<const PointLightMaterial> ConstPointLightMaterialPtr;
+typedef Property<PointLightMaterialPtr>           PointLightMaterialProperty;
 
 // -----------------------------------------------------------------------------
-class LightMaterial : public Material {
+class PointLightMaterial : public Material {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -38,25 +38,25 @@ class LightMaterial : public Material {
 
   // ----------------------------------------------------- contruction interface
   // Creates a new material and returns a shared pointer.
-  static LightMaterialPtr create() {
-    return std::make_shared<LightMaterial>();
+  static PointLightMaterialPtr create() {
+    return std::make_shared<PointLightMaterial>();
   }
 
-  static LightMaterialPtr create_from_file(std::string const& file) {
-    auto mat(std::make_shared<LightMaterial>());
+  static PointLightMaterialPtr create_from_file(std::string const& file) {
+    auto mat(std::make_shared<PointLightMaterial>());
     mat->Texture = Texture::create(file);
     return mat;
   }
 
-  static LightMaterialPtr create_from_database(std::string const& id) {
-    auto mat(std::make_shared<LightMaterial>());
+  static PointLightMaterialPtr create_from_database(std::string const& id) {
+    auto mat(std::make_shared<PointLightMaterial>());
     mat->Texture = TextureDatabase::instance()->get(id);
     return mat;
   }
 
   // creates a copy from this
-  LightMaterialPtr create_copy() const {
-    return std::make_shared<LightMaterial>(*this);
+  PointLightMaterialPtr create_copy() const {
+    return std::make_shared<PointLightMaterial>(*this);
   }
 
   // ------------------------------------------------------------ public methods
@@ -69,11 +69,12 @@ class LightMaterial : public Material {
     transform = transform * math::make_scale(math::get_scale(object_transform));
 
     Texture()->bind(ctx, 0);
-    LightShader::instance()->use(ctx);
-    LightShader::instance()->set_common_uniforms(ctx, transform);
-    LightShader::instance()->set_uniform("screen_size", ctx.size);
-    LightShader::instance()->set_uniform("g_buffer_normal", 2);
-    LightShader::instance()->set_uniform("light_tex", 0);
+    PointLightShader::instance()->use(ctx);
+    PointLightShader::instance()->set_uniform("projection", ctx.projection_matrix);
+    PointLightShader::instance()->set_uniform("transform", transform);
+    PointLightShader::instance()->set_uniform("screen_size", ctx.size);
+    PointLightShader::instance()->set_uniform("g_buffer_normal", 2);
+    PointLightShader::instance()->set_uniform("light_tex", 0);
   }
 };
 
@@ -81,4 +82,4 @@ class LightMaterial : public Material {
 
 }
 
-#endif // SWIFT2D_LIGHT_MATERIAL_HPP
+#endif // SWIFT2D_POINT_LIGHT_MATERIAL_HPP

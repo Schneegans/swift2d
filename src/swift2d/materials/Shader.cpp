@@ -31,14 +31,6 @@ Shader::~Shader() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Shader::set_common_uniforms(RenderContext const& ctx,
-                                 math::mat3 const& object_transform) {
-  set_uniform("projection", ctx.projection_matrix);
-  set_uniform("transform", object_transform);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void Shader::upload_to(RenderContext const& ctx) const {
 
   // set the vertex shader source

@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_LIGHT_SHADER_HPP
-#define SWIFT2D_LIGHT_SHADER_HPP
+#ifndef SWIFT2D_DIRECTIONAL_LIGHT_SHADER_HPP
+#define SWIFT2D_DIRECTIONAL_LIGHT_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Shader.hpp>
@@ -19,25 +19,25 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class LightShader : public Shader,
-                    public Singleton<LightShader> {
+class DirectionalLightShader : public Shader,
+                               public Singleton<DirectionalLightShader> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  friend class Singleton<LightShader>;
+  friend class Singleton<DirectionalLightShader>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  LightShader();
-  ~LightShader() {};
+  DirectionalLightShader();
+  ~DirectionalLightShader() {};
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_LIGHT_SHADER_HPP
+#endif // SWIFT2D_DIRECTIONAL_LIGHT_SHADER_HPP

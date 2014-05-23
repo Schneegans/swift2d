@@ -46,7 +46,7 @@ class Bullet: public SceneObject {
          tex->Material = MaterialDatabase::instance()->get("bullet");
          tex->Transform = math::make_scale(1.5f);
 
-    auto light = add<PointLightComponent>();
+    auto light = add<LightComponent>();
          light->Depth = 1.0f;
          light->Transform = math::make_scale(15.0f);
          light->Material = MaterialDatabase::instance()->get("light");
@@ -72,10 +72,11 @@ int main(int argc, char** argv) {
   MaterialDatabase::instance()->add("ship",       ShadelessTextureMaterial::create_from_file("ship.png"));
   MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_file("bullet.png"));
 
-  MaterialDatabase::instance()->add("planet1",     BumpTextureMaterial::create_from_files("planet_diffuse2.png", "planet_normal2.png"));
-  MaterialDatabase::instance()->add("planet2",     BumpTextureMaterial::create_from_files("planet_diffuse.png", "planet_normal.png"));
+  MaterialDatabase::instance()->add("planet1",    BumpTextureMaterial::create_from_files("planet_diffuse2.png", "planet_normal2.png"));
+  MaterialDatabase::instance()->add("planet2",    BumpTextureMaterial::create_from_files("planet_diffuse.png", "planet_normal.png"));
 
-  MaterialDatabase::instance()->add("light",      LightMaterial::create_from_file("light.png"));
+  MaterialDatabase::instance()->add("light",      PointLightMaterial::create_from_file("light.png"));
+  MaterialDatabase::instance()->add("sun",        DirectionalLightMaterial::create(math::vec3(1, 1, -1)));
 
 
   // window setup --------------------------------------------------------------
@@ -90,11 +91,11 @@ int main(int argc, char** argv) {
        music->play();
 
   auto field = scene->add<CircularShape>();
-       field->Transform = math::make_scale(2);
+       field->Transform = math::make_scale(4);
 
-  auto sun = scene->add<PointLightComponent>();
+  auto sun = scene->add<LightComponent>();
        sun->Transform = math::make_scale(15) * math::make_translate(-0.2, 0.2);
-       sun->Material = MaterialDatabase::instance()->get("light");
+       sun->Material = MaterialDatabase::instance()->get("sun");
 
   auto bg = scene->add<SpriteComponent>();
        bg->Depth = -1000.0f;
@@ -132,7 +133,7 @@ int main(int argc, char** argv) {
        ship->Depth = 1.0f;
        ship->Material = MaterialDatabase::instance()->get("ship");
 
-  auto light = player->add<PointLightComponent>();
+  auto light = player->add<LightComponent>();
        light->Depth = 1.0f;
        light->Transform = math::make_scale(20);
        light->Material = MaterialDatabase::instance()->get("light");

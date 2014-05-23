@@ -75,7 +75,8 @@ class BumpTextureMaterial : public Material {
     Texture()->bind(ctx, 0);
     NormalMap()->bind(ctx, 1);
     BumpTextureShader::instance()->use(ctx);
-    BumpTextureShader::instance()->set_common_uniforms(ctx, object_transform);
+    BumpTextureShader::instance()->set_uniform("projection", ctx.projection_matrix);
+    BumpTextureShader::instance()->set_uniform("transform", object_transform);
     BumpTextureShader::instance()->set_uniform("diffuse", 0);
     BumpTextureShader::instance()->set_uniform("normal", 1);
     BumpTextureShader::instance()->set_uniform("emit", Emit());
