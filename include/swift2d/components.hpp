@@ -15,5 +15,6 @@
 #include <swift2d/components/ListenerComponent.hpp>
 #include <swift2d/components/SoundComponent.hpp>
 #include <swift2d/components/CameraComponent.hpp>
+#include <swift2d/components/TextComponent.hpp>
 
 #endif  // SWIFT2D_INCLUDE_COMPONENTS_HPP

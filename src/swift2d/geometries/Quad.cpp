@@ -51,8 +51,9 @@ void Quad::upload_to(RenderContext const& ctx) const {
   oglplus::Buffer::Data(oglplus::Buffer::Target::Array, 8, rectangle_verts);
 
   // setup the vertex attribs array for the vertices
-  oglplus::VertexAttribArray vert_attr(0);
-  vert_attr.Setup<oglplus::Vec2f>().Enable();
+  oglplus::VertexAttribArray(0).Setup<oglplus::Vec2f>().Enable();
+
+  oglplus::VertexArray::Unbind();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,6 +67,7 @@ void Quad::draw(RenderContext const& ctx) const {
 
   rectangle_->Bind();
   ctx.gl.DrawArrays(oglplus::PrimitiveType::TriangleStrip, 0, 4);
+  // oglplus::VertexArray::Unbind();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

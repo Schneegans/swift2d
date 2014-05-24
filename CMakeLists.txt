@@ -32,6 +32,7 @@ pkg_check_modules(PNG REQUIRED libpng)
 pkg_check_modules(OPENAL REQUIRED openal)
 pkg_check_modules(SNDFILE REQUIRED sndfile)
 pkg_check_modules(ALUT REQUIRED freealut)
+pkg_check_modules(PANGOCAIRO REQUIRED pangocairo)
 pkg_check_modules(OPENGL REQUIRED gl)
 
 set(Boost_USE_STATIC_LIBS OFF)
@@ -50,6 +51,7 @@ set(LIBS
     ${OPENAL_LIBRARIES}
     ${SNDFILE_LIBRARIES}
     ${ALUT_LIBRARIES}
+    ${PANGOCAIRO_LIBRARIES}
     ${OPENGL_LIBRARIES}
 )
 link_libraries(${LIBS})
@@ -62,6 +64,7 @@ set(LIB_PATHS
     ${OPENAL_LIBRARY_DIRS}
     ${SNDFILE_LIBRARY_DIRS}
     ${ALUT_LIBRARY_DIRS}
+    ${PANGOCAIRO_LIBRARY_DIRS}
     ${OPENGL_LIBRARY_DIRS}
 )
 link_directories(${LIB_PATHS})
@@ -82,6 +85,7 @@ set(INCLUDE_PATHS
     ${OPENAL_INCLUDE_DIRS}
     ${SNDFILE_INCLUDE_DIRS}
     ${ALUT_INCLUDE_DIRS}
+    ${PANGOCAIRO_INCLUDE_DIRS}
     ${OPENGL_INCLUDE_DIRS}
 )
 include_directories(SYSTEM ${INCLUDE_PATHS})
@@ -149,6 +153,10 @@ message( "" )
 message( " alut:" )
 message( "   library: ${ALUT_LIBRARIES}" )
 message( "   include: ${ALUT_INCLUDE_DIRS}" )
+message( "" )
+message( " pangocairo:" )
+message( "   library: ${PANGOCAIRO_LIBRARIES}" )
+message( "   include: ${PANGOCAIRO_INCLUDE_DIRS}" )
 message( "" )
 message( " opengl:" )
 message( "   library: ${OPENGL_LIBRARIES}" )

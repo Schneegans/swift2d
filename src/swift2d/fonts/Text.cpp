@@ -7,36 +7,49 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/shader_snippets.hpp>
+#include <swift2d/fonts/Text.hpp>
+#include <swift2d/graphics/RenderContext.hpp>
+
+#include <oglplus/text/pango_cairo.hpp>
 
 namespace swift {
-namespace shader_snippets {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::string get_quad_vertext_shader() {
-  return R"(
-    #version 330
+Text::Text()
+  : text_update_(true)
+  , font_update_(true) {
 
-    // input
-    layout(location=0) in vec2 position;
+  Content.on_change().connect([&](std::string const& val){
+    text_update_ = true;
+  });
 
-    // uniforms
-    uniform mat3 projection;
-    uniform mat3 transform;
+  Size.on_change().connect([&](int val){
+    text_update_ = true;
+  });
 
-    // varyings
-    out vec2 tex_coords;
-
-    void main(void) {
-      vec3 pos    = projection * transform * vec3(position, 1.0);
-      tex_coords = vec2(position.x + 1.0, 1.0 - position.y) * 0.5;
-      gl_Position = vec4(pos.xy, 0.0, 1.0);
-    }
-  )";
+  Font.on_change().connect([&](std::string const& val){
+    text_update_ = true;
+  });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
+LayoutPtr const& Text::get_layout() {
+  if (font_update_) {
+    layout_ = FontRenderer::instance()->make_layout(Font(), Size(), 128);
+    font_update_ = false;
+  }
+
+  if (text_update_) {
+    layout_->Set(Content());
+    text_update_ = false;
+  }
+
+  return layout_;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
 }
+

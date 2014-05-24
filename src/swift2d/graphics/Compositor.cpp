@@ -95,7 +95,7 @@ void Compositor::init(RenderContext const& ctx) {
       out vec2 tex_coords;
 
       void main(void){
-        tex_coords = vec2(position.x + 1.0, 1.0 - position.y) * 0.5;
+        tex_coords = position * 0.5 + 0.5;
         gl_Position = vec4(position, 0.0, 1.0);
       }
     )", R"(
@@ -152,6 +152,8 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
     ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
   }
 
+  ctx.gl.Clear().ColorBuffer();
+
   for (auto& object: scene->objects) {
     object.second->draw(ctx);
   }
@@ -197,6 +199,7 @@ void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext c
 
     oglplus::DefaultFramebuffer::Bind(oglplus::Framebuffer::Target::Draw);
     ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
+
 
     oglplus::Texture::Active(0);
     ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_color_);

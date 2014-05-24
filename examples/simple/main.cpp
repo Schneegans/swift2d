@@ -25,8 +25,8 @@ class Mover: public MoveBehavior {
       } else if (action == 1) {
         if (key == Key::W) LinearSpeed.set( 20, 1);
         if (key == Key::S) LinearSpeed.set(-20, 1);
-        if (key == Key::A) AngularSpeed.set( 2 , 0.5);
-        if (key == Key::D) AngularSpeed.set(-2 , 0.5);
+        if (key == Key::A) AngularSpeed.set(-2 , 0.5);
+        if (key == Key::D) AngularSpeed.set( 2 , 0.5);
       }
     });
   }
@@ -44,11 +44,11 @@ class Bullet: public SceneObject {
     auto tex = add<SpriteComponent>();
          tex->Depth = 10.0f;
          tex->Material = MaterialDatabase::instance()->get("bullet");
-         tex->Transform = math::make_scale(1.5f);
+         tex->Transform = math::make_scale(1.0f);
 
     auto light = add<LightComponent>();
          light->Depth = 1.0f;
-         light->Transform = math::make_scale(15.0f);
+         light->Transform = math::make_scale(5.0f);
          light->Material = MaterialDatabase::instance()->get("light");
 
     auto shape = add<CircularShape>();
@@ -85,6 +85,7 @@ int main(int argc, char** argv) {
 
   // example scene setup -------------------------------------------------------
   auto scene = SceneObject::create();
+
   auto music = scene->add<SoundComponent>();
        music->Sound = Sound::create_from_file("music.ogg");
        music->Volume = 0.1f;
@@ -102,9 +103,14 @@ int main(int argc, char** argv) {
        bg->Material = MaterialDatabase::instance()->get("background");
        bg->Transform = math::make_scale(2.f);
 
-
   auto camera = scene->add<CameraComponent>();
-  camera->Size = math::vec2(2.f, 2.f);
+       camera->Size = math::vec2(2.f, 2.f);
+
+  auto fps = scene->add<TextComponent>();
+       fps->Transform = math::make_translate(-1.9, -1.9);
+       fps->Text = Text::create("FPS", "sans", 12);
+       fps->Depth = 1000.f;
+       fps->InScreenSpace = true;
 
   // planet
   auto planet1 = scene->add_object();
@@ -152,6 +158,11 @@ int main(int argc, char** argv) {
   ticker.on_tick.connect([&]() {
     renderer.process(scene, camera, timer.get_elapsed());
     timer.reset();
+
+    std::stringstream sstr;
+    sstr << "FPS: " << pipeline->rendering_fps();
+    fps->Text->Content = sstr.str();
+
     window->process_input();
   });
 

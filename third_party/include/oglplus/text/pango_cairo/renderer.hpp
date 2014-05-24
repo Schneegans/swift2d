@@ -49,7 +49,7 @@ public:
 	void Use(void)
 	{
 		_program.Use();
-		VertexArray::Unbind();
+		// VertexArray::Unbind();
 	}
 
 	void Render(const PangoCairoLayout& layout)

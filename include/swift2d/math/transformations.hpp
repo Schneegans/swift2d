@@ -50,6 +50,8 @@ vec2 normalized(vec2 const& vec);
 void normalize(vec3& vec);
 void normalize(vec2& vec);
 
+mat4 to_3D(mat3 const& mat);
+
 }
 }
 
