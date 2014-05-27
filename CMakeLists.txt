@@ -38,7 +38,7 @@ pkg_check_modules(OPENGL REQUIRED gl)
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost REQUIRED COMPONENTS thread system)
+find_package(Boost REQUIRED COMPONENTS thread system filesystem)
 
 include(find_ev)
 

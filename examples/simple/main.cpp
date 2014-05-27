@@ -8,6 +8,7 @@
 
 #include <swift2d/swift2d.hpp>
 
+#include <boost/filesystem.hpp>
 #include <iostream>
 
 using namespace swift;
@@ -86,18 +87,21 @@ int main(int argc, char** argv) {
   // initialize Swift2D
   init(argc, argv);
 
+  // get application directory
+  std::string directory(boost::filesystem::system_complete(argv[0]).normalize().remove_filename().string() + "/");
+
 
   MainLoop loop;
 
   // load resources ------------------------------------------------------------
-  MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_file("bg.jpg"));
-  MaterialDatabase::instance()->add("ship",       ShadelessTextureMaterial::create_from_file("ship.png"));
-  MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_file("bullet.png"));
+  MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_file(directory + "bg.jpg"));
+  MaterialDatabase::instance()->add("ship",       ShadelessTextureMaterial::create_from_file(directory + "ship.png"));
+  MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_file(directory + "bullet.png"));
 
-  MaterialDatabase::instance()->add("planet1",    BumpTextureMaterial::create_from_files("planet_diffuse2.png", "planet_normal2.png"));
-  MaterialDatabase::instance()->add("planet2",    BumpTextureMaterial::create_from_files("planet_diffuse.png", "planet_normal.png"));
+  MaterialDatabase::instance()->add("planet1",    BumpTextureMaterial::create_from_files(directory + "planet_diffuse2.png", directory + "planet_normal2.png"));
+  MaterialDatabase::instance()->add("planet2",    BumpTextureMaterial::create_from_files(directory + "planet_diffuse.png", directory + "planet_normal.png"));
 
-  MaterialDatabase::instance()->add("light",      PointLightMaterial::create_from_file("light.png"));
+  MaterialDatabase::instance()->add("light",      PointLightMaterial::create_from_file(directory + "light.png"));
   MaterialDatabase::instance()->add("sun",        DirectionalLightMaterial::create(math::vec3(1, 1, -1)));
 
 
@@ -109,7 +113,7 @@ int main(int argc, char** argv) {
   auto scene = SceneObject::create();
 
   auto music = scene->add<SoundComponent>();
-       music->Sound = Sound::create_from_file("music.ogg");
+       music->Sound = Sound::create_from_file(directory + "music.ogg");
        music->Volume = 0.1f;
        music->play();
 
