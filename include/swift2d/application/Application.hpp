@@ -6,56 +6,39 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_RENDERER_HPP
-#define SWIFT2D_RENDERER_HPP
+#ifndef SWIFT2D_APPLICATION_HPP
+#define SWIFT2D_APPLICATION_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/utils/FPSCounter.hpp>
-#include <swift2d/graphics/RenderClient.hpp>
-#include <swift2d/scene/SerializedScene.hpp>
-#include <vector>
-#include <string>
-#include <memory>
+#include <swift2d/swift2d.hpp>
 
 namespace swift {
 
-// forward declares ------------------------------------------------------------
-class Pipeline;
-typedef std::shared_ptr<Pipeline> PipelinePtr;
-
-class SceneObject;
-typedef std::shared_ptr<SceneObject> SceneObjectPtr;
-
 ////////////////////////////////////////////////////////////////////////////////
-// Manages the rendering on multiple contexts.                                //
-// This class is used to provide a renderer frontend interface to the user.   //
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class Renderer {
+class Application {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Renderer();
-  virtual ~Renderer();
+  Application(int argc, char** argv);
+  virtual ~Application();
 
-  void set_pipeline(PipelinePtr const& pipeline);
+  std::string get_resource(std::string const& type, std::string const& file);
 
-  void process(SceneObjectPtr const& scene,
-               CameraComponentPtr const& camera);
-
+  void start();
   void stop();
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-
-  RenderClient<ConstSerializedScenePtr>* render_client_;
-  FPSCounter                             application_fps_;
+  MainLoop    loop_;
+  std::string executable_;
 };
 
 }
 
-#endif  // SWIFT2D_RENDERER_HPP
+#endif  // SWIFT2D_APPLICATION_HPP

@@ -8,7 +8,6 @@
 
 #include <swift2d/swift2d.hpp>
 
-#include <boost/filesystem.hpp>
 #include <iostream>
 
 using namespace swift;
@@ -85,23 +84,17 @@ class Spark: public SceneObject {
 int main(int argc, char** argv) {
 
   // initialize Swift2D
-  init(argc, argv);
-
-  // get application directory
-  std::string directory(boost::filesystem::system_complete(argv[0]).normalize().remove_filename().string() + "/");
-
-
-  MainLoop loop;
+  Application app(argc, argv);
 
   // load resources ------------------------------------------------------------
-  MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_file(directory + "bg.jpg"));
-  MaterialDatabase::instance()->add("ship",       ShadelessTextureMaterial::create_from_file(directory + "ship.png"));
-  MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_file(directory + "bullet.png"));
+  MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_file(app.get_resource("images", "bg.jpg")));
+  MaterialDatabase::instance()->add("ship",       ShadelessTextureMaterial::create_from_file(app.get_resource("images", "ship.png")));
+  MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_file(app.get_resource("images", "bullet.png")));
 
-  MaterialDatabase::instance()->add("planet1",    BumpTextureMaterial::create_from_files(directory + "planet_diffuse2.png", directory + "planet_normal2.png"));
-  MaterialDatabase::instance()->add("planet2",    BumpTextureMaterial::create_from_files(directory + "planet_diffuse.png", directory + "planet_normal.png"));
+  MaterialDatabase::instance()->add("planet1",    BumpTextureMaterial::create_from_files(app.get_resource("images", "planet_diffuse2.png"), app.get_resource("images", "planet_normal2.png")));
+  MaterialDatabase::instance()->add("planet2",    BumpTextureMaterial::create_from_files(app.get_resource("images", "planet_diffuse.png"), app.get_resource("images", "planet_normal.png")));
 
-  MaterialDatabase::instance()->add("light",      PointLightMaterial::create_from_file(directory + "light.png"));
+  MaterialDatabase::instance()->add("light",      PointLightMaterial::create_from_file(app.get_resource("images", "light.png")));
   MaterialDatabase::instance()->add("sun",        DirectionalLightMaterial::create(math::vec3(1, 1, -1)));
 
 
@@ -113,7 +106,7 @@ int main(int argc, char** argv) {
   auto scene = SceneObject::create();
 
   auto music = scene->add<SoundComponent>();
-       music->Sound = Sound::create_from_file(directory + "music.ogg");
+       music->Sound = Sound::create_from_file(app.get_resource("audio", "music.ogg"));
        music->Volume = 0.1f;
        music->play();
 
@@ -174,7 +167,8 @@ int main(int argc, char** argv) {
   auto pipeline = Pipeline::create();
   pipeline->set_output_window(window);
 
-  Renderer renderer(pipeline);
+  Renderer renderer;
+  renderer.set_pipeline(pipeline);
 
   // main loop -----------------------------------------------------------------
   Timer timer;
@@ -182,20 +176,23 @@ int main(int argc, char** argv) {
 
   Ticker ticker(1.0 / 60.0);
   ticker.on_tick.connect([&]() {
-    renderer.process(scene, camera, timer.get_elapsed());
-    timer.reset();
 
     std::stringstream sstr;
+    sstr.precision(1);
+    sstr.setf(std::ios::fixed, std::ios::floatfield);
     sstr << "FPS: " << pipeline->rendering_fps() << " / "
          << pipeline->application_fps() << " Particles: " << particle_count;
     fps->Text->Content = sstr.str();
 
     window->process_input();
+    scene->update(timer.get_elapsed());
+    renderer.process(scene, camera);
+    timer.reset();
   });
 
   window->on_close.connect([&](){
     renderer.stop();
-    loop.stop();
+    app.stop();
   });
 
   window->on_resize.connect([&](math::vec2i const& size){
@@ -208,7 +205,7 @@ int main(int argc, char** argv) {
   window->on_key_press.connect([&](swift::Key key, int scancode, int action, int mods) {
     if (key == swift::Key::ESCAPE) {
       renderer.stop();
-      loop.stop();
+      app.stop();
     } else if (key == swift::Key::SPACE && action != 1) {
       auto bullet = std::make_shared<Bullet>(scene);
       scene->add_object(bullet);
@@ -224,7 +221,7 @@ int main(int argc, char** argv) {
     }
   });
 
-  loop.start();
+  app.start();
 
   return 0;
 }

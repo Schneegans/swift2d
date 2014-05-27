@@ -23,6 +23,7 @@
 #include <swift2d/materials.hpp>
 #include <swift2d/input/keys.hpp>
 #include <swift2d/triggers/ShapeTrigger.hpp>
+#include <swift2d/application/Application.hpp>
 
 namespace swift {
 
