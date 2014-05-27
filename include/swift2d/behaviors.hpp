@@ -13,5 +13,6 @@
 #include <swift2d/behaviors/Behavior.hpp>
 #include <swift2d/behaviors/MoveBehavior.hpp>
 #include <swift2d/behaviors/DeleteOnLeaveBehavior.hpp>
+#include <swift2d/behaviors/TimedDeleteBehavior.hpp>
 
 #endif  // SWIFT2D_INCLUDE_BEHAVIORS_HPP

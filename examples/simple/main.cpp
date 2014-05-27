@@ -12,6 +12,8 @@
 
 using namespace swift;
 
+int particle_count(0);
+
 class Mover: public MoveBehavior {
  public:
   Mover() {}
@@ -55,6 +57,25 @@ class Bullet: public SceneObject {
 
     auto deleter = add<DeleteOnLeaveBehavior>();
          deleter->set_shapes(shape, scene->get_component<CircularShape>());
+         deleter->on_delete.connect([&](){ --particle_count; });
+  }
+};
+
+class Spark: public SceneObject {
+ public:
+  Spark() {
+    auto move = add<MoveBehavior>();
+         move->LinearSpeed.set(math::random::get(-2.0f, 2.0f));
+         move->AngularSpeed.set(math::random::get(-5.0f, 5.0f));
+
+    auto tex = add<SpriteComponent>();
+         tex->Depth = 10.0f;
+         tex->Material = MaterialDatabase::instance()->get("bullet");
+         tex->Transform = math::make_scale(0.2f);
+
+    auto deleter = add<TimedDeleteBehavior>();
+         deleter->Life = 10;
+         deleter->on_delete.connect([&](){ --particle_count; });
   }
 };
 
@@ -64,6 +85,7 @@ int main(int argc, char** argv) {
 
   // initialize Swift2D
   init(argc, argv);
+
 
   MainLoop loop;
 
@@ -160,7 +182,8 @@ int main(int argc, char** argv) {
     timer.reset();
 
     std::stringstream sstr;
-    sstr << "FPS: " << pipeline->rendering_fps();
+    sstr << "FPS: " << pipeline->rendering_fps() << " / "
+         << pipeline->application_fps() << " Particles: " << particle_count;
     fps->Text->Content = sstr.str();
 
     window->process_input();
@@ -186,6 +209,14 @@ int main(int argc, char** argv) {
       auto bullet = std::make_shared<Bullet>(scene);
       scene->add_object(bullet);
       bullet->Transform = player->Transform();
+
+      ++particle_count;
+
+      for (int i(0); i<5; ++i) {
+        auto spark = scene->add_object(std::make_shared<Spark>());
+        spark->Transform = player->Transform();
+        ++particle_count;
+      }
     }
   });
 

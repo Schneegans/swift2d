@@ -6,12 +6,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_DELETE_ON_LEAVE_BEHAVIOR_HPP
-#define SWIFT2D_DELETE_ON_LEAVE_BEHAVIOR_HPP
+#ifndef SWIFT2D_TIMED_DELETE_BEHAVIOR_HPP
+#define SWIFT2D_TIMED_DELETE_BEHAVIOR_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/behaviors/Behavior.hpp>
-#include <swift2d/triggers/ShapeTrigger.hpp>
 
 namespace swift {
 
@@ -20,54 +19,46 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class DeleteOnLeaveBehavior;
-typedef std::shared_ptr<DeleteOnLeaveBehavior>       DeleteOnLeaveBehaviorPtr;
-typedef std::shared_ptr<const DeleteOnLeaveBehavior> ConstDeleteOnLeaveBehaviorPtr;
+class TimedDeleteBehavior;
+typedef std::shared_ptr<TimedDeleteBehavior>       TimedDeleteBehaviorPtr;
+typedef std::shared_ptr<const TimedDeleteBehavior> ConstTimedDeleteBehaviorPtr;
 
 // -----------------------------------------------------------------------------
-class DeleteOnLeaveBehavior : public Behavior<SceneObject*> {
+class TimedDeleteBehavior : public Behavior<SceneObject*> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
+  // ---------------------------------------------------------------- properties
+  Float Life;
   Signal<> on_delete;
 
   // ----------------------------------------------------- constrution interface
-  DeleteOnLeaveBehavior() {
-    int callback;
-    callback = trigger_.on_leave.connect([&](){
-      if (get_user()) {
-        on_delete.emit();
-        trigger_.on_leave.disconnect(callback);
-        get_user()->detach();
-      }
-    });
-  }
+  TimedDeleteBehavior() : Life(1.0f) {}
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static DeleteOnLeaveBehaviorPtr create(Args&& ... a) {
-    return std::make_shared<DeleteOnLeaveBehavior>(a...);
+  static TimedDeleteBehaviorPtr create(Args&& ... a) {
+    return std::make_shared<TimedDeleteBehavior>(a...);
   }
 
   // creates a copy from this
-  DeleteOnLeaveBehaviorPtr create_copy() const {
-    return std::make_shared<DeleteOnLeaveBehavior>(*this);
+  TimedDeleteBehaviorPtr create_copy() const {
+    return std::make_shared<TimedDeleteBehavior>(*this);
   }
 
   // ------------------------------------------------------------ public methods
-  void set_shapes(CircularShapePtr const& a, CircularShapePtr const& b) {
-    trigger_.set_shapes(a, b);
+  /*virtual*/ void update(double time) {
+    Life.set(Life.get()-time);
+    if (Life.get() <= 0) {
+      on_delete.emit();
+      get_user()->detach();
+    }
   }
-
- ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
- private:
-  ShapeTrigger trigger_;
 
 };
 
 }
 
-#endif  // SWIFT2D_DELETE_ON_LEAVE_BEHAVIOR_HPP
+#endif  // SWIFT2D_TIMED_DELETE_BEHAVIOR_HPP
