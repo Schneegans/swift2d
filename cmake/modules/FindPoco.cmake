@@ -1,181 +1,210 @@
-# - Find the Poco includes and libraries.
-# The following variables are set if Poco is found.  If Poco is not
-# found, Poco_FOUND is set to false.
-#  Poco_FOUND        - True when the Poco include directory is found.
-#  Poco_INCLUDE_DIRS - the path to where the poco include files are.
-#  Poco_LIBRARY_DIRS - The path to where the poco library files are.
-#  Poco_BINARY_DIRS - The path to where the poco dlls are.
-#  Poco_LIBRARIES - All libraries
-
-# ----------------------------------------------------------------------------
-# If you have installed Poco in a non-standard location.
-# Then you have three options. 
-# In the following comments, it is assumed that <Your Path>
-# points to the root directory of the include directory of Poco. e.g
-# If you have put poco in C:\development\Poco then <Your Path> is
-# "C:/development/Poco" and in this directory there will be two
-# directories called "include" and "lib".
-# 1) After CMake runs, set Poco_INCLUDE_DIR to <Your Path>/poco<-version>
-# 2) Use CMAKE_INCLUDE_PATH to set a path to <Your Path>/poco<-version>. This will allow FIND_PATH()
-#    to locate Poco_INCLUDE_DIR by utilizing the PATH_SUFFIXES option. e.g.
-#    SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "<Your Path>/include")
-# 3) Set an environment variable called ${POCO_ROOT} that points to the root of where you have
-#    installed Poco, e.g. <Your Path>. It is assumed that there is at least a subdirectory called
-#    Foundation/include/Poco in this path.
+# - finds the Poco C++ libraries
+# This module finds the Applied Informatics Poco libraries.
+# It supports the following components:
 #
-# Note:
-#  1) If you are just using the poco headers, then you do not need to use
-#     Poco_LIBRARY_DIRS in your CMakeLists.txt file.
-#  2) If Poco has not been installed, then when setting Poco_LIBRARY_DIRS
-#     the script will look for /lib first and, if this fails, then for /stage/lib.
+# Util (loaded by default)
+# Foundation (loaded by default)
+# XML
+# Zip
+# Crypto
+# Data
+# Net
+# NetSSL_OpenSSL
+# OSP
 #
 # Usage:
-# In your CMakeLists.txt file do something like this:
-# ...
-# # Poco
-# FIND_PACKAGE(Poco)
-# ...
-# INCLUDE_DIRECTORIES(${Poco_INCLUDE_DIRS})
-# LINK_DIRECTORIES(${Poco_LIBRARY_DIRS})
+# set(ENV{Poco_DIR} path/to/poco/sdk)
+# find_package(Poco REQUIRED OSP Data Crypto)
 #
-# In Windows, we make the assumption that, if the Poco files are installed, the default directory
-# will be C:\poco or C:\Program Files\Poco.
+# On completion, the script defines the following variables:
+#
+# - Compound variables:
+#   Poco_FOUND
+#   - true if all requested components were found.
+# Poco_LIBRARIES
+#   - contains release (and debug if available) libraries for all requested components.
+#     It has the form "optimized LIB1 debug LIBd1 optimized LIB2 ...", ready for use with the target_link_libraries command.
+# Poco_INCLUDE_DIRS
+#   - Contains include directories for all requested components.
+#
+# - Component variables:
+#   Poco_Xxx_FOUND
+#   - Where Xxx is the properly cased component name (eg. 'Util', 'OSP').
+#     True if a component's library or debug library was found successfully.
+# Poco_Xxx_LIBRARY
+#   - Library for component Xxx.
+# Poco_Xxx_LIBRARY_DEBUG
+#   - debug library for component Xxx
+#   Poco_Xxx_INCLUDE_DIR
+#   - include directory for component Xxx
+#
+#   - OSP BundleCreator variables: (i.e. bundle.exe on windows, bundle on unix-likes)
+#   (is only discovered if OSP is a requested component)
+# Poco_OSP_Bundle_EXECUTABLE_FOUND
+#   - true if the bundle-creator executable was found.
+# Poco_OSP_Bundle_EXECUTABLE
+#   - the path to the bundle-creator executable.
+#
+# Author: Andreas Stahl andreas.stahl@tu-dresden.de
 
-SET(POCO_INCLUDE_PATH_DESCRIPTION "top-level directory containing the poco include directories. E.g /usr/local/include/poco-1.2.1 or c:\\poco\\include\\poco-1.2.1")
-SET(POCO_INCLUDE_DIR_MESSAGE "Set the Poco_INCLUDE_DIR cmake cache entry to the ${POCO_INCLUDE_PATH_DESCRIPTION}")
-SET(POCO_LIBRARY_PATH_DESCRIPTION "top-level directory containing the poco libraries.")
-SET(POCO_LIBRARY_DIR_MESSAGE "Set the Poco_LIBRARY_DIR cmake cache entry to the ${POCO_LIBRARY_PATH_DESCRIPTION}")
+set(Poco_HINTS
+  /usr/local
+  C:/AppliedInformatics
+  ${Poco_DIR}
+  $ENV{Poco_DIR}
+)
 
-
-SET(POCO_DIR_SEARCH $ENV{POCO_ROOT})
-IF(POCO_DIR_SEARCH)
-  FILE(TO_CMAKE_PATH ${POCO_DIR_SEARCH} POCO_DIR_SEARCH)
-ELSE(POCO_DIR_SEARCH)
-  SET(POCO_DIR_SEARCH ${POCO_ROOT})
-  IF(POCO_DIR_SEARCH)
-    FILE(TO_CMAKE_PATH ${POCO_DIR_SEARCH} POCO_DIR_SEARCH)
-  ENDIF(POCO_DIR_SEARCH)
-ENDIF(POCO_DIR_SEARCH)
-
-
-IF(WIN32)
-  SET(POCO_DIR_SEARCH
-    ${POCO_DIR_SEARCH}
-    C:/poco
-    D:/poco
-    "C:Program Files/poco"
-    "D:Program Files/poco"
+if(NOT Poco_ROOT_DIR)
+  # look for the root directory, first for the source-tree variant
+  find_path(Poco_ROOT_DIR
+    NAMES Foundation/include/Poco/Poco.h
+    HINTS ${Poco_HINTS}
   )
-ENDIF(WIN32)
-
-# Add in some path suffixes. These will have to be updated whenever a new Poco version comes out.
-SET(SUFFIX_FOR_INCLUDE_PATH
- poco-1.2.4
- poco-1.2.3
- poco-1.2.1
-)
-
-SET(SUFFIX_FOR_LIBRARY_PATH
- poco-1.2.4/lib
- poco-1.2.4/lib/Linux/i686
- poco-1.2.3/lib
- poco-1.2.3/lib/Linux/i686
- poco-1.2.1/lib
- poco-1.2.1/lib/Linux/i686
- lib
- lib/Linux/i686
-)
-
-#
-# Look for an installation.
-#
-FIND_PATH(Poco_INCLUDE_DIR NAMES Poco/AbstractCache.h Foundation/include/Poco/AbstractCache.h PATH_SUFFIXES ${SUFFIX_FOR_INCLUDE_PATH} PATHS
-
-  # Look in other places.
-  ${POCO_DIR_SEARCH}
-
-  # Help the user find it if we cannot.
-  DOC "The ${POCO_INCLUDE_DIR_MESSAGE}"
-)
-
-# Assume we didn't find it.
-SET(Poco_FOUND 0)
-
-# Now try to get the include and library path.
-IF(Poco_INCLUDE_DIR)
-
-  IF(EXISTS "${Poco_INCLUDE_DIR}")
-    SET(Poco_INCLUDE_DIRS
-      ${Poco_INCLUDE_DIR}/CppUnit/include
-      ${Poco_INCLUDE_DIR}/Foundation/include
-      ${Poco_INCLUDE_DIR}/Net/include
-      ${Poco_INCLUDE_DIR}/Util/include
-      ${Poco_INCLUDE_DIR}/XML/include
-      ${Poco_INCLUDE_DIR}/Zip/include
+  if(NOT Poco_ROOT_DIR)
+    # this means poco may have a different directory structure, maybe it was installed, let's check for that
+    message(STATUS "Looking for Poco install directory structure.")
+    find_path(Poco_ROOT_DIR
+      NAMES include/Poco/Poco.h
+      HINTS ${Poco_HINTS}
     )
-    SET(Poco_FOUND 1)
-  ENDIF(EXISTS "${Poco_INCLUDE_DIR}")
+    if(NOT Poco_ROOT_DIR)
+      # poco was still not found -> Fail
+      if(Poco_FIND_REQUIRED)
+        message(FATAL_ERROR "Poco: Could not find Poco install directory")
+      endif()
+      if(NOT Poco_FIND_QUIETLY)
+        message(STATUS "Poco: Could not find Poco install directory")
+      endif()
+      return()
+    else()
+      # poco was found with the make install directory structure
+      message(STATUS "Assuming Poco install directory structure at ${Poco_ROOT_DIR}.")
+      set(Poco_INSTALLED true)
+    endif()
+  endif()
+endif()
 
-  set( Poco_LIBRARIES "") #reset
-  IF ( NOT Poco_LIBRARIES )
-    FIND_LIBRARY(Poco_LIBRARY_Zip NAMES PocoZip PocoZipd PATH_SUFFIXES ${SUFFIX_FOR_LIBRARY_PATH} PATHS
-      # Look in other places.
-      ${Poco_INCLUDE_DIR}
-      ${POCO_DIR_SEARCH}
-      # Help the user find it if we cannot.
-      DOC "The ${POCO_LIBRARY_PATH_DESCRIPTION}"
-    )
-  FIND_LIBRARY(Poco_LIBRARY_Found NAMES PocoFoundation PocoFoundationd PATH_SUFFIXES ${SUFFIX_FOR_LIBRARY_PATH} PATHS
-      # Look in other places.
-      ${Poco_INCLUDE_DIR}
-      ${POCO_DIR_SEARCH}
-      # Help the user find it if we cannot.
-      DOC "The ${POCO_LIBRARY_PATH_DESCRIPTION}"
-    )
-  set( Poco_LIBRARIES     "${Poco_LIBRARY_Found};${Poco_LIBRARY_Zip}" CACHE FILEPATH "Poco libraries names" FORCE )
+# add dynamic library directory
+if(WIN32)
+  find_path(Poco_RUNTIME_LIBRARY_DIRS
+    NAMES PocoFoundation.dll
+    HINTS ${Poco_ROOT_DIR}
+    PATH_SUFFIXES
+      bin
+      lib
+  )
+endif()
 
+# if installed directory structure, set full include dir
+if(Poco_INSTALLED)
+  set(Poco_INCLUDE_DIRS ${Poco_ROOT_DIR}/include/ CACHE PATH "The global include path for Poco")
+endif()
+
+# append the default minimum components to the list to find
+list(APPEND components
+  ${Poco_FIND_COMPONENTS}
+  # default components:
+  "Util"
+  "Foundation"
+)
+list(REMOVE_DUPLICATES components) # remove duplicate defaults
+
+foreach( component ${components} )
+  #if(NOT Poco_${component}_FOUND)
+
+  # include directory for the component
+  if(NOT Poco_${component}_INCLUDE_DIR)
+    find_path(Poco_${component}_INCLUDE_DIR
+      NAMES
+        Poco/${component}.h   # e.g. Foundation.h
+        Poco/${component}/${component}.h # e.g. OSP/OSP.h Util/Util.h
+      HINTS
+        ${Poco_ROOT_DIR}
+      PATH_SUFFIXES
+        include
+        ${component}/include
+    )
+  endif()
+  if(NOT Poco_${component}_INCLUDE_DIR)
+    message(FATAL_ERROR "Poco_${component}_INCLUDE_DIR NOT FOUND")
+  else()
+    list(APPEND Poco_INCLUDE_DIRS ${Poco_${component}_INCLUDE_DIR})
   endif()
 
-  IF ( NOT Poco_LIBRARY_DIR )
-    FIND_LIBRARY(Poco_LIBRARY_DIR_TMP NAMES PocoFoundation PocoFoundationd PocoZip PocoZipd PATH_SUFFIXES ${SUFFIX_FOR_LIBRARY_PATH} PATHS
-
-      # Look in other places.
-      ${Poco_INCLUDE_DIR}
-      ${POCO_DIR_SEARCH}
-
-      # Help the user find it if we cannot.
-      DOC "The ${POCO_LIBRARY_PATH_DESCRIPTION}"
+  # release library
+  if(NOT Poco_${component}_LIBRARY)
+    find_library(
+      Poco_${component}_LIBRARY
+      NAMES Poco${component}
+      HINTS ${Poco_ROOT_DIR}
+      PATH_SUFFIXES
+        lib
+        bin
     )
-    GET_FILENAME_COMPONENT(Poco_LIBRARY_DIR_PATH ${Poco_LIBRARY_DIR_TMP} PATH)
-    SET( Poco_LIBRARY_DIR ${Poco_LIBRARY_DIR_PATH} CACHE PATH "Poco library dir path" )
+    if(Poco_${component}_LIBRARY)
+      message(STATUS "Found Poco ${component}: ${Poco_${component}_LIBRARY}")
+    endif()
   endif()
-  
-  IF(Poco_INCLUDE_DIR)
-    
-	
-    # Look for the poco binary path.
-    SET(Poco_BINARY_DIR ${Poco_INCLUDE_DIR})
-    IF(Poco_BINARY_DIR AND EXISTS "${Poco_BINARY_DIR}")
+  if(Poco_${component}_LIBRARY)
+    list(APPEND Poco_LIBRARIES "optimized" ${Poco_${component}_LIBRARY} )
+    mark_as_advanced(Poco_${component}_LIBRARY)
+  endif()
 
-      SET(Poco_BINARY_DIRS ${Poco_BINARY_DIR}/bin)
-	  SET(Poco_LIBRARY_DIRS "${Poco_BINARY_DIR}/bin" CACHE PATH "All Poco Library Dirs")
-	  
-    ENDIF(Poco_BINARY_DIR AND EXISTS "${Poco_BINARY_DIR}")
+  # debug library
+  if(NOT Poco_${component}_LIBRARY_DEBUG)
+    find_library(
+      Poco_${component}_LIBRARY_DEBUG
+      Names Poco${component}d
+      HINTS ${Poco_ROOT_DIR}
+      PATH_SUFFIXES
+        lib
+        bin
+    )
+    if(Poco_${component}_LIBRARY_DEBUG)
+      message(STATUS "Found Poco ${component} (debug): ${Poco_${component}_LIBRARY_DEBUG}")
+    endif()
+  endif(NOT Poco_${component}_LIBRARY_DEBUG)
+  if(Poco_${component}_LIBRARY_DEBUG)
+    list(APPEND Poco_LIBRARIES "debug" ${Poco_${component}_LIBRARY_DEBUG})
+    mark_as_advanced(Poco_${component}_LIBRARY_DEBUG)
+  endif()
 
-  ENDIF(Poco_INCLUDE_DIR)
+  # mark component as found or handle not finding it
+  if(Poco_${component}_LIBRARY_DEBUG OR Poco_${component}_LIBRARY)
+    set(Poco_${component}_FOUND TRUE)
+  elseif(NOT Poco_FIND_QUIETLY)
+    message(FATAL_ERROR "Could not find Poco component ${component}!")
+  endif()
+endforeach()
 
-ENDIF(Poco_INCLUDE_DIR)
+if(DEFINED Poco_LIBRARIES)
+  set(Poco_FOUND true)
+endif()
 
-IF(NOT Poco_FOUND)
-  IF(NOT Poco_FIND_QUIETLY)
-    MESSAGE(STATUS "Poco was not found. ${POCO_DIR_MESSAGE}")
-  ELSE(NOT Poco_FIND_QUIETLY)
-    IF(Poco_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Poco was not found. ${POCO_DIR_MESSAGE}")
-    ENDIF(Poco_FIND_REQUIRED)
-  ENDIF(NOT Poco_FIND_QUIETLY)
-ENDIF(NOT Poco_FOUND)
+if(${Poco_OSP_FOUND})
+  # find the osp bundle program
+  find_program(
+    Poco_OSP_Bundle_EXECUTABLE
+    NAMES bundle
+    HINTS
+      ${Poco_RUNTIME_LIBRARY_DIRS}
+      ${Poco_ROOT_DIR}
+    PATH_SUFFIXES
+      bin
+      OSP/BundleCreator/bin/Darwin/x86_64
+      OSP/BundleCreator/bin/Darwin/i386
+    DOC "The executable that bundles OSP packages according to a .bndlspec specification."
+  )
+  if(Poco_OSP_Bundle_EXECUTABLE)
+    set(Poco_OSP_Bundle_EXECUTABLE_FOUND true)
+  endif()
+  # include bundle script file
+  find_file(Poco_OSP_Bundles_file NAMES PocoBundles.cmake HINTS ${CMAKE_MODULE_PATH})
+  if(${Poco_OSP_Bundles_file})
+    include(${Poco_OSP_Bundles_file})
+  endif()
+endif()
 
-IF(NOT Poco_FIND_QUIETLY)
-  message( ${Poco_INCLUDE_DIR} + " and lib dir " + ${Poco_LIBRARY_DIR} + " poco found " + ${Poco_FOUND})
-ENDIF(NOT Poco_FIND_QUIETLY)
+message(STATUS "Found Poco: ${Poco_LIBRARIES}")
+
+
