@@ -74,6 +74,7 @@ set(OWN_INCLUDE_PATHS
     ${CMAKE_CURRENT_SOURCE_DIR}/build
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/src/raknet
 )
 include_directories(${OWN_INCLUDE_PATHS})
 
@@ -104,6 +105,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall --std=c++0x -fPIC")
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+add_subdirectory(third_party/src)
 add_subdirectory(src)
 
 ################################################################

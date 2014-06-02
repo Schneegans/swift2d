@@ -1,0 +1,12 @@
+set(CMAKE_CXX_FLAGS_RELEASE "-s -w -O4")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall")
+
+INCLUDE_DIRECTORIES(
+  raknet/
+)
+
+FILE(GLOB RAKNET_SRC
+  raknet/*.cpp
+)
+
+ADD_LIBRARY(raknet STATIC ${RAKNET_SRC})
