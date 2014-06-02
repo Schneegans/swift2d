@@ -40,8 +40,6 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost REQUIRED COMPONENTS thread system filesystem)
 
-find_package(Poco REQUIRED Net)
-
 include(find_ev)
 
 
@@ -56,7 +54,6 @@ set(LIBS
     ${ALUT_LIBRARIES}
     ${PANGOCAIRO_LIBRARIES}
     ${OPENGL_LIBRARIES}
-    ${Poco_LIBRARIES}
 )
 link_libraries(${LIBS})
 
@@ -91,7 +88,6 @@ set(INCLUDE_PATHS
     ${ALUT_INCLUDE_DIRS}
     ${PANGOCAIRO_INCLUDE_DIRS}
     ${OPENGL_INCLUDE_DIRS}
-    ${Poco_INCLUDE_DIRS}
 )
 include_directories(SYSTEM ${INCLUDE_PATHS})
 
@@ -166,8 +162,4 @@ message( "" )
 message( " opengl:" )
 message( "   library: ${OPENGL_LIBRARIES}" )
 message( "   include: ${OPENGL_INCLUDE_DIRS}" )
-message( "" )
-message( " poco:" )
-message( "   library: ${Poco_LIBRARIES}" )
-message( "   include: ${Poco_INCLUDE_DIRS}" )
 message( "" )
