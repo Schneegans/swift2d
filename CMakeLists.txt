@@ -105,7 +105,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall --std=c++0x -fPIC")
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib)
-add_subdirectory(third_party/src)
+add_subdirectory(third_party/raknet)
 add_subdirectory(src)
 
 ################################################################
