@@ -112,10 +112,9 @@ add_subdirectory(src)
 # Create examples
 ################################################################
 
-file(GLOB _EXAMPLES ${CMAKE_CURRENT_SOURCE_DIR}/examples/*)
-FOREACH(_EXAMPLE ${_EXAMPLES})
-    add_subdirectory(${_EXAMPLE})
-ENDFOREACH(_EXAMPLE ${_EXAMPLES})
+add_subdirectory(examples/simple)
+add_subdirectory(examples/network)
+add_subdirectory(examples/complex_network)
 
 ################################################################
 # Summary
