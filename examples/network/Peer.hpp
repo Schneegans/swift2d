@@ -6,38 +6,43 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_UPNP_OPENER_HPP
-#define SWIFT2D_UPNP_OPENER_HPP
+#ifndef SWIFT2D_PEER_HPP
+#define SWIFT2D_PEER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/events.hpp>
+// #include <swift2d/events.hpp>
 
+namespace RakNet {
+  class RakPeerInterface;
+  class ConnectionGraph2;
+  class FullyConnectedMesh2;
+}
 
 namespace swift {
-
-// forward declares ------------------------------------------------------------
-class Peer;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class UpnpOpener {
+class Peer {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Signal<> on_success;
-  Signal<> on_fail;
+  Peer();
+  ~Peer();
 
-  void open(Peer const& peer);
+  friend class UpnpOpener;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  RakNet::RakPeerInterface*    peer_;
+  RakNet::ConnectionGraph2*    graph_;
+  RakNet::FullyConnectedMesh2* mesh_;
 };
 
 }
 
-#endif  // SWIFT2D_UPNP_OPENER_HPP
+#endif  // SWIFT2D_PEER_HPP

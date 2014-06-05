@@ -9,6 +9,9 @@
 // includes  -------------------------------------------------------------------
 #include "UpnpOpener.hpp"
 
+#include "Peer.hpp"
+#include <swift2d/utils/Logger.hpp>
+
 #include <miniupnpc/miniupnpc.h>
 #include <miniupnpc/upnpcommands.h>
 #include <miniupnpc/upnperrors.h>
@@ -20,6 +23,7 @@
 #include <../../third_party/raknet/src/RakThread.h>
 
 #include <iostream>
+#include <sstream>
 
 namespace swift {
 
@@ -27,14 +31,16 @@ namespace swift {
 
 namespace {
 
+  //////////////////////////////////////////////////////////////////////////////
+
   struct UPNPOpenWorkerArgs {
     char            buff[256];
-    unsigned short  portToOpen;
+    unsigned short  port_to_open;
     unsigned int    timeout;
     UpnpOpener*     opener;
-    void (*resultCallback)(bool success, unsigned short portToOpen, UpnpOpener* opener);
-    void (*progressCallback)(const char *progressMsg, UpnpOpener* opener);
   };
+
+  //////////////////////////////////////////////////////////////////////////////
 
   RAK_THREAD_DECLARATION(UPNPOpenWorker) {
 
@@ -42,113 +48,75 @@ namespace {
     bool success=false;
 
     // Behind a NAT. Try to open with UPNP to avoid doing NAT punchthrough
-    struct UPNPDev * devlist = 0;
-    RakNet::Time t1 = RakNet::GetTime();
-    devlist = upnpDiscover(args->timeout, 0, 0, 0, 0, 0);
-    RakNet::Time t2 = RakNet::GetTime();
-    if (devlist) {
-      if (args->progressCallback)
-        args->progressCallback("List of UPNP devices found on the network :\n", args->opener);
-      struct UPNPDev * device;
-      for(device = devlist; device; device = device->pNext) {
-        sprintf(args->buff, " desc: %s\n st: %s\n\n", device->descURL, device->st);
-        if (args->progressCallback) {
-          args->progressCallback(args->buff, args->opener);
-        }
-      }
+    int error(0);
+    UPNPDev* devlist = upnpDiscover(args->timeout, 0, 0, 0, 0, &error);
 
-      char lanaddr[64]; /* my ip address on the LAN */
-      struct UPNPUrls urls;
-      struct IGDdatas data;
+    if (error > 0) {
+      Logger::LOG_WARNING << "upnpDiscover failed with code " << error << " ("
+                          << strupnperror(error) << ")" << std::endl;
+
+    } else if (devlist) {
+
+      char lanaddr[64];
+      UPNPUrls urls;
+      IGDdatas data;
+
       if (UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))==1) {
-        char iport[32];
-        Itoa(args->portToOpen, iport,10);
-        char eport[32];
-        strcpy(eport, iport);
 
-        // Version miniupnpc-1.6.20120410
-        int r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
-          eport, iport, lanaddr, 0, "UDP", 0, "0");
+        freeUPNPDevlist(devlist);
 
-        if(r!=UPNPCOMMAND_SUCCESS) {
-          printf("AddPortMapping(%s, %s, %s) failed with code %d (%s)\n",
-          eport, iport, lanaddr, r, strupnperror(r));
+        std::stringstream port_stream;
+        port_stream << args->port_to_open;
+        auto port(port_stream.str());
+
+        error = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
+                                    port.c_str(), port.c_str(),
+                                    lanaddr, 0, "UDP", 0, "0");
+
+        if(error != UPNPCOMMAND_SUCCESS) {
+          Logger::LOG_WARNING << "AddPortMapping failed with code " << error
+                              << " (" << strupnperror(error) << ")" << std::endl;
         }
 
-        char intPort[6];
-        char intClient[16];
+        char int_port[6], int_client[16], desc[128], enabled[128], duration[128];
+        error = UPNP_GetSpecificPortMappingEntry(urls.controlURL, data.first.servicetype,
+          port.c_str(), "UDP", int_client, int_port, desc, enabled, duration);
 
-        // Version miniupnpc-1.6.20120410
-        char desc[128];
-        char enabled[128];
-        char leaseDuration[128];
-        r = UPNP_GetSpecificPortMappingEntry(urls.controlURL,
-          data.first.servicetype,
-          eport, "UDP",
-          intClient, intPort,
-          desc, enabled, leaseDuration);
-
-        if(r!=UPNPCOMMAND_SUCCESS) {
-          sprintf(args->buff, "GetSpecificPortMappingEntry() failed with code %d (%s)\n",
-            r, strupnperror(r));
-          if (args->progressCallback)
-            args->progressCallback(args->buff, args->opener);
-        } else {
-          if (args->progressCallback) {
-            args->progressCallback("UPNP success.\n", args->opener);
-          }
-          success=true;
-        }
+        success = error == UPNPCOMMAND_SUCCESS;
       }
     }
 
-    if (args->resultCallback) {
-      args->resultCallback(success, args->portToOpen, args->opener);
+    if (success) {
+      args->opener->on_success.emit();
+    } else {
+      args->opener->on_fail.emit();
     }
+
     RakNet::OP_DELETE(args, _FILE_AND_LINE_);
-    return nullptr;
   }
 
-  void UPNPOpenAsynch(unsigned short portToOpen,
-      unsigned int timeout,
-      void (*progressCallback)(const char *progressMsg, UpnpOpener* opener),
-      void (*resultCallback)(bool success, unsigned short portToOpen, UpnpOpener* opener),
-      UpnpOpener* opener) {
+  //////////////////////////////////////////////////////////////////////////////
+
+  void UPNPOpenAsynch(unsigned short port_to_open, unsigned int timeout, UpnpOpener* opener) {
 
     UPNPOpenWorkerArgs *args = RakNet::OP_NEW<UPNPOpenWorkerArgs>(_FILE_AND_LINE_);
-    args->portToOpen = portToOpen;
-    args->timeout = timeout;
-    args->opener = opener;
-    args->progressCallback = progressCallback;
-    args->resultCallback = resultCallback;
+    args->port_to_open  = port_to_open;
+    args->timeout       = timeout;
+    args->opener        = opener;
 
     RakNet::RakThread::Create(UPNPOpenWorker, args);
   }
 
-  void UPNPProgressCallback(const char *progressMsg, UpnpOpener* opener) {
-    std::cout << progressMsg << std::endl;
-  }
-
-  void UPNPResultCallback(bool success, unsigned short portToOpen, UpnpOpener* opener) {
-    if (success) {
-      std::cout << "Discovering UPNP: Success!" << std::endl;
-      opener->on_success.emit();
-    } else {
-      std::cout << "Discovering UPNP: Fail!" << std::endl;
-    }
-  }
+  //////////////////////////////////////////////////////////////////////////////
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void UpnpOpener::open(RakNet::RakPeerInterface* peer) {
-    std::cout << "Discovering UPNP..." << std::endl;
-
+void UpnpOpener::open(Peer const& peer) {
     DataStructures::List<RakNet::RakNetSocket2*> sockets;
-    peer->GetSockets(sockets);
-
-    UPNPOpenAsynch(sockets[0]->GetBoundAddress().GetPort(), 2000, UPNPProgressCallback, UPNPResultCallback, this);
+    peer.peer_->GetSockets(sockets);
+    UPNPOpenAsynch(sockets[0]->GetBoundAddress().GetPort(), 3000, this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

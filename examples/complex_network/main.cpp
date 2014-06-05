@@ -907,7 +907,7 @@ int main(void)
 				break;
 
 			case ID_ALREADY_CONNECTED:
-				printf("ID_ALREADY_CONNECTED with guid %ul\n", packet->guid);
+				printf("ID_ALREADY_CONNECTED with guid %s\n", packet->guid.ToString());
 				break;
 
 			case ID_INVALID_PASSWORD:

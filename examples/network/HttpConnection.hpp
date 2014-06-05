@@ -6,38 +6,46 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_UPNP_OPENER_HPP
-#define SWIFT2D_UPNP_OPENER_HPP
+#ifndef SWIFT2D_HTTP_CONNECTION_HPP
+#define SWIFT2D_HTTP_CONNECTION_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/events.hpp>
 
+namespace RakNet {
+  class TCPInterface;
+  class HTTPConnection2;
+}
 
 namespace swift {
-
-// forward declares ------------------------------------------------------------
-class Peer;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class UpnpOpener {
+class HttpConnection {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Signal<> on_success;
-  Signal<> on_fail;
+  Signal<std::string> on_response;
 
-  void open(Peer const& peer);
+  HttpConnection();
+  ~HttpConnection();
+
+  void get(std::string const& uri, std::string const& server, unsigned short port);
+  void post(std::string const& uri, std::string const& content, std::string const& server, unsigned short port);
+
+  void update();
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  RakNet::TCPInterface*    tcp_;
+  RakNet::HTTPConnection2* http_;
 };
 
 }
 
-#endif  // SWIFT2D_UPNP_OPENER_HPP
+#endif  // SWIFT2D_HTTP_CONNECTION_HPP
