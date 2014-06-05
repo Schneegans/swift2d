@@ -176,6 +176,8 @@ int main(int argc, char** argv) {
 
   Ticker ticker(1.0 / 60.0);
   ticker.on_tick.connect([&]() {
+    double time(timer.get_elapsed());
+    timer.reset();
 
     std::stringstream sstr;
     sstr.precision(1);
@@ -185,9 +187,8 @@ int main(int argc, char** argv) {
     fps->Text->Content = sstr.str();
 
     window->process_input();
-    scene->update(timer.get_elapsed());
+    scene->update(time);
     renderer.process(scene, camera);
-    timer.reset();
   });
 
   window->on_close.connect([&](){
@@ -213,7 +214,7 @@ int main(int argc, char** argv) {
 
       ++particle_count;
 
-      for (int i(0); i<5; ++i) {
+      for (int i(0); i<25; ++i) {
         auto spark = scene->add_object(std::make_shared<Spark>());
         spark->Transform = player->Transform();
         ++particle_count;
