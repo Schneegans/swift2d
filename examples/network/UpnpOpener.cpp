@@ -52,8 +52,7 @@ namespace {
     UPNPDev* devlist = upnpDiscover(args->timeout, 0, 0, 0, 0, &error);
 
     if (error > 0) {
-      Logger::LOG_WARNING << "upnpDiscover failed with code " << error << " ("
-                          << strupnperror(error) << ")" << std::endl;
+      Logger::LOG_WARNING << "upnpDiscover failed with code " << error << std::endl;
 
     } else if (devlist) {
 
@@ -61,7 +60,7 @@ namespace {
       UPNPUrls urls;
       IGDdatas data;
 
-      if (UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))==1) {
+      if (UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr)) == 1) {
 
         freeUPNPDevlist(devlist);
 
@@ -74,15 +73,15 @@ namespace {
                                     lanaddr, 0, "UDP", 0, "0");
 
         if(error != UPNPCOMMAND_SUCCESS) {
-          Logger::LOG_WARNING << "AddPortMapping failed with code " << error
-                              << " (" << strupnperror(error) << ")" << std::endl;
+          Logger::LOG_WARNING << "AddPortMapping failed with code " << error << std::endl;
+
+        } else {
+          char int_port[6], int_client[16], desc[128], enabled[128], duration[128];
+          error = UPNP_GetSpecificPortMappingEntry(urls.controlURL, data.first.servicetype,
+            port.c_str(), "UDP", int_client, int_port, desc, enabled, duration);
+
+          success = error == UPNPCOMMAND_SUCCESS;
         }
-
-        char int_port[6], int_client[16], desc[128], enabled[128], duration[128];
-        error = UPNP_GetSpecificPortMappingEntry(urls.controlURL, data.first.servicetype,
-          port.c_str(), "UDP", int_client, int_port, desc, enabled, duration);
-
-        success = error == UPNPCOMMAND_SUCCESS;
       }
     }
 

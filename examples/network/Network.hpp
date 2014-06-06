@@ -6,17 +6,13 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_PEER_HPP
-#define SWIFT2D_PEER_HPP
+#ifndef SWIFT2D_NETWORK_HPP
+#define SWIFT2D_NETWORK_HPP
 
 // includes  -------------------------------------------------------------------
-#include <string>
-
-namespace RakNet {
-  class RakPeerInterface;
-  class ConnectionGraph2;
-  class FullyConnectedMesh2;
-}
+#include "Peer.hpp"
+#include "UpnpOpener.hpp"
+#include "HttpConnection.hpp"
 
 namespace swift {
 
@@ -24,28 +20,25 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class Peer {
+class Network {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Peer();
-  ~Peer();
+  Network(std::string const& game_ID);
 
-  void connect(std::string const& ip, unsigned short port);
-
-  friend class UpnpOpener;
-  friend class Network;
+  void update();
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  RakNet::RakPeerInterface*    peer_;
-  RakNet::ConnectionGraph2*    graph_;
-  RakNet::FullyConnectedMesh2* mesh_;
+  Peer            peer_;
+  HttpConnection  http_;
+  UpnpOpener      upnp_;
+  std::string     game_ID_;
 };
 
 }
 
-#endif  // SWIFT2D_PEER_HPP
+#endif  // SWIFT2D_NETWORK_HPP
