@@ -44,7 +44,8 @@ namespace {
   std::string location_string(const char* f, int l) {
     std::string file(std::string(f).substr(std::string(f).find_last_of('/') + 1).c_str());
     std::stringstream sstr;
-    sstr << "[" << file << ":" << l << "]";
+    sstr << "[" << file << "]";
+    // sstr << "[" << file << ":" << l << "]";
     return sstr.str();
   }
 

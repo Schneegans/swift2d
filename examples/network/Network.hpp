@@ -27,6 +27,13 @@ class Network : public Singleton<Network> {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  enum Phase {
+    OPEN_UPNP,
+    SEARCHING_FOR_OTHER_INSTANCES,
+    CONNECT_TO_RUNNING_INSTANCE,
+    START_NEW_INSTANCE,
+    HOSTING_INSTANCE
+  };
 
   void connect(std::string const& game_ID);
   void update();
@@ -36,14 +43,19 @@ class Network : public Singleton<Network> {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  void enter_phase(Phase phase);
 
-  Network() {}
+  Network() : phase_(OPEN_UPNP), host_(false) {}
   ~Network() {}
 
   Peer            peer_;
   HttpConnection  http_;
   UpnpOpener      upnp_;
+
+  Phase           phase_;
   std::string     game_ID_;
+
+  bool            host_;
 };
 
 }

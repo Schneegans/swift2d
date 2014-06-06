@@ -62,7 +62,7 @@ void HttpConnection::update() {
   int contentOffset;
   if (http_->GetResponse(stringTransmitted, hostTransmitted, responseReceived, hostReceived, contentOffset)) {
     if (!responseReceived.IsEmpty()) {
-      on_response.emit(responseReceived.C_String());
+      on_response.emit(responseReceived.C_String() + contentOffset);
     }
   }
 }
