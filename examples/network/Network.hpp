@@ -10,6 +10,8 @@
 #define SWIFT2D_NETWORK_HPP
 
 // includes  -------------------------------------------------------------------
+#include <swift2d/utils/Singleton.hpp>
+
 #include "Peer.hpp"
 #include "UpnpOpener.hpp"
 #include "HttpConnection.hpp"
@@ -20,19 +22,24 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class Network {
+class Network : public Singleton<Network> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Network(std::string const& game_ID);
-
+  void connect(std::string const& game_ID);
   void update();
+
+  friend class Singleton<Network>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+
+  Network() {}
+  ~Network() {}
+
   Peer            peer_;
   HttpConnection  http_;
   UpnpOpener      upnp_;

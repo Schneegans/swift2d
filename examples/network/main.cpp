@@ -15,11 +15,11 @@ int main(int argc, char** argv) {
 
   // initialize Swift2D
   swift::Application app(argc, argv);
-  swift::Network network("myTestGame");
+  swift::Network::instance()->connect("myTestGame");
 
   swift::Ticker ticker(1.0 / 60.0);
   ticker.on_tick.connect([&]() {
-    network.update();
+    swift::Network::instance()->update();
   });
 
   app.start();

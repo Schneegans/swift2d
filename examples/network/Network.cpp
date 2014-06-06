@@ -21,16 +21,15 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Network::Network(std::string const& game_ID)
-  : game_ID_(game_ID) {
+void Network::connect(std::string const& game_ID) {
 
   http_.on_response.connect([&](std::string const& response){
     std::cout << "RESPONSE: " << response << std::endl;
   });
 
-  upnp_.on_success.connect([&](){
+  upnp_.on_success.connect([=](){
     swift::Logger::LOG_MESSAGE << "Successfully opened UPNP!" << std::endl;
-    http_.get("masterserver2.raknet.com/testServer?__gameId=" + game_ID_, "masterserver2.raknet.com", 80);
+    http_.get("masterserver2.raknet.com/testServer?__gameId=" + game_ID, "masterserver2.raknet.com", 80);
   });
 
   upnp_.on_fail.connect([&](){
