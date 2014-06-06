@@ -12,10 +12,22 @@
 #include "UpnpOpener.hpp"
 #include "HttpConnection.hpp"
 
+#include "../../third_party/raknet/src/MessageIdentifiers.h"
+#include "../../third_party/raknet/src/RakNetTypes.h"
+#include <../../third_party/raknet/src/RakPeerInterface.h>
+
 #include <thread>
+
+// enum Phase {
+//   DETECT_NAT_PUNCH_ADDRESS,
+//   OPEN_UPNP,
+//   CONNECT_TO_PEER
+// };
 
 // main ------------------------------------------------------------------------
 int main() {
+
+  // Phase phase(DETECT_NAT_PUNCH_ADDRESS);
 
   swift::Peer peer;
 
@@ -35,18 +47,33 @@ int main() {
     upnp.open(peer);
   });
 
-  http.post("masterserver2.raknet.com/testServer",
-            "{'__gameId': 'myTestGame', '__clientReqId': '0', '__rowId': '0', '__timeoutSec': '30' }",
+  // swift::Logger::LOG_MESSAGE << "Detecting own IP..." << std::endl;
+  // peer.connect("natpunch.jenkinssoftware.com", 61111);
+
+  std::stringstream game_descriptor;
+  game_descriptor << "{'__gameId': 'myTestGame', '__clientReqId': '0', "
+                  << "'__rowId': '0', '__timeoutSec': '30', "
+                  << "'guid': '" << peer.peer_->GetMyGUID().ToString() << "' }";
+
+  http.post("masterserver2.raknet.com/testServer", game_descriptor.str(),
             "masterserver2.raknet.com", 80);
 
   swift::Logger::LOG_MESSAGE << "Opening UPNP..." << std::endl;
   upnp.open(peer);
 
   while (true) {
-  //   for (RakNet::Packet* packet=peer->Receive(); packet; peer->DeallocatePacket(packet), packet=peer->Receive()) {
+  //   for (RakNet::Packet* packet=peer.peer_->Receive(); packet; peer.peer_->DeallocatePacket(packet), packet=peer.peer_->Receive()) {
   //     switch (packet->data[0]) {
 
   //       case ID_CONNECTION_REQUEST_ACCEPTED:
+  //         if (phase == DETECT_NAT_PUNCH_ADDRESS) {
+  //           swift::Logger::LOG_DEBUG << "Nat punch guid is " << packet->guid.ToString() << std::endl;
+  //           swift::Logger::LOG_DEBUG << "Nat punch IP is "  << packet->systemAddress.ToString() << std::endl;
+
+  //           phase = OPEN_UPNP;
+  //           swift::Logger::LOG_MESSAGE << "Opening UPNP..." << std::endl;
+  //           upnp.open(peer);
+  //         }
   //         break;
 
   //       case ID_ADVERTISE_SYSTEM:
@@ -71,11 +98,11 @@ int main() {
   //         }
   //         break;
 
-  //       default:
-  //         std::cout << "Message with identifier " << packet->data[0] << " has arrived." << std::endl;
-  //         break;
-  //       }
-  //   }
+    //     default:
+    //       std::cout << "Message with identifier " << packet->data[0] << " has arrived." << std::endl;
+    //       break;
+    //     }
+    // }
 
     http.update();
 

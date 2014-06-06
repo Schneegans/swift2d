@@ -59,4 +59,13 @@ Peer::~Peer() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Peer::connect(std::string const& ip, unsigned short port) {
+  RakNet::ConnectionAttemptResult car = peer_->Connect(ip.c_str(), port, 0, 0);
+  if (car!=RakNet::CONNECTION_ATTEMPT_STARTED) {
+    Logger::LOG_WARNING << "Failed connect to "<< ip << ". Code=" << car << std::endl;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 }

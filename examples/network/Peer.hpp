@@ -10,7 +10,7 @@
 #define SWIFT2D_PEER_HPP
 
 // includes  -------------------------------------------------------------------
-// #include <swift2d/events.hpp>
+#include <string>
 
 namespace RakNet {
   class RakPeerInterface;
@@ -33,12 +33,14 @@ class Peer {
   Peer();
   ~Peer();
 
+  void connect(std::string const& ip, unsigned short port);
+
   friend class UpnpOpener;
 
+  RakNet::RakPeerInterface*    peer_;
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  RakNet::RakPeerInterface*    peer_;
   RakNet::ConnectionGraph2*    graph_;
   RakNet::FullyConnectedMesh2* mesh_;
 };
