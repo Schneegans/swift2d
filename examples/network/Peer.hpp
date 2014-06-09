@@ -16,6 +16,7 @@ namespace RakNet {
   class RakPeerInterface;
   class ConnectionGraph2;
   class FullyConnectedMesh2;
+  class NatPunchthroughClient;
 }
 
 namespace swift {
@@ -34,6 +35,9 @@ class Peer {
   ~Peer();
 
   void connect(std::string const& ip, unsigned short port);
+  void open_nat(uint64_t guid, std::string const& nat_server);
+
+  uint64_t get_guid() const;
 
   friend class UpnpOpener;
   friend class Network;
@@ -41,9 +45,14 @@ class Peer {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  RakNet::RakPeerInterface*    peer_;
-  RakNet::ConnectionGraph2*    graph_;
-  RakNet::FullyConnectedMesh2* mesh_;
+  void request_join(uint64_t guid);
+  void start_join(uint64_t guid);
+  void join(uint64_t guid, std::string const& nat_server);
+
+  RakNet::RakPeerInterface*       peer_;
+  RakNet::ConnectionGraph2*       graph_;
+  RakNet::FullyConnectedMesh2*    mesh_;
+  RakNet::NatPunchthroughClient*  npt_;
 };
 
 }

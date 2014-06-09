@@ -115,7 +115,7 @@ namespace {
 void UpnpOpener::open(Peer const& peer) {
     DataStructures::List<RakNet::RakNetSocket2*> sockets;
     peer.peer_->GetSockets(sockets);
-    UPNPOpenAsynch(sockets[0]->GetBoundAddress().GetPort(), 3000, this);
+    UPNPOpenAsynch(sockets[0]->GetBoundAddress().GetPort(), 2000, this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

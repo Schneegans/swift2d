@@ -9,11 +9,16 @@
 // includes  -------------------------------------------------------------------
 #include "Peer.hpp"
 
+#include "Network.hpp"
 #include <swift2d/utils/Logger.hpp>
 
 #include <../../third_party/raknet/src/ConnectionGraph2.h>
 #include <../../third_party/raknet/src/FullyConnectedMesh2.h>
 #include <../../third_party/raknet/src/RakPeerInterface.h>
+#include <../../third_party/raknet/src/NatPunchthroughClient.h>
+#include <../../third_party/raknet/src/BitStream.h>
+#include <../../third_party/raknet/src/MessageIdentifiers.h>
+// #include <../../third_party/raknet/src/DS_List.h>
 
 #include <iostream>
 
@@ -24,12 +29,16 @@ namespace swift {
 Peer::Peer()
   : peer_(RakNet::RakPeerInterface::GetInstance())
   , graph_(RakNet::ConnectionGraph2::GetInstance())
-  , mesh_(RakNet::FullyConnectedMesh2::GetInstance()) {
+  , mesh_(RakNet::FullyConnectedMesh2::GetInstance())
+  , npt_(RakNet::NatPunchthroughClient::GetInstance()) {
 
-  mesh_->SetAutoparticipateConnections(true);
 
   peer_->AttachPlugin(mesh_);
   peer_->AttachPlugin(graph_);
+  peer_->AttachPlugin(npt_);
+
+  mesh_->SetAutoparticipateConnections(false);
+  mesh_->SetConnectOnNewRemoteConnection(false, "");
 
   RakNet::SocketDescriptor sd;
   sd.socketFamily=AF_INET;
@@ -42,10 +51,7 @@ Peer::Peer()
   }
 
   peer_->SetMaximumIncomingConnections(8);
-  peer_->SetTimeoutTime(1000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
-
-  Logger::LOG_DEBUG << "Our guid is " << peer_->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString() << std::endl;
-  Logger::LOG_DEBUG << "Started on "  << peer_->GetMyBoundAddress().ToString(true) << std::endl;
+  peer_->SetTimeoutTime(1000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -64,6 +70,47 @@ void Peer::connect(std::string const& ip, unsigned short port) {
   if (car!=RakNet::CONNECTION_ATTEMPT_STARTED) {
     Logger::LOG_WARNING << "Failed connect to "<< ip << ". Code=" << car << std::endl;
   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Peer::open_nat(uint64_t guid, std::string const& nat_server) {
+  npt_->OpenNAT(RakNet::RakNetGUID(guid), RakNet::SystemAddress(nat_server.c_str()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Peer::request_join(uint64_t guid) {
+  mesh_->ResetHostCalculation();
+
+  RakNet::BitStream message;
+  message.Write((RakNet::MessageID)(ID_USER_PACKET_ENUM + Network::REQUEST_JOIN));
+  peer_->Send(&message, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::RakNetGUID(guid), false);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Peer::start_join(uint64_t guid) {
+  mesh_->StartVerifiedJoin(RakNet::RakNetGUID(guid));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Peer::join(uint64_t guid, std::string const& nat_server) {
+  DataStructures::List<RakNet::SystemAddress> addresses;
+  DataStructures::List<RakNet::RakNetGUID> guids;
+  mesh_->GetVerifiedJoinRequiredProcessingList(RakNet::RakNetGUID(guid), addresses, guids);
+  for (unsigned int i=0; i < guids.Size(); i++) {
+    if (guids[i].g != get_guid()) {
+      npt_->OpenNAT(guids[i], RakNet::SystemAddress(nat_server.c_str()));
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+uint64_t Peer::get_guid() const {
+  return peer_->GetMyGUID().g;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

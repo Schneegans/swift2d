@@ -16,6 +16,10 @@
 #include "UpnpOpener.hpp"
 #include "HttpConnection.hpp"
 
+namespace RakNet {
+  class RakPeerInterface;
+}
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,12 +32,21 @@ class Network : public Singleton<Network> {
  // ----------------------------------------------------------- public interface
  public:
   enum Phase {
-    OPEN_UPNP,
+    CONNECTING_TO_SERVER,
+    OPENING_UPNP,
     SEARCHING_FOR_OTHER_INSTANCES,
-    CONNECT_TO_RUNNING_INSTANCE,
-    START_NEW_INSTANCE,
-    HOSTING_INSTANCE
+    CONNECTING_TO_HOST,
+    STARTING_NEW_INSTANCE,
+    HOSTING_INSTANCE,
+    CONNECTING_TO_PEERS,
+    PARTICIPATING
   };
+
+  enum PacketID {
+    REQUEST_JOIN
+  };
+
+  // Signal<RakNet::Packet*> on_packet_received;
 
   void connect(std::string const& game_ID);
   void update();
@@ -44,8 +57,9 @@ class Network : public Singleton<Network> {
  // ---------------------------------------------------------- private interface
  private:
   void enter_phase(Phase phase);
+  void upload_game();
 
-  Network() : phase_(OPEN_UPNP), host_(false) {}
+  Network();
   ~Network() {}
 
   Peer            peer_;
@@ -55,7 +69,9 @@ class Network : public Singleton<Network> {
   Phase           phase_;
   std::string     game_ID_;
 
-  bool            host_;
+  Timer           update_timer_;
+  uint64_t        host_guid_;
+  std::string     nat_server_address_;
 };
 
 }
