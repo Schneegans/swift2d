@@ -16,66 +16,11 @@
 #include <../../third_party/raknet/src/FullyConnectedMesh2.h>
 #include <../../third_party/raknet/src/RakPeerInterface.h>
 #include <../../third_party/raknet/src/NatPunchthroughClient.h>
-#include <../../third_party/raknet/src/UDPProxyClient.h>
 #include <../../third_party/raknet/src/BitStream.h>
 #include <../../third_party/raknet/src/MessageIdentifiers.h>
 // #include <../../third_party/raknet/src/DS_List.h>
 
 #include <iostream>
-
-struct UDPResultHandler : public RakNet::UDPProxyClientResultHandler
-{
-
-  void OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort,
-    RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress,
-    RakNet::SystemAddress targetAddress, RakNet::RakNetGUID targetGuid,
-    RakNet::UDPProxyClient *proxyClientPlugin) {
-
-    swift::Logger::LOG_DEBUG << "OnForwardingSuccess" << std::endl;
-  }
-
-
-  void OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort,
-    RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress,
-    RakNet::SystemAddress targetAddress, RakNet::RakNetGUID targetGuid,
-    RakNet::UDPProxyClient *proxyClientPlugin) {
-
-    swift::Logger::LOG_DEBUG << "OnForwardingNotification" << std::endl;
-  }
-
-
-  void OnNoServersOnline(RakNet::SystemAddress proxyCoordinator,
-    RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress,
-    RakNet::RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin) {
-
-    swift::Logger::LOG_DEBUG << "OnNoServersOnline" << std::endl;
-  }
-
-
-  void OnRecipientNotConnected(RakNet::SystemAddress proxyCoordinator,
-    RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress,
-    RakNet::RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin) {
-
-    swift::Logger::LOG_DEBUG << "OnRecipientNotConnected" << std::endl;
-  }
-
-
-  void OnAllServersBusy(RakNet::SystemAddress proxyCoordinator,
-    RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress,
-    RakNet::RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin) {
-
-    swift::Logger::LOG_DEBUG << "OnAllServersBusy" << std::endl;
-  }
-
-
-  void OnForwardingInProgress(const char *proxyIPAddress,
-    unsigned short proxyPort, RakNet::SystemAddress proxyCoordinator,
-    RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress,
-    RakNet::RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin) {
-
-    swift::Logger::LOG_DEBUG << "OnForwardingInProgress" << std::endl;
-  }
-};
 
 namespace swift {
 
@@ -86,20 +31,15 @@ Peer::Peer()
   , graph_(RakNet::ConnectionGraph2::GetInstance())
   , mesh_(RakNet::FullyConnectedMesh2::GetInstance())
   , npt_(RakNet::NatPunchthroughClient::GetInstance())
-  , udp_proxy_(RakNet::UDPProxyClient::GetInstance())
 {
 
 
   peer_->AttachPlugin(mesh_);
   peer_->AttachPlugin(graph_);
   peer_->AttachPlugin(npt_);
-  peer_->AttachPlugin(udp_proxy_);
 
   mesh_->SetAutoparticipateConnections(false);
   mesh_->SetConnectOnNewRemoteConnection(false, "");
-
-  auto h = new UDPResultHandler();
-  udp_proxy_->SetResultHandler(h);
 
   RakNet::SocketDescriptor sd;
   sd.socketFamily=AF_INET;

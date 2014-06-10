@@ -16,7 +16,6 @@
 #include <../../third_party/raknet/src/RakPeerInterface.h>
 #include <../../third_party/raknet/src/BitStream.h>
 #include <../../third_party/raknet/src/FullyConnectedMesh2.h>
-#include <../../third_party/raknet/src/UDPProxyClient.h>
 #include <../../third_party/raknet/src/PacketLogger.h>
 
 #include <boost/property_tree/ptree.hpp>
@@ -118,16 +117,6 @@ void Network::update() {
 
       // ##################### BASIC PACKETS ###################################
       // -----------------------------------------------------------------------
-      case ID_NEW_INCOMING_CONNECTION:
-        // Logger::LOG_MESSAGE << "Incoming connection from " << packet->guid.ToString() << "." << std::endl;
-        break;
-
-      // -----------------------------------------------------------------------
-      case ID_REMOTE_NEW_INCOMING_CONNECTION:
-        // Logger::LOG_MESSAGE << "New remote incoming connection from " << packet->guid.ToString() << "." << std::endl;
-        break;
-
-      // -----------------------------------------------------------------------
       case ID_CONNECTION_REQUEST_ACCEPTED:
         if (phase_ == CONNECTING_TO_SERVER) {
           Logger::LOG_MESSAGE << "Connected to NAT server." << std::endl;
@@ -151,6 +140,7 @@ void Network::update() {
       // ################ NAT PUNCH THROUGH PACKETS ############################
       // -----------------------------------------------------------------------
       case ID_NAT_PUNCHTHROUGH_SUCCEEDED:
+        Logger::LOG_MESSAGE << "natpunch succeeded..." << std::endl;
         if (phase_ == CONNECTING_TO_HOST || phase_ == CONNECTING_TO_PEERS) {
           Logger::LOG_MESSAGE << "Found route to host. Connecting..." << std::endl;
           peer_.connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort());
@@ -159,20 +149,7 @@ void Network::update() {
 
       // -----------------------------------------------------------------------
       case ID_NAT_PUNCHTHROUGH_FAILED:
-        if (phase_ == CONNECTING_TO_HOST) {
-          Logger::LOG_MESSAGE << "NAT punch through failed. Trying to request forwarding!" << std::endl;
-
-          peer_.udp_proxy_->RequestForwarding(
-            RakNet::SystemAddress(nat_server_address_.c_str()),
-            RakNet::UNASSIGNED_SYSTEM_ADDRESS, RakNet::RakNetGUID(host_guid_), 7000);
-        } else {
-          Logger::LOG_MESSAGE << "NAT punch through failed. Ignoring it!" << std::endl;
-        }
-        break;
-
-      // -----------------------------------------------------------------------
-      case ID_NAT_RESPOND_BOUND_ADDRESSES:
-        // ignore packet
+        Logger::LOG_MESSAGE << "NAT punch through failed." << std::endl;
         break;
 
       // ################## FULLY CONNECTED MESH ###############################
