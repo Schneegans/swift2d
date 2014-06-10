@@ -17,6 +17,7 @@
 #include <../../third_party/raknet/src/BitStream.h>
 #include <../../third_party/raknet/src/FullyConnectedMesh2.h>
 #include <../../third_party/raknet/src/PacketLogger.h>
+#include <../../third_party/raknet/src/NatTypeDetectionClient.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -121,7 +122,7 @@ void Network::update() {
         if (phase_ == CONNECTING_TO_SERVER) {
           Logger::LOG_MESSAGE << "Connected to NAT server." << std::endl;
           nat_server_address_ = packet->systemAddress.ToString();
-          enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
+          enter_phase(DETECT_NAT_TYPE);
 
         } else if (phase_ == CONNECTING_TO_HOST) {
           Logger::LOG_MESSAGE << "Connected to host " << packet->guid.ToString() << ". Sending join request." << std::endl;
@@ -151,6 +152,13 @@ void Network::update() {
       case ID_NAT_PUNCHTHROUGH_FAILED:
         Logger::LOG_MESSAGE << "NAT punch through failed." << std::endl;
         break;
+
+      // -----------------------------------------------------------------------
+      case ID_NAT_TYPE_DETECTION_RESULT: {
+        auto type = (RakNet::NATTypeDetectionResult) packet->data[1];
+        Logger::LOG_MESSAGE << "NAT Type is " << RakNet::NATTypeDetectionResultToString(type) << " (" << RakNet::NATTypeDetectionResultToStringFriendly(type) << ")" << std::endl;
+        enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
+        } break;
 
       // ################## FULLY CONNECTED MESH ###############################
       // -----------------------------------------------------------------------
@@ -243,6 +251,12 @@ void Network::enter_phase(Phase phase) {
     case CONNECTING_TO_SERVER:
       Logger::LOG_MESSAGE << "Connecting to NAT server..." << std::endl;
       peer_.connect("natpunch.jenkinssoftware.com", 61111);
+      break;
+
+    // -------------------------------------------------------------------------
+    case DETECT_NAT_TYPE:
+      Logger::LOG_MESSAGE << "Detecting NAT type..." << std::endl;
+      peer_.nat_type_detector_->DetectNATType(RakNet::SystemAddress(nat_server_address_.c_str()));
       break;
 
     // -------------------------------------------------------------------------

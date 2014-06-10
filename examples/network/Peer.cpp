@@ -16,6 +16,7 @@
 #include <../../third_party/raknet/src/FullyConnectedMesh2.h>
 #include <../../third_party/raknet/src/RakPeerInterface.h>
 #include <../../third_party/raknet/src/NatPunchthroughClient.h>
+#include <../../third_party/raknet/src/NatTypeDetectionClient.h>
 #include <../../third_party/raknet/src/BitStream.h>
 #include <../../third_party/raknet/src/MessageIdentifiers.h>
 // #include <../../third_party/raknet/src/DS_List.h>
@@ -31,12 +32,14 @@ Peer::Peer()
   , graph_(RakNet::ConnectionGraph2::GetInstance())
   , mesh_(RakNet::FullyConnectedMesh2::GetInstance())
   , npt_(RakNet::NatPunchthroughClient::GetInstance())
+  , nat_type_detector_(RakNet::NatTypeDetectionClient::GetInstance())
 {
 
 
   peer_->AttachPlugin(mesh_);
   peer_->AttachPlugin(graph_);
   peer_->AttachPlugin(npt_);
+  peer_->AttachPlugin(nat_type_detector_);
 
   mesh_->SetAutoparticipateConnections(false);
   mesh_->SetConnectOnNewRemoteConnection(false, "");
