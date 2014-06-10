@@ -38,6 +38,15 @@ Network::Network()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Network::disconnect() {
+  if (phase_ == HOSTING_INSTANCE) {
+    Logger::LOG_MESSAGE << "Unregistering game." << std::endl;
+    unregister_game();
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Network::connect(std::string const& game_ID) {
   game_ID_ = game_ID;
 
@@ -109,7 +118,7 @@ void Network::update() {
   http_.update();
 
   if (phase_ == HOSTING_INSTANCE && update_timer_.get_elapsed() > 20.0) {
-    upload_game();
+    register_game();
     update_timer_.reset();
   }
 
@@ -285,14 +294,14 @@ void Network::enter_phase(Phase phase) {
       Logger::LOG_MESSAGE << "No running instances found. "
                           << "Starting new instance..." << std::endl;
       peer_.mesh_->ResetHostCalculation();
-      upload_game();
+      register_game();
       update_timer_.reset();
       break;
 
     // -------------------------------------------------------------------------
     case HOSTING_INSTANCE:
       Logger::LOG_MESSAGE << "We are host now." << std::endl;
-      upload_game();
+      register_game();
       update_timer_.reset();
       break;
 
@@ -305,7 +314,7 @@ void Network::enter_phase(Phase phase) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Network::upload_game() {
+void Network::register_game() {
   std::stringstream game_descriptor;
   game_descriptor << "{'__gameId': '" << game_ID_ << "', '__clientReqId': '0', "
                   << "'__rowId': '0', '__timeoutSec': '45', "
@@ -313,6 +322,13 @@ void Network::upload_game() {
 
   http_.post("masterserver2.raknet.com/testServer", game_descriptor.str(),
              "masterserver2.raknet.com", 80);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Network::unregister_game() {
+  http_.del("masterserver2.raknet.com/testServer?__gameId=" + game_ID_ + "&__rowId=0",
+            "masterserver2.raknet.com", 80);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

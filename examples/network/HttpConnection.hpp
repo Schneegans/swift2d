@@ -36,6 +36,7 @@ class HttpConnection {
 
   void get(std::string const& uri, std::string const& server, unsigned short port);
   void post(std::string const& uri, std::string const& content, std::string const& server, unsigned short port);
+  void del(std::string const& uri, std::string const& server, unsigned short port);
 
   void update();
 

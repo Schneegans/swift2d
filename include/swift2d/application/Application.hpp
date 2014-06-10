@@ -25,7 +25,7 @@ class Application {
  public:
 
   Application(int argc, char** argv);
-  virtual ~Application();
+  virtual ~Application() {}
 
   std::string get_resource(std::string const& type, std::string const& file);
 
@@ -35,8 +35,8 @@ class Application {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  MainLoop    loop_;
   std::string executable_;
+  boost::asio::signal_set signals_;
 };
 
 }

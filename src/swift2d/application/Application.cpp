@@ -17,16 +17,16 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Application::Application(int argc, char** argv)
-  : loop_()
-  , executable_(boost::filesystem::system_complete(argv[0]).normalize().remove_filename().string()) {
+  : executable_(boost::filesystem::system_complete(argv[0]).normalize().remove_filename().string())
+  , signals_(MainLoop::instance()->get_io_service(), SIGINT, SIGTERM) {
 
   init(argc, argv);
-}
 
-////////////////////////////////////////////////////////////////////////////////
-
-Application::~Application() {
-
+  signals_.async_wait([&](boost::system::error_code const& error, int signal_number){
+    if (!error) {
+      stop();
+    }
+  });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,13 +38,13 @@ std::string Application::get_resource(std::string const& type, std::string const
 ////////////////////////////////////////////////////////////////////////////////
 
 void Application::start() {
-  loop_.start();
+  MainLoop::instance()->start();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Application::stop() {
-  loop_.stop();
+  MainLoop::instance()->stop();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

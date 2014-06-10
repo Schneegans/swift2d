@@ -24,6 +24,8 @@ int main(int argc, char** argv) {
 
   app.start();
 
+  swift::Network::instance()->disconnect();
+
   return 0;
 }
 

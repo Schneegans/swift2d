@@ -47,6 +47,12 @@ void HttpConnection::post(std::string const& uri, std::string const& content, st
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void HttpConnection::del(std::string const& uri, std::string const& server, unsigned short port) {
+  http_->TransmitRequest(RakNet::RakString::FormatForDELETE(uri.c_str()), server.c_str(), port);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void HttpConnection::update() {
 
   RakNet::SystemAddress sa(tcp_->HasCompletedConnectionAttempt());

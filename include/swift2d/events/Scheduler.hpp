@@ -10,8 +10,7 @@
 #define SWIFT2D_EVENTS_SCHEDULER_HPP
 
 // includes  ------------------------------------------------------------------
-#include <ev++.h>
-#include <functional>
+#include <swift2d/events/MainLoop.hpp>
 #include <map>
 
 namespace swift {
@@ -29,9 +28,9 @@ class Scheduler {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void self_callback(ev::timer& timer, int revents);
+   void self_callback(boost::asio::deadline_timer* timer, int revents);
 
-  std::map<ev::timer*, std::function<void()>> tasks_;
+   std::map<boost::asio::deadline_timer*, std::function<void()> > tasks_;
 };
 
 // -----------------------------------------------------------------------------

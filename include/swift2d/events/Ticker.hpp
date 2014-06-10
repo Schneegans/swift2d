@@ -10,7 +10,6 @@
 #define SWIFT2D_EVENTS_TICKER_HPP
 
 // includes  ------------------------------------------------------------------
-#include <ev++.h>
 #include <swift2d/events/Scheduler.hpp>
 #include <swift2d/events/Signal.hpp>
 
@@ -28,12 +27,19 @@ class Ticker {
 
   // ---------------------------------------------------- construction interface
   Ticker(double tick_time);
+  ~Ticker();
+
+  void set_tick_time(double tick_time);
+  double get_tick_time() const;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void self_callback(ev::timer& timer, int revents);
-  ev::timer timer_;
+  void self_callback(int revents);
+  void async_wait ();
+
+  boost::asio::deadline_timer* timer_;
+  double tick_time_;
 };
 
 // -----------------------------------------------------------------------------

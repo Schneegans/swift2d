@@ -50,6 +50,7 @@ class Network : public Singleton<Network> {
   // Signal<RakNet::Packet*> on_packet_received;
 
   void connect(std::string const& game_ID);
+  void disconnect();
   void update();
 
   friend class Singleton<Network>;
@@ -58,7 +59,8 @@ class Network : public Singleton<Network> {
  // ---------------------------------------------------------- private interface
  private:
   void enter_phase(Phase phase);
-  void upload_game();
+  void register_game();
+  void unregister_game();
 
   Network();
   ~Network() {}
