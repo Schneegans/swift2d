@@ -162,9 +162,9 @@ void Peer::join(uint64_t guid, std::string const& nat_server) {
   DataStructures::List<RakNet::RakNetGUID> guids;
   mesh_->GetVerifiedJoinRequiredProcessingList(RakNet::RakNetGUID(guid), addresses, guids);
   for (unsigned int i=0; i < guids.Size(); i++) {
-    if (guids[i].g != get_guid()) {
+    // if (guids[i].g != get_guid()) {
       npt_->OpenNAT(guids[i], RakNet::SystemAddress(nat_server.c_str()));
-    }
+    // }
   }
 }
 

@@ -151,7 +151,7 @@ void Network::update() {
       // ################ NAT PUNCH THROUGH PACKETS ############################
       // -----------------------------------------------------------------------
       case ID_NAT_PUNCHTHROUGH_SUCCEEDED:
-        if (phase_ == CONNECTING_TO_HOST) {
+        if (phase_ == CONNECTING_TO_HOST || phase_ == CONNECTING_TO_PEERS) {
           Logger::LOG_MESSAGE << "Found route to host. Connecting..." << std::endl;
           peer_.connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort());
         }
@@ -164,7 +164,7 @@ void Network::update() {
 
           peer_.udp_proxy_->RequestForwarding(
             RakNet::SystemAddress(nat_server_address_.c_str()),
-            RakNet::UNASSIGNED_SYSTEM_ADDRESS, packet->systemAddress, 7000);
+            RakNet::UNASSIGNED_SYSTEM_ADDRESS, RakNet::RakNetGUID(host_guid_), 7000);
         } else {
           Logger::LOG_MESSAGE << "NAT punch through failed. Ignoring it!" << std::endl;
         }
@@ -240,6 +240,7 @@ void Network::update() {
 
       // -----------------------------------------------------------------------
       case ID_FCM2_VERIFIED_JOIN_START:
+        Logger::LOG_MESSAGE << "ID_FCM2_VERIFIED_JOIN_START." << std::endl;
         enter_phase(CONNECTING_TO_PEERS);
         peer_.join(packet->guid.g, nat_server_address_);
         break;

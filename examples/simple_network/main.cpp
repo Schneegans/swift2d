@@ -12,121 +12,142 @@
 #include "../../third_party/raknet/src/SocketLayer.h"
 #include "../../third_party/raknet/src/Kbhit.h"
 #include "../../third_party/raknet/src/PacketLogger.h"
+#include "../../third_party/raknet/src/Gets.h"
 #include "../../third_party/raknet/src/BitStream.h"
 
 using namespace RakNet;
 
-RakNet::RakPeerInterface *rakPeer;
+#define NUM_PEERS 4
+RakNet::RakPeerInterface *rakPeer[NUM_PEERS];
+
+class FullyConnectedMesh2_UserData : public FullyConnectedMesh2
+{
+	virtual void WriteVJCUserData(RakNet::BitStream *bsOut) {bsOut->Write(RakString("test"));}
+};
 
 int main()
 {
-	FullyConnectedMesh2 fcm2;
-	ConnectionGraph2 cg2;
-	rakPeer=RakNet::RakPeerInterface::GetInstance();
-	rakPeer->AttachPlugin(&fcm2);
-	rakPeer->AttachPlugin(&cg2);
-	fcm2.SetAutoparticipateConnections(true);
-	RakNet::SocketDescriptor sd;
-	sd.socketFamily=AF_INET; // Only IPV4 supports broadcast on 255.255.255.255
-	sd.port=60000;
-	while (IRNS2_Berkley::IsPortInUse(sd.port, sd.hostAddress, sd.socketFamily, SOCK_DGRAM)==true)
-		sd.port++;
-	StartupResult sr = rakPeer->Startup(8,&sd,1);
-	RakAssert(sr==RAKNET_STARTED);
-	rakPeer->SetMaximumIncomingConnections(8);
-	rakPeer->SetTimeoutTime(1000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
-	printf("Our guid is %s\n", rakPeer->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
-	printf("Started on %s\n", rakPeer->GetMyBoundAddress().ToString(true));
+	FullyConnectedMesh2_UserData fcm2[NUM_PEERS];
 
-//	PacketLogger packetLogger;
-//	rakPeer->AttachPlugin(&packetLogger);
-//	packetLogger.SetLogDirectMessages(false);
+	for (int i=0; i < NUM_PEERS; i++)
+	{
+		rakPeer[i]=RakNet::RakPeerInterface::GetInstance();
+		rakPeer[i]->AttachPlugin(&fcm2[i]);
+		fcm2[i].SetAutoparticipateConnections(false);
+		fcm2[i].SetConnectOnNewRemoteConnection(false, "");
+		RakNet::SocketDescriptor sd;
+		sd.port=60000+i;
+		StartupResult sr = rakPeer[i]->Startup(NUM_PEERS,&sd,1);
+		RakAssert(sr==RAKNET_STARTED);
+		rakPeer[i]->SetMaximumIncomingConnections(NUM_PEERS);
+		rakPeer[i]->SetTimeoutTime(1000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+		printf("%i. Our guid is %s\n", i, rakPeer[i]->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
+	}
+
+	RakSleep(100);
+
+	for (int i=1; i < NUM_PEERS; i++)
+	{
+		ConnectionAttemptResult car = rakPeer[i]->Connect("127.0.0.1", 60000, 0, 0 );
+		RakAssert(car==CONNECTION_ATTEMPT_STARTED);
+	}
+
+	RakSleep(100);
+
+	for (int i=1; i < NUM_PEERS; i++)
+	{
+		fcm2[0].StartVerifiedJoin(rakPeer[i]->GetMyGUID());
+	}
+
 
 	bool quit=false;
 	RakNet::Packet *packet;
 	char ch;
 	while (!quit)
 	{
-		for (packet = rakPeer->Receive(); packet; rakPeer->DeallocatePacket(packet), packet = rakPeer->Receive())
+		for (int peerIndex=0; peerIndex < NUM_PEERS; peerIndex++)
 		{
-			switch (packet->data[0])
+			for (packet = rakPeer[peerIndex]->Receive(); packet; rakPeer[peerIndex]->DeallocatePacket(packet), packet = rakPeer[peerIndex]->Receive())
 			{
-			case ID_DISCONNECTION_NOTIFICATION:
-				// Connection lost normally
-				printf("ID_DISCONNECTION_NOTIFICATION\n");
-				break;
-
-
-			case ID_NEW_INCOMING_CONNECTION:
-				// Somebody connected.  We have their IP now
-				printf("ID_NEW_INCOMING_CONNECTION from %s. guid=%s.\n", packet->systemAddress.ToString(true), packet->guid.ToString());
-				break;
-
-			case ID_CONNECTION_REQUEST_ACCEPTED:
-				// Somebody connected.  We have their IP now
-				printf("ID_CONNECTION_REQUEST_ACCEPTED from %s. guid=%s.\n", packet->systemAddress.ToString(true), packet->guid.ToString());
-				break;
-
-
-			case ID_CONNECTION_LOST:
-				// Couldn't deliver a reliable packet - i.e. the other system was abnormally
-				// terminated
-				printf("ID_CONNECTION_LOST\n");
-				break;
-
-			case ID_ADVERTISE_SYSTEM:
-				if (packet->guid!=rakPeer->GetMyGUID())
-					rakPeer->Connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort(),0,0);
-				break;
-
-			case ID_FCM2_NEW_HOST:
+				switch (packet->data[0])
 				{
-				if (packet->guid==rakPeer->GetMyGUID())
-					printf("Got new host (ourselves)");
-				else
-					printf("Got new host %s, GUID=%s", packet->systemAddress.ToString(true), packet->guid.ToString());
-					RakNet::BitStream bs(packet->data,packet->length,false);
-					bs.IgnoreBytes(1);
-					RakNetGUID oldHost;
-					bs.Read(oldHost);
-					// If oldHost is different then the current host, then we lost connection to the host
-					if (oldHost!=UNASSIGNED_RAKNET_GUID)
-						printf(". Oldhost Guid=%s\n", oldHost.ToString());
-					else
-						printf(". (First reported host)\n");
-				}
-				break;
+				case ID_FCM2_VERIFIED_JOIN_START:
+					{
+						printf("%s: Got ID_FCM2_VERIFIED_JOIN_START from %s. address=", rakPeer[peerIndex]->GetMyGUID().ToString(), packet->guid.ToString());
+						DataStructures::List<SystemAddress> addresses;
+						DataStructures::List<RakNetGUID> guids;
+						fcm2[peerIndex].GetVerifiedJoinRequiredProcessingList(packet->guid, addresses, guids);
+						for (unsigned int i=0; i < guids.Size(); i++)
+						{
+							printf("%s:", guids[i].ToString());
+							ConnectionAttemptResult car = rakPeer[peerIndex]->Connect(addresses[i].ToString(false), addresses[i].GetPort(), 0, 0);
+							switch (car)
+							{
+							case CONNECTION_ATTEMPT_STARTED:
+								printf("CONNECTION_ATTEMPT_STARTED");
+								break;
+							case ALREADY_CONNECTED_TO_ENDPOINT:
+								printf("ALREADY_CONNECTED_TO_ENDPOINT");
+								break;
+							case CONNECTION_ATTEMPT_ALREADY_IN_PROGRESS:
+								printf("CONNECTION_ATTEMPT_ALREADY_IN_PROGRESS");
+								break;
+							default:
+								printf("Other");
+							}
+							printf(" ");
+						}
+						printf("\n");
+					}
+					break;
 
-// 			case ID_REMOTE_NEW_INCOMING_CONNECTION:
-// 				{
-// 					uint32_t count;
-// 					RakNet::BitStream bsIn(packet->data, packet->length,false);
-// 					bsIn.IgnoreBytes(1);
-// 					bsIn.Read(count);
-// 					SystemAddress sa;
-// 					RakNetGUID guid;
-// 					printf("ID_REMOTE_NEW_INCOMING_CONNECTION from %s\n", packet->systemAddress.ToString(true));
-// 					for (uint32_t i=0; i < count; i++)
-// 					{
-// 						bsIn.Read(sa);
-// 						bsIn.Read(guid);
-//
-// 						printf("%s ", sa.ToString(true));
-// 					}
-// 					printf("\n");
-// 				}
+				case ID_FCM2_VERIFIED_JOIN_FAILED:
+					printf("%s: ID_FCM2_VERIFIED_JOIN_FAILED from %s\n", rakPeer[peerIndex]->GetMyGUID().ToString(), packet->guid.ToString());
+					break;
+
+				case ID_FCM2_VERIFIED_JOIN_CAPABLE:
+					{
+						RakNet::BitStream bs(packet->data,packet->length,false);
+						FullyConnectedMesh2::SkipToVJCUserData(&bs);
+						RakString testStr;
+						bs.Read(testStr);
+
+						printf("%s: ID_FCM2_VERIFIED_JOIN_CAPABLE from %s\n", rakPeer[peerIndex]->GetMyGUID().ToString(), packet->guid.ToString());
+						printf("STR: %s\n", testStr.C_String());
+						fcm2[peerIndex].RespondOnVerifiedJoinCapable(packet, true, 0);
+					}
+					break;
+
+				case ID_FCM2_VERIFIED_JOIN_ACCEPTED:
+					{
+						bool thisSystemAccepted;
+						DataStructures::List<RakNetGUID> systemsAccepted;
+						RakNet::BitStream additionalData;
+						fcm2[peerIndex].GetVerifiedJoinAcceptedAdditionalData(packet, &thisSystemAccepted, systemsAccepted, &additionalData);
+						if (thisSystemAccepted)
+						{
+							printf("%s: ID_FCM2_VERIFIED_JOIN_ACCEPTED from %s. systemsAccepted=", rakPeer[peerIndex]->GetMyGUID().ToString(), packet->guid.ToString());
+							for (unsigned int i=0; i < systemsAccepted.Size(); i++)
+								printf("%s ", systemsAccepted[i].ToString());
+							printf("\n");
+						}
+						break;
+					}
+
+				case ID_FCM2_VERIFIED_JOIN_REJECTED:
+					printf("%s: ID_FCM2_VERIFIED_JOIN_REJECTED from %s\n", rakPeer[peerIndex]->GetMyGUID().ToString(), packet->guid.ToString());
+					rakPeer[peerIndex]->CloseConnection(packet->guid, true);
+					break;
+
+				default:
+					printf("%s: %s from %s\n", rakPeer[peerIndex]->GetMyGUID().ToString(), PacketLogger::BaseIDTOString(packet->data[0]), packet->guid.ToString());
+				}
 			}
 		}
 
 		if (kbhit())
 		{
 			ch=getch();
-			if (ch==' ')
-			{
-				unsigned int participantList;
-				fcm2.GetParticipantCount(&participantList);
-				printf("participantList=%i\n",participantList);
-			}
 			if (ch=='q' || ch=='Q')
 			{
 				printf("Quitting.\n");
@@ -134,14 +155,13 @@ int main()
 			}
 		}
 
+
 		RakSleep(30);
-		for (int i=0; i < 32; i++)
-		{
-			if (rakPeer->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS,0).GetPort()!=60000+i)
-				rakPeer->AdvertiseSystem("255.255.255.255", 60000+i, 0,0,0);
-		}
 	}
 
-	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
+	for (int i=0; i < NUM_PEERS; i++)
+	{
+		RakNet::RakPeerInterface::DestroyInstance(rakPeer[i]);
+	}
 	return 0;
 }
