@@ -9,42 +9,36 @@ set(SWIFT2D_MAJOR 0)
 set(SWIFT2D_MINOR 1)
 set(SWIFT2D_PATCH 0)
 set(SWIFT2D_VERSION ${SWIFT2D_MAJOR}.${SWIFT2D_MINOR}.${SWIFT2D_PATCH})
-set(SWIFT2D_DESCRIPTION "Swift2D - an astonishing virtual reality engine")
+set(SWIFT2D_DESCRIPTION "Swift2D - an astonishing 2D game engine")
 set(SWIFT2D_HOMEPAGE "http://www.swift2d.org")
 set(SWIFT2D_EXENAME "Swift2D")
 set(SWIFT2D_PACKAGENAME "Swift2D")
 
-# We require at least version 2.8.0
 cmake_minimum_required(VERSION 2.8.0)
 
 find_package(PkgConfig)
 
-# Location where cmake first looks for modules.
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 ################################################################
 # Configure and find libraries
 ################################################################
 
-pkg_check_modules(GLFW REQUIRED glfw3)
-pkg_check_modules(GLEW REQUIRED glew)
-pkg_check_modules(PNG REQUIRED libpng)
-pkg_check_modules(OPENAL REQUIRED openal)
-pkg_check_modules(SNDFILE REQUIRED sndfile)
-pkg_check_modules(ALUT REQUIRED freealut)
-pkg_check_modules(PANGOCAIRO REQUIRED pangocairo)
-pkg_check_modules(OPENGL REQUIRED gl)
+pkg_check_modules(GLFW          REQUIRED glfw3)
+pkg_check_modules(GLEW          REQUIRED glew)
+pkg_check_modules(PNG           REQUIRED libpng)
+pkg_check_modules(OPENAL        REQUIRED openal)
+pkg_check_modules(SNDFILE       REQUIRED sndfile)
+pkg_check_modules(ALUT          REQUIRED freealut)
+pkg_check_modules(PANGOCAIRO    REQUIRED pangocairo)
+pkg_check_modules(OPENGL        REQUIRED gl)
 
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost REQUIRED COMPONENTS thread system filesystem)
 
-include(find_ev)
-
-
 set(LIBS
-    ${EV_LIBRARIES}
     ${GLFW_LIBRARIES}
     ${Boost_LIBRARIES}
     ${GLEW_LIBRARIES}
@@ -79,7 +73,6 @@ set(OWN_INCLUDE_PATHS
 include_directories(${OWN_INCLUDE_PATHS})
 
 set(INCLUDE_PATHS
-    ${EV_INCLUDE_DIRS}
     ${GLFW_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${GLEW_INCLUDE_DIRS}
@@ -128,10 +121,6 @@ message( "" )
 message( " boost:" )
 message( "   library: ${Boost_LIBRARIES}" )
 message( "   include: ${Boost_INCLUDE_DIRS}" )
-message( "" )
-message( " ev:" )
-message( "   library: ${EV_LIBRARIES}" )
-message( "   include: ${EV_INCLUDE_DIRS}" )
 message( "" )
 message( " glfw3:" )
 message( "   library: ${GLFW_LIBRARIES}" )
