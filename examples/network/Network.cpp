@@ -94,7 +94,7 @@ void Network::connect(std::string const& game_ID) {
 
   upnp_.on_fail.connect([&](){
     Logger::LOG_MESSAGE << "Failed to open UPNP. Using NAT punch through." << std::endl;
-    enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
+    enter_phase(OPENING_UPNP);
   });
 
   enter_phase(CONNECTING_TO_SERVER);
@@ -203,13 +203,13 @@ void Network::update() {
 
       // -----------------------------------------------------------------------
       case ID_FCM2_VERIFIED_JOIN_ACCEPTED: {
-        DataStructures::List<RakNet::RakNetGUID> accepted_systems;
+        DataStructures::List<RakNet::RakNetGUID> peers;
         bool this_was_accepted;
-        peer_.mesh_->GetVerifiedJoinAcceptedAdditionalData(packet, &this_was_accepted, accepted_systems, 0);
+        peer_.mesh_->GetVerifiedJoinAcceptedAdditionalData(packet, &this_was_accepted, peers, 0);
         if (this_was_accepted) {
           Logger::LOG_MESSAGE << "Join accepted." << std::endl;
         } else {
-          Logger::LOG_MESSAGE << "Peer " << accepted_systems[0].ToString() << " joined the game." << std::endl;
+          Logger::LOG_MESSAGE << "Peer " << peers[0].ToString() << " joined the game." << std::endl;
         }
 
         if (this_was_accepted) {
@@ -289,19 +289,14 @@ void Network::enter_phase(Phase phase) {
 
     // -------------------------------------------------------------------------
     case HOSTING_INSTANCE:
-      Logger::LOG_MESSAGE << "We are host now..." << std::endl;
+      Logger::LOG_MESSAGE << "We are host now." << std::endl;
       upload_game();
       update_timer_.reset();
       break;
 
     // -------------------------------------------------------------------------
     case PARTICIPATING:
-      Logger::LOG_MESSAGE << "Participating game..." << std::endl;
-      break;
-
-    // -------------------------------------------------------------------------
-    case CONNECTING_TO_PEERS:
-
+      Logger::LOG_MESSAGE << "Participating game." << std::endl;
       break;
   }
 }
