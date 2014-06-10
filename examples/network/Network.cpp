@@ -16,6 +16,7 @@
 #include <../../third_party/raknet/src/RakPeerInterface.h>
 #include <../../third_party/raknet/src/BitStream.h>
 #include <../../third_party/raknet/src/FullyConnectedMesh2.h>
+#include <../../third_party/raknet/src/UDPProxyClient.h>
 #include <../../third_party/raknet/src/PacketLogger.h>
 
 #include <boost/property_tree/ptree.hpp>
@@ -28,7 +29,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Network::Network()
-  : phase_(OPENING_UPNP) {
+  : phase_(SEARCHING_FOR_OTHER_INSTANCES) {
 
   update_timer_.start();
 
@@ -94,6 +95,7 @@ void Network::connect(std::string const& game_ID) {
 
   upnp_.on_fail.connect([&](){
     Logger::LOG_MESSAGE << "Failed to open UPNP. Using NAT punch through." << std::endl;
+    // enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
     enter_phase(OPENING_UPNP);
   });
 
@@ -130,7 +132,7 @@ void Network::update() {
         if (phase_ == CONNECTING_TO_SERVER) {
           Logger::LOG_MESSAGE << "Connected to NAT server." << std::endl;
           nat_server_address_ = packet->systemAddress.ToString();
-          enter_phase(OPENING_UPNP);
+          enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
 
         } else if (phase_ == CONNECTING_TO_HOST) {
           Logger::LOG_MESSAGE << "Connected to host " << packet->guid.ToString() << ". Sending join request." << std::endl;
@@ -157,7 +159,15 @@ void Network::update() {
 
       // -----------------------------------------------------------------------
       case ID_NAT_PUNCHTHROUGH_FAILED:
-        Logger::LOG_MESSAGE << "Found no route to host." << std::endl;
+        if (phase_ == CONNECTING_TO_HOST) {
+          Logger::LOG_MESSAGE << "NAT punch through failed. Trying to request forwarding!" << std::endl;
+
+          peer_.udp_proxy_->RequestForwarding(
+            RakNet::SystemAddress(nat_server_address_.c_str()),
+            RakNet::UNASSIGNED_SYSTEM_ADDRESS, packet->systemAddress, 7000);
+        } else {
+          Logger::LOG_MESSAGE << "NAT punch through failed. Ignoring it!" << std::endl;
+        }
         break;
 
       // -----------------------------------------------------------------------
