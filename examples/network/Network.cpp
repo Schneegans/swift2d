@@ -87,7 +87,7 @@ void Network::connect(std::string const& game_ID) {
     }
   });
 
-  upnp_.on_success.connect([=](){
+  upnp_.on_success.connect([&](){
     Logger::LOG_MESSAGE << "Successfully opened UPNP." << std::endl;
     enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
   });
@@ -95,7 +95,6 @@ void Network::connect(std::string const& game_ID) {
   upnp_.on_fail.connect([&](){
     Logger::LOG_MESSAGE << "Failed to open UPNP. Using NAT punch through." << std::endl;
     enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
-    // enter_phase(OPENING_UPNP);
   });
 
   enter_phase(CONNECTING_TO_SERVER);
@@ -108,7 +107,6 @@ void Network::update() {
   http_.update();
 
   if (phase_ == HOSTING_INSTANCE && update_timer_.get_elapsed() > 20.0) {
-    Logger::LOG_MESSAGE << "Refreshing game information..." << std::endl;
     upload_game();
     update_timer_.reset();
   }
@@ -167,12 +165,14 @@ void Network::update() {
         // ignore packet
         break;
 
-      // ################ NAT PUNCH THROUGH PACKETS ############################
+      // ################## FULLY CONNECTED MESH ###############################
       // -----------------------------------------------------------------------
       case ID_FCM2_NEW_HOST:
 
         if (packet->guid.g == peer_.get_guid()) {
-          enter_phase(HOSTING_INSTANCE);
+          if (phase_ != HOSTING_INSTANCE) {
+            enter_phase(HOSTING_INSTANCE);
+          }
         } else {
           Logger::LOG_MESSAGE << packet->guid.ToString() << " is host now." << std::endl;
 
@@ -197,7 +197,7 @@ void Network::update() {
 
       // -----------------------------------------------------------------------
       case ID_FCM2_VERIFIED_JOIN_CAPABLE:
-        Logger::LOG_MESSAGE << "Client is capable of joining." << std::endl;
+        Logger::LOG_MESSAGE << "ID_FCM2_VERIFIED_JOIN_CAPABLE." << std::endl;
         peer_.mesh_->RespondOnVerifiedJoinCapable(packet, true, 0);
         break;
 
@@ -207,9 +207,9 @@ void Network::update() {
         bool this_was_accepted;
         peer_.mesh_->GetVerifiedJoinAcceptedAdditionalData(packet, &this_was_accepted, accepted_systems, 0);
         if (this_was_accepted) {
-          Logger::LOG_MESSAGE << "Game join request accepted" << std::endl;
+          Logger::LOG_MESSAGE << "Join accepted." << std::endl;
         } else {
-          Logger::LOG_MESSAGE << "System " << accepted_systems[0].ToString() << " joined the mesh" << std::endl;
+          Logger::LOG_MESSAGE << "Peer " << accepted_systems[0].ToString() << " joined the game." << std::endl;
         }
 
         if (this_was_accepted) {
