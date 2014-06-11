@@ -24,6 +24,7 @@ class NetworkObject: public RakNet::Replica3 {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  NetworkObject();
 
   virtual RakNet::RakString get_name() const { return RakNet::RakString("Test"); };
 

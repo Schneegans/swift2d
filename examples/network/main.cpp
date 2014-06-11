@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
   swift::Network::instance()->connect("myTestGame");
 
   auto window = swift::Window::create();
-  // window->Open = true;
+  window->Open = true;
   swift::NetworkObject test;
 
   swift::Ticker ticker(1.0 / 60.0);

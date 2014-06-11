@@ -280,7 +280,7 @@ void Network::update() {
       // ##################### OTHER PACKETS ###################################
       // -----------------------------------------------------------------------
       default:
-        Logger::LOG_DEBUG << "Got " << RakNet::PacketLogger::BaseIDTOString(packet->data[0])
+        Logger::LOG_TRACE << "Got " << RakNet::PacketLogger::BaseIDTOString(packet->data[0])
                           << " from " << packet->guid.ToString() << std::endl;
         break;
     }

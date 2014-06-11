@@ -13,6 +13,7 @@
 
 namespace swift {
 
+#define LOG_TRACE   Logger::trace_impl  (__FILE__, __LINE__)
 #define LOG_DEBUG   Logger::debug_impl  (__FILE__, __LINE__)
 #define LOG_MESSAGE Logger::message_impl(__FILE__, __LINE__)
 #define LOG_WARNING Logger::warning_impl(__FILE__, __LINE__)
@@ -22,12 +23,13 @@ class Logger {
 
  public:
 
+  static bool enable_trace;
   static bool enable_debug;
   static bool enable_message;
   static bool enable_warning;
   static bool enable_error;
 
-
+  static std::ostream& trace_impl(const char* file, int line);
   static std::ostream& debug_impl(const char* file, int line);
   static std::ostream& message_impl(const char* file, int line);
   static std::ostream& warning_impl(const char* file, int line);

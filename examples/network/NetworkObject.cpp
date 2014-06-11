@@ -18,6 +18,12 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+NetworkObject::NetworkObject() {
+  Logger::LOG_WARNING << "NetworkObject created!" << std::endl;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void NetworkObject::WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const {
   allocationIdBitstream->Write(get_name());
 }

@@ -30,6 +30,7 @@
 
 namespace swift {
 
+bool Logger::enable_trace = false;
 bool Logger::enable_debug = true;
 bool Logger::enable_message = true;
 bool Logger::enable_warning = true;
@@ -60,6 +61,12 @@ namespace {
       return dev_null;
     }
   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::ostream& Logger::trace_impl(const char* file, int line) {
+  return print(enable_trace, "[SWIFT2D][T]", PRINT_TURQUOISE, file, line);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
