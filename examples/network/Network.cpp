@@ -150,9 +150,8 @@ void Network::update() {
       // ################ NAT PUNCH THROUGH PACKETS ############################
       // -----------------------------------------------------------------------
       case ID_NAT_PUNCHTHROUGH_SUCCEEDED:
-        Logger::LOG_MESSAGE << "natpunch succeeded..." << std::endl;
         if (phase_ == CONNECTING_TO_HOST || phase_ == CONNECTING_TO_PEERS) {
-          Logger::LOG_MESSAGE << "Found route to host. Connecting..." << std::endl;
+          Logger::LOG_MESSAGE << "NAT punch succeeded. Connecting..." << std::endl;
           peer_.connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort());
         }
         break;
@@ -201,7 +200,6 @@ void Network::update() {
 
       // -----------------------------------------------------------------------
       case ID_FCM2_VERIFIED_JOIN_CAPABLE:
-        Logger::LOG_MESSAGE << "ID_FCM2_VERIFIED_JOIN_CAPABLE." << std::endl;
         peer_.mesh_->RespondOnVerifiedJoinCapable(packet, true, 0);
         break;
 
@@ -234,7 +232,7 @@ void Network::update() {
 
       // -----------------------------------------------------------------------
       case ID_FCM2_VERIFIED_JOIN_START:
-        Logger::LOG_MESSAGE << "ID_FCM2_VERIFIED_JOIN_START." << std::endl;
+        Logger::LOG_MESSAGE << "Connecting to other peers..." << std::endl;
         enter_phase(CONNECTING_TO_PEERS);
         peer_.join(packet->guid.g, nat_server_address_);
         break;
@@ -247,6 +245,12 @@ void Network::update() {
         break;
     }
   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Network::is_host() const {
+  return peer_.mesh_->IsConnectedHost();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -53,6 +53,8 @@ class Network : public Singleton<Network> {
   void disconnect();
   void update();
 
+  bool is_host() const;
+
   friend class Singleton<Network>;
 
  ///////////////////////////////////////////////////////////////////////////////

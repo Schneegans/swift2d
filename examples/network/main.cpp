@@ -9,6 +9,8 @@
 #include <swift2d/swift2d.hpp>
 
 #include "Network.hpp"
+#include "NetworkObject.hpp"
+
 
 // main ------------------------------------------------------------------------
 int main(int argc, char** argv) {
@@ -17,9 +19,30 @@ int main(int argc, char** argv) {
   swift::Application app(argc, argv);
   swift::Network::instance()->connect("myTestGame");
 
+  auto window = swift::Window::create();
+  window->Open = true;
+  swift::NetworkObject test;
+
   swift::Ticker ticker(1.0 / 60.0);
   ticker.on_tick.connect([&]() {
+    window->process_input();
     swift::Network::instance()->update();
+  });
+
+  window->on_close.connect([&](){
+    app.stop();
+  });
+
+  window->on_key_press.connect([&](swift::Key key, int scancode, int action, int mods) {
+    if (key == swift::Key::ESCAPE) {
+      app.stop();
+    } else if (key == swift::Key::SPACE && action != 1) {
+      if (swift::Network::instance()->is_host()) {
+        swift::Logger::LOG_DEBUG << "Host" << std::endl;
+      } else {
+        swift::Logger::LOG_DEBUG << "Client" << std::endl;
+      }
+    }
   });
 
   app.start();
