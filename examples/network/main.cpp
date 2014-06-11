@@ -37,11 +37,9 @@ int main(int argc, char** argv) {
     if (key == swift::Key::ESCAPE) {
       app.stop();
     } else if (key == swift::Key::SPACE && action != 1) {
-      if (swift::Network::instance()->is_host()) {
-        swift::Logger::LOG_DEBUG << "Host" << std::endl;
-      } else {
-        swift::Logger::LOG_DEBUG << "Client" << std::endl;
-      }
+      swift::Logger::LOG_DEBUG << "Creating object." << std::endl;
+      auto some_object(new swift::NetworkObject());
+      swift::Network::instance()->distribute_object(some_object);
     }
   });
 

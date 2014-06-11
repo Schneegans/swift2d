@@ -18,12 +18,16 @@ namespace RakNet {
   class FullyConnectedMesh2;
   class NatPunchthroughClient;
   class NatTypeDetectionClient;
+  class NetworkIDManager;
 }
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
+// forward declares ------------------------------------------------------------
+class ReplicationManager;
 
 // -----------------------------------------------------------------------------
 class Peer {
@@ -55,6 +59,8 @@ class Peer {
   RakNet::FullyConnectedMesh2*    mesh_;
   RakNet::NatPunchthroughClient*  npt_;
   RakNet::NatTypeDetectionClient* nat_type_detector_;
+  RakNet::NetworkIDManager*       id_manager_;
+  ReplicationManager*             replica_;
 };
 
 }

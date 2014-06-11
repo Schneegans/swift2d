@@ -14,6 +14,7 @@
 
 #include "Peer.hpp"
 #include "UpnpOpener.hpp"
+#include "NetworkObject.hpp"
 #include "HttpConnection.hpp"
 
 namespace RakNet {
@@ -52,6 +53,8 @@ class Network : public Singleton<Network> {
   void connect(std::string const& game_ID);
   void disconnect();
   void update();
+
+  void distribute_object(NetworkObject* object);
 
   bool is_host() const;
 

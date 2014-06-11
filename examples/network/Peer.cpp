@@ -10,6 +10,7 @@
 #include "Peer.hpp"
 
 #include "Network.hpp"
+#include "ReplicationManager.hpp"
 #include <swift2d/utils/Logger.hpp>
 
 #include <../../third_party/raknet/src/ConnectionGraph2.h>
@@ -19,6 +20,7 @@
 #include <../../third_party/raknet/src/NatTypeDetectionClient.h>
 #include <../../third_party/raknet/src/BitStream.h>
 #include <../../third_party/raknet/src/MessageIdentifiers.h>
+#include <../../third_party/raknet/src/NetworkIDManager.h>
 // #include <../../third_party/raknet/src/DS_List.h>
 
 #include <iostream>
@@ -33,13 +35,16 @@ Peer::Peer()
   , mesh_(RakNet::FullyConnectedMesh2::GetInstance())
   , npt_(RakNet::NatPunchthroughClient::GetInstance())
   , nat_type_detector_(RakNet::NatTypeDetectionClient::GetInstance())
-{
-
+  , id_manager_(new RakNet::NetworkIDManager())
+  , replica_(new ReplicationManager()) {
 
   peer_->AttachPlugin(mesh_);
   peer_->AttachPlugin(graph_);
   peer_->AttachPlugin(npt_);
   peer_->AttachPlugin(nat_type_detector_);
+  peer_->AttachPlugin(replica_);
+
+  replica_->SetNetworkIDManager(id_manager_);
 
   mesh_->SetAutoparticipateConnections(false);
   mesh_->SetConnectOnNewRemoteConnection(false, "");
@@ -65,6 +70,9 @@ Peer::~Peer() {
   RakNet::RakPeerInterface::DestroyInstance(peer_);
   RakNet::ConnectionGraph2::DestroyInstance(graph_);
   RakNet::FullyConnectedMesh2::DestroyInstance(mesh_);
+
+  delete replica_;
+  delete id_manager_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
