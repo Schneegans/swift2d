@@ -117,6 +117,13 @@ void Network::connect(std::string const& game_ID) {
 
 void Network::update() {
 
+  auto register_new_peer = [&](RakNet::RakNetGUID guid){
+    RakNet::Connection_RM3 *connection = peer_.replica_->AllocConnection(peer_.peer_->GetSystemAddressFromGuid(guid), guid);
+    if (peer_.replica_->PushConnection(connection) == false) {
+      peer_.replica_->DeallocConnection(connection);
+    }
+  };
+
   http_.update();
 
   if (phase_ == HOSTING_INSTANCE && update_timer_.get_elapsed() > 20.0) {
@@ -172,7 +179,11 @@ void Network::update() {
 
       // ################## FULLY CONNECTED MESH ###############################
       // -----------------------------------------------------------------------
-      case ID_FCM2_NEW_HOST:
+      case ID_FCM2_NEW_HOST: {
+        RakNet::BitStream bs(packet->data, packet->length, false);
+        bs.IgnoreBytes(1);
+        RakNet::RakNetGUID old_host;
+        bs.Read(old_host);
 
         if (packet->guid.g == peer_.get_guid()) {
           if (phase_ != HOSTING_INSTANCE) {
@@ -181,10 +192,6 @@ void Network::update() {
         } else {
           Logger::LOG_MESSAGE << packet->guid.ToString() << " is host now." << std::endl;
 
-          RakNet::BitStream bs(packet->data, packet->length, false);
-          bs.IgnoreBytes(1);
-          RakNet::RakNetGUID old_host;
-          bs.Read(old_host);
 
           if (old_host != RakNet::UNASSIGNED_RAKNET_GUID) {
             Logger::LOG_MESSAGE << "Old host was " << old_host.ToString() << std::endl;
@@ -192,7 +199,16 @@ void Network::update() {
             Logger::LOG_MESSAGE << "There was no host before." << std::endl;
           }
         }
-        break;
+
+        if (old_host == RakNet::UNASSIGNED_RAKNET_GUID) {
+          DataStructures::List<RakNet::RakNetGUID> peers;
+          peer_.mesh_->GetParticipantList(peers);
+          for (unsigned int i=0; i < peers.Size(); i++) {
+            register_new_peer(peers[i]);
+          }
+        }
+
+        } break;
 
       // -----------------------------------------------------------------------
       case (ID_USER_PACKET_ENUM + REQUEST_JOIN):
@@ -216,9 +232,16 @@ void Network::update() {
           Logger::LOG_MESSAGE << "Peer " << peers[0].ToString() << " joined the game." << std::endl;
         }
 
+        if (peer_.mesh_->GetConnectedHost() != RakNet::UNASSIGNED_RAKNET_GUID) {
+          for (unsigned int i=0; i < peers.Size(); i++) {
+            register_new_peer(peers[i]);
+          }
+        }
+
         if (this_was_accepted) {
           enter_phase(PARTICIPATING);
         }
+
       } break;
 
       // -----------------------------------------------------------------------

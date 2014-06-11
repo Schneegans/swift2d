@@ -45,6 +45,7 @@ Peer::Peer()
   peer_->AttachPlugin(replica_);
 
   replica_->SetNetworkIDManager(id_manager_);
+  replica_->SetAutoManageConnections(false,true);
 
   mesh_->SetAutoparticipateConnections(false);
   mesh_->SetConnectOnNewRemoteConnection(false, "");
