@@ -20,6 +20,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -32,17 +33,24 @@ class SerializableReference {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-
   SerializableReference(): serializer_(nullptr) {}
 
   template<class T> SerializableReference(T const& value)
     : serializer_(new SerializerImpl<T>())
     , value_(value) {}
 
+  SerializableReference(SerializableReference const& a)
+    : serializer_(a.serializer_ ? a.serializer_->clone() : nullptr)
+    , value_(a.value_) {}
+
+  template <class T>
+  SerializableReference& operator=(T const& r) {
+    SerializableReference(r).swap(*this);
+    return *this;
+  }
+
   ~SerializableReference() {
-    if (serializer_) {
-      delete serializer_;
-    }
+    delete serializer_;
   }
 
   void serialize(RakNet::VariableDeltaSerializer::SerializationContext* ctx,
@@ -61,8 +69,7 @@ class SerializableReference {
   Serializer* serializer_;
   boost::any  value_;
 
-
-  // ---------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   struct Serializer {
     virtual void serialize(RakNet::VariableDeltaSerializer::SerializationContext* ctx,
                    RakNet::VariableDeltaSerializer* serilizer,
@@ -70,10 +77,11 @@ class SerializableReference {
     virtual void deserialize(RakNet::VariableDeltaSerializer::DeserializationContext* ctx,
                    RakNet::VariableDeltaSerializer* serilizer,
                    boost::any const& a) const = 0;
+    virtual Serializer* clone() const = 0;
   };
 
 
-  // ---------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   template <class T>
   struct SerializerImpl: Serializer {
 
@@ -93,7 +101,17 @@ class SerializableReference {
         std::cout << "Value changed: " << *target << std::endl;
       }
     }
+
+    Serializer* clone() const {
+      return new SerializerImpl<T>();
+    }
   };
+
+  void swap(SerializableReference& r) {
+    std::swap(serializer_, r.serializer_);
+    std::swap(value_, r.value_);
+  }
+
 };
 
 }
