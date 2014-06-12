@@ -14,8 +14,13 @@
 class Player: public swift::NetworkObject {
  public:
 
-  Player() {
+  Player()
+    : name_("Unnamed Player")
+    , id_(0) {
+
     swift::Network::instance()->distribute_object(this);
+    // distribute_member(&name_);
+    distribute_member(&id_);
   }
 
   RakNet::RakString get_name() const {
@@ -25,6 +30,10 @@ class Player: public swift::NetworkObject {
   static void init() {
     swift::Network::instance()->register_type<Player>();
   }
+
+ // private:
+  std::string name_;
+  float         id_;
 };
 
 // main ------------------------------------------------------------------------
@@ -56,6 +65,10 @@ int main(int argc, char** argv) {
       switch(key) {
         case swift::Key::ESCAPE:
           app.stop();
+          break;
+        case swift::Key::SPACE:
+          player.name_ = "Jim";
+          player.id_ = 2.f;
           break;
       }
     }

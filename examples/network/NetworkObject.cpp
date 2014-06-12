@@ -89,29 +89,23 @@ RakNet::RM3QuerySerializationResult NetworkObject::QuerySerialization(RakNet::Co
 ////////////////////////////////////////////////////////////////////////////////
 
 RakNet::RM3SerializationResult NetworkObject::Serialize(RakNet::SerializeParameters *serializeParameters) {
-  // RakNet::VariableDeltaSerializer::SerializationContext ctx;
 
-  // serializeParameters->pro[0].reliability=UNRELIABLE_WITH_ACK_RECEIPT;
-  // serializeParameters->pro[0].sendReceipt=replicaManager->GetRakPeerInterface()->IncrementNextSendReceipt();
-  // serializeParameters->messageTimestamp=RakNet::GetTime();
+  RakNet::VariableDeltaSerializer::SerializationContext ctx;
 
-  // vd_serializer_.BeginUnreliableAckedSerialize(
-  //   &ctx,
-  //   serializeParameters->destinationConnection->GetRakNetGUID(),
-  //   &serializeParameters->outputBitstream[0],
-  //   serializeParameters->pro[0].sendReceipt
-  //   );
-  // vd_serializer_.SerializeVariable(&ctx, test_var_1);
-  // vd_serializer_.EndSerialize(&ctx);
+  serializeParameters->pro[0].reliability=UNRELIABLE_WITH_ACK_RECEIPT;
+  serializeParameters->pro[0].sendReceipt=replicaManager->GetRakPeerInterface()->IncrementNextSendReceipt();
+  serializeParameters->messageTimestamp=RakNet::GetTime();
 
-  // serializeParameters->pro[1].reliability=RELIABLE_ORDERED;
-  // vd_serializer_.BeginIdenticalSerialize(
-  //   &ctx,
-  //   serializeParameters->whenLastSerialized==0,
-  //   &serializeParameters->outputBitstream[1]
-  //   );
-  // vd_serializer_.SerializeVariable(&ctx, test_var_2);
-  // vd_serializer_.EndSerialize(&ctx);
+  vd_serializer_.BeginUnreliableAckedSerialize(
+    &ctx,
+    serializeParameters->destinationConnection->GetRakNetGUID(),
+    &serializeParameters->outputBitstream[0],
+    serializeParameters->pro[0].sendReceipt
+  );
+  for (auto& member: distributed_members_) {
+    member.serialize(&ctx, &vd_serializer_);
+  }
+  vd_serializer_.EndSerialize(&ctx);
 
   return RakNet::RM3SR_SERIALIZED_ALWAYS;
 }
@@ -119,17 +113,13 @@ RakNet::RM3SerializationResult NetworkObject::Serialize(RakNet::SerializeParamet
 ////////////////////////////////////////////////////////////////////////////////
 
 void NetworkObject::Deserialize(RakNet::DeserializeParameters *deserializeParameters) {
-  // RakNet::VariableDeltaSerializer::DeserializationContext ctx;
+  RakNet::VariableDeltaSerializer::DeserializationContext ctx;
 
-  // vd_serializer_.BeginDeserialize(&ctx, &deserializeParameters->serializationBitstream[0]);
-  // if (vd_serializer_.DeserializeVariable(&ctx, test_var_1))
-  //   Logger::LOG_DEBUG << "test_var_1 changed to " << test_var_1 << std::endl;
-  // vd_serializer_.EndDeserialize(&ctx);
-
-  // vd_serializer_.BeginDeserialize(&ctx, &deserializeParameters->serializationBitstream[1]);
-  // if (vd_serializer_.DeserializeVariable(&ctx, test_var_2))
-  //   Logger::LOG_DEBUG << "test_var_2 changed to " << test_var_2 << std::endl;
-  // vd_serializer_.EndDeserialize(&ctx);
+  vd_serializer_.BeginDeserialize(&ctx, &deserializeParameters->serializationBitstream[0]);
+  for (auto& member: distributed_members_) {
+    member.deserialize(&ctx, &vd_serializer_);
+  }
+  vd_serializer_.EndDeserialize(&ctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -142,6 +132,12 @@ void NetworkObject::OnUserReplicaPreSerializeTick(void) {
 
 void NetworkObject::NotifyReplicaOfMessageDeliveryStatus(RakNet::RakNetGUID guid, uint32_t receiptId, bool messageArrived) {
   vd_serializer_.OnMessageReceipt(guid, receiptId, messageArrived);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void NetworkObject::distribute_member(SerializableReference const& value) {
+  distributed_members_.push_back(value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

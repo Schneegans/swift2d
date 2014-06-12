@@ -11,7 +11,8 @@
 
 // includes  -------------------------------------------------------------------
 #include <../../third_party/raknet/src/ReplicaManager3.h>
-#include <../../third_party/raknet/src/VariableDeltaSerializer.h>
+
+#include "SerializableReference.hpp"
 
 namespace swift {
 
@@ -43,10 +44,14 @@ class NetworkObject: public RakNet::Replica3 {
   virtual void OnUserReplicaPreSerializeTick();
   void NotifyReplicaOfMessageDeliveryStatus(RakNet::RakNetGUID guid, uint32_t receiptId, bool messageArrived);
 
+  void distribute_member(SerializableReference const& value);
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   void print_bitstream(RakNet::BitStream *bs);
+
+  std::vector<SerializableReference> distributed_members_;
 
   RakNet::VariableDeltaSerializer vd_serializer_;
 };
