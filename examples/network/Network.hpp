@@ -15,6 +15,7 @@
 #include "Peer.hpp"
 #include "UpnpOpener.hpp"
 #include "NetworkObject.hpp"
+#include "ReplicationManager.hpp"
 #include "HttpConnection.hpp"
 
 namespace RakNet {
@@ -53,6 +54,11 @@ class Network : public Singleton<Network> {
   void connect(std::string const& game_ID);
   void disconnect();
   void update();
+
+  template<typename T> void register_type() {
+    T object;
+    peer_.replica_->register_object(object.get_name(), [](){ return new T(); });
+  };
 
   void distribute_object(NetworkObject* object);
 

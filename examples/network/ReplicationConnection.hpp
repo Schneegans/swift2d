@@ -19,29 +19,27 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+// forward declares ------------------------------------------------------------
+class ReplicationManager;
+
 // -----------------------------------------------------------------------------
 class ReplicationConnection: public RakNet::Connection_RM3 {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-  ReplicationConnection(RakNet::SystemAddress const& systemAddress, RakNet::RakNetGUID guid)
-    : RakNet::Connection_RM3(systemAddress, guid) {}
+  ReplicationConnection(RakNet::SystemAddress const& systemAddress,
+                        RakNet::RakNetGUID guid, ReplicationManager const* parent);
 
-  virtual ~ReplicationConnection() {}
+  bool QueryGroupDownloadMessages() const;
 
-  bool QueryGroupDownloadMessages() const {
-    return true;
-  }
+  virtual RakNet::Replica3 *AllocReplica(RakNet::BitStream *allocationId,
+                                         RakNet::ReplicaManager3 *replicaManager3);
 
-  virtual RakNet::Replica3 *AllocReplica(RakNet::BitStream *allocationId, RakNet::ReplicaManager3 *replicaManager3) {
-    RakNet::RakString type;
-    allocationId->Read(type);
-    if (type=="Test") {
-      return new NetworkObject();
-    }
-    return 0;
-  }
+ ///////////////////////////////////////////////////////////////////////////////
+ // ---------------------------------------------------------- private interface
+ private:
+  ReplicationManager const* parent_;
 };
 
 }

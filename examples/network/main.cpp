@@ -11,6 +11,21 @@
 #include "Network.hpp"
 #include "NetworkObject.hpp"
 
+class Player: public swift::NetworkObject {
+ public:
+
+  Player() {
+    swift::Network::instance()->distribute_object(this);
+  }
+
+  RakNet::RakString get_name() const {
+    return RakNet::RakString("Player");
+  };
+
+  static void init() {
+    swift::Network::instance()->register_type<Player>();
+  }
+};
 
 // main ------------------------------------------------------------------------
 int main(int argc, char** argv) {
@@ -21,7 +36,10 @@ int main(int argc, char** argv) {
 
   auto window = swift::Window::create();
   window->Open = true;
-  swift::NetworkObject test;
+
+  Player::init();
+
+  Player player;
 
   swift::Ticker ticker(1.0 / 60.0);
   ticker.on_tick.connect([&]() {
@@ -42,11 +60,8 @@ int main(int argc, char** argv) {
           app.stop();
           break;
         case swift::Key::SPACE:
-          my_objects.push_back(new swift::NetworkObject());
-          swift::Network::instance()->distribute_object(my_objects.back());
-          break;
-        case swift::Key::A:
-          for (auto o: my_objects) { ++o->test_var_1; ++o->test_var_2; }
+          // my_objects.push_back(new swift::NetworkObject());
+          // swift::Network::instance()->distribute_object(my_objects.back());
           break;
         case swift::Key::D:
           for (auto o: my_objects) delete o;

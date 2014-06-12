@@ -26,7 +26,7 @@ class NetworkObject: public RakNet::Replica3 {
  public:
   NetworkObject();
 
-  virtual RakNet::RakString get_name() const { return RakNet::RakString("Test"); };
+  virtual RakNet::RakString get_name() const = 0;
 
   virtual void WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const;
   virtual RakNet::RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, RakNet::ReplicaManager3 *replicaManager3);
@@ -43,12 +43,9 @@ class NetworkObject: public RakNet::Replica3 {
   virtual void OnUserReplicaPreSerializeTick();
   void NotifyReplicaOfMessageDeliveryStatus(RakNet::RakNetGUID guid, uint32_t receiptId, bool messageArrived);
 
-  int test_var_1;
-  int test_var_2;
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-
   void print_bitstream(RakNet::BitStream *bs);
 
   RakNet::VariableDeltaSerializer vd_serializer_;
