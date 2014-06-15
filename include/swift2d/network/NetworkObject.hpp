@@ -13,7 +13,6 @@
 #include <swift2d/network/Network.hpp>
 #include <swift2d/network/NetworkObjectBase.hpp>
 
-
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,14 +26,15 @@ class NetworkObject: public NetworkObjectBase {
  // ----------------------------------------------------------- public interface
  public:
 
-  static void init() {
-    swift::Network::instance()->register_type<T>();
+  static void init(std::string const& type_name) {
+    if (!initialized_) {
+      initialized_ = true;
+      type_name_ = RakNet::RakString(type_name.c_str());
+      swift::Network::instance()->register_type<T>(type_name_);
+    }
   }
 
-  NetworkObject(std::string const& type_name) :
-    type_name_(type_name.c_str()) {}
-
-  RakNet::RakString const& get_name() const {
+  RakNet::RakString const& get_type() const {
     return type_name_;
   };
 
@@ -46,8 +46,15 @@ class NetworkObject: public NetworkObjectBase {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  RakNet::RakString type_name_;
+  static RakNet::RakString type_name_;
+  static bool              initialized_;
 };
+
+template<typename T>
+RakNet::RakString NetworkObject<T>::type_name_ = "";
+
+template<typename T>
+bool NetworkObject<T>::initialized_ = false;
 
 }
 

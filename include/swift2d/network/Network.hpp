@@ -55,9 +55,8 @@ class Network : public Singleton<Network> {
   void disconnect();
   void update();
 
-  template<typename T> void register_type() {
-    T object;
-    peer_.replica_->register_object(object.get_name(), [](){ return new T(); });
+  template<typename T> void register_type(RakNet::RakString const& type) {
+    peer_.replica_->register_object(type, [](){ return new T(); });
   };
 
   void distribute_object(NetworkObjectBase* object);

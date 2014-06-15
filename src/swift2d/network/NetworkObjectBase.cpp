@@ -18,14 +18,8 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-NetworkObjectBase::NetworkObjectBase() {
-  Logger::LOG_WARNING << "NetworkObjectBase created!" << std::endl;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void NetworkObjectBase::WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const {
-  allocationIdBitstream->Write(get_name());
+  allocationIdBitstream->Write(get_type());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +38,7 @@ bool NetworkObjectBase::QueryRemoteConstruction(RakNet::Connection_RM3 *sourceCo
 
 void NetworkObjectBase::SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {
   vd_serializer_.AddRemoteSystemVariableHistory(destinationConnection->GetRakNetGUID());
-  constructionBitstream->Write(get_name() + RakNet::RakString(" SerializeConstruction"));
+  constructionBitstream->Write(get_type() + RakNet::RakString(" SerializeConstruction"));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +52,7 @@ bool NetworkObjectBase::DeserializeConstruction(RakNet::BitStream *constructionB
 
 void NetworkObjectBase::SerializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *destinationConnection) {
   vd_serializer_.RemoveRemoteSystemVariableHistory(destinationConnection->GetRakNetGUID());
-  destructionBitstream->Write(get_name() + RakNet::RakString(" SerializeDestruction"));
+  destructionBitstream->Write(get_type() + RakNet::RakString(" SerializeDestruction"));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -92,22 +86,18 @@ RakNet::RM3SerializationResult NetworkObjectBase::Serialize(RakNet::SerializePar
 
   RakNet::VariableDeltaSerializer::SerializationContext ctx;
 
-  serializeParameters->pro[0].reliability=UNRELIABLE_WITH_ACK_RECEIPT;
-  serializeParameters->pro[0].sendReceipt=replicaManager->GetRakPeerInterface()->IncrementNextSendReceipt();
-  serializeParameters->messageTimestamp=RakNet::GetTime();
-
-  vd_serializer_.BeginUnreliableAckedSerialize(
+  serializeParameters->pro[0].reliability=RELIABLE_ORDERED;
+  vd_serializer_.BeginIdenticalSerialize(
     &ctx,
-    serializeParameters->destinationConnection->GetRakNetGUID(),
-    &serializeParameters->outputBitstream[0],
-    serializeParameters->pro[0].sendReceipt
+    serializeParameters->whenLastSerialized==0,
+    &serializeParameters->outputBitstream[0]
   );
   for (auto& member: distributed_members_) {
     member.serialize(&ctx, &vd_serializer_);
   }
   vd_serializer_.EndSerialize(&ctx);
 
-  return RakNet::RM3SR_BROADCAST_IDENTICALLY;
+  return RakNet::RM3SR_SERIALIZED_ALWAYS_IDENTICALLY;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -126,12 +116,6 @@ void NetworkObjectBase::Deserialize(RakNet::DeserializeParameters *deserializePa
 
 void NetworkObjectBase::OnUserReplicaPreSerializeTick(void) {
   vd_serializer_.OnPreSerializeTick();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void NetworkObjectBase::NotifyReplicaOfMessageDeliveryStatus(RakNet::RakNetGUID guid, uint32_t receiptId, bool messageArrived) {
-  vd_serializer_.OnMessageReceipt(guid, receiptId, messageArrived);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

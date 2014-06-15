@@ -32,8 +32,8 @@ class MoveBehavior : public Behavior<SceneObject*> {
  public:
 
   // ---------------------------------------------------------------- properties
-  AnimatedFloat LinearSpeed;
-  AnimatedFloat AngularSpeed;
+  Float LinearSpeed;
+  Float AngularSpeed;
 
   // ----------------------------------------------------- constrution interface
   MoveBehavior()
@@ -58,8 +58,8 @@ class MoveBehavior : public Behavior<SceneObject*> {
   // ------------------------------------------------------------ public methods
   virtual void update(double time) {
 
-    LinearSpeed.update(time);
-    AngularSpeed.update(time);
+    // LinearSpeed.update(time);
+    // AngularSpeed.update(time);
 
     auto user_transform(get_user()->Transform.get());
     math::rotate(user_transform, AngularSpeed.get() * time);

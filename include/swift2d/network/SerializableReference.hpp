@@ -35,7 +35,7 @@ struct Serializer {
 
 
 // ---------------------------------------------------------------------------
-template <class T>
+template <typename T>
 struct SerializerImpl: Serializer {
 
   void serialize(RakNet::VariableDeltaSerializer::SerializationContext* ctx,
@@ -59,27 +59,80 @@ struct SerializerImpl: Serializer {
 };
 
 // ---------------------------------------------------------------------------
-template <>
-struct SerializerImpl<Mat3*>: Serializer {
+template <typename T>
+struct SerializerImpl<NumericProperty<T>*>: Serializer {
 
   void serialize(RakNet::VariableDeltaSerializer::SerializationContext* ctx,
                  RakNet::VariableDeltaSerializer* s,
                  boost::any const& a) const {
 
-    s->SerializeVariable(ctx, boost::any_cast<Mat3*>(a)->get());
+    s->SerializeVariable(ctx, boost::any_cast<NumericProperty<T>*>(a)->get());
   }
 
   void deserialize(RakNet::VariableDeltaSerializer::DeserializationContext* ctx,
                  RakNet::VariableDeltaSerializer* s,
                  boost::any const& a) const {
 
-    Mat3::value_type val;
-    s->DeserializeVariable(ctx, val);
-    boost::any_cast<Mat3*>(a)->set(val);
+    T val;
+    if (s->DeserializeVariable(ctx, val)) {
+      boost::any_cast<NumericProperty<T>*>(a)->set(val);
+    }
   }
 
   Serializer* clone() const {
-    return new SerializerImpl<Mat3*>();
+    return new SerializerImpl<NumericProperty<T>*>();
+  }
+};
+
+// ---------------------------------------------------------------------------
+template <typename T>
+struct SerializerImpl<LogicalProperty<T>*>: Serializer {
+
+  void serialize(RakNet::VariableDeltaSerializer::SerializationContext* ctx,
+                 RakNet::VariableDeltaSerializer* s,
+                 boost::any const& a) const {
+
+    s->SerializeVariable(ctx, boost::any_cast<LogicalProperty<T>*>(a)->get());
+  }
+
+  void deserialize(RakNet::VariableDeltaSerializer::DeserializationContext* ctx,
+                 RakNet::VariableDeltaSerializer* s,
+                 boost::any const& a) const {
+
+    T val;
+    if (s->DeserializeVariable(ctx, val)) {
+      boost::any_cast<LogicalProperty<T>*>(a)->set(val);
+    }
+  }
+
+  Serializer* clone() const {
+    return new SerializerImpl<NumericProperty<T>*>();
+  }
+};
+
+// ---------------------------------------------------------------------------
+template <typename T>
+struct SerializerImpl<AnimatedProperty<T>*>: Serializer {
+
+  void serialize(RakNet::VariableDeltaSerializer::SerializationContext* ctx,
+                 RakNet::VariableDeltaSerializer* s,
+                 boost::any const& a) const {
+
+    s->SerializeVariable(ctx, boost::any_cast<AnimatedProperty<T>*>(a)->get());
+  }
+
+  void deserialize(RakNet::VariableDeltaSerializer::DeserializationContext* ctx,
+                 RakNet::VariableDeltaSerializer* s,
+                 boost::any const& a) const {
+
+    T val;
+    if (s->DeserializeVariable(ctx, val)) {
+      boost::any_cast<AnimatedProperty<T>*>(a)->set(val);
+    }
+  }
+
+  Serializer* clone() const {
+    return new SerializerImpl<AnimatedProperty<T>*>();
   }
 };
 

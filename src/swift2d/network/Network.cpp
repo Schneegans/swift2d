@@ -262,21 +262,6 @@ void Network::update() {
         peer_.join(packet->guid.g, nat_server_address_);
         break;
 
-      // #################### REPLICA PACKETS ##################################
-      // -----------------------------------------------------------------------
-      case ID_SND_RECEIPT_LOSS:
-      case ID_SND_RECEIPT_ACKED: {
-          uint32_t msgNumber;
-          memcpy(&msgNumber, packet->data+1, 4);
-
-          DataStructures::List<RakNet::Replica3*> replicaListOut;
-          peer_.replica_->GetReplicasCreatedByMe(replicaListOut);
-          unsigned int idx;
-          for (idx=0; idx < replicaListOut.Size(); idx++) {
-            ((NetworkObjectBase*)replicaListOut[idx])->NotifyReplicaOfMessageDeliveryStatus(packet->guid,msgNumber, packet->data[0]==ID_SND_RECEIPT_ACKED);
-          }
-        }
-
       // ##################### OTHER PACKETS ###################################
       // -----------------------------------------------------------------------
       default:

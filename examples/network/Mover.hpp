@@ -28,15 +28,15 @@ class Mover : public MoveBehavior {
     auto window = WindowManager::instance()->get_default();
     connection_ = window->on_key_press.connect([&](Key key, int scancode, int action, int mods){
       if (action == 0) {
-        if (key == Key::W) LinearSpeed.set(0, 0.5);
-        if (key == Key::S) LinearSpeed.set(0, 0.5);
-        if (key == Key::A) AngularSpeed.set(0, 0.1);
-        if (key == Key::D) AngularSpeed.set(0, 0.1);
+        if (key == Key::W) LinearSpeed.set(0);
+        if (key == Key::S) LinearSpeed.set(0);
+        if (key == Key::A) AngularSpeed.set(0);
+        if (key == Key::D) AngularSpeed.set(0);
       } else if (action == 1) {
-        if (key == Key::W) LinearSpeed.set( 20, 1);
-        if (key == Key::S) LinearSpeed.set(-20, 1);
-        if (key == Key::A) AngularSpeed.set(-2 , 0.5);
-        if (key == Key::D) AngularSpeed.set( 2 , 0.5);
+        if (key == Key::W) LinearSpeed.set( 10);
+        if (key == Key::S) LinearSpeed.set(-10);
+        if (key == Key::A) AngularSpeed.set(-2 );
+        if (key == Key::D) AngularSpeed.set( 2 );
       }
     });
   }

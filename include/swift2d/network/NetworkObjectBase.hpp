@@ -25,9 +25,7 @@ class NetworkObjectBase: public RakNet::Replica3 {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-  NetworkObjectBase();
-
-  virtual RakNet::RakString const& get_name() const = 0;
+  virtual RakNet::RakString const& get_type() const = 0;
 
   virtual void WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const;
   virtual RakNet::RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, RakNet::ReplicaManager3 *replicaManager3);
@@ -42,7 +40,6 @@ class NetworkObjectBase: public RakNet::Replica3 {
   virtual RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters *serializeParameters);
   virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters);
   virtual void OnUserReplicaPreSerializeTick();
-  void NotifyReplicaOfMessageDeliveryStatus(RakNet::RakNetGUID guid, uint32_t receiptId, bool messageArrived);
 
   void distribute_member(SerializableReference const& value);
 

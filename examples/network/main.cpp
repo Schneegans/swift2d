@@ -26,7 +26,6 @@ int main(int argc, char** argv) {
 
   // player --------------------------------------------------------------------
   Player::init();
-
   Player player(true);
   player.distribute();
 
