@@ -26,6 +26,10 @@
 
 #include <sstream>
 
+
+#define USE_NAT_TYPE_DETECTION  false
+#define USE_UPNP                false
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +39,7 @@ Network::Network()
 
   update_timer_.start();
 
-  Logger::LOG_MESSAGE << "We are " << peer_.get_guid() << std::endl;
+  Logger::LOG_MESSAGE << "I'm " << peer_.get_guid() << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -106,7 +110,6 @@ void Network::connect(std::string const& game_ID) {
 
   upnp_.on_fail.connect([&](){
     Logger::LOG_MESSAGE << "Failed to open UPNP. Using NAT punch through." << std::endl;
-    // enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
     enter_phase(OPENING_UPNP);
   });
 
@@ -140,7 +143,11 @@ void Network::update() {
         if (phase_ == CONNECTING_TO_SERVER) {
           Logger::LOG_MESSAGE << "Connected to NAT server." << std::endl;
           nat_server_address_ = packet->systemAddress.ToString();
-          enter_phase(DETECT_NAT_TYPE);
+
+          if (USE_NAT_TYPE_DETECTION) enter_phase(DETECT_NAT_TYPE);
+          else if (USE_UPNP)          enter_phase(OPENING_UPNP);
+          else                        enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
+
 
         } else if (phase_ == CONNECTING_TO_HOST) {
           Logger::LOG_MESSAGE << "Connected to host " << packet->guid.ToString() << ". Sending join request." << std::endl;
@@ -174,7 +181,9 @@ void Network::update() {
       case ID_NAT_TYPE_DETECTION_RESULT: {
         auto type = (RakNet::NATTypeDetectionResult) packet->data[1];
         Logger::LOG_MESSAGE << "NAT Type is " << RakNet::NATTypeDetectionResultToString(type) << " (" << RakNet::NATTypeDetectionResultToStringFriendly(type) << ")" << std::endl;
-        enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
+
+        if (USE_UPNP) enter_phase(OPENING_UPNP);
+        else          enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
         } break;
 
       // ################## FULLY CONNECTED MESH ###############################
@@ -335,7 +344,7 @@ void Network::enter_phase(Phase phase) {
 
     // -------------------------------------------------------------------------
     case HOSTING_INSTANCE:
-      Logger::LOG_MESSAGE << "We are host now." << std::endl;
+      Logger::LOG_MESSAGE << "I'm host now." << std::endl;
       register_game();
       update_timer_.reset();
       break;
