@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/network/NetworkObject.hpp>
+#include <swift2d/network/NetworkObjectBase.hpp>
 
 #include <swift2d/utils/Logger.hpp>
 
@@ -18,77 +18,77 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-NetworkObject::NetworkObject() {
-  Logger::LOG_WARNING << "NetworkObject created!" << std::endl;
+NetworkObjectBase::NetworkObjectBase() {
+  Logger::LOG_WARNING << "NetworkObjectBase created!" << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void NetworkObject::WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const {
+void NetworkObjectBase::WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const {
   allocationIdBitstream->Write(get_name());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-RakNet::RM3ConstructionState NetworkObject::QueryConstruction(RakNet::Connection_RM3 *destinationConnection, RakNet::ReplicaManager3 *replicaManager3) {
+RakNet::RM3ConstructionState NetworkObjectBase::QueryConstruction(RakNet::Connection_RM3 *destinationConnection, RakNet::ReplicaManager3 *replicaManager3) {
   return QueryConstruction_PeerToPeer(destinationConnection);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool NetworkObject::QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection) {
+bool NetworkObjectBase::QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection) {
   return QueryRemoteConstruction_PeerToPeer(sourceConnection);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void NetworkObject::SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {
+void NetworkObjectBase::SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {
   vd_serializer_.AddRemoteSystemVariableHistory(destinationConnection->GetRakNetGUID());
   constructionBitstream->Write(get_name() + RakNet::RakString(" SerializeConstruction"));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool NetworkObject::DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {
+bool NetworkObjectBase::DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {
   print_bitstream(constructionBitstream);
   return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void NetworkObject::SerializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *destinationConnection) {
+void NetworkObjectBase::SerializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *destinationConnection) {
   vd_serializer_.RemoveRemoteSystemVariableHistory(destinationConnection->GetRakNetGUID());
   destructionBitstream->Write(get_name() + RakNet::RakString(" SerializeDestruction"));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool NetworkObject::DeserializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *sourceConnection) {
+bool NetworkObjectBase::DeserializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *sourceConnection) {
   print_bitstream(destructionBitstream);
   return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-RakNet::RM3ActionOnPopConnection NetworkObject::QueryActionOnPopConnection(RakNet::Connection_RM3 *droppedConnection) const {
+RakNet::RM3ActionOnPopConnection NetworkObjectBase::QueryActionOnPopConnection(RakNet::Connection_RM3 *droppedConnection) const {
   return QueryActionOnPopConnection_PeerToPeer(droppedConnection);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void NetworkObject::DeallocReplica(RakNet::Connection_RM3 *sourceConnection) {
+void NetworkObjectBase::DeallocReplica(RakNet::Connection_RM3 *sourceConnection) {
   delete this;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-RakNet::RM3QuerySerializationResult NetworkObject::QuerySerialization(RakNet::Connection_RM3 *destinationConnection) {
+RakNet::RM3QuerySerializationResult NetworkObjectBase::QuerySerialization(RakNet::Connection_RM3 *destinationConnection) {
   return QuerySerialization_PeerToPeer(destinationConnection);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-RakNet::RM3SerializationResult NetworkObject::Serialize(RakNet::SerializeParameters *serializeParameters) {
+RakNet::RM3SerializationResult NetworkObjectBase::Serialize(RakNet::SerializeParameters *serializeParameters) {
 
   RakNet::VariableDeltaSerializer::SerializationContext ctx;
 
@@ -112,7 +112,7 @@ RakNet::RM3SerializationResult NetworkObject::Serialize(RakNet::SerializeParamet
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void NetworkObject::Deserialize(RakNet::DeserializeParameters *deserializeParameters) {
+void NetworkObjectBase::Deserialize(RakNet::DeserializeParameters *deserializeParameters) {
   RakNet::VariableDeltaSerializer::DeserializationContext ctx;
 
   vd_serializer_.BeginDeserialize(&ctx, &deserializeParameters->serializationBitstream[0]);
@@ -124,32 +124,32 @@ void NetworkObject::Deserialize(RakNet::DeserializeParameters *deserializeParame
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void NetworkObject::OnUserReplicaPreSerializeTick(void) {
+void NetworkObjectBase::OnUserReplicaPreSerializeTick(void) {
   vd_serializer_.OnPreSerializeTick();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void NetworkObject::NotifyReplicaOfMessageDeliveryStatus(RakNet::RakNetGUID guid, uint32_t receiptId, bool messageArrived) {
+void NetworkObjectBase::NotifyReplicaOfMessageDeliveryStatus(RakNet::RakNetGUID guid, uint32_t receiptId, bool messageArrived) {
   vd_serializer_.OnMessageReceipt(guid, receiptId, messageArrived);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void NetworkObject::distribute_member(SerializableReference const& value) {
+void NetworkObjectBase::distribute_member(SerializableReference const& value) {
   distributed_members_.push_back(value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void NetworkObject::print_bitstream(RakNet::BitStream *bs) {
+void NetworkObjectBase::print_bitstream(RakNet::BitStream *bs) {
   if (bs->GetNumberOfBitsUsed() == 0) {
     return;
   }
 
   RakNet::RakString string;
   bs->Read(string);
-  Logger::LOG_TRACE << "NetworkObject receive: " << string.C_String() << std::endl;
+  Logger::LOG_TRACE << "NetworkObjectBase receive: " << string.C_String() << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

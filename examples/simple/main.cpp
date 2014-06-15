@@ -99,11 +99,11 @@ int main(int argc, char** argv) {
 
 
   // window setup --------------------------------------------------------------
-  auto window = Window::create();
+  auto window = WindowManager::instance()->get_default();
   // window->Fullscreen = true;
 
   // example scene setup -------------------------------------------------------
-  auto scene = SceneObject::create();
+  auto scene = SceneManager::instance()->get_default();
 
   auto music = scene->add<SoundComponent>();
        music->Sound = Sound::create_from_file(app.get_resource("audio", "music.ogg"));

@@ -66,12 +66,11 @@ class Window {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  void open_();
+  void close_();
 
-    void open_();
-    void close_();
-
-    RenderContext render_context_;
-    GLFWwindow* window_;
+  RenderContext render_context_;
+  GLFWwindow* window_;
 };
 
 }

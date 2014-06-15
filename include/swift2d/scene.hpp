@@ -12,5 +12,6 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/scene/SceneObject.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
+#include <swift2d/scene/SceneManager.hpp>
 
 #endif  // SWIFT2D_INCLUDE_SCENE_HPP

@@ -273,7 +273,7 @@ void Network::update() {
           peer_.replica_->GetReplicasCreatedByMe(replicaListOut);
           unsigned int idx;
           for (idx=0; idx < replicaListOut.Size(); idx++) {
-            ((NetworkObject*)replicaListOut[idx])->NotifyReplicaOfMessageDeliveryStatus(packet->guid,msgNumber, packet->data[0]==ID_SND_RECEIPT_ACKED);
+            ((NetworkObjectBase*)replicaListOut[idx])->NotifyReplicaOfMessageDeliveryStatus(packet->guid,msgNumber, packet->data[0]==ID_SND_RECEIPT_ACKED);
           }
         }
 
@@ -289,7 +289,7 @@ void Network::update() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Network::distribute_object(NetworkObject* object) {
+void Network::distribute_object(NetworkObjectBase* object) {
   peer_.replica_->Reference(object);
 }
 

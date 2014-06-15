@@ -14,7 +14,7 @@
 
 #include <swift2d/network/Peer.hpp>
 #include <swift2d/network/UpnpOpener.hpp>
-#include <swift2d/network/NetworkObject.hpp>
+#include <swift2d/network/NetworkObjectBase.hpp>
 #include <swift2d/network/ReplicationManager.hpp>
 #include <swift2d/network/HttpConnection.hpp>
 
@@ -60,7 +60,7 @@ class Network : public Singleton<Network> {
     peer_.replica_->register_object(object.get_name(), [](){ return new T(); });
   };
 
-  void distribute_object(NetworkObject* object);
+  void distribute_object(NetworkObjectBase* object);
 
   bool is_host() const;
 

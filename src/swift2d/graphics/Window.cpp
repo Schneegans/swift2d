@@ -83,7 +83,7 @@ void Window::open_() {
       Fullscreen.get() ? glfwGetPrimaryMonitor() : nullptr,
       nullptr);
 
-    WindowManager::windows[window_] = this;
+    WindowManager::instance()->glfw_windows[window_] = this;
 
     set_active(true);
 
@@ -100,16 +100,16 @@ void Window::open_() {
     render_context_.gl.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     glfwSetWindowCloseCallback(window_, [](GLFWwindow* w) {
-      WindowManager::windows[w]->on_close.emit();
+      WindowManager::instance()->glfw_windows[w]->on_close.emit();
     });
 
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
-      WindowManager::windows[w]->get_context().size = math::vec2i(width, height);
-      WindowManager::windows[w]->on_resize.emit(math::vec2i(width, height));
+      WindowManager::instance()->glfw_windows[w]->get_context().size = math::vec2i(width, height);
+      WindowManager::instance()->glfw_windows[w]->on_resize.emit(math::vec2i(width, height));
     });
 
     glfwSetKeyCallback(window_, [](GLFWwindow* w, int key, int scancode, int action, int mods) {
-      WindowManager::windows[w]->on_key_press.emit(static_cast<Key>(key), scancode, action, mods);
+      WindowManager::instance()->glfw_windows[w]->on_key_press.emit(static_cast<Key>(key), scancode, action, mods);
     });
 
     // apply vsync -------------------------------------------------------------

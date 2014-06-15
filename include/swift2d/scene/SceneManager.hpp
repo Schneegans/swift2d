@@ -6,14 +6,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_REPLICATION_MANAGER_HPP
-#define SWIFT2D_REPLICATION_MANAGER_HPP
+#ifndef SWIFT2D_SCENE_MANAGER_HPP
+#define SWIFT2D_SCENE_MANAGER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/network/ReplicationConnection.hpp>
-
-#include <functional>
-#include <map>
+#include <swift2d/utils/Singleton.hpp>
 
 namespace swift {
 
@@ -21,25 +18,26 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class ReplicationManager: public RakNet::ReplicaManager3 {
+class SceneManager : public Singleton<SceneManager> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  /*virtual*/ RakNet::Connection_RM3* AllocConnection(RakNet::SystemAddress const& systemAddress, RakNet::RakNetGUID rakNetGUID) const;
+  SceneObjectPtr const& get_default() const { return default_; }
 
-  /*virtual*/ void DeallocConnection(RakNet::Connection_RM3 *connection) const;
-
-  void register_object(RakNet::RakString const& name, std::function<NetworkObjectBase*()> const& factory);
-  NetworkObjectBase* create_object(RakNet::RakString const& name) const;
+  friend class Singleton<SceneManager>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  std::map<RakNet::RakString, std::function<NetworkObjectBase*()>> object_registry_;
+
+  SceneManager(): default_(SceneObject::create()) {}
+  ~SceneManager() {}
+
+  SceneObjectPtr default_;
 };
 
 }
 
-#endif  // SWIFT2D_REPLICATION_MANAGER_HPP
+#endif  // SWIFT2D_SCENE_MANAGER_HPP

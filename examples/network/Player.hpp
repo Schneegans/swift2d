@@ -6,40 +6,58 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_REPLICATION_MANAGER_HPP
-#define SWIFT2D_REPLICATION_MANAGER_HPP
+#ifndef PLAYER_HPP
+#define PLAYER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/network/ReplicationConnection.hpp>
+#include "Mover.hpp"
 
-#include <functional>
-#include <map>
-
-namespace swift {
+using namespace swift;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class ReplicationManager: public RakNet::ReplicaManager3 {
+class Player : public NetworkObject<Player> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  /*virtual*/ RakNet::Connection_RM3* AllocConnection(RakNet::SystemAddress const& systemAddress, RakNet::RakNetGUID rakNetGUID) const;
+  Player(bool is_local = false)
+    : NetworkObject<Player>("PlayerType") {
 
-  /*virtual*/ void DeallocConnection(RakNet::Connection_RM3 *connection) const;
+    auto scene = SceneManager::instance()->get_default();
+    player_ = scene->add_object();
+    player_->Transform = math::make_scale(0.1);
 
-  void register_object(RakNet::RakString const& name, std::function<NetworkObjectBase*()> const& factory);
-  NetworkObjectBase* create_object(RakNet::RakString const& name) const;
+    if (is_local) {
+      auto mover = std::make_shared<Mover>();
+      player_->add(mover);
+    }
 
- ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
+    auto listener = player_->add<ListenerComponent>();
+    listener->Volume = 1.0;
+
+    auto ship = player_->add<SpriteComponent>();
+    ship->Depth = 1.0f;
+    ship->Material = MaterialDatabase::instance()->get("ship");
+
+    auto light = player_->add<LightComponent>();
+    light->Depth = 1.0f;
+    light->Transform = math::make_scale(20);
+    light->Material = MaterialDatabase::instance()->get("light");
+
+    distribute_member(&player_->Transform);
+  }
+
+ ~Player() {
+    auto scene = SceneManager::instance()->get_default();
+    scene->remove(player_);
+ }
+
  private:
-  std::map<RakNet::RakString, std::function<NetworkObjectBase*()>> object_registry_;
+  SceneObjectPtr player_;
 };
 
-}
-
-#endif  // SWIFT2D_REPLICATION_MANAGER_HPP
+#endif  // PLAYER_HPP

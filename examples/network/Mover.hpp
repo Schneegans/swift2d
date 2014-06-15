@@ -6,40 +6,51 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_REPLICATION_MANAGER_HPP
-#define SWIFT2D_REPLICATION_MANAGER_HPP
+#ifndef MOVER_HPP
+#define MOVER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/network/ReplicationConnection.hpp>
+#include <swift2d/swift2d.hpp>
 
-#include <functional>
-#include <map>
-
-namespace swift {
+using namespace swift;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class ReplicationManager: public RakNet::ReplicaManager3 {
+class Mover : public MoveBehavior {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  /*virtual*/ RakNet::Connection_RM3* AllocConnection(RakNet::SystemAddress const& systemAddress, RakNet::RakNetGUID rakNetGUID) const;
+  Mover() {
+    auto window = WindowManager::instance()->get_default();
+    connection_ = window->on_key_press.connect([&](Key key, int scancode, int action, int mods){
+      if (action == 0) {
+        if (key == Key::W) LinearSpeed.set(0, 0.5);
+        if (key == Key::S) LinearSpeed.set(0, 0.5);
+        if (key == Key::A) AngularSpeed.set(0, 0.1);
+        if (key == Key::D) AngularSpeed.set(0, 0.1);
+      } else if (action == 1) {
+        if (key == Key::W) LinearSpeed.set( 20, 1);
+        if (key == Key::S) LinearSpeed.set(-20, 1);
+        if (key == Key::A) AngularSpeed.set(-2 , 0.5);
+        if (key == Key::D) AngularSpeed.set( 2 , 0.5);
+      }
+    });
+  }
 
-  /*virtual*/ void DeallocConnection(RakNet::Connection_RM3 *connection) const;
-
-  void register_object(RakNet::RakString const& name, std::function<NetworkObjectBase*()> const& factory);
-  NetworkObjectBase* create_object(RakNet::RakString const& name) const;
+  ~Mover() {
+    auto window = WindowManager::instance()->get_default();
+    window->on_key_press.disconnect(connection_);
+  }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  std::map<RakNet::RakString, std::function<NetworkObjectBase*()>> object_registry_;
+  int connection_;
+
 };
 
-}
-
-#endif  // SWIFT2D_REPLICATION_MANAGER_HPP
+#endif  // MOVER_HPP

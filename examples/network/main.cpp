@@ -7,71 +7,65 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <swift2d/swift2d.hpp>
+#include "SpaceScene.hpp"
+#include "Player.hpp"
 
-class Player: public swift::NetworkObject {
- public:
-
-  Player()
-    : name_("Unnamed Player")
-    , id_(0) {
-
-    swift::Network::instance()->distribute_object(this);
-    // distribute_member(&name_);
-    // distribute_member(&id_);
-    distribute_member(&pos_);
-  }
-
-  RakNet::RakString get_name() const {
-    return RakNet::RakString("Player");
-  };
-
-  static void init() {
-    swift::Network::instance()->register_type<Player>();
-  }
-
- // private:
-  std::string       name_;
-  int               id_;
-  swift::math::vec2 pos_;
-};
+using namespace swift;
 
 // main ------------------------------------------------------------------------
 int main(int argc, char** argv) {
 
   // initialize Swift2D
-  swift::Application app(argc, argv);
-  swift::Network::instance()->connect("myTestGame");
+  Application app(argc, argv);
+  Network::instance()->connect("myTestGame");
 
-  auto window = swift::Window::create();
-  window->Open = true;
+  // scene ---------------------------------------------------------------------
+  auto scene = SpaceScene::create(app);
+  auto camera = scene->add<CameraComponent>();
+  camera->Size = math::vec2(2.f, 2.f);
 
+  // player --------------------------------------------------------------------
   Player::init();
 
-  Player player;
-  player.pos_ = swift::math::vec2(42, 42);
+  Player player(true);
+  player.distribute();
 
-  auto ticker(swift::Ticker::create(1.0 / 60.0));
+  // rendering pipeline --------------------------------------------------------
+  auto window = WindowManager::instance()->get_default();
+  auto pipeline = Pipeline::create();
+  pipeline->set_output_window(window);
+
+  Renderer renderer;
+  renderer.set_pipeline(pipeline);
+
+  // main loop -----------------------------------------------------------------
+  Timer timer;
+  timer.start();
+
+  auto ticker(Ticker::create(1.0 / 60.0));
   ticker->on_tick.connect([&]() {
+    double time(timer.get_elapsed());
+    timer.reset();
+
     window->process_input();
-    swift::Network::instance()->update();
+    Network::instance()->update();
+    scene->update(time);
+    renderer.process(scene, camera);
   });
 
   ticker->start();
 
   window->on_close.connect([&](){
+    renderer.stop();
     app.stop();
   });
 
-  window->on_key_press.connect([&](swift::Key key, int scancode, int action, int mods) {
+  window->on_key_press.connect([&](Key key, int scancode, int action, int mods) {
     if (action != 1) {
       switch(key) {
-        case swift::Key::ESCAPE:
+        case Key::ESCAPE:
+          renderer.stop();
           app.stop();
-          break;
-        case swift::Key::SPACE:
-          player.name_ = "Jim";
-          player.id_ = 2.f;
-          player.pos_ = swift::math::vec2(1, 2);
           break;
       }
     }
@@ -79,7 +73,7 @@ int main(int argc, char** argv) {
 
   app.start();
 
-  swift::Network::instance()->disconnect();
+  Network::instance()->disconnect();
 
   return 0;
 }

@@ -27,18 +27,18 @@ void ReplicationManager::DeallocConnection(RakNet::Connection_RM3 *connection) c
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ReplicationManager::register_object(RakNet::RakString const& name, std::function<NetworkObject*()> const& factory) {
+void ReplicationManager::register_object(RakNet::RakString const& name, std::function<NetworkObjectBase*()> const& factory) {
   object_registry_[name] = factory;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-NetworkObject* ReplicationManager::create_object(RakNet::RakString const& name) const {
+NetworkObjectBase* ReplicationManager::create_object(RakNet::RakString const& name) const {
   auto factory(object_registry_.find(name));
   if (factory != object_registry_.end()) {
     return factory->second();
   } else {
-    Logger::LOG_WARNING << "Failed to create NetworkObject: Type " << name << " is not registered!" << std::endl;
+    Logger::LOG_WARNING << "Failed to create NetworkObjectBase: Type " << name << " is not registered!" << std::endl;
     return nullptr;
   }
 }

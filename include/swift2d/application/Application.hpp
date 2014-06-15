@@ -27,7 +27,7 @@ class Application {
   Application(int argc, char** argv);
   virtual ~Application() {}
 
-  std::string get_resource(std::string const& type, std::string const& file);
+  std::string get_resource(std::string const& type, std::string const& file) const;
 
   void start();
   void stop();

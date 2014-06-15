@@ -6,15 +6,22 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef SPACE_SCENE
+#define SPACE_SCENE
+
 // includes  -------------------------------------------------------------------
-#include <swift2d/graphics/WindowManager.hpp>
-
-namespace swift {
+#include <swift2d/swift2d.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
-
-std::unordered_map<GLFWwindow*, Window*> WindowManager::windows;
-
 ////////////////////////////////////////////////////////////////////////////////
 
-}
+// -----------------------------------------------------------------------------
+class SpaceScene {
+
+ ///////////////////////////////////////////////////////////////////////////////
+ // ----------------------------------------------------------- public interface
+ public:
+  static swift::SceneObjectPtr create(swift::Application const& app);
+};
+
+#endif  // SPACE_SCENE
