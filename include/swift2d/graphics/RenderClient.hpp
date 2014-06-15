@@ -46,13 +46,17 @@ class RenderClient {
 
       while (running_) {
         auto sg = this->double_buffer_.read();
-        fun(sg);
-        this->fps_counter.step();
+        if (sg) {
+          fun(sg);
+          this->fps_counter.step();
+        }
       }
     });
   }
 
-  ~RenderClient() { stop(); }
+  ~RenderClient() {
+    stop();
+  }
 
   FPSCounter fps_counter;
 
@@ -64,9 +68,11 @@ class RenderClient {
   }
 
   void stop() {
-    running_ = false;
-    double_buffer_.write_blocked(T());
-    forever_.join();
+    if (running_) {
+      running_ = false;
+      double_buffer_.write_blocked(T());
+      forever_.join();
+    }
   }
 
  ///////////////////////////////////////////////////////////////////////////////

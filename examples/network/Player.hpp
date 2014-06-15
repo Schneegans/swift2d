@@ -49,6 +49,10 @@ class Player : public NetworkObject<Player> {
     light->Material = MaterialDatabase::instance()->get("light");
 
     distribute_member(&player_->Transform);
+
+    player_->Transform.on_change().connect([&](math::mat3 const& val){
+      // std::cout << val << std::endl;
+    });
   }
 
  ~Player() {
