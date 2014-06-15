@@ -24,6 +24,7 @@
 #include <swift2d/input/keys.hpp>
 #include <swift2d/triggers/ShapeTrigger.hpp>
 #include <swift2d/application/Application.hpp>
+#include <swift2d/network.hpp>
 
 namespace swift {
 

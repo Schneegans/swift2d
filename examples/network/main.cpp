@@ -8,9 +8,6 @@
 
 #include <swift2d/swift2d.hpp>
 
-#include "Network.hpp"
-#include "NetworkObject.hpp"
-
 class Player: public swift::NetworkObject {
  public:
 

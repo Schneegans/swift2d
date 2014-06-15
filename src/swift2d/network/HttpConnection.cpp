@@ -7,10 +7,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include "HttpConnection.hpp"
+#include <swift2d/network/HttpConnection.hpp>
 
-#include <../../third_party/raknet/src/HTTPConnection2.h>
-#include <../../third_party/raknet/src/TCPInterface.h>
+#include <raknet/src/HTTPConnection2.h>
+#include <raknet/src/TCPInterface.h>
 
 #include <iostream>
 

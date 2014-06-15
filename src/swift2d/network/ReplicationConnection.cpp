@@ -7,9 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include "ReplicationConnection.hpp"
+#include <swift2d/network/ReplicationConnection.hpp>
 
-#include "ReplicationManager.hpp"
+#include <swift2d/network/ReplicationManager.hpp>
 #include <swift2d/utils/Logger.hpp>
 
 namespace swift {

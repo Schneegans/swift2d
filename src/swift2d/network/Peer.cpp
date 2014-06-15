@@ -7,21 +7,20 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include "Peer.hpp"
+#include <swift2d/network/Peer.hpp>
 
-#include "Network.hpp"
-#include "ReplicationManager.hpp"
+#include <swift2d/network/Network.hpp>
+#include <swift2d/network/ReplicationManager.hpp>
 #include <swift2d/utils/Logger.hpp>
 
-#include <../../third_party/raknet/src/ConnectionGraph2.h>
-#include <../../third_party/raknet/src/FullyConnectedMesh2.h>
-#include <../../third_party/raknet/src/RakPeerInterface.h>
-#include <../../third_party/raknet/src/NatPunchthroughClient.h>
-#include <../../third_party/raknet/src/NatTypeDetectionClient.h>
-#include <../../third_party/raknet/src/BitStream.h>
-#include <../../third_party/raknet/src/MessageIdentifiers.h>
-#include <../../third_party/raknet/src/NetworkIDManager.h>
-// #include <../../third_party/raknet/src/DS_List.h>
+#include <raknet/src/ConnectionGraph2.h>
+#include <raknet/src/FullyConnectedMesh2.h>
+#include <raknet/src/RakPeerInterface.h>
+#include <raknet/src/NatPunchthroughClient.h>
+#include <raknet/src/NatTypeDetectionClient.h>
+#include <raknet/src/BitStream.h>
+#include <raknet/src/MessageIdentifiers.h>
+#include <raknet/src/NetworkIDManager.h>
 
 #include <iostream>
 

@@ -10,7 +10,7 @@
 #define SWIFT2D_ANY_VALUE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <../../third_party/raknet/src/VariableDeltaSerializer.h>
+#include <raknet/src/VariableDeltaSerializer.h>
 
 #include <boost/any.hpp>
 #include <iostream>

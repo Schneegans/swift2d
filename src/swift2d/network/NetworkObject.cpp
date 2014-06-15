@@ -7,12 +7,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include "NetworkObject.hpp"
+#include <swift2d/network/NetworkObject.hpp>
 
 #include <swift2d/utils/Logger.hpp>
 
-#include <../../third_party/raknet/src/RakPeerInterface.h>
-#include <../../third_party/raknet/src/GetTime.h>
+#include <raknet/src/RakPeerInterface.h>
+#include <raknet/src/GetTime.h>
 
 namespace swift {
 

@@ -10,7 +10,7 @@
 #define SWIFT2D_REPLICATION_MANAGER_HPP
 
 // includes  -------------------------------------------------------------------
-#include "ReplicationConnection.hpp"
+#include <swift2d/network/ReplicationConnection.hpp>
 
 #include <functional>
 #include <map>

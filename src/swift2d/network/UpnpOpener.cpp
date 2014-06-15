@@ -7,20 +7,20 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include "UpnpOpener.hpp"
+#include <swift2d/network/UpnpOpener.hpp>
 
-#include "Peer.hpp"
+#include <swift2d/network/Peer.hpp>
 #include <swift2d/utils/Logger.hpp>
 
 #include <miniupnpc/miniupnpc.h>
 #include <miniupnpc/upnpcommands.h>
 #include <miniupnpc/upnperrors.h>
 
-#include <../../third_party/raknet/src/RakPeerInterface.h>
-#include <../../third_party/raknet/src/GetTime.h>
-#include <../../third_party/raknet/src/DS_List.h>
-#include <../../third_party/raknet/src/Itoa.h>
-#include <../../third_party/raknet/src/RakThread.h>
+#include <raknet/src/RakPeerInterface.h>
+#include <raknet/src/GetTime.h>
+#include <raknet/src/DS_List.h>
+#include <raknet/src/Itoa.h>
+#include <raknet/src/RakThread.h>
 
 #include <iostream>
 #include <sstream>

@@ -48,6 +48,7 @@ set(LIBS
     ${ALUT_LIBRARIES}
     ${PANGOCAIRO_LIBRARIES}
     ${OPENGL_LIBRARIES}
+    miniupnpc
 )
 link_libraries(${LIBS})
 
@@ -68,7 +69,7 @@ set(OWN_INCLUDE_PATHS
     ${CMAKE_CURRENT_SOURCE_DIR}/build
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/src/raknet
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party
 )
 include_directories(${OWN_INCLUDE_PATHS})
 

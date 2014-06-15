@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include "ReplicationManager.hpp"
+#include <swift2d/network/ReplicationManager.hpp>
 
 #include <swift2d/utils/Logger.hpp>
 

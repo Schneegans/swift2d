@@ -12,11 +12,11 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Singleton.hpp>
 
-#include "Peer.hpp"
-#include "UpnpOpener.hpp"
-#include "NetworkObject.hpp"
-#include "ReplicationManager.hpp"
-#include "HttpConnection.hpp"
+#include <swift2d/network/Peer.hpp>
+#include <swift2d/network/UpnpOpener.hpp>
+#include <swift2d/network/NetworkObject.hpp>
+#include <swift2d/network/ReplicationManager.hpp>
+#include <swift2d/network/HttpConnection.hpp>
 
 namespace RakNet {
   class RakPeerInterface;

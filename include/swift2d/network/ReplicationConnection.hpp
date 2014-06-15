@@ -10,9 +10,9 @@
 #define SWIFT2D_REPLICATION_CONNECTION_HPP
 
 // includes  -------------------------------------------------------------------
-#include "NetworkObject.hpp"
+#include <swift2d/network/NetworkObject.hpp>
 
-#include <../../third_party/raknet/src/ReplicaManager3.h>
+#include <raknet/src/ReplicaManager3.h>
 
 namespace swift {
 

@@ -7,19 +7,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include "Network.hpp"
+#include <swift2d/network/Network.hpp>
 
-#include "ReplicationManager.hpp"
+#include <swift2d/network/ReplicationManager.hpp>
 
 #include <swift2d/utils/Logger.hpp>
 
-#include <../../third_party/raknet/src/MessageIdentifiers.h>
-#include <../../third_party/raknet/src/RakNetTypes.h>
-#include <../../third_party/raknet/src/RakPeerInterface.h>
-#include <../../third_party/raknet/src/BitStream.h>
-#include <../../third_party/raknet/src/FullyConnectedMesh2.h>
-#include <../../third_party/raknet/src/PacketLogger.h>
-#include <../../third_party/raknet/src/NatTypeDetectionClient.h>
+#include <raknet/src/MessageIdentifiers.h>
+#include <raknet/src/RakNetTypes.h>
+#include <raknet/src/RakPeerInterface.h>
+#include <raknet/src/BitStream.h>
+#include <raknet/src/FullyConnectedMesh2.h>
+#include <raknet/src/PacketLogger.h>
+#include <raknet/src/NatTypeDetectionClient.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
