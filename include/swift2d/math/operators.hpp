@@ -16,7 +16,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 2> const& vec) {
+inline std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 2> const& vec) {
   stream << "(" << vec.x() << ", " << vec.y() << ")";
   return stream;
 }
@@ -24,7 +24,7 @@ std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 2> const& vec)
 ////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 3> const& vec) {
+inline std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 3> const& vec) {
   stream << "(" << vec.x() << ", " << vec.y() << ", " << vec.z() << ")";
   return stream;
 }
@@ -32,7 +32,7 @@ std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 3> const& vec)
 ////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 4> const& vec) {
+inline std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 4> const& vec) {
   stream << "(" << vec.x() << ", " << vec.y() << ", " << vec.z() << ", " << vec.w() << ")";
   return stream;
 }
@@ -41,7 +41,7 @@ std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 4> const& vec)
 ////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-std::ostream& operator<<(std::ostream& stream, oglplus::Matrix<T, 2, 2> const& mat) {
+inline std::ostream& operator<<(std::ostream& stream, oglplus::Matrix<T, 2, 2> const& mat) {
 
   stream << "(" << mat.At(0,0) << ", " << mat.At(0,1) << "," << std::endl;
   stream << " " << mat.At(1,0) << ", " << mat.At(1,1) << ")";
@@ -52,7 +52,7 @@ std::ostream& operator<<(std::ostream& stream, oglplus::Matrix<T, 2, 2> const& m
 ////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-std::ostream& operator<<(std::ostream& stream, oglplus::Matrix<T, 3, 3> const& mat) {
+inline std::ostream& operator<<(std::ostream& stream, oglplus::Matrix<T, 3, 3> const& mat) {
 
   stream << "(" << mat.At(0,0) << ", " << mat.At(0,1) << ", " << mat.At(0,2) << ", " << std::endl;
   stream << " " << mat.At(1,0) << ", " << mat.At(1,1) << ", " << mat.At(1,2) << ", " << std::endl;
@@ -64,7 +64,7 @@ std::ostream& operator<<(std::ostream& stream, oglplus::Matrix<T, 3, 3> const& m
 ////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-std::ostream& operator<<(std::ostream& stream, oglplus::Matrix<T, 4, 4> const& mat) {
+inline std::ostream& operator<<(std::ostream& stream, oglplus::Matrix<T, 4, 4> const& mat) {
 
   stream << "(" << mat.At(0,0) << ", " << mat.At(0,1) << ", " << mat.At(0,2) << ", " << mat.At(0,3) << ", " << std::endl;
   stream << " " << mat.At(1,0) << ", " << mat.At(1,1) << ", " << mat.At(1,2) << ", " << mat.At(1,3) << ", " << std::endl;
@@ -73,6 +73,7 @@ std::ostream& operator<<(std::ostream& stream, oglplus::Matrix<T, 4, 4> const& m
 
   return stream;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

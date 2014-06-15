@@ -15,16 +15,15 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Ticker::Ticker(double tick_time)
-  : timer_(new boost::asio::deadline_timer(MainLoop::instance()->get_io_service(), boost::posix_time::microseconds(1000000.0*tick_time)))
-  , tick_time_(tick_time) {
-
-  async_wait();
-}
+  : timer_(MainLoop::instance()->get_io_service(), boost::posix_time::microseconds(1000000.0*tick_time))
+  , tick_time_(tick_time)
+  , active_(false) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 Ticker::~Ticker() {
-  delete timer_;
+  on_tick.disconnect_all();
+  stop();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,16 +40,32 @@ double Ticker::get_tick_time() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Ticker::self_callback(int revents) {
+void Ticker::start() {
+  active_ = true;
   async_wait();
-  on_tick.emit();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Ticker::stop() {
+  active_ = false;
+  timer_.cancel();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Ticker::self_callback(boost::system::error_code const& error) {
+  if (error !=  boost::asio::error::operation_aborted && active_) {
+    async_wait();
+    on_tick.emit();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Ticker::async_wait() {
-  timer_->expires_from_now(boost::posix_time::microseconds(1000000.0*tick_time_));
-  timer_->async_wait(boost::bind(&Ticker::self_callback, this, 0));
+  timer_.expires_from_now(boost::posix_time::microseconds(1000000.0*tick_time_));
+  timer_.async_wait(boost::bind(&Ticker::self_callback, shared_from_this(), _1));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

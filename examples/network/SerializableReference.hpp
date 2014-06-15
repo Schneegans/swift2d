@@ -63,47 +63,59 @@ class SerializableReference {
     serializer_->deserialize(ctx, serilizer, value_);
   }
 
+  void print() const {
+    serializer_->print(value_);
+  }
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   Serializer* serializer_;
   boost::any  value_;
 
-  // -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   struct Serializer {
     virtual void serialize(RakNet::VariableDeltaSerializer::SerializationContext* ctx,
-                   RakNet::VariableDeltaSerializer* serilizer,
+                   RakNet::VariableDeltaSerializer* s,
                    boost::any const& a) const = 0;
+
     virtual void deserialize(RakNet::VariableDeltaSerializer::DeserializationContext* ctx,
-                   RakNet::VariableDeltaSerializer* serilizer,
+                   RakNet::VariableDeltaSerializer* s,
                    boost::any const& a) const = 0;
+
     virtual Serializer* clone() const = 0;
+    virtual void print(boost::any const& a) const = 0;
   };
 
 
-  // -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   template <class T>
   struct SerializerImpl: Serializer {
 
     void serialize(RakNet::VariableDeltaSerializer::SerializationContext* ctx,
-                   RakNet::VariableDeltaSerializer* serilizer,
+                   RakNet::VariableDeltaSerializer* s,
                    boost::any const& a) const {
 
-      serilizer->SerializeVariable(ctx, *boost::any_cast<T>(a));
+      s->SerializeVariable(ctx, *boost::any_cast<T>(a));
     }
 
     void deserialize(RakNet::VariableDeltaSerializer::DeserializationContext* ctx,
-                   RakNet::VariableDeltaSerializer* serilizer,
+                   RakNet::VariableDeltaSerializer* s,
                    boost::any const& a) const {
 
+      std::cout << "Got Value!" << std::endl;
       T target(boost::any_cast<T>(a));
-      if(serilizer->DeserializeVariable(ctx, *target)) {
-        std::cout << "Value changed: " << *target << std::endl;
+      if(s->DeserializeVariable(ctx, *target)) {
+        // std::cout << "Value changed: " << *target << std::endl;
       }
     }
 
     Serializer* clone() const {
       return new SerializerImpl<T>();
+    }
+
+    void print(boost::any const& a) const {
+      // std::cout << *boost::any_cast<T>(a) << std::endl;
     }
   };
 

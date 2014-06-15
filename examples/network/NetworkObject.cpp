@@ -107,7 +107,7 @@ RakNet::RM3SerializationResult NetworkObject::Serialize(RakNet::SerializeParamet
   }
   vd_serializer_.EndSerialize(&ctx);
 
-  return RakNet::RM3SR_SERIALIZED_ALWAYS;
+  return RakNet::RM3SR_BROADCAST_IDENTICALLY;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

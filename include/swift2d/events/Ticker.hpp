@@ -15,8 +15,13 @@
 
 namespace swift {
 
+// shared pointer type definition ----------------------------------------------
+class Ticker;
+typedef std::shared_ptr<Ticker>       TickerPtr;
+typedef std::shared_ptr<const Ticker> ConstTickerPtr;
+
 // -----------------------------------------------------------------------------
-class Ticker {
+class Ticker : public std::enable_shared_from_this<Ticker> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -26,20 +31,29 @@ class Ticker {
   Signal<> on_tick;
 
   // ---------------------------------------------------- construction interface
+  template <typename... Args>
+  static TickerPtr create(Args&& ... a) {
+    return std::make_shared<Ticker>(a...);
+  }
+
   Ticker(double tick_time);
   ~Ticker();
 
   void set_tick_time(double tick_time);
   double get_tick_time() const;
 
+  void start();
+  void stop();
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void self_callback(int revents);
-  void async_wait ();
+  void self_callback(boost::system::error_code const& error);
+  void async_wait();
 
-  boost::asio::deadline_timer* timer_;
+  boost::asio::deadline_timer timer_;
   double tick_time_;
+  bool active_;
 };
 
 // -----------------------------------------------------------------------------

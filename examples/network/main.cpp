@@ -20,7 +20,8 @@ class Player: public swift::NetworkObject {
 
     swift::Network::instance()->distribute_object(this);
     // distribute_member(&name_);
-    distribute_member(&id_);
+    // distribute_member(&id_);
+    distribute_member(&pos_);
   }
 
   RakNet::RakString get_name() const {
@@ -32,8 +33,9 @@ class Player: public swift::NetworkObject {
   }
 
  // private:
-  std::string name_;
-  float         id_;
+  std::string       name_;
+  int               id_;
+  swift::math::vec2 pos_;
 };
 
 // main ------------------------------------------------------------------------
@@ -49,12 +51,15 @@ int main(int argc, char** argv) {
   Player::init();
 
   Player player;
+  player.pos_ = swift::math::vec2(42, 42);
 
-  swift::Ticker ticker(1.0 / 60.0);
-  ticker.on_tick.connect([&]() {
+  auto ticker(swift::Ticker::create(1.0 / 60.0));
+  ticker->on_tick.connect([&]() {
     window->process_input();
     swift::Network::instance()->update();
   });
+
+  ticker->start();
 
   window->on_close.connect([&](){
     app.stop();
@@ -69,6 +74,7 @@ int main(int argc, char** argv) {
         case swift::Key::SPACE:
           player.name_ = "Jim";
           player.id_ = 2.f;
+          player.pos_ = swift::math::vec2(1, 2);
           break;
       }
     }
