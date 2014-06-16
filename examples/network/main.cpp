@@ -27,7 +27,6 @@ int main(int argc, char** argv) {
   // player --------------------------------------------------------------------
   Player::init();
   Player player(true);
-  player.distribute();
 
   // rendering pipeline --------------------------------------------------------
   auto window = WindowManager::instance()->get_default();

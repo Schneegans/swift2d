@@ -40,9 +40,13 @@ class Player : public NetworkObject<Player> {
     else          mover = MoveBehavior::create();
     player_->add(mover);
 
+    auto offset = OffsetBehavior::create();
+    player_->add(offset);
+
     auto listener = player_->add<ListenerComponent>();
     listener->Volume = 1.0;
 
+    // appearance --------------------------------------------------------------
     auto ship = player_->add<SpriteComponent>();
     ship->Depth = 1.0f;
     ship->Material = MaterialDatabase::instance()->get("ship");
@@ -52,6 +56,7 @@ class Player : public NetworkObject<Player> {
     light->Transform = math::make_scale(20);
     light->Material = MaterialDatabase::instance()->get("light");
 
+    // once in a while, update absolute position and rotation ------------------
     if (is_local) {
       update_ticker_->start();
       update_ticker_->on_tick.connect([&](){
@@ -63,28 +68,38 @@ class Player : public NetworkObject<Player> {
         auto transform(player_->Transform.get());
         math::set_translate(transform, val);
         player_->Transform.set(transform);
+
+        // auto transform(math::get_translate(player_->Transform.get()));
+        // player_->get_component<OffsetBehavior>()->TranslationOffsetX.set(transform.x() - val.x(), 1.0);
+        // player_->get_component<OffsetBehavior>()->TranslationOffsetY.set(transform.y() - val.y(), 1.0);
       });
       rotation_update_.on_change().connect([&](float val) {
         auto transform(player_->Transform.get());
         math::set_rotation(transform, val);
         player_->Transform.set(transform);
+
+        // auto transform(math::get_rotation(player_->Transform.get()));
+        // player_->get_component<OffsetBehavior>()->RotationOffset.set(transform - val, 1.0);
       });
     }
 
+    // distribute members over network -----------------------------------------
     distribute_member(&mover->LinearSpeed);
     distribute_member(&mover->AngularSpeed);
     distribute_member(&position_update_);
     distribute_member(&rotation_update_);
+
+    distribute();
   }
 
- ~Player() {
+  ~Player() {
     update_ticker_->stop();
-    auto scene = SceneManager::instance()->get_default();
-    scene->remove(player_);
- }
+    SceneManager::instance()->get_default()->remove(player_);
+  }
 
  private:
   SceneObjectPtr player_;
+
   Vec2           position_update_;
   Float          rotation_update_;
   TickerPtr      update_ticker_;

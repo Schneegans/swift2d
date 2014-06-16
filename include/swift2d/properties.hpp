@@ -36,6 +36,7 @@ typedef StreamableProperty<std::string> String;
 
 typedef AnimatedProperty<double>        AnimatedDouble;
 typedef AnimatedProperty<float>         AnimatedFloat;
+typedef AnimatedProperty<math::vec2>    AnimatedVec2;
 
 }
 

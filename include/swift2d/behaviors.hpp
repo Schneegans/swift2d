@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/behaviors/Behavior.hpp>
 #include <swift2d/behaviors/MoveBehavior.hpp>
+#include <swift2d/behaviors/OffsetBehavior.hpp>
 #include <swift2d/behaviors/DeleteOnLeaveBehavior.hpp>
 #include <swift2d/behaviors/TimedDeleteBehavior.hpp>
 
