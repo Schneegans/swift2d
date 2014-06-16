@@ -44,6 +44,10 @@ vec2  get_translate (mat3 const& mat);
 vec2  get_scale     (mat3 const& mat);
 float get_rotation  (mat3 const& mat);
 
+void set_translate (mat3& mat, vec2 const& val);
+void set_scale     (mat3& mat, vec2 const& val);
+void set_rotation  (mat3& mat, float val);
+
 vec3 normalized(vec3 const& vec);
 vec2 normalized(vec2 const& vec);
 

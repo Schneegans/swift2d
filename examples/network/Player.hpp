@@ -55,18 +55,27 @@ class Player : public NetworkObject<Player> {
     if (is_local) {
       player_->Transform.on_change().connect([&](math::mat3 const& val){
         if (++update_counter_%100 == 0) {
-          transform_update_.set(val);
+          position_update_.set(math::get_translate(val));
+          rotation_update_.set(math::get_rotation(val));
         }
       });
     } else {
-      transform_update_.on_change().connect([&](math::mat3 const& val){
-        player_->Transform.set(val);
+      position_update_.on_change().connect([&](math::vec2 const& val) {
+        auto transform(player_->Transform.get());
+        math::set_translate(transform, val);
+        player_->Transform.set(transform);
+      });
+      rotation_update_.on_change().connect([&](float val) {
+        auto transform(player_->Transform.get());
+        math::set_rotation(transform, val);
+        player_->Transform.set(transform);
       });
     }
 
     distribute_member(&mover->LinearSpeed);
     distribute_member(&mover->AngularSpeed);
-    distribute_member(&transform_update_);
+    distribute_member(&position_update_);
+    distribute_member(&rotation_update_);
   }
 
  ~Player() {
@@ -77,7 +86,8 @@ class Player : public NetworkObject<Player> {
  private:
   SceneObjectPtr player_;
   int            update_counter_;
-  Mat3           transform_update_;
+  Vec2           position_update_;
+  Float          rotation_update_;
 };
 
 #endif  // PLAYER_HPP

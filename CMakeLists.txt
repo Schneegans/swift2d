@@ -108,8 +108,6 @@ add_subdirectory(src)
 
 add_subdirectory(examples/simple)
 add_subdirectory(examples/network)
-add_subdirectory(examples/complex_network)
-add_subdirectory(examples/simple_network)
 
 ################################################################
 # Summary
