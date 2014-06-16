@@ -91,7 +91,7 @@ void Window::open_() {
     glewExperimental = GL_TRUE;
     glewInit(); glGetError();
 
-    Logger::LOG_DEBUG << "Created OpenGL context with version "
+    Logger::LOG_TRACE << "Created OpenGL context with version "
                       << render_context_.gl.MajorVersion()
                       << "." << render_context_.gl.MinorVersion() << std::endl;
 

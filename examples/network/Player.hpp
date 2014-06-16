@@ -29,7 +29,7 @@ class Player : public NetworkObject<Player> {
   }
 
   Player(bool is_local = false)
-    : update_counter_(0) {
+    : update_ticker_(Ticker::create(5.0)) {
 
     auto scene = SceneManager::instance()->get_default();
     player_ = scene->add_object();
@@ -53,11 +53,10 @@ class Player : public NetworkObject<Player> {
     light->Material = MaterialDatabase::instance()->get("light");
 
     if (is_local) {
-      player_->Transform.on_change().connect([&](math::mat3 const& val){
-        if (++update_counter_%100 == 0) {
-          position_update_.set(math::get_translate(val));
-          rotation_update_.set(math::get_rotation(val));
-        }
+      update_ticker_->start();
+      update_ticker_->on_tick.connect([&](){
+        position_update_.set(math::get_translate(player_->Transform.get()));
+        rotation_update_.set(math::get_rotation(player_->Transform.get()));
       });
     } else {
       position_update_.on_change().connect([&](math::vec2 const& val) {
@@ -79,15 +78,16 @@ class Player : public NetworkObject<Player> {
   }
 
  ~Player() {
+    update_ticker_->stop();
     auto scene = SceneManager::instance()->get_default();
     scene->remove(player_);
  }
 
  private:
   SceneObjectPtr player_;
-  int            update_counter_;
   Vec2           position_update_;
   Float          rotation_update_;
+  TickerPtr      update_ticker_;
 };
 
 #endif  // PLAYER_HPP
