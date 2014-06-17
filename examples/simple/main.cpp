@@ -174,8 +174,8 @@ int main(int argc, char** argv) {
   Timer timer;
   timer.start();
 
-  Ticker ticker(1.0 / 60.0);
-  ticker.on_tick.connect([&]() {
+  auto ticker(Ticker::create(1.0 / 60.0));
+  ticker->on_tick.connect([&]() {
     double time(timer.get_elapsed());
     timer.reset();
 
@@ -190,6 +190,8 @@ int main(int argc, char** argv) {
     scene->update(time);
     renderer.process(scene, camera);
   });
+
+  ticker->start();
 
   window->on_close.connect([&](){
     renderer.stop();
