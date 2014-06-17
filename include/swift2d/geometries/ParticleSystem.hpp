@@ -6,54 +6,54 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SHADER_HPP
-#define SWIFT2D_SHADER_HPP
+#ifndef SWIFT2D_PARTICLE_SYSTEM_HPP
+#define SWIFT2D_PARTICLE_SYSTEM_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/utils/Singleton.hpp>
+#include <swift2d/properties.hpp>
+#include <swift2d/materials/Shader.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
+// Stores geometry data. A mesh can be loaded from an Assimp mesh and the     //
+// draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class Shader {
+class ParticleSystem: public Singleton<ParticleSystem> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Shader(std::string const& v_source,
-         std::string const& f_source,
-         std::string const& g_source = "");
-  ~Shader();
+  void update(double time);
 
-  // uses the Shader on the given context.
-  void use(RenderContext const& ctx) const;
+  // Draws the ParticleSystem to the given context.
+  void draw(RenderContext const& context, math::mat3 const& object_transform) const;
 
-  template<typename T>
-  void set_uniform(std::string name, T const& val) {
-    oglplus::ProgramUniform<T>(*program_, name).Set(val);
-  }
+  friend class Singleton<ParticleSystem>;
 
-  mutable oglplus::Program *program_;
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void upload_to(RenderContext const& ctx) const;
+  // this class is a Singleton --- private c'tor and d'tor
+  ParticleSystem();
+  ~ParticleSystem();
 
-  mutable oglplus::VertexShader    *v_shader_;
-  mutable oglplus::FragmentShader  *f_shader_;
-  mutable oglplus::GeometryShader  *g_shader_;
+  void upload_to(RenderContext const& context) const;
 
-  std::string v_source_;
-  std::string f_source_;
-  std::string g_source_;
+  mutable std::vector<math::vec2>   positions_;
+  mutable std::vector<float>        ages_;
+  mutable Shader                    shader_;
+
+  mutable oglplus::VertexArray*      particles_;
+  mutable oglplus::Buffer*           pos_buf_;
+  mutable oglplus::Buffer*           age_buf_;
 };
-
-// -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_SHADER_HPP
+#endif // SWIFT2D_PARTICLE_SYSTEM_HPP

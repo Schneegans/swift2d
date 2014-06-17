@@ -16,5 +16,6 @@
 #include <swift2d/components/SoundComponent.hpp>
 #include <swift2d/components/CameraComponent.hpp>
 #include <swift2d/components/TextComponent.hpp>
+#include <swift2d/components/ParticleSystemComponent.hpp>
 
 #endif  // SWIFT2D_INCLUDE_COMPONENTS_HPP

@@ -32,12 +32,11 @@ Quad::~Quad() {
 
 void Quad::upload_to(RenderContext const& ctx) const {
 
-  // ---------------------------------------------------------------------------
   // bind the VAO for the rectangle_
   rectangle_ = new oglplus::VertexArray();
   rectangle_->Bind();
 
-  GLfloat rectangle_verts[8] = {
+  std::vector<float> rect = {
     -1.0f, -1.0f,
     -1.0f, 1.0f,
     1.0f, -1.0f,
@@ -47,13 +46,14 @@ void Quad::upload_to(RenderContext const& ctx) const {
   // bind the VBO for the rectangle_ vertices
   verts_ = new oglplus::Buffer();
   verts_->Bind(oglplus::Buffer::Target::Array);
+
   // upload the data
-  oglplus::Buffer::Data(oglplus::Buffer::Target::Array, 8, rectangle_verts);
+  oglplus::Buffer::Data(oglplus::Buffer::Target::Array, rect);
 
   // setup the vertex attribs array for the vertices
   oglplus::VertexAttribArray(0).Setup<oglplus::Vec2f>().Enable();
 
-  oglplus::VertexArray::Unbind();
+  // oglplus::VertexArray::Unbind();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +67,6 @@ void Quad::draw(RenderContext const& ctx) const {
 
   rectangle_->Bind();
   ctx.gl.DrawArrays(oglplus::PrimitiveType::TriangleStrip, 0, 4);
-  // oglplus::VertexArray::Unbind();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

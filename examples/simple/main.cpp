@@ -158,6 +158,9 @@ int main(int argc, char** argv) {
        ship->Depth = 1.0f;
        ship->Material = MaterialDatabase::instance()->get("ship");
 
+  auto exhaust = player->add<ParticleSystemComponent>();
+       exhaust->Depth = 1.0f;
+
   auto light = player->add<LightComponent>();
        light->Depth = 1.0f;
        light->Transform = math::make_scale(20);
