@@ -65,21 +65,20 @@ class Player : public NetworkObject<Player> {
       });
     } else {
       position_update_.on_change().connect([&](math::vec2 const& val) {
-        auto transform(player_->Transform.get());
-        math::set_translate(transform, val);
-        player_->Transform.set(transform);
+        auto pos(math::get_translate(player_->Transform.get()));
+        player_->get_component<OffsetBehavior>()->set_transform_offset(val - pos);
 
-        // auto transform(math::get_translate(player_->Transform.get()));
-        // player_->get_component<OffsetBehavior>()->TranslationOffsetX.set(transform.x() - val.x(), 1.0);
-        // player_->get_component<OffsetBehavior>()->TranslationOffsetY.set(transform.y() - val.y(), 1.0);
+        // auto transform(player_->Transform.get());
+        // math::set_translate(transform, val);
+        // player_->Transform.set(transform);
       });
       rotation_update_.on_change().connect([&](float val) {
-        auto transform(player_->Transform.get());
-        math::set_rotation(transform, val);
-        player_->Transform.set(transform);
+        auto rot(math::get_rotation(player_->Transform.get()));
+        player_->get_component<OffsetBehavior>()->set_rotation_offset(val - rot);
 
-        // auto transform(math::get_rotation(player_->Transform.get()));
-        // player_->get_component<OffsetBehavior>()->RotationOffset.set(transform - val, 1.0);
+        // auto transform(player_->Transform.get());
+        // math::set_rotation(transform, val);
+        // player_->Transform.set(transform);
       });
     }
 

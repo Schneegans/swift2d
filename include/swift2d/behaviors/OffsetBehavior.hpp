@@ -58,19 +58,38 @@ class OffsetBehavior : public Behavior<SceneObject*> {
     return std::make_shared<OffsetBehavior>(*this);
   }
 
+  void set_transform_offset(math::vec2 const& offset) {
+    TranslationOffsetX.set(offset.x());
+    TranslationOffsetY.set(offset.y());
+    TranslationOffsetX.set(0, 4.0);
+    TranslationOffsetY.set(0, 4.0);
+  }
+
+  void set_rotation_offset(float offset) {
+    RotationOffset.set(offset);
+    RotationOffset.set(0, 4.0);
+  }
+
   // ------------------------------------------------------------ public methods
   virtual void update(double time) {
+
+    float x = TranslationOffsetX.get();
+    float y = TranslationOffsetY.get();
+    float r = RotationOffset.get();
 
     TranslationOffsetX.update(time);
     TranslationOffsetX.update(time);
     RotationOffset.update(time);
 
+    x -= TranslationOffsetX.get();
+    y -= TranslationOffsetY.get();
+    r -= RotationOffset.get();
+
+    auto mat = math::make_translate(x, y);
+    math::rotate(mat, r);
+
     auto user_transform(get_user()->Transform.get());
-
-    math::set_translate(user_transform, math::get_translate(user_transform) + math::vec2(TranslationOffsetX.get(), TranslationOffsetY.get()));
-    math::set_rotation(user_transform, math::get_rotation(user_transform) + RotationOffset.get());
-
-    get_user()->Transform.set(user_transform);
+    get_user()->Transform.set(mat * user_transform);
   }
 
 };
