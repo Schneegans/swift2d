@@ -63,13 +63,13 @@ ParticleSystem::ParticleSystem()
       // out float geomAge;
 
       void main(void) {
-        float yo[2] = float[2](10.5, -10.5);
-        float xo[2] = float[2](10.5, -10.5);
+        float yo[2] = float[2](0.5, -0.5);
+        float xo[2] = float[2](0.5, -0.5);
 
         for(int j=0; j!=2; ++j) {
           for(int i=0; i!=2; ++i) {
-            vec4 in_pos = gl_in[0].gl_Position;
-            vec3 pos = projection * transform * vec3(in_pos.xy - vec2(xo[i], yo[i]), 1.0);
+            vec2 in_pos = gl_in[0].gl_Position.xy - vec2(xo[i], yo[j]);
+            vec3 pos = projection * transform * vec3(in_pos, 1.0);
             gl_Position = vec4(pos.xy, 0.0, 1.0);
             // geomAge = vertAge[0];
             EmitVertex();
