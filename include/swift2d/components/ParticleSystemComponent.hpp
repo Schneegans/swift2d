@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/DrawableComponent.hpp>
 #include <swift2d/geometries/CPUParticleSystem.hpp>
+#include <swift2d/geometries/ParticleEmitter.hpp>
 
 namespace swift {
 
@@ -32,11 +33,13 @@ class ParticleSystemComponent : public DrawableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float                     Depth;
-  CPUParticleSystemProperty ParticleSystem;
+  Float                   Depth;
+  ParticleEmitterProperty Emitter;
 
   // ----------------------------------------------------- contruction interface
-  ParticleSystemComponent() : Depth(0.f) {}
+  ParticleSystemComponent()
+    : Depth(0.f)
+    , particle_system_(CPUParticleSystem::create(this)) {}
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
@@ -52,16 +55,22 @@ class ParticleSystemComponent : public DrawableComponent {
   // ------------------------------------------------------------ public methods
   void update(double time) {
     DrawableComponent::update(time);
-    ParticleSystem()->update(time, WorldTransform());
+    Emitter()->update(time);
+    particle_system_->update(time);
   }
 
   void draw(RenderContext const& ctx) {
-    ParticleSystem()->draw(ctx, WorldTransform());
+    particle_system_->draw(ctx);
   }
 
   void serialize(SerializedScenePtr& scene) const {
     scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
   }
+
+ ///////////////////////////////////////////////////////////////////////////////
+ // ---------------------------------------------------------- private interface
+ private:
+  CPUParticleSystemPtr particle_system_;
 
 };
 

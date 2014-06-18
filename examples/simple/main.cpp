@@ -22,8 +22,8 @@ class Mover: public MoveBehavior {
       if (action == 0) {
         if (key == Key::W) {
           LinearSpeed.set(0);
-          get_user()->get_components<ParticleSystemComponent>()[0]->ParticleSystem()->Density.set(0.0, 0.1);
-          get_user()->get_components<ParticleSystemComponent>()[1]->ParticleSystem()->Density.set(0.0, 0.1);
+          get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density.set(0.0, 0.1);
+          get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density.set(0.0, 0.1);
         }
         if (key == Key::S) LinearSpeed.set(0);
         if (key == Key::A) AngularSpeed.set(0);
@@ -31,8 +31,8 @@ class Mover: public MoveBehavior {
       } else if (action == 1) {
         if (key == Key::W) {
           LinearSpeed.set( 10);
-          get_user()->get_components<ParticleSystemComponent>()[0]->ParticleSystem()->Density.set(2.0, 0.5);
-          get_user()->get_components<ParticleSystemComponent>()[1]->ParticleSystem()->Density.set(2.0, 0.5);
+          get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density.set(2.0, 0.5);
+          get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density.set(2.0, 0.5);
         }
         if (key == Key::S) LinearSpeed.set(-10);
         if (key == Key::A) AngularSpeed.set(-2 );
@@ -170,23 +170,23 @@ int main(int argc, char** argv) {
        ship->Material = MaterialDatabase::instance()->get("ship");
 
   // exhaust
-  auto smoke_particles = CPUParticleSystem::create();
+  auto smoke_particles = ParticleEmitter::create();
        smoke_particles->Life = 10.0f;
        smoke_particles->Texture = TextureDatabase::instance()->get("smoke");
 
   auto smoke = player->add<ParticleSystemComponent>();
        smoke->Depth = 0.5f;
        smoke->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
-       smoke->ParticleSystem = smoke_particles;
+       smoke->Emitter = smoke_particles;
 
-  auto fire_particles = CPUParticleSystem::create();
+  auto fire_particles = ParticleEmitter::create();
        fire_particles->Life = 1.0f;
        fire_particles->Texture = TextureDatabase::instance()->get("fire");
 
   auto fire = player->add<ParticleSystemComponent>();
        fire->Depth = 0.6f;
        fire->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
-       fire->ParticleSystem = fire_particles;
+       fire->Emitter = fire_particles;
 
 
 

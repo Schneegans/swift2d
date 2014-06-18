@@ -10,6 +10,7 @@
 #include <swift2d/geometries/CPUParticleSystem.hpp>
 
 #include <swift2d/materials/CPUParticleSystemShader.hpp>
+#include <swift2d/components/ParticleSystemComponent.hpp>
 #include <swift2d/math.hpp>
 #include <swift2d/utils/Logger.hpp>
 
@@ -19,8 +20,9 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-CPUParticleSystem::CPUParticleSystem()
-  : particles_(nullptr)
+CPUParticleSystem::CPUParticleSystem(ParticleSystemComponent* parent)
+  : parent_(parent)
+  , particles_(nullptr)
   , pos_buf_(nullptr)
   , age_buf_(nullptr) {}
 
@@ -34,12 +36,11 @@ CPUParticleSystem::~CPUParticleSystem() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void CPUParticleSystem::update(double time, math::mat3 const& object_transform) {
+void CPUParticleSystem::update(double time) {
 
-  Life.update(time);
-  Density.update(time);
 
-  if (Life() <= 0) {
+
+  if (parent_->Emitter()->Life() <= 0) {
     clear_all();
 
   } else {
@@ -49,12 +50,12 @@ void CPUParticleSystem::update(double time, math::mat3 const& object_transform) 
         empty_positions_.push(i);
       } else if (ages_[i] >= 0.f) {
         positions_[i] += directions_[i] * time;
-        ages_[i] += time / Life();
+        ages_[i] += time / parent_->Emitter()->Life();
       }
     }
 
-    for (int i(0); i<Density(); ++i) {
-      spawn(object_transform);
+    for (int i(0); i<parent_->Emitter()->Density(); ++i) {
+      spawn();
     }
   }
 }
@@ -83,7 +84,7 @@ void CPUParticleSystem::upload_to(RenderContext const& ctx) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void CPUParticleSystem::draw(RenderContext const& ctx, math::mat3 const& object_transform) const {
+void CPUParticleSystem::draw(RenderContext const& ctx) const {
 
   if (positions_.size() > 0) {
 
@@ -92,16 +93,16 @@ void CPUParticleSystem::draw(RenderContext const& ctx, math::mat3 const& object_
       upload_to(ctx);
     }
 
-    Texture()->bind(ctx, 0);
+    parent_->Emitter()->Texture()->bind(ctx, 0);
 
     CPUParticleSystemShader::instance()->use(ctx);
     CPUParticleSystemShader::instance()->set_uniform("diffuse", 0);
     CPUParticleSystemShader::instance()->set_uniform("projection", ctx.projection_matrix);
 
-    if (InWorldSpace()) {
-      CPUParticleSystemShader::instance()->set_uniform("transform", math::make_scale(math::get_scale(object_transform)));
+    if (parent_->Emitter()->InWorldSpace()) {
+      CPUParticleSystemShader::instance()->set_uniform("transform", math::make_scale(math::get_scale(parent_->WorldTransform())));
     } else {
-      CPUParticleSystemShader::instance()->set_uniform("transform", object_transform);
+      CPUParticleSystemShader::instance()->set_uniform("transform", parent_->WorldTransform());
     }
 
     particles_->Bind();
@@ -117,7 +118,7 @@ void CPUParticleSystem::draw(RenderContext const& ctx, math::mat3 const& object_
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void CPUParticleSystem::spawn(math::mat3 const& object_transform) {
+void CPUParticleSystem::spawn() {
 
   int index(0);
 
@@ -131,15 +132,15 @@ void CPUParticleSystem::spawn(math::mat3 const& object_transform) {
     directions_.resize(index+1);
   }
 
-  if (InWorldSpace()) {
+  if (parent_->Emitter()->InWorldSpace()) {
 
-    math::vec2 scale(math::get_scale(object_transform));
+    math::vec2 scale(math::get_scale(parent_->WorldTransform()));
 
-    positions_[index]     =  math::get_translate(object_transform);
+    positions_[index]     =  math::get_translate(parent_->WorldTransform());
     positions_[index][0] /= scale.x();
     positions_[index][1] /= scale.y();
 
-    directions_[index]     =  (object_transform * math::vec3(-5, 0, 0)).xy();
+    directions_[index]     =  (parent_->WorldTransform() * math::vec3(-5, 0, 0)).xy();
     directions_[index][0] +=  math::random::get(-0.1f, 0.1f);
     directions_[index][1] +=  math::random::get(-0.1f, 0.1f);
     directions_[index][0] /= scale.x();

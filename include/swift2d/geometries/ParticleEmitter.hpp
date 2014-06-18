@@ -6,11 +6,10 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_CPU_PARTICLE_SYSTEM_HPP
-#define SWIFT2D_CPU_PARTICLE_SYSTEM_HPP
+#ifndef SWIFT2D_PARTICLE_EMITTER_HPP
+#define SWIFT2D_PARTICLE_EMITTER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/graphics/RenderContext.hpp>
 #include <swift2d/properties.hpp>
 #include <swift2d/textures/Texture.hpp>
 
@@ -21,56 +20,50 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-// forward declares ------------------------------------------------------------
-class ParticleSystemComponent;
 
 // shared pointer type definition ----------------------------------------------
-class CPUParticleSystem;
-typedef std::shared_ptr<CPUParticleSystem>       CPUParticleSystemPtr;
-typedef std::shared_ptr<const CPUParticleSystem> ConstCPUParticleSystemPtr;
-typedef Property<CPUParticleSystemPtr>           CPUParticleSystemProperty;
+class ParticleEmitter;
+typedef std::shared_ptr<ParticleEmitter>       ParticleEmitterPtr;
+typedef std::shared_ptr<const ParticleEmitter> ConstParticleEmitterPtr;
+typedef Property<ParticleEmitterPtr>           ParticleEmitterProperty;
 
 // -----------------------------------------------------------------------------
-class CPUParticleSystem {
+class ParticleEmitter {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
+  // ---------------------------------------------------------------- properties
+  Bool            InWorldSpace;
+  AnimatedFloat   Life;
+  AnimatedFloat   Density;
+  TextureProperty Texture;
+
   // ----------------------------------------------------- contruction interface
-  CPUParticleSystem(ParticleSystemComponent* parent);
-  ~CPUParticleSystem();
 
   // Creates a new component and returns a shared pointer.
-  static CPUParticleSystemPtr create(ParticleSystemComponent* parent) {
-    return std::make_shared<CPUParticleSystem>(parent);
+  static ParticleEmitterPtr create() {
+    auto result(std::make_shared<ParticleEmitter>());
+    result->InWorldSpace = true;
+    result->Life         = 10.f;
+    result->Density      = 10.f;
+    return result;
+  }
+
+  void update(double time) {
+    Life.update(time);
+    Density.update(time);
   }
 
   // ------------------------------------------------------------ public methods
-  void update(double time);
 
-  // Draws the CPUParticleSystem to the given context.
-  void draw(RenderContext const& context) const;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void upload_to(RenderContext const& context) const;
-  void spawn();
-  void clear_all();
-
-  ParticleSystemComponent* parent_;
-
-  mutable std::stack<int>            empty_positions_;
-  mutable std::vector<math::vec2>    positions_;
-  mutable std::vector<math::vec2>    directions_;
-  mutable std::vector<float>         ages_;
-
-  mutable oglplus::VertexArray*      particles_;
-  mutable oglplus::Buffer*           pos_buf_;
-  mutable oglplus::Buffer*           age_buf_;
 };
 
 }
 
-#endif // SWIFT2D_CPU_PARTICLE_SYSTEM_HPP
+#endif // SWIFT2D_PARTICLE_EMITTER_HPP
