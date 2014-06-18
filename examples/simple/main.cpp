@@ -20,12 +20,18 @@ class Mover: public MoveBehavior {
   Mover(WindowPtr const& w) {
     w->on_key_press.connect([&](Key key, int scancode, int action, int mods){
       if (action == 0) {
-        if (key == Key::W) LinearSpeed.set(0);
+        if (key == Key::W) {
+          LinearSpeed.set(0);
+          get_user()->get_component<ParticleSystemComponent>()->ParticleSystem()->Density.set(0.0, 0.1);
+        }
         if (key == Key::S) LinearSpeed.set(0);
         if (key == Key::A) AngularSpeed.set(0);
         if (key == Key::D) AngularSpeed.set(0);
       } else if (action == 1) {
-        if (key == Key::W) LinearSpeed.set( 10);
+        if (key == Key::W) {
+          LinearSpeed.set( 10);
+          get_user()->get_component<ParticleSystemComponent>()->ParticleSystem()->Density.set(100.0, 0.5);
+        }
         if (key == Key::S) LinearSpeed.set(-10);
         if (key == Key::A) AngularSpeed.set(-2 );
         if (key == Key::D) AngularSpeed.set( 2 );
@@ -87,9 +93,11 @@ int main(int argc, char** argv) {
   Application app(argc, argv);
 
   // load resources ------------------------------------------------------------
+  TextureDatabase::instance()->add("bullet", Texture::create(app.get_resource("images", "bullet.png")));
+
   MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_file(app.get_resource("images", "bg.jpg")));
   MaterialDatabase::instance()->add("ship",       ShadelessTextureMaterial::create_from_file(app.get_resource("images", "ship.png")));
-  MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_file(app.get_resource("images", "bullet.png")));
+  MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_database("bullet"));
 
   MaterialDatabase::instance()->add("planet1",    BumpTextureMaterial::create_from_files(app.get_resource("images", "planet_diffuse2.png"), app.get_resource("images", "planet_normal2.png")));
   MaterialDatabase::instance()->add("planet2",    BumpTextureMaterial::create_from_files(app.get_resource("images", "planet_diffuse.png"), app.get_resource("images", "planet_normal.png")));
@@ -158,8 +166,14 @@ int main(int argc, char** argv) {
        ship->Depth = 1.0f;
        ship->Material = MaterialDatabase::instance()->get("ship");
 
+  auto particles = CPUParticleSystem::create();
+       particles->Life = 10.0f;
+       particles->Texture = TextureDatabase::instance()->get("bullet");
+
   auto exhaust = player->add<ParticleSystemComponent>();
-       exhaust->Depth = 1.0f;
+       exhaust->Depth = 0.5f;
+       exhaust->Transform = math::make_scale(0.5) * math::make_translate(-0.5, 0);
+       exhaust->ParticleSystem = particles;
 
   auto light = player->add<LightComponent>();
        light->Depth = 1.0f;

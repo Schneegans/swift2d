@@ -70,12 +70,12 @@ class Property {
 
 
 
-  Property<T>& operator=(T const& rhs) {
+  virtual Property<T>& operator=(T const& rhs) {
     set(rhs);
     return *this;
   }
 
-  Property<T>& operator=(Property<T> const& rhs) {
+  virtual Property<T>& operator=(Property<T> const& rhs) {
     set(rhs.value_);
     return *this;
   }

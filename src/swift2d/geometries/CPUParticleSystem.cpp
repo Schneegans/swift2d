@@ -34,23 +34,34 @@ CPUParticleSystem::~CPUParticleSystem() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void CPUParticleSystem::update(double time) {
-  static int c(0);
-  if (positions_.size() < 100 && (c++)%20==0) {
-    positions_.push_back(math::vec2(0.f, 0.f));
-    ages_.push_back(0);
-  }
+void CPUParticleSystem::update(double time, math::mat3 const& object_transform) {
 
-  for (int i(0); i<positions_.size(); ++i) {
-    positions_[i] += math::vec2(0.2, 0);
-    ages_[i] += time;
+  Life.update(time);
+  Density.update(time);
+
+  if (Life() <= 0) {
+    clear_all();
+
+  } else {
+    for (int i(0); i<positions_.size(); ++i) {
+      if (ages_[i] > 1.0f) {
+        ages_[i] = -1.f;
+        empty_positions_.push(i);
+      } else if (ages_[i] >= 0.f) {
+        positions_[i] += directions_[i] * time;
+        ages_[i] += time / Life();
+      }
+    }
+
+    for (int i(0); i<Density(); ++i) {
+      spawn(object_transform);
+    }
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void CPUParticleSystem::upload_to(RenderContext const& ctx) const {
-  ctx.gl.PointSize(20);
 
   particles_ = new oglplus::VertexArray();
   pos_buf_   = new oglplus::Buffer();
@@ -60,15 +71,11 @@ void CPUParticleSystem::upload_to(RenderContext const& ctx) const {
   particles_->Bind(); {
 
     // bind the VBO for the particle positions
-    positions_.reserve(100);
     pos_buf_->Bind(oglplus::Buffer::Target::Array);
-    oglplus::Buffer::Data(oglplus::Buffer::Target::Array, positions_);
     oglplus::VertexAttribArray(0).Setup<oglplus::Vec2f>().Enable();
 
     // bind the VBO for the particle ages
-    ages_.reserve(100);
     age_buf_->Bind(oglplus::Buffer::Target::Array);
-    oglplus::Buffer::Data(oglplus::Buffer::Target::Array, ages_);
     oglplus::VertexAttribArray(1).Setup<float>().Enable();
   }
   particles_->Unbind();
@@ -78,23 +85,84 @@ void CPUParticleSystem::upload_to(RenderContext const& ctx) const {
 
 void CPUParticleSystem::draw(RenderContext const& ctx, math::mat3 const& object_transform) const {
 
-  // upload to GPU if neccessary
-  if (!particles_) {
-    upload_to(ctx);
+  if (positions_.size() > 0) {
+
+    // upload to GPU if neccessary
+    if (!particles_) {
+      upload_to(ctx);
+    }
+
+    Texture()->bind(ctx, 0);
+
+    CPUParticleSystemShader::instance()->use(ctx);
+    CPUParticleSystemShader::instance()->set_uniform("diffuse", 0);
+    CPUParticleSystemShader::instance()->set_uniform("projection", ctx.projection_matrix);
+
+    if (InWorldSpace()) {
+      CPUParticleSystemShader::instance()->set_uniform("transform", math::make_scale(math::get_scale(object_transform)));
+    } else {
+      CPUParticleSystemShader::instance()->set_uniform("transform", object_transform);
+    }
+
+    particles_->Bind();
+    pos_buf_->Bind(oglplus::Buffer::Target::Array);
+    oglplus::Buffer::Data(oglplus::Buffer::Target::Array, positions_);
+
+    age_buf_->Bind(oglplus::Buffer::Target::Array);
+    oglplus::Buffer::Data(oglplus::Buffer::Target::Array, ages_);
+
+    ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, positions_.size());
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void CPUParticleSystem::spawn(math::mat3 const& object_transform) {
+
+  int index(0);
+
+  if (empty_positions_.size() > 0) {
+    index = empty_positions_.top();
+    empty_positions_.pop();
+  } else {
+    index = positions_.size();
+    positions_.resize(index+1);
+    ages_.resize(index+1);
+    directions_.resize(index+1);
   }
 
-  CPUParticleSystemShader::instance()->use(ctx);
-  CPUParticleSystemShader::instance()->set_uniform("projection", ctx.projection_matrix);
-  CPUParticleSystemShader::instance()->set_uniform("transform", object_transform);
+  if (InWorldSpace()) {
 
-  particles_->Bind();
-  pos_buf_->Bind(oglplus::Buffer::Target::Array);
-  oglplus::Buffer::Data(oglplus::Buffer::Target::Array, positions_);
+    math::vec2 scale(math::get_scale(object_transform));
 
-  age_buf_->Bind(oglplus::Buffer::Target::Array);
-  oglplus::Buffer::Data(oglplus::Buffer::Target::Array, ages_);
+    positions_[index]     =  math::get_translate(object_transform);
+    positions_[index][0] /= scale.x();
+    positions_[index][1] /= scale.y();
 
-  ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, positions_.size());
+    directions_[index]     =  (object_transform * math::vec3(-10, 0, 0)).xy();
+    directions_[index][0] +=  math::random::get(-0.1f, 0.1f);
+    directions_[index][1] +=  math::random::get(-0.1f, 0.1f);
+    directions_[index][0] /= scale.x();
+    directions_[index][1] /= scale.y();
+
+  } else {
+    positions_[index]  = math::vec2(0.f, 0.f);
+    directions_[index] = math::vec2(-10, 0);
+  }
+
+  ages_[index] = 0.f;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void CPUParticleSystem::clear_all() {
+  positions_.clear();
+  directions_.clear();
+  ages_.clear();
+
+  while (!empty_positions_.empty()) {
+    empty_positions_.pop();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

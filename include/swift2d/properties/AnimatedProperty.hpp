@@ -51,10 +51,7 @@ class AnimatedProperty: public NumericProperty<T> {
     , end_(value)
     , state_(-1.0)
     , duration_(0)
-    , exp_(0.0) {
-
-      Logger::LOG_WARNING << value << std::endl;
-    }
+    , exp_(0.0) {}
 
   AnimatedProperty(T const& start, T const& end, double duration = 1.0,
                    Direction direction = IN_OUT, double exponent = 0.0)
@@ -112,6 +109,11 @@ class AnimatedProperty: public NumericProperty<T> {
 
   inline T const& start() const { return start_; }
   inline T const& end()   const { return end_; }
+
+  virtual AnimatedProperty<T>& operator=(T const& rhs) {
+    set(rhs);
+    return *this;
+  }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

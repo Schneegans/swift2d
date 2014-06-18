@@ -32,8 +32,8 @@ class ParticleSystemComponent : public DrawableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float            Depth;
-  MaterialProperty Material;
+  Float                     Depth;
+  CPUParticleSystemProperty ParticleSystem;
 
   // ----------------------------------------------------- contruction interface
   ParticleSystemComponent() : Depth(0.f) {}
@@ -52,11 +52,11 @@ class ParticleSystemComponent : public DrawableComponent {
   // ------------------------------------------------------------ public methods
   void update(double time) {
     DrawableComponent::update(time);
-    CPUParticleSystem::instance()->update(time);
+    ParticleSystem()->update(time, WorldTransform());
   }
 
   void draw(RenderContext const& ctx) {
-    CPUParticleSystem::instance()->draw(ctx, WorldTransform());
+    ParticleSystem()->draw(ctx, WorldTransform());
   }
 
   void serialize(SerializedScenePtr& scene) const {
