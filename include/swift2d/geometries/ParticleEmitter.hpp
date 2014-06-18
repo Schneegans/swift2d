@@ -51,17 +51,18 @@ class ParticleEmitter {
     return result;
   }
 
+  // creates a copy from this
+  ParticleEmitterPtr create_copy() const {
+    return std::make_shared<ParticleEmitter>(*this);
+  }
+
+  // ------------------------------------------------------------ public methods
   void update(double time) {
     Life.update(time);
     Density.update(time);
   }
 
-  // ------------------------------------------------------------ public methods
 
-
- ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
- private:
 };
 
 }

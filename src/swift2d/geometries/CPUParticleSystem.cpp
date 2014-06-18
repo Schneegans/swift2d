@@ -105,6 +105,7 @@ void CPUParticleSystem::draw(RenderContext const& ctx) const {
       CPUParticleSystemShader::instance()->set_uniform("transform", parent_->WorldTransform());
     }
 
+    // update gpu data
     particles_->Bind();
     pos_buf_->Bind(oglplus::Buffer::Target::Array);
     oglplus::Buffer::Data(oglplus::Buffer::Target::Array, positions_);
@@ -112,6 +113,7 @@ void CPUParticleSystem::draw(RenderContext const& ctx) const {
     age_buf_->Bind(oglplus::Buffer::Target::Array);
     oglplus::Buffer::Data(oglplus::Buffer::Target::Array, ages_);
 
+    // draw!
     ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, positions_.size());
   }
 }

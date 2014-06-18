@@ -56,6 +56,35 @@ class Player : public NetworkObject<Player> {
     light->Transform = math::make_scale(20);
     light->Material = MaterialDatabase::instance()->get("light");
 
+    // exhaust
+    auto smoke_particles = ParticleEmitter::create();
+    smoke_particles->Life = 10.0f;
+    smoke_particles->Texture = TextureDatabase::instance()->get("smoke");
+
+    auto smoke = player_->add<ParticleSystemComponent>();
+    smoke->Depth = 0.5f;
+    smoke->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
+    smoke->Emitter = smoke_particles;
+
+    auto fire_particles = ParticleEmitter::create();
+    fire_particles->Life = 1.0f;
+    fire_particles->Texture = TextureDatabase::instance()->get("fire");
+
+    auto fire = player_->add<ParticleSystemComponent>();
+    fire->Depth = 0.6f;
+    fire->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
+    fire->Emitter = fire_particles;
+
+    mover->LinearSpeed.on_change().connect([&](float val){
+      if (val > 0) {
+        player_->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = val;
+        player_->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = val;
+      } else {
+        player_->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 0.0;
+        player_->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 0.0;
+      }
+    });
+
     // once in a while, update absolute position and rotation ------------------
     if (is_local) {
       update_ticker_->start();
@@ -65,20 +94,20 @@ class Player : public NetworkObject<Player> {
       });
     } else {
       position_update_.on_change().connect([&](math::vec2 const& val) {
-        auto pos(math::get_translate(player_->Transform.get()));
-        player_->get_component<OffsetBehavior>()->set_transform_offset(val - pos);
+        // auto pos(math::get_translate(player_->Transform.get()));
+        // player_->get_component<OffsetBehavior>()->set_transform_offset(val - pos);
 
-        // auto transform(player_->Transform.get());
-        // math::set_translate(transform, val);
-        // player_->Transform.set(transform);
+        auto transform(player_->Transform.get());
+        math::set_translate(transform, val);
+        player_->Transform.set(transform);
       });
       rotation_update_.on_change().connect([&](float val) {
-        auto rot(math::get_rotation(player_->Transform.get()));
-        player_->get_component<OffsetBehavior>()->set_rotation_offset(val - rot);
+        // auto rot(math::get_rotation(player_->Transform.get()));
+        // player_->get_component<OffsetBehavior>()->set_rotation_offset(val - rot);
 
-        // auto transform(player_->Transform.get());
-        // math::set_rotation(transform, val);
-        // player_->Transform.set(transform);
+        auto transform(player_->Transform.get());
+        math::set_rotation(transform, val);
+        player_->Transform.set(transform);
       });
     }
 

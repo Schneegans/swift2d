@@ -14,6 +14,10 @@ using namespace swift;
 ////////////////////////////////////////////////////////////////////////////////
 
 swift::SceneObjectPtr SpaceScene::create(swift::Application const& app) {
+
+  TextureDatabase::instance()->add("smoke", Texture::create(app.get_resource("images", "smoke.png")));
+  TextureDatabase::instance()->add("fire", Texture::create(app.get_resource("images", "fire.png")));
+
   MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_file(app.get_resource("images", "bg.jpg")));
   MaterialDatabase::instance()->add("ship",       ShadelessTextureMaterial::create_from_file(app.get_resource("images", "ship.png")));
   MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_file(app.get_resource("images", "bullet.png")));
