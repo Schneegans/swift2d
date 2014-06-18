@@ -37,15 +37,15 @@ class Shader {
     oglplus::ProgramUniform<T>(*program_, name).Set(val);
   }
 
-  mutable oglplus::Program *program_;
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   void upload_to(RenderContext const& ctx) const;
 
-  mutable oglplus::VertexShader    *v_shader_;
-  mutable oglplus::FragmentShader  *f_shader_;
-  mutable oglplus::GeometryShader  *g_shader_;
+  mutable oglplus::VertexShader*    v_shader_;
+  mutable oglplus::FragmentShader*  f_shader_;
+  mutable oglplus::GeometryShader*  g_shader_;
+  mutable oglplus::Program*         program_;
 
   std::string v_source_;
   std::string f_source_;

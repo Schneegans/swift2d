@@ -11,7 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/DrawableComponent.hpp>
-#include <swift2d/geometries/ParticleSystem.hpp>
+#include <swift2d/geometries/CPUParticleSystem.hpp>
 
 namespace swift {
 
@@ -52,11 +52,11 @@ class ParticleSystemComponent : public DrawableComponent {
   // ------------------------------------------------------------ public methods
   void update(double time) {
     DrawableComponent::update(time);
-    ParticleSystem::instance()->update(time);
+    CPUParticleSystem::instance()->update(time);
   }
 
   void draw(RenderContext const& ctx) {
-    ParticleSystem::instance()->draw(ctx, WorldTransform());
+    CPUParticleSystem::instance()->draw(ctx, WorldTransform());
   }
 
   void serialize(SerializedScenePtr& scene) const {

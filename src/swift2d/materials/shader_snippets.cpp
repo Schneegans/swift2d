@@ -30,7 +30,7 @@ std::string get_quad_vertext_shader() {
 
     void main(void) {
       vec3 pos    = projection * transform * vec3(position, 1.0);
-      tex_coords = vec2(position.x + 1.0, 1.0 - position.y) * 0.5;
+      tex_coords  = vec2(position.x + 1.0, 1.0 - position.y) * 0.5;
       gl_Position = vec4(pos.xy, 0.0, 1.0);
     }
   )";

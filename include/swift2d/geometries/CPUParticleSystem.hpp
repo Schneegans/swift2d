@@ -23,7 +23,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class ParticleSystem: public Singleton<ParticleSystem> {
+class CPUParticleSystem: public Singleton<CPUParticleSystem> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -31,17 +31,17 @@ class ParticleSystem: public Singleton<ParticleSystem> {
 
   void update(double time);
 
-  // Draws the ParticleSystem to the given context.
+  // Draws the CPUParticleSystem to the given context.
   void draw(RenderContext const& context, math::mat3 const& object_transform) const;
 
-  friend class Singleton<ParticleSystem>;
+  friend class Singleton<CPUParticleSystem>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  ParticleSystem();
-  ~ParticleSystem();
+  CPUParticleSystem();
+  ~CPUParticleSystem();
 
   void upload_to(RenderContext const& context) const;
 

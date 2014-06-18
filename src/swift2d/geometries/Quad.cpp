@@ -34,26 +34,27 @@ void Quad::upload_to(RenderContext const& ctx) const {
 
   // bind the VAO for the rectangle_
   rectangle_ = new oglplus::VertexArray();
-  rectangle_->Bind();
+  rectangle_->Bind(); {
 
-  std::vector<float> rect = {
-    -1.0f, -1.0f,
-    -1.0f, 1.0f,
-    1.0f, -1.0f,
-    1.0f, 1.0f
-  };
+    std::vector<float> rect = {
+      -1.0f, -1.0f,
+      -1.0f, 1.0f,
+      1.0f, -1.0f,
+      1.0f, 1.0f
+    };
 
-  // bind the VBO for the rectangle_ vertices
-  verts_ = new oglplus::Buffer();
-  verts_->Bind(oglplus::Buffer::Target::Array);
+    // bind the VBO for the rectangle_ vertices
+    verts_ = new oglplus::Buffer();
+    verts_->Bind(oglplus::Buffer::Target::Array);
 
-  // upload the data
-  oglplus::Buffer::Data(oglplus::Buffer::Target::Array, rect);
+    // upload the data
+    oglplus::Buffer::Data(oglplus::Buffer::Target::Array, rect);
 
-  // setup the vertex attribs array for the vertices
-  oglplus::VertexAttribArray(0).Setup<oglplus::Vec2f>().Enable();
+    // setup the vertex attribs array for the vertices
+    oglplus::VertexAttribArray(0).Setup<oglplus::Vec2f>().Enable();
 
-  // oglplus::VertexArray::Unbind();
+  }
+  rectangle_->Unbind();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
