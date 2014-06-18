@@ -139,7 +139,7 @@ void CPUParticleSystem::spawn(math::mat3 const& object_transform) {
     positions_[index][0] /= scale.x();
     positions_[index][1] /= scale.y();
 
-    directions_[index]     =  (object_transform * math::vec3(-10, 0, 0)).xy();
+    directions_[index]     =  (object_transform * math::vec3(-5, 0, 0)).xy();
     directions_[index][0] +=  math::random::get(-0.1f, 0.1f);
     directions_[index][1] +=  math::random::get(-0.1f, 0.1f);
     directions_[index][0] /= scale.x();
@@ -147,7 +147,7 @@ void CPUParticleSystem::spawn(math::mat3 const& object_transform) {
 
   } else {
     positions_[index]  = math::vec2(0.f, 0.f);
-    directions_[index] = math::vec2(-10, 0);
+    directions_[index] = math::vec2(-5, 0);
   }
 
   ages_[index] = 0.f;

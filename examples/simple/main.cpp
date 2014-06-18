@@ -22,7 +22,8 @@ class Mover: public MoveBehavior {
       if (action == 0) {
         if (key == Key::W) {
           LinearSpeed.set(0);
-          get_user()->get_component<ParticleSystemComponent>()->ParticleSystem()->Density.set(0.0, 0.1);
+          get_user()->get_components<ParticleSystemComponent>()[0]->ParticleSystem()->Density.set(0.0, 0.1);
+          get_user()->get_components<ParticleSystemComponent>()[1]->ParticleSystem()->Density.set(0.0, 0.1);
         }
         if (key == Key::S) LinearSpeed.set(0);
         if (key == Key::A) AngularSpeed.set(0);
@@ -30,7 +31,8 @@ class Mover: public MoveBehavior {
       } else if (action == 1) {
         if (key == Key::W) {
           LinearSpeed.set( 10);
-          get_user()->get_component<ParticleSystemComponent>()->ParticleSystem()->Density.set(100.0, 0.5);
+          get_user()->get_components<ParticleSystemComponent>()[0]->ParticleSystem()->Density.set(2.0, 0.5);
+          get_user()->get_components<ParticleSystemComponent>()[1]->ParticleSystem()->Density.set(2.0, 0.5);
         }
         if (key == Key::S) LinearSpeed.set(-10);
         if (key == Key::A) AngularSpeed.set(-2 );
@@ -93,11 +95,12 @@ int main(int argc, char** argv) {
   Application app(argc, argv);
 
   // load resources ------------------------------------------------------------
-  TextureDatabase::instance()->add("bullet", Texture::create(app.get_resource("images", "bullet.png")));
+  TextureDatabase::instance()->add("smoke", Texture::create(app.get_resource("images", "smoke.png")));
+  TextureDatabase::instance()->add("fire", Texture::create(app.get_resource("images", "fire.png")));
 
   MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_file(app.get_resource("images", "bg.jpg")));
   MaterialDatabase::instance()->add("ship",       ShadelessTextureMaterial::create_from_file(app.get_resource("images", "ship.png")));
-  MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_database("bullet"));
+  MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_file(app.get_resource("images", "bullet.png")));
 
   MaterialDatabase::instance()->add("planet1",    BumpTextureMaterial::create_from_files(app.get_resource("images", "planet_diffuse2.png"), app.get_resource("images", "planet_normal2.png")));
   MaterialDatabase::instance()->add("planet2",    BumpTextureMaterial::create_from_files(app.get_resource("images", "planet_diffuse.png"), app.get_resource("images", "planet_normal.png")));
@@ -166,14 +169,26 @@ int main(int argc, char** argv) {
        ship->Depth = 1.0f;
        ship->Material = MaterialDatabase::instance()->get("ship");
 
-  auto particles = CPUParticleSystem::create();
-       particles->Life = 10.0f;
-       particles->Texture = TextureDatabase::instance()->get("bullet");
+  // exhaust
+  auto smoke_particles = CPUParticleSystem::create();
+       smoke_particles->Life = 10.0f;
+       smoke_particles->Texture = TextureDatabase::instance()->get("smoke");
 
-  auto exhaust = player->add<ParticleSystemComponent>();
-       exhaust->Depth = 0.5f;
-       exhaust->Transform = math::make_scale(0.5) * math::make_translate(-0.5, 0);
-       exhaust->ParticleSystem = particles;
+  auto smoke = player->add<ParticleSystemComponent>();
+       smoke->Depth = 0.5f;
+       smoke->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
+       smoke->ParticleSystem = smoke_particles;
+
+  auto fire_particles = CPUParticleSystem::create();
+       fire_particles->Life = 1.0f;
+       fire_particles->Texture = TextureDatabase::instance()->get("fire");
+
+  auto fire = player->add<ParticleSystemComponent>();
+       fire->Depth = 0.6f;
+       fire->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
+       fire->ParticleSystem = fire_particles;
+
+
 
   auto light = player->add<LightComponent>();
        light->Depth = 1.0f;
