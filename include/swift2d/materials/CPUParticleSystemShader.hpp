@@ -6,52 +6,38 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_PARTICLE_SYSTEM_HPP
-#define SWIFT2D_PARTICLE_SYSTEM_HPP
+#ifndef SWIFT2D_CPU_PARTICLE_SYSTEM_SHADER_HPP
+#define SWIFT2D_CPU_PARTICLE_SYSTEM_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/materials/Shader.hpp>
 #include <swift2d/utils/Singleton.hpp>
-#include <swift2d/properties.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-// Stores geometry data. A mesh can be loaded from an Assimp mesh and the     //
-// draw onto a context.                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class CPUParticleSystem: public Singleton<CPUParticleSystem> {
+class CPUParticleSystemShader : public Shader,
+                                public Singleton<CPUParticleSystemShader> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  void update(double time);
-
-  // Draws the CPUParticleSystem to the given context.
-  void draw(RenderContext const& context, math::mat3 const& object_transform) const;
-
-  friend class Singleton<CPUParticleSystem>;
+  friend class Singleton<CPUParticleSystemShader>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  CPUParticleSystem();
-  ~CPUParticleSystem();
-
-  void upload_to(RenderContext const& context) const;
-
-  mutable std::vector<math::vec2>    positions_;
-  mutable std::vector<float>         ages_;
-
-  mutable oglplus::VertexArray*      particles_;
-  mutable oglplus::Buffer*           pos_buf_;
-  mutable oglplus::Buffer*           age_buf_;
+  CPUParticleSystemShader();
+  ~CPUParticleSystemShader() {};
 };
+
+// -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_PARTICLE_SYSTEM_HPP
+#endif // SWIFT2D_CPU_PARTICLE_SYSTEM_SHADER_HPP
