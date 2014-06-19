@@ -62,6 +62,10 @@ class ParticleSystemComponent : public DrawableComponent {
     particle_system_->draw(ctx);
   }
 
+  int get_particle_count() const {
+    return particle_system_->get_particle_count();
+  }
+
   void serialize(SerializedScenePtr& scene) const {
     scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
   }

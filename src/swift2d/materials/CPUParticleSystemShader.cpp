@@ -20,12 +20,15 @@ CPUParticleSystemShader::CPUParticleSystemShader()
 
       layout(location=0) in vec2  position;
       layout(location=1) in float age;
+      layout(location=2) in float rotation;
 
       out float varying_age;
+      out float varying_rotation;
 
       void main(void) {
         gl_Position = vec4(position.xy, 0.0, 1.0);
         varying_age = age;
+        varying_rotation = rotation;
       }
     )",
 
@@ -43,9 +46,17 @@ CPUParticleSystemShader::CPUParticleSystemShader()
 
       uniform sampler2D diffuse;
 
+      uniform vec3 start_color;
+      uniform vec3 end_color;
+
+      uniform float start_opacity;
+      uniform float end_opacity;
+
       void main(void) {
-        fragColor    = texture2D(diffuse, tex_coords);
-        fragColor.a *= (1.0 - age);
+        vec4 color = mix(vec4(start_color, start_opacity), vec4(end_color, end_opacity), age);
+
+        fragColor      = texture2D(diffuse, tex_coords) * color;
+
         fragNormal   = vec4(0.5, 0.5, 0, fragColor.a);
         fragEmit     = vec4(1.0, 0, 0, fragColor.a);
       }
@@ -64,6 +75,9 @@ CPUParticleSystemShader::CPUParticleSystemShader()
       uniform float start_scale;
       uniform float end_scale;
 
+      uniform bool enable_rotation;
+
+      in  float varying_rotation[];
       in  float varying_age[];
       out float age;
       out vec2  tex_coords;
@@ -78,9 +92,19 @@ CPUParticleSystemShader::CPUParticleSystemShader()
 
           for(int j=0; j!=2; ++j) {
             for(int i=0; i!=2; ++i) {
-              vec2 in_pos = gl_in[0].gl_Position.xy - vec2(xo[i], yo[j]) * scale;
-              vec3 pos    = projection * transform * vec3(in_pos, 1.0);
-              gl_Position = vec4(pos.xy, 0.0, 1.0);
+
+              vec2 pos = vec2(xo[i], yo[j]) * scale;
+
+              if (enable_rotation) {
+                float r = varying_rotation[0];
+                pos = vec2(pos.x * cos(r) - pos.y * sin(r), pos.y * cos(r) + pos.x * sin(r));
+              }
+
+              pos = gl_in[0].gl_Position.xy - pos;
+              pos = (projection * transform * vec3(pos, 1.0)).xy;
+
+
+              gl_Position = vec4(pos, 0.0, 1.0);
               age         = varying_age[0];
               tex_coords  = vec2(xo[i], yo[j]) + 0.5;
               EmitVertex();

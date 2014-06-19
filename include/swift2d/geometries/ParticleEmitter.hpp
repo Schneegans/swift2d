@@ -39,6 +39,8 @@ class ParticleEmitter {
   Bool            WorldSpacePosition;
   Bool            WorldSpaceDirection;
 
+  Bool            BlendAdditive;
+
   Float           Life;
   Float           LifeVariance;
 
@@ -46,16 +48,17 @@ class ParticleEmitter {
   Vec2            Direction;
   Float           DirectionVariance;
 
-  Float           StartRotation;
-  Float           EndRotation;
+  Float           RotationSpeed;
+  Float           RotationSpeedVariance;
+
+  Float           Rotation;
   Float           RotationVariance;
 
   Float           StartOpacity;
   Float           EndOpacity;
 
-  Bool            Colorize;
-  Color           StartColor;
-  Color           EndColor;
+  ColorProperty   StartColor;
+  ColorProperty   EndColor;
 
   Float           Density;
 
@@ -64,6 +67,7 @@ class ParticleEmitter {
 
   TextureProperty Texture;
 
+
   // ----------------------------------------------------- contruction interface
 
   // Creates a new component and returns a shared pointer.
@@ -71,17 +75,18 @@ class ParticleEmitter {
     auto result(std::make_shared<ParticleEmitter>());
     result->WorldSpacePosition    = true;
     result->WorldSpaceDirection   = false;
+    result->BlendAdditive         = false;
     result->Life                  = 10.f;
     result->LifeVariance          = 3.f;
     result->Position              = math::vec2(0.f, 0.f);
     result->Direction             = math::vec2(1.f, 0.f);
     result->DirectionVariance     = 0.3f;
-    result->StartRotation         = 5.f;
-    result->EndRotation           = 0.f;
-    result->RotationVariance      = 1.f;
+    result->RotationSpeed         = 0.f;
+    result->RotationSpeedVariance = 0.f;
+    result->Rotation              = 0.f;
+    result->RotationVariance      = 0.f;
     result->StartOpacity          = 1.f;
     result->EndOpacity            = 0.f;
-    result->Colorize              = false;
     result->StartColor            = Color(1, 1, 1);
     result->EndColor              = Color(1, 1, 1);
     result->Density               = 5.f;

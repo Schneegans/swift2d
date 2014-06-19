@@ -52,6 +52,10 @@ class CPUParticleSystem {
   // Draws the CPUParticleSystem to the given context.
   void draw(RenderContext const& context) const;
 
+  int get_particle_count() const {
+    return positions_.size() - empty_positions_.size();
+  }
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
@@ -61,15 +65,20 @@ class CPUParticleSystem {
 
   ParticleSystemComponent* parent_;
 
-  mutable std::stack<int>            empty_positions_;
-  mutable std::vector<math::vec2>    positions_;
-  mutable std::vector<math::vec2>    directions_;
-  mutable std::vector<float>         ages_;
-  mutable std::vector<float>         max_ages_;
+  std::stack<int>            empty_positions_;
+  std::vector<math::vec2>    positions_;
+  std::vector<math::vec2>    directions_;
+  std::vector<float>         ages_;
+  std::vector<float>         max_ages_;
+  std::vector<float>         rots_;
+  std::vector<float>         rot_speeds_;
+
+  float particles_to_spawn_;
 
   mutable oglplus::VertexArray*      particles_;
   mutable oglplus::Buffer*           pos_buf_;
   mutable oglplus::Buffer*           age_buf_;
+  mutable oglplus::Buffer*           rot_buf_;
 };
 
 }

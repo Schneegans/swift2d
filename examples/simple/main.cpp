@@ -31,8 +31,8 @@ class Mover: public MoveBehavior {
       } else if (action == 1) {
         if (key == Key::W) {
           LinearSpeed.set( 10);
-          get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 2.0;
-          get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 2.0;
+          get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 100.0;
+          get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 100.0;
         }
         if (key == Key::S) LinearSpeed.set(-10);
         if (key == Key::A) AngularSpeed.set(-2 );
@@ -175,6 +175,9 @@ int main(int argc, char** argv) {
        smoke_particles->LifeVariance = 3.0f;
        smoke_particles->StartScale = 0.1f;
        smoke_particles->EndScale = 5.0f;
+       smoke_particles->StartColor = Color(0.0, 0.0, 0.0);
+       smoke_particles->EndColor = Color(1, 1, 1);
+       smoke_particles->RotationSpeedVariance = 2.f;
        smoke_particles->Direction = math::vec2(-2.f, 0.f);
        smoke_particles->Texture = TextureDatabase::instance()->get("smoke");
 
@@ -186,8 +189,12 @@ int main(int argc, char** argv) {
   auto fire_particles = ParticleEmitter::create();
        fire_particles->Life = 1.0f;
        fire_particles->LifeVariance = 0.5f;
-       fire_particles->StartScale = 0.5f;
+       fire_particles->StartScale = 0.2f;
        fire_particles->EndScale = 2.0f;
+       fire_particles->StartOpacity = 0.5f;
+       fire_particles->BlendAdditive = true;
+       fire_particles->StartColor = Color(1, 1, 1);
+       fire_particles->EndColor = Color(0.8, 0.0, 0.0);
        fire_particles->Direction = math::vec2(-2.f, 0.f);
        fire_particles->Texture = TextureDatabase::instance()->get("fire");
 
@@ -195,8 +202,6 @@ int main(int argc, char** argv) {
        fire->Depth = 0.6f;
        fire->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
        fire->Emitter = fire_particles;
-
-
 
   auto light = player->add<LightComponent>();
        light->Depth = 1.0f;
@@ -223,7 +228,8 @@ int main(int argc, char** argv) {
     sstr.precision(1);
     sstr.setf(std::ios::fixed, std::ios::floatfield);
     sstr << "FPS: " << pipeline->rendering_fps() << " / "
-         << pipeline->application_fps() << " Particles: " << particle_count;
+         << pipeline->application_fps() << " Particles: "
+         << particle_count + smoke->get_particle_count() + fire->get_particle_count();
     fps->Text->Content = sstr.str();
 
     window->process_input();
