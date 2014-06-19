@@ -11,8 +11,9 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/DrawableComponent.hpp>
-#include <swift2d/geometries/CPUParticleSystem.hpp>
-#include <swift2d/geometries/ParticleEmitter.hpp>
+#include <swift2d/geometries/ParticleSystem.hpp>
+#include <swift2d/geometries/TextureParticleEmitter.hpp>
+#include <swift2d/geometries/LightParticleEmitter.hpp>
 
 namespace swift {
 
@@ -39,7 +40,7 @@ class ParticleSystemComponent : public DrawableComponent {
   // ----------------------------------------------------- contruction interface
   ParticleSystemComponent()
     : Depth(0.f)
-    , particle_system_(CPUParticleSystem::create(this)) {}
+    , particle_system_(ParticleSystem::create(this)) {}
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
@@ -67,13 +68,17 @@ class ParticleSystemComponent : public DrawableComponent {
   }
 
   void serialize(SerializedScenePtr& scene) const {
-    scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
+    if (Emitter()->serialize_as_light()) {
+      scene->lights.insert(std::make_pair(Depth.get(), create_copy()));
+    } else {
+      scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
+    }
   }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  CPUParticleSystemPtr particle_system_;
+  ParticleSystemPtr particle_system_;
 
 };
 

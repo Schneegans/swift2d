@@ -6,15 +6,13 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_PARTICLE_EMITTER_HPP
-#define SWIFT2D_PARTICLE_EMITTER_HPP
+#ifndef SWIFT2D_TEXTURE_PARTICLE_EMITTER_HPP
+#define SWIFT2D_TEXTURE_PARTICLE_EMITTER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/properties.hpp>
-#include <swift2d/utils/Color.hpp>
-#include <swift2d/textures/Texture.hpp>
+#include <swift2d/geometries/ParticleEmitter.hpp>
 
-#include <memory>
+#include <stack>
 
 namespace swift {
 
@@ -22,58 +20,52 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class ParticleEmitter;
-typedef std::shared_ptr<ParticleEmitter>       ParticleEmitterPtr;
-typedef std::shared_ptr<const ParticleEmitter> ConstParticleEmitterPtr;
-typedef Property<ParticleEmitterPtr>           ParticleEmitterProperty;
+class TextureParticleEmitter;
+typedef std::shared_ptr<TextureParticleEmitter>       TextureParticleEmitterPtr;
+typedef std::shared_ptr<const TextureParticleEmitter> ConstTextureParticleEmitterPtr;
+typedef Property<TextureParticleEmitterPtr>           TextureParticleEmitterProperty;
 
 // -----------------------------------------------------------------------------
-class ParticleEmitter {
+class TextureParticleEmitter : public ParticleEmitter {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ---------------------------------------------------------------- properties
-  Bool            WorldSpacePosition;
-  Bool            WorldSpaceDirection;
-
-  Float           Life;
-  Float           LifeVariance;
-
-  Vec2            Position;
-
-  Vec2            Direction;
-  Float           DirectionVariance;
-
-  Float           StartOpacity;
-  Float           EndOpacity;
+  Bool            BlendAdditive;
 
   Float           RotationSpeed;
   Float           RotationSpeedVariance;
 
-  ColorProperty   StartColor;
-  ColorProperty   EndColor;
+  Float           Rotation;
+  Float           RotationVariance;
 
-
-  Float           Density;
-
-  Float           StartScale;
-  Float           EndScale;
+  TextureProperty Texture;
 
 
   // ----------------------------------------------------- contruction interface
-  ParticleEmitter();
+  TextureParticleEmitter();
+
+  // Creates a new component and returns a shared pointer.
+  static TextureParticleEmitterPtr create() {
+    return std::make_shared<TextureParticleEmitter>();
+  }
+
+  // creates a copy from this
+  TextureParticleEmitterPtr create_copy() const {
+    return std::make_shared<TextureParticleEmitter>(*this);
+  }
 
   // ------------------------------------------------------------ public methods
-  virtual bool serialize_as_light() const = 0;
+  bool serialize_as_light() const { return false; }
 
-  virtual void draw(RenderContext const& ctx, math::mat3 const& transform, int count) const = 0;
+  void draw(RenderContext const& ctx, math::mat3 const& transform, int count) const;
 
-  virtual void spawn(math::mat3 transform, math::vec2& position, float& max_age,
-             math::vec2& direction, float& rotation, float& rotation_speed) const = 0;
+  void spawn(math::mat3 transform, math::vec2& position, float& max_age,
+             math::vec2& direction, float& rotation, float& rotation_speed) const;
 };
 
 }
 
-#endif // SWIFT2D_PARTICLE_EMITTER_HPP
+#endif // SWIFT2D_TEXTURE_PARTICLE_EMITTER_HPP

@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_CPU_PARTICLE_SYSTEM_HPP
-#define SWIFT2D_CPU_PARTICLE_SYSTEM_HPP
+#ifndef SWIFT2D_PARTICLE_SYSTEM_HPP
+#define SWIFT2D_PARTICLE_SYSTEM_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
@@ -25,31 +25,31 @@ namespace swift {
 class ParticleSystemComponent;
 
 // shared pointer type definition ----------------------------------------------
-class CPUParticleSystem;
-typedef std::shared_ptr<CPUParticleSystem>       CPUParticleSystemPtr;
-typedef std::shared_ptr<const CPUParticleSystem> ConstCPUParticleSystemPtr;
-typedef Property<CPUParticleSystemPtr>           CPUParticleSystemProperty;
+class ParticleSystem;
+typedef std::shared_ptr<ParticleSystem>       ParticleSystemPtr;
+typedef std::shared_ptr<const ParticleSystem> ConstParticleSystemPtr;
+typedef Property<ParticleSystemPtr>           ParticleSystemProperty;
 
 // -----------------------------------------------------------------------------
-class CPUParticleSystem {
+class ParticleSystem {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ----------------------------------------------------- contruction interface
-  CPUParticleSystem(ParticleSystemComponent* parent);
-  ~CPUParticleSystem();
+  ParticleSystem(ParticleSystemComponent* parent);
+  ~ParticleSystem();
 
   // Creates a new component and returns a shared pointer.
-  static CPUParticleSystemPtr create(ParticleSystemComponent* parent) {
-    return std::make_shared<CPUParticleSystem>(parent);
+  static ParticleSystemPtr create(ParticleSystemComponent* parent) {
+    return std::make_shared<ParticleSystem>(parent);
   }
 
   // ------------------------------------------------------------ public methods
   void update(double time);
 
-  // Draws the CPUParticleSystem to the given context.
+  // Draws the ParticleSystem to the given context.
   void draw(RenderContext const& context) const;
 
   int get_particle_count() const {
@@ -83,4 +83,4 @@ class CPUParticleSystem {
 
 }
 
-#endif // SWIFT2D_CPU_PARTICLE_SYSTEM_HPP
+#endif // SWIFT2D_PARTICLE_SYSTEM_HPP

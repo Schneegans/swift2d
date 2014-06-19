@@ -7,13 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/CPUParticleSystemShader.hpp>
+#include <swift2d/materials/TextureParticleShader.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-CPUParticleSystemShader::CPUParticleSystemShader()
+TextureParticleShader::TextureParticleShader()
   : Shader(
     R"(
       #version 330
@@ -36,29 +36,29 @@ CPUParticleSystemShader::CPUParticleSystemShader()
     R"(
       #version 330
 
-      // in  float geomAge;
-      layout (location = 0) out vec4 fragColor;
-      layout (location = 1) out vec4 fragNormal;
-      layout (location = 2) out vec4 fragEmit;
-
       in float age;
       in vec2  tex_coords;
 
       uniform sampler2D diffuse;
+      uniform vec3      start_color;
+      uniform vec3      end_color;
+      uniform float     start_opacity;
+      uniform float     end_opacity;
 
-      uniform vec3 start_color;
-      uniform vec3 end_color;
-
-      uniform float start_opacity;
-      uniform float end_opacity;
+      layout (location = 0) out vec4 fragColor;
+      layout (location = 1) out vec4 fragNormal;
+      layout (location = 2) out vec4 fragEmit;
 
       void main(void) {
-        vec4 color = mix(vec4(start_color, start_opacity), vec4(end_color, end_opacity), age);
+        vec4 color = mix(
+          vec4(start_color, start_opacity),
+          vec4(end_color, end_opacity),
+          age
+        );
 
-        fragColor      = texture2D(diffuse, tex_coords) * color;
-
-        fragNormal   = vec4(0.5, 0.5, 0, fragColor.a);
-        fragEmit     = vec4(1.0, 0, 0, fragColor.a);
+        fragColor  = texture2D(diffuse, tex_coords) * color;
+        fragNormal = vec4(0.5, 0.5, 0, fragColor.a);
+        fragEmit   = vec4(1.0, 0, 0, fragColor.a);
       }
     )",
 
@@ -69,16 +69,15 @@ CPUParticleSystemShader::CPUParticleSystemShader()
       layout(points) in;
       layout(triangle_strip, max_vertices = 4) out;
 
-      uniform mat3 transform;
-      uniform mat3 projection;
+      in float varying_rotation[];
+      in float varying_age[];
 
+      uniform mat3  transform;
+      uniform mat3  projection;
       uniform float start_scale;
       uniform float end_scale;
+      uniform bool  enable_rotation;
 
-      uniform bool enable_rotation;
-
-      in  float varying_rotation[];
-      in  float varying_age[];
       out float age;
       out vec2  tex_coords;
 
@@ -97,12 +96,14 @@ CPUParticleSystemShader::CPUParticleSystemShader()
 
               if (enable_rotation) {
                 float r = varying_rotation[0];
-                pos = vec2(pos.x * cos(r) - pos.y * sin(r), pos.y * cos(r) + pos.x * sin(r));
+                pos = vec2(
+                  pos.x * cos(r) - pos.y * sin(r),
+                  pos.y * cos(r) + pos.x * sin(r)
+                );
               }
 
               pos = gl_in[0].gl_Position.xy - pos;
               pos = (projection * transform * vec3(pos, 1.0)).xy;
-
 
               gl_Position = vec4(pos, 0.0, 1.0);
               age         = varying_age[0];

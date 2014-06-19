@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_CPU_PARTICLE_SYSTEM_SHADER_HPP
-#define SWIFT2D_CPU_PARTICLE_SYSTEM_SHADER_HPP
+#ifndef SWIFT2D_TEXTURE_PARTICLE_SHADER_HPP
+#define SWIFT2D_TEXTURE_PARTICLE_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Shader.hpp>
@@ -19,25 +19,25 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class CPUParticleSystemShader : public Shader,
-                                public Singleton<CPUParticleSystemShader> {
+class TextureParticleShader : public Shader,
+                              public Singleton<TextureParticleShader> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  friend class Singleton<CPUParticleSystemShader>;
+  friend class Singleton<TextureParticleShader>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  CPUParticleSystemShader();
-  ~CPUParticleSystemShader() {};
+  TextureParticleShader();
+  ~TextureParticleShader() {};
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_CPU_PARTICLE_SYSTEM_SHADER_HPP
+#endif // SWIFT2D_TEXTURE_PARTICLE_SHADER_HPP

@@ -24,6 +24,7 @@ class Mover: public MoveBehavior {
           LinearSpeed.set(0);
           get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 0.0;
           get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 0.0;
+          get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 0.0;
         }
         if (key == Key::S) LinearSpeed.set(0);
         if (key == Key::A) AngularSpeed.set(0);
@@ -33,6 +34,7 @@ class Mover: public MoveBehavior {
           LinearSpeed.set( 10);
           get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 100.0;
           get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 100.0;
+          get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 50.0;
         }
         if (key == Key::S) LinearSpeed.set(-10);
         if (key == Key::A) AngularSpeed.set(-2 );
@@ -97,6 +99,7 @@ int main(int argc, char** argv) {
   // load resources ------------------------------------------------------------
   TextureDatabase::instance()->add("smoke", Texture::create(app.get_resource("images", "smoke.png")));
   TextureDatabase::instance()->add("fire", Texture::create(app.get_resource("images", "fire.png")));
+  TextureDatabase::instance()->add("point_light", Texture::create(app.get_resource("images", "light.png")));
 
   MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_file(app.get_resource("images", "bg.jpg")));
   MaterialDatabase::instance()->add("ship",       ShadelessTextureMaterial::create_from_file(app.get_resource("images", "ship.png")));
@@ -105,7 +108,7 @@ int main(int argc, char** argv) {
   MaterialDatabase::instance()->add("planet1",    BumpTextureMaterial::create_from_files(app.get_resource("images", "planet_diffuse2.png"), app.get_resource("images", "planet_normal2.png")));
   MaterialDatabase::instance()->add("planet2",    BumpTextureMaterial::create_from_files(app.get_resource("images", "planet_diffuse.png"), app.get_resource("images", "planet_normal.png")));
 
-  MaterialDatabase::instance()->add("light",      PointLightMaterial::create_from_file(app.get_resource("images", "light.png")));
+  MaterialDatabase::instance()->add("light",      PointLightMaterial::create_from_database("point_light"));
   MaterialDatabase::instance()->add("sun",        DirectionalLightMaterial::create(math::vec3(1, 1, -1)));
 
 
@@ -170,7 +173,7 @@ int main(int argc, char** argv) {
        ship->Material = MaterialDatabase::instance()->get("ship");
 
   // exhaust
-  auto smoke_particles = ParticleEmitter::create();
+  auto smoke_particles = TextureParticleEmitter::create();
        smoke_particles->Life = 5.0f;
        smoke_particles->LifeVariance = 3.0f;
        smoke_particles->StartScale = 0.1f;
@@ -186,7 +189,7 @@ int main(int argc, char** argv) {
        smoke->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
        smoke->Emitter = smoke_particles;
 
-  auto fire_particles = ParticleEmitter::create();
+  auto fire_particles = TextureParticleEmitter::create();
        fire_particles->Life = 1.0f;
        fire_particles->LifeVariance = 0.5f;
        fire_particles->StartScale = 0.2f;
@@ -203,10 +206,21 @@ int main(int argc, char** argv) {
        fire->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
        fire->Emitter = fire_particles;
 
-  auto light = player->add<LightComponent>();
-       light->Depth = 1.0f;
-       light->Transform = math::make_scale(20);
-       light->Material = MaterialDatabase::instance()->get("light");
+  auto fire_light_particles = LightParticleEmitter::create();
+       fire_light_particles->Life = 1.0f;
+       fire_light_particles->LifeVariance = 0.5f;
+       fire_light_particles->StartScale = 2.f;
+       fire_light_particles->EndScale = 15.0f;
+       fire_light_particles->StartOpacity = 1.f;
+       fire_light_particles->StartColor = Color(1, 1, 1);
+       fire_light_particles->EndColor = Color(0.8, 0.0, 0.0);
+       fire_light_particles->Direction = math::vec2(-2.f, 0.f);
+       fire_light_particles->Texture = TextureDatabase::instance()->get("point_light");
+
+  auto fire_light = player->add<ParticleSystemComponent>();
+       fire_light->Depth = 0.6f;
+       fire_light->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
+       fire_light->Emitter = fire_light_particles;
 
   // rendering pipeline --------------------------------------------------------
   auto pipeline = Pipeline::create();
@@ -229,7 +243,9 @@ int main(int argc, char** argv) {
     sstr.setf(std::ios::fixed, std::ios::floatfield);
     sstr << "FPS: " << pipeline->rendering_fps() << " / "
          << pipeline->application_fps() << " Particles: "
-         << particle_count + smoke->get_particle_count() + fire->get_particle_count();
+         << particle_count + smoke->get_particle_count()
+                           + fire->get_particle_count()
+                           + fire_light->get_particle_count();
     fps->Text->Content = sstr.str();
 
     window->process_input();

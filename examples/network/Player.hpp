@@ -57,7 +57,7 @@ class Player : public NetworkObject<Player> {
     light->Material = MaterialDatabase::instance()->get("light");
 
     // exhaust
-    auto smoke_particles = ParticleEmitter::create();
+    auto smoke_particles = TextureParticleEmitter::create();
     smoke_particles->Life = 10.0f;
     smoke_particles->Texture = TextureDatabase::instance()->get("smoke");
 
@@ -66,7 +66,7 @@ class Player : public NetworkObject<Player> {
     smoke->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
     smoke->Emitter = smoke_particles;
 
-    auto fire_particles = ParticleEmitter::create();
+    auto fire_particles = TextureParticleEmitter::create();
     fire_particles->Life = 1.0f;
     fire_particles->Texture = TextureDatabase::instance()->get("fire");
 

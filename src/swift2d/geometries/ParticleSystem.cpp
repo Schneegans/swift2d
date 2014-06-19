@@ -7,9 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/geometries/CPUParticleSystem.hpp>
+#include <swift2d/geometries/ParticleSystem.hpp>
 
-#include <swift2d/materials/CPUParticleSystemShader.hpp>
 #include <swift2d/components/ParticleSystemComponent.hpp>
 #include <swift2d/math.hpp>
 #include <swift2d/utils/Logger.hpp>
@@ -20,7 +19,7 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-CPUParticleSystem::CPUParticleSystem(ParticleSystemComponent* parent)
+ParticleSystem::ParticleSystem(ParticleSystemComponent* parent)
   : parent_(parent)
   , particles_to_spawn_(0.f)
   , particles_(nullptr)
@@ -30,7 +29,7 @@ CPUParticleSystem::CPUParticleSystem(ParticleSystemComponent* parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-CPUParticleSystem::~CPUParticleSystem() {
+ParticleSystem::~ParticleSystem() {
   if (particles_) delete particles_;
   if (pos_buf_)   delete pos_buf_;
   if (age_buf_)   delete age_buf_;
@@ -39,23 +38,30 @@ CPUParticleSystem::~CPUParticleSystem() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void CPUParticleSystem::update(double time) {
+void ParticleSystem::update(double time) {
 
   if (parent_->Emitter()->Life() <= 0) {
+
+    // free memory
     clear_all();
 
   } else {
+
+    // update active particles
     for (int i(0); i<positions_.size(); ++i) {
       if (ages_[i] > 1.0f) {
+        // dead - overwrite with new particles
         ages_[i] = -1.f;
         empty_positions_.push(i);
       } else if (ages_[i] >= 0.f) {
+        // update movement
         positions_[i] += directions_[i] * time;
         ages_[i] += time / max_ages_[i];
         rots_[i] += time * rot_speeds_[i];
       }
     }
 
+    // spawn new particles
     particles_to_spawn_ += parent_->Emitter()->Density() * time;
 
     while (particles_to_spawn_ > 1.f) {
@@ -67,8 +73,9 @@ void CPUParticleSystem::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void CPUParticleSystem::upload_to(RenderContext const& ctx) const {
+void ParticleSystem::upload_to(RenderContext const& ctx) const {
 
+  // allocate GPU resources
   particles_ = new oglplus::VertexArray();
   pos_buf_   = new oglplus::Buffer();
   age_buf_   = new oglplus::Buffer();
@@ -94,43 +101,13 @@ void CPUParticleSystem::upload_to(RenderContext const& ctx) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void CPUParticleSystem::draw(RenderContext const& ctx) const {
+void ParticleSystem::draw(RenderContext const& ctx) const {
 
   if (positions_.size() > 0) {
 
     // upload to GPU if neccessary
     if (!particles_) {
       upload_to(ctx);
-    }
-
-    auto emitter(parent_->Emitter());
-
-    CPUParticleSystemShader::instance()->use(ctx);
-    emitter->Texture()->bind(ctx, 0);
-
-    CPUParticleSystemShader::instance()->set_uniform("diffuse", 0);
-    CPUParticleSystemShader::instance()->set_uniform("projection", ctx.projection_matrix);
-
-    if (emitter->WorldSpacePosition()) {
-      CPUParticleSystemShader::instance()->set_uniform("transform", math::make_scale(math::get_scale(parent_->WorldTransform())));
-    } else {
-      CPUParticleSystemShader::instance()->set_uniform("transform", parent_->WorldTransform());
-    }
-
-    CPUParticleSystemShader::instance()->set_uniform("start_scale", emitter->StartScale());
-    CPUParticleSystemShader::instance()->set_uniform("end_scale", emitter->EndScale());
-
-    CPUParticleSystemShader::instance()->set_uniform("start_color", emitter->StartColor().vec3());
-    CPUParticleSystemShader::instance()->set_uniform("end_color", emitter->EndColor().vec3());
-
-    CPUParticleSystemShader::instance()->set_uniform("start_opacity", emitter->StartOpacity());
-    CPUParticleSystemShader::instance()->set_uniform("end_opacity", emitter->EndOpacity());
-
-    bool enable_rotation(emitter->RotationSpeed() != 0.f || emitter->RotationSpeedVariance() != 0.f || emitter->Rotation() != 0.f || emitter->RotationVariance() != 0.f);
-    CPUParticleSystemShader::instance()->set_uniform("enable_rotation", (int)enable_rotation);
-
-    if (emitter->BlendAdditive()) {
-      ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::One);
     }
 
     // update gpu data
@@ -144,26 +121,25 @@ void CPUParticleSystem::draw(RenderContext const& ctx) const {
     rot_buf_->Bind(oglplus::Buffer::Target::Array);
     oglplus::Buffer::Data(oglplus::Buffer::Target::Array, rots_);
 
-    // draw!
-    ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, positions_.size());
-
-    if (emitter->BlendAdditive()) {
-      ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::OneMinusSrcAlpha);
-    }
+    // draw
+    parent_->Emitter()->draw(ctx, parent_->WorldTransform(), positions_.size());
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void CPUParticleSystem::spawn() {
+void ParticleSystem::spawn() {
 
-  auto emitter(parent_->Emitter());
 
+  // index of newly spawned particle
   int index(0);
 
+  // there is a location of a dead particle available
   if (empty_positions_.size() > 0) {
     index = empty_positions_.top();
     empty_positions_.pop();
+
+  // create a new particle
   } else {
     index = positions_.size();
     positions_.resize(index+1);
@@ -174,45 +150,21 @@ void CPUParticleSystem::spawn() {
     rot_speeds_.resize(index+1);
   }
 
-  math::vec2 scale(math::get_scale(parent_->WorldTransform()));
-
-  // generate position
-  if (emitter->WorldSpacePosition()) {
-    math::vec2 pos(emitter->Position());
-    positions_[index]     = (parent_->WorldTransform() * math::vec3(pos.x(), pos.y(), 1)).xy() ;
-    positions_[index][0] /= scale.x();
-    positions_[index][1] /= scale.y();
-  } else {
-    positions_[index] = emitter->Position();
-  }
-
-  // generate direction
-  if (emitter->WorldSpaceDirection()) {
-    directions_[index] = emitter->Direction();
-  } else {
-    math::vec2 dir(emitter->Direction());
-    directions_[index]     =  (parent_->WorldTransform() * math::vec3(dir.x(), dir.y(), 0)).xy();
-    directions_[index][0] /= scale.x();
-    directions_[index][1] /= scale.y();
-  }
-
-  auto direction_variance = math::make_rotate(math::random::get(-emitter->DirectionVariance(), emitter->DirectionVariance()));
-  directions_[index] = (direction_variance * math::vec3(directions_[index][0], directions_[index][1], 0.0f)).xy();
-
-
-  // generate rotation
-  rots_[index] = emitter->Rotation() + math::random::get(-emitter->RotationVariance(), emitter->RotationVariance());
-  rot_speeds_[index] = emitter->RotationSpeed() + math::random::get(-emitter->RotationSpeedVariance(), emitter->RotationSpeedVariance());
-
-  // generate life time
   ages_[index] = 0.f;
-  float var(emitter->LifeVariance());
-  max_ages_[index] = std::max(0.f, emitter->Life() + math::random::get(-var, var));
+
+  parent_->Emitter()->spawn(
+    parent_->WorldTransform(),
+    positions_[index],
+    max_ages_[index],
+    directions_[index],
+    rots_[index],
+    rot_speeds_[index]
+  );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void CPUParticleSystem::clear_all() {
+void ParticleSystem::clear_all() {
   positions_.clear();
   directions_.clear();
   ages_.clear();
