@@ -61,6 +61,9 @@ CPUParticleSystemShader::CPUParticleSystemShader()
       uniform mat3 transform;
       uniform mat3 projection;
 
+      uniform float start_scale;
+      uniform float end_scale;
+
       in  float varying_age[];
       out float age;
       out vec2  tex_coords;
@@ -71,9 +74,11 @@ CPUParticleSystemShader::CPUParticleSystemShader()
           float yo[2] = float[2](0.5, -0.5);
           float xo[2] = float[2](0.5, -0.5);
 
+          float scale = mix(start_scale, end_scale, varying_age[0]);
+
           for(int j=0; j!=2; ++j) {
             for(int i=0; i!=2; ++i) {
-              vec2 in_pos = gl_in[0].gl_Position.xy - vec2(xo[i], yo[j]);
+              vec2 in_pos = gl_in[0].gl_Position.xy - vec2(xo[i], yo[j]) * scale;
               vec3 pos    = projection * transform * vec3(in_pos, 1.0);
               gl_Position = vec4(pos.xy, 0.0, 1.0);
               age         = varying_age[0];

@@ -22,8 +22,8 @@ class Mover: public MoveBehavior {
       if (action == 0) {
         if (key == Key::W) {
           LinearSpeed.set(0);
-          get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density.set(0.0, 0.1);
-          get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density.set(0.0, 0.1);
+          get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 0.0;
+          get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 0.0;
         }
         if (key == Key::S) LinearSpeed.set(0);
         if (key == Key::A) AngularSpeed.set(0);
@@ -31,8 +31,8 @@ class Mover: public MoveBehavior {
       } else if (action == 1) {
         if (key == Key::W) {
           LinearSpeed.set( 10);
-          get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density.set(2.0, 0.5);
-          get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density.set(2.0, 0.5);
+          get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 2.0;
+          get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 2.0;
         }
         if (key == Key::S) LinearSpeed.set(-10);
         if (key == Key::A) AngularSpeed.set(-2 );
@@ -171,7 +171,11 @@ int main(int argc, char** argv) {
 
   // exhaust
   auto smoke_particles = ParticleEmitter::create();
-       smoke_particles->Life = 10.0f;
+       smoke_particles->Life = 5.0f;
+       smoke_particles->LifeVariance = 3.0f;
+       smoke_particles->StartScale = 0.1f;
+       smoke_particles->EndScale = 5.0f;
+       smoke_particles->Direction = math::vec2(-2.f, 0.f);
        smoke_particles->Texture = TextureDatabase::instance()->get("smoke");
 
   auto smoke = player->add<ParticleSystemComponent>();
@@ -181,6 +185,10 @@ int main(int argc, char** argv) {
 
   auto fire_particles = ParticleEmitter::create();
        fire_particles->Life = 1.0f;
+       fire_particles->LifeVariance = 0.5f;
+       fire_particles->StartScale = 0.5f;
+       fire_particles->EndScale = 2.0f;
+       fire_particles->Direction = math::vec2(-2.f, 0.f);
        fire_particles->Texture = TextureDatabase::instance()->get("fire");
 
   auto fire = player->add<ParticleSystemComponent>();

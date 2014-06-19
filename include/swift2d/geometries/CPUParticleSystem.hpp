@@ -65,6 +65,7 @@ class CPUParticleSystem {
   mutable std::vector<math::vec2>    positions_;
   mutable std::vector<math::vec2>    directions_;
   mutable std::vector<float>         ages_;
+  mutable std::vector<float>         max_ages_;
 
   mutable oglplus::VertexArray*      particles_;
   mutable oglplus::Buffer*           pos_buf_;

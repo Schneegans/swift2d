@@ -55,7 +55,6 @@ class ParticleSystemComponent : public DrawableComponent {
   // ------------------------------------------------------------ public methods
   void update(double time) {
     DrawableComponent::update(time);
-    Emitter()->update(time);
     particle_system_->update(time);
   }
 

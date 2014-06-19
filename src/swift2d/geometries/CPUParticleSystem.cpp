@@ -50,7 +50,7 @@ void CPUParticleSystem::update(double time) {
         empty_positions_.push(i);
       } else if (ages_[i] >= 0.f) {
         positions_[i] += directions_[i] * time;
-        ages_[i] += time / parent_->Emitter()->Life();
+        ages_[i] += time / max_ages_[i];
       }
     }
 
@@ -93,17 +93,36 @@ void CPUParticleSystem::draw(RenderContext const& ctx) const {
       upload_to(ctx);
     }
 
+    CPUParticleSystemShader::instance()->use(ctx);
     parent_->Emitter()->Texture()->bind(ctx, 0);
 
-    CPUParticleSystemShader::instance()->use(ctx);
+    // Life
+    // LifeVariance
+    // Direction
+    // DirectionVariance
+    // StartRotation
+    // EndRotation
+    // RotationVariance
+    // StartOpacity
+    // EndOpacity
+    // Colorize
+    // StartColor
+    // EndColor
+    // Density
+    // StartScale
+    // EndScale
+
     CPUParticleSystemShader::instance()->set_uniform("diffuse", 0);
     CPUParticleSystemShader::instance()->set_uniform("projection", ctx.projection_matrix);
 
-    if (parent_->Emitter()->InWorldSpace()) {
+    if (parent_->Emitter()->WorldSpacePosition()) {
       CPUParticleSystemShader::instance()->set_uniform("transform", math::make_scale(math::get_scale(parent_->WorldTransform())));
     } else {
       CPUParticleSystemShader::instance()->set_uniform("transform", parent_->WorldTransform());
     }
+
+    CPUParticleSystemShader::instance()->set_uniform("start_scale", parent_->Emitter()->StartScale());
+    CPUParticleSystemShader::instance()->set_uniform("end_scale", parent_->Emitter()->EndScale());
 
     // update gpu data
     particles_->Bind();
@@ -131,29 +150,38 @@ void CPUParticleSystem::spawn() {
     index = positions_.size();
     positions_.resize(index+1);
     ages_.resize(index+1);
+    max_ages_.resize(index+1);
     directions_.resize(index+1);
   }
 
-  if (parent_->Emitter()->InWorldSpace()) {
+  math::vec2 scale(math::get_scale(parent_->WorldTransform()));
 
-    math::vec2 scale(math::get_scale(parent_->WorldTransform()));
-
-    positions_[index]     =  math::get_translate(parent_->WorldTransform());
+  // generate position
+  if (parent_->Emitter()->WorldSpacePosition()) {
+    math::vec2 pos(parent_->Emitter()->Position());
+    positions_[index]     = (parent_->WorldTransform() * math::vec3(pos.x(), pos.y(), 1)).xy() ;
     positions_[index][0] /= scale.x();
     positions_[index][1] /= scale.y();
+  } else {
+    positions_[index] = parent_->Emitter()->Position();
+  }
 
-    directions_[index]     =  (parent_->WorldTransform() * math::vec3(-5, 0, 0)).xy();
+  // generate direction
+  if (parent_->Emitter()->WorldSpaceDirection()) {
+    directions_[index] = parent_->Emitter()->Direction();
+  } else {
+    math::vec2 dir(parent_->Emitter()->Direction());
+    directions_[index]     =  (parent_->WorldTransform() * math::vec3(dir.x(), dir.y(), 0)).xy();
     directions_[index][0] +=  math::random::get(-0.1f, 0.1f);
     directions_[index][1] +=  math::random::get(-0.1f, 0.1f);
     directions_[index][0] /= scale.x();
     directions_[index][1] /= scale.y();
-
-  } else {
-    positions_[index]  = math::vec2(0.f, 0.f);
-    directions_[index] = math::vec2(-5, 0);
   }
 
+  // generate life time
   ages_[index] = 0.f;
+  float var(parent_->Emitter()->LifeVariance());
+  max_ages_[index] = std::max(0.f, parent_->Emitter()->Life() + math::random::get(-var, var));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -162,6 +190,7 @@ void CPUParticleSystem::clear_all() {
   positions_.clear();
   directions_.clear();
   ages_.clear();
+  max_ages_.clear();
 
   while (!empty_positions_.empty()) {
     empty_positions_.pop();
