@@ -9,6 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Shader.hpp>
 #include <swift2d/utils/Logger.hpp>
+#include <swift2d/materials/ShaderIncludes.hpp>
 
 namespace swift {
 
@@ -23,7 +24,12 @@ Shader::Shader(std::string const& v_source,
   , program_(nullptr)
   , v_source_(v_source)
   , f_source_(f_source)
-  , g_source_(g_source) {}
+  , g_source_(g_source) {
+
+  ShaderIncludes::instance()->process(v_source_);
+  ShaderIncludes::instance()->process(f_source_);
+  ShaderIncludes::instance()->process(g_source_);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

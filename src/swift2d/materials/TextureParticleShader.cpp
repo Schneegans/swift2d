@@ -16,7 +16,7 @@ namespace swift {
 TextureParticleShader::TextureParticleShader()
   : Shader(
     R"(
-      #version 330
+      @include "version"
 
       layout(location=0) in vec2  position;
       layout(location=1) in float age;
@@ -34,7 +34,7 @@ TextureParticleShader::TextureParticleShader()
 
 
     R"(
-      #version 330
+      @include "version"
 
       in float age;
       in vec2  tex_coords;
@@ -64,7 +64,7 @@ TextureParticleShader::TextureParticleShader()
 
 
     R"(
-      #version 330
+      @include "version"
 
       layout(points) in;
       layout(triangle_strip, max_vertices = 4) out;

@@ -16,7 +16,7 @@ namespace swift {
 LightParticleShader::LightParticleShader()
   : Shader(
     R"(
-      #version 330
+      @include "version"
 
       layout(location=0) in vec2  position;
       layout(location=1) in float age;
@@ -31,7 +31,7 @@ LightParticleShader::LightParticleShader()
 
 
     R"(
-      #version 330
+      @include "version"
 
       in float age;
       in vec2  tex_coords;
@@ -72,7 +72,7 @@ LightParticleShader::LightParticleShader()
 
 
     R"(
-      #version 330
+      @include "version"
 
       layout(points) in;
       layout(triangle_strip, max_vertices = 4) out;

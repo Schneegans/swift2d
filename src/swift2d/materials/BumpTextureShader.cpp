@@ -8,7 +8,6 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/BumpTextureShader.hpp>
-#include <swift2d/materials/shader_snippets.hpp>
 
 namespace swift {
 
@@ -17,10 +16,12 @@ namespace swift {
 BumpTextureShader::BumpTextureShader()
   : Shader(
     // vertex shader
-    shader_snippets::get_quad_vertext_shader(),
+    R"(
+      @include "quad_vertext_shader"
+    )",
     // fragment shader
     R"(
-      #version 330
+      @include "version"
 
       // varyings
       in vec2 tex_coords;

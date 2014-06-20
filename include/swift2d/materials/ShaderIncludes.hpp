@@ -6,11 +6,14 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SHADER_SNIPPETS_HPP
-#define SWIFT2D_SHADER_SNIPPETS_HPP
+#ifndef SWIFT2D_SHADER_INCLUDES_HPP
+#define SWIFT2D_SHADER_INCLUDES_HPP
 
 // includes  -------------------------------------------------------------------
-#include <string>
+#include <swift2d/materials/Shader.hpp>
+#include <swift2d/utils/Singleton.hpp>
+
+#include <unordered_map>
 
 namespace swift {
 
@@ -18,13 +21,32 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-namespace shader_snippets {
-  std::string get_quad_vertext_shader();
-}
+class ShaderIncludes : public Singleton<ShaderIncludes> {
 
+ ///////////////////////////////////////////////////////////////////////////////
+ // ----------------------------------------------------------- public interface
+ public:
+
+  void process(std::string& input) const;
+
+  void add_include(std::string const& identifier, std::string const& code);
+
+  friend class Singleton<ShaderIncludes>;
+
+ ///////////////////////////////////////////////////////////////////////////////
+ // ---------------------------------------------------------- private interface
+ private:
+  // this class is a Singleton --- private c'tor and d'tor
+  ShaderIncludes();
+  ~ShaderIncludes() {};
+
+  bool process_impl(std::string& input) const;
+
+  std::unordered_map<std::string, std::string> snippets_;
+};
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_SHADER_SNIPPETS_HPP
+#endif // SWIFT2D_SHADER_INCLUDES_HPP

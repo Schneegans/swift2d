@@ -87,7 +87,7 @@ void Compositor::init(RenderContext const& ctx) {
     // create shaders ------------------------------------------------------------
 
     shader_ = new Shader(R"(
-      #version 330
+      @include "version"
 
       layout(location=0) in vec2 position;
 
@@ -99,7 +99,7 @@ void Compositor::init(RenderContext const& ctx) {
         gl_Position = vec4(position, 0.0, 1.0);
       }
     )", R"(
-      #version 330
+      @include "version"
 
       in vec2 tex_coords;
       uniform sampler2D g_buffer_diffuse;
