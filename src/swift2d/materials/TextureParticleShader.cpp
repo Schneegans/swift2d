@@ -16,6 +16,7 @@ namespace swift {
 TextureParticleShader::TextureParticleShader()
   : Shader(
     R"(
+      // vertex shader ---------------------------------------------------------
       @include "version"
 
       layout(location=0) in vec2  position;
@@ -34,6 +35,7 @@ TextureParticleShader::TextureParticleShader()
 
 
     R"(
+      // fragment shader -------------------------------------------------------
       @include "version"
 
       in float age;
@@ -45,9 +47,7 @@ TextureParticleShader::TextureParticleShader()
       uniform float     start_opacity;
       uniform float     end_opacity;
 
-      layout (location = 0) out vec4 fragColor;
-      layout (location = 1) out vec4 fragNormal;
-      layout (location = 2) out vec4 fragEmit;
+      @include "write_gbuffer"
 
       void main(void) {
         vec4 color = mix(
@@ -56,14 +56,17 @@ TextureParticleShader::TextureParticleShader()
           age
         );
 
-        fragColor  = texture2D(diffuse, tex_coords) * color;
-        fragNormal = vec4(0.5, 0.5, 0, fragColor.a);
-        fragEmit   = vec4(1.0, 0, 0, fragColor.a);
+        vec4 out_color  = texture2D(diffuse, tex_coords) * color;
+        vec4 out_normal = vec4(0.5, 0.5, 0, out_color.a);
+        vec4 out_emit   = vec4(1.0, 0, 0, out_color.a);
+
+        write_gbuffer(out_color, out_normal, out_emit);
       }
     )",
 
 
     R"(
+      // geometry shader -------------------------------------------------------
       @include "version"
 
       layout(points) in;

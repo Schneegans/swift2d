@@ -15,12 +15,12 @@ namespace swift {
 
 BumpTextureShader::BumpTextureShader()
   : Shader(
-    // vertex shader
     R"(
+      // vertex shader ---------------------------------------------------------
       @include "quad_vertext_shader"
     )",
-    // fragment shader
     R"(
+      // fragment shader -------------------------------------------------------
       @include "version"
 
       // varyings
@@ -31,15 +31,14 @@ BumpTextureShader::BumpTextureShader()
       uniform sampler2D normal;
       uniform float     emit;
 
-      // output
-      layout (location = 0) out vec4 fragColor;
-      layout (location = 1) out vec4 fragNormal;
-      layout (location = 2) out vec4 fragEmit;
+      @include "write_gbuffer"
 
       void main(void){
-        fragColor  = texture2D(diffuse, tex_coords);
-        fragNormal  = texture2D(normal, tex_coords);
-        fragEmit   = vec4(emit, 0, 0, fragColor.a);
+        vec4 out_color  = texture2D(diffuse, tex_coords);
+        vec4 out_normal = texture2D(normal, tex_coords);
+        vec4 out_emit   = vec4(emit, 0, 0, out_color.a);
+
+        write_gbuffer(out_color, out_normal, out_emit);
       }
     )"
   ) {}

@@ -36,7 +36,50 @@ ShaderIncludes::ShaderIncludes() {
     }
   )");
 
-  add_include("version", "#version 330");
+  add_include("version", R"(
+    #version 330
+  )");
+
+  add_include("write_gbuffer", R"(
+    layout (location = 0) out vec4 fragColor;
+    layout (location = 1) out vec4 fragNormal;
+    layout (location = 2) out vec4 fragEmit;
+
+    void write_gbuffer(vec4 color, vec4 normal, vec4 emit) {
+      fragColor   = color;
+      fragNormal  = normal;
+      fragEmit    = emit;
+    }
+  )");
+
+  add_include("write_lbuffer", R"(
+    layout (location = 0) out vec3 fragColor;
+
+    void write_lbuffer(vec3 color) {
+      fragColor   = color;
+    }
+  )");
+
+  add_include("gbuffer_input", R"(
+    uniform ivec2     screen_size;
+    uniform sampler2D g_buffer_diffuse;
+    uniform sampler2D g_buffer_normal;
+    uniform sampler2D g_buffer_emit;
+
+    vec3 get_normal() {
+      return texture2D(g_buffer_normal, gl_FragCoord.xy/screen_size).rgb;
+    }
+  )");
+
+  add_include("light_helpers", R"(
+    float get_specular_light(vec3 light_dir, vec3 surface_dir) {
+      return pow(max(0, dot(vec3(0, 0, 1), reflect(light_dir, surface_dir))), 50);
+    }
+
+    float get_diffuse_light(vec3 light_dir, vec3 surface_dir) {
+      return max(0, dot(light_dir, surface_dir));
+    }
+  )");
 }
 
 ////////////////////////////////////////////////////////////////////////////////

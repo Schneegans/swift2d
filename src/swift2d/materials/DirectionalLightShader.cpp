@@ -15,34 +15,32 @@ namespace swift {
 
 DirectionalLightShader::DirectionalLightShader()
   : Shader(
-    // vertex shader
     R"(
+      // vertex shader ---------------------------------------------------------
       @include "quad_vertext_shader"
     )",
-    // fragment shader
     R"(
+      // fragment shader -------------------------------------------------------
       @include "version"
 
       // varyings
       in vec2 tex_coords;
 
       // uniforms
-      uniform ivec2     screen_size;
-      uniform vec3      light_dir;
-      uniform sampler2D g_buffer_normal;
+      uniform vec3 light_dir;
 
-      // output
-      out vec3 fragColor;
+      @include "gbuffer_input"
+      @include "write_lbuffer"
+      @include "light_helpers"
 
       void main(void){
-        vec4 normal       = texture2D(g_buffer_normal, gl_FragCoord.xy/screen_size);
-        vec3 surface_dir  = normalize(normal.rgb - 0.5);
-        float attenuation = normal.a;
+        vec3 normal       = get_normal();
+        vec3 surface_dir  = normalize(normal - 0.5);
 
-        float spot        = pow(max(0, dot(vec3(0, 0, 1), reflect(light_dir, surface_dir))), 50) * attenuation;
-        float intensity   = max(0, dot(light_dir, surface_dir)) * attenuation;
+        float spot        = get_specular_light(light_dir, surface_dir);
+        float intensity   = get_diffuse_light(light_dir, surface_dir);
 
-        fragColor         = vec3(intensity, spot, 0);
+        write_lbuffer(vec3(intensity, spot, 0));
       }
     )"
   ) {}
