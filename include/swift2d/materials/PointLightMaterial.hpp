@@ -35,8 +35,12 @@ class PointLightMaterial : public Material {
 
   // ---------------------------------------------------------------- properties
   TextureProperty Texture;
+  ColorProperty   Color;
 
   // ----------------------------------------------------- contruction interface
+  PointLightMaterial()
+    : Color(swift::Color(1.f, 1.f, 1.f)) {}
+
   // Creates a new material and returns a shared pointer.
   static PointLightMaterialPtr create() {
     return std::make_shared<PointLightMaterial>();
@@ -73,8 +77,11 @@ class PointLightMaterial : public Material {
     PointLightShader::instance()->set_uniform("projection", ctx.projection_matrix);
     PointLightShader::instance()->set_uniform("transform", transform);
     PointLightShader::instance()->set_uniform("screen_size", ctx.size);
+    // PointLightShader::instance()->set_uniform("g_buffer_color", 1);
     PointLightShader::instance()->set_uniform("g_buffer_normal", 2);
+    PointLightShader::instance()->set_uniform("g_buffer_aux", 3);
     PointLightShader::instance()->set_uniform("light_tex", 0);
+    PointLightShader::instance()->set_uniform("light_color", Color().vec3());
   }
 };
 

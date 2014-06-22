@@ -34,7 +34,7 @@ class Mover: public MoveBehavior {
           LinearSpeed.set( 10);
           get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 100.0;
           get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 100.0;
-          get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 50.0;
+          get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 15.0;
         }
         if (key == Key::S) LinearSpeed.set(-10);
         if (key == Key::A) AngularSpeed.set(-2 );
@@ -105,11 +105,20 @@ int main(int argc, char** argv) {
   MaterialDatabase::instance()->add("ship",       ShadelessTextureMaterial::create_from_file(app.get_resource("images", "ship.png")));
   MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_file(app.get_resource("images", "bullet.png")));
 
-  MaterialDatabase::instance()->add("planet1",    BumpTextureMaterial::create_from_files(app.get_resource("images", "planet_diffuse2.png"), app.get_resource("images", "planet_normal2.png")));
-  MaterialDatabase::instance()->add("planet2",    BumpTextureMaterial::create_from_files(app.get_resource("images", "planet_diffuse.png"), app.get_resource("images", "planet_normal.png")));
+  MaterialDatabase::instance()->add("planet2",    ShadelessTextureMaterial::create_from_file(app.get_resource("images", "planet_diffuse2.png")));
+  MaterialDatabase::instance()->add("planet1",    BumpTextureMaterial::create_from_files(app.get_resource("images", "planet_diffuse.png"),
+                                                                                         app.get_resource("images", "planet_normal.png"),
+                                                                                         0.1, 50.f, 0.8f));
+  MaterialDatabase::instance()->add("planet3",    BumpTextureMaterial::create_from_files(app.get_resource("images", "planet_diffuse3.png"),
+                                                                                         app.get_resource("images", "planet_normal3.png"),
+                                                                                         0.1, 20.f, 0.3f));
 
-  MaterialDatabase::instance()->add("light",      PointLightMaterial::create_from_database("point_light"));
-  MaterialDatabase::instance()->add("sun",        DirectionalLightMaterial::create(math::vec3(1, 1, -1)));
+  auto mat = PointLightMaterial::create_from_database("point_light");
+  mat->Color = Color(0.4, 0.3, 1.0);
+  MaterialDatabase::instance()->add("light",      mat);
+
+  MaterialDatabase::instance()->add("sun1",       DirectionalLightMaterial::create(math::vec3(0.1, 1, 0), Color(1, 0.5, 1.0)));
+  MaterialDatabase::instance()->add("sun2",       DirectionalLightMaterial::create(math::vec3(-1, -1, 0), Color(0.4, 0.8, 1.0)));
 
 
   // window setup --------------------------------------------------------------
@@ -119,17 +128,19 @@ int main(int argc, char** argv) {
   // example scene setup -------------------------------------------------------
   auto scene = SceneManager::instance()->get_default();
 
-  auto music = scene->add<SoundComponent>();
-       music->Sound = Sound::create_from_file(app.get_resource("audio", "music.ogg"));
-       music->Volume = 0.1f;
-       music->play();
+  // auto music = scene->add<SoundComponent>();
+  //      music->Sound = Sound::create_from_file(app.get_resource("audio", "music.ogg"));
+  //      music->Volume = 0.1f;
+  //      music->play();
 
   auto field = scene->add<CircularShape>();
        field->Transform = math::make_scale(4);
 
-  auto sun = scene->add<LightComponent>();
-       sun->Transform = math::make_scale(15) * math::make_translate(-0.2, 0.2);
-       sun->Material = MaterialDatabase::instance()->get("sun");
+  auto sun1 = scene->add<LightComponent>();
+       sun1->Material = MaterialDatabase::instance()->get("sun1");
+
+  auto sun2 = scene->add<LightComponent>();
+       sun2->Material = MaterialDatabase::instance()->get("sun2");
 
   auto bg = scene->add<SpriteComponent>();
        bg->Depth = -1000.0f;
@@ -147,16 +158,28 @@ int main(int argc, char** argv) {
 
   // planet
   auto planet1 = scene->add_object();
-       planet1->Transform = math::make_translate(-0.9, -0.5);
-  auto sprite2 = planet1->add<SpriteComponent>();
-       sprite2->Depth = 0.0f;
-       sprite2->Material = MaterialDatabase::instance()->get("planet1");
+       planet1->Transform = math::make_translate(-0.9, 0.5) * math::make_scale(1.2f);
+  auto sprite1 = planet1->add<SpriteComponent>();
+       sprite1->Depth = 0.0f;
+       sprite1->Material = MaterialDatabase::instance()->get("planet1");
+  auto rot = planet1->add<MoveBehavior>();
+       rot->AngularSpeed = 0.1f;
 
   auto planet2 = scene->add_object();
-       planet2->Transform = math::make_translate(-1.2, 1.0);
-  auto sprite3 = planet2->add<SpriteComponent>();
+       planet2->Transform = math::make_translate(-1.2, -2.0) * math::make_scale(2.2f);
+  auto sprite2 = planet2->add<SpriteComponent>();
+       sprite2->Depth = 40.0f;
+       sprite2->Material = MaterialDatabase::instance()->get("planet2");
+       rot = planet2->add<MoveBehavior>();
+       rot->AngularSpeed = -0.1f;
+
+  auto planet3 = scene->add_object();
+       planet3->Transform = math::make_translate(1.2, -1.0) * math::make_scale(1.5f);;
+  auto sprite3 = planet3->add<SpriteComponent>();
        sprite3->Depth = 0.0f;
-       sprite3->Material = MaterialDatabase::instance()->get("planet2");
+       sprite3->Material = MaterialDatabase::instance()->get("planet3");
+       rot = planet3->add<MoveBehavior>();
+       rot->AngularSpeed = 0.03f;
 
   // player
   auto player = scene->add_object();
@@ -209,11 +232,11 @@ int main(int argc, char** argv) {
   auto fire_light_particles = LightParticleEmitter::create();
        fire_light_particles->Life = 1.0f;
        fire_light_particles->LifeVariance = 0.5f;
-       fire_light_particles->StartScale = 2.f;
-       fire_light_particles->EndScale = 15.0f;
-       fire_light_particles->StartOpacity = 1.f;
-       fire_light_particles->StartColor = Color(1, 1, 1);
-       fire_light_particles->EndColor = Color(0.8, 0.0, 0.0);
+       fire_light_particles->StartScale = 10.f;
+       fire_light_particles->EndScale = 20.0f;
+       fire_light_particles->StartOpacity = 0.5f;
+       fire_light_particles->StartColor = Color(1, 0.1, 0.1);
+       fire_light_particles->EndColor = Color(1.0, 0.0, 0.0);
        fire_light_particles->Direction = math::vec2(-2.f, 0.f);
        fire_light_particles->Texture = TextureDatabase::instance()->get("point_light");
 

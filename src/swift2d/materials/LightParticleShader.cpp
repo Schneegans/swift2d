@@ -64,10 +64,10 @@ LightParticleShader::LightParticleShader()
         vec3 surface_dir  = normalize(normal - 0.5);
         float attenuation = light.a * color.a;
 
-        float spot        = get_specular_light(light_dir, surface_dir) * attenuation;
-        float intensity   = get_diffuse_light(light_dir, surface_dir) * attenuation;
+        float specular    = get_specular_light(light_dir, surface_dir) * attenuation;
+        float diffuse     = get_diffuse_light(light_dir, surface_dir) * attenuation;
 
-        write_lbuffer(vec3(intensity, spot, 0) + color.rga*0.00001);
+        write_lbuffer(color.rgb, diffuse, specular * get_reflectivity());
       }
     )",
 

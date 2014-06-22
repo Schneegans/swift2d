@@ -28,6 +28,7 @@ PointLightShader::PointLightShader()
 
       // uniforms
       uniform sampler2D light_tex;
+      uniform vec3      light_color;
 
       @include "gbuffer_input"
       @include "write_lbuffer"
@@ -40,10 +41,10 @@ PointLightShader::PointLightShader()
         vec3 light_dir    = normalize(light.rgb - 0.5);
         vec3 surface_dir  = normalize(normal - 0.5);
 
-        float spot        = get_specular_light(light_dir, surface_dir) * light.a;
-        float intensity   = get_diffuse_light(light_dir, surface_dir) * light.a;
+        float specular    = get_specular_light(light_dir, surface_dir) * light.a;
+        float diffuse     = get_diffuse_light(light_dir, surface_dir) * light.a;
 
-        write_lbuffer(vec3(intensity, spot, 0));
+        write_lbuffer(light_color, diffuse, specular * get_reflectivity());
       }
     )"
   ) {}

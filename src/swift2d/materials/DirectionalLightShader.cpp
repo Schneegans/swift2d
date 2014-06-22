@@ -28,6 +28,7 @@ DirectionalLightShader::DirectionalLightShader()
 
       // uniforms
       uniform vec3 light_dir;
+      uniform vec3 light_color;
 
       @include "gbuffer_input"
       @include "write_lbuffer"
@@ -37,10 +38,10 @@ DirectionalLightShader::DirectionalLightShader()
         vec3 normal       = get_normal();
         vec3 surface_dir  = normalize(normal - 0.5);
 
-        float spot        = get_specular_light(light_dir, surface_dir);
-        float intensity   = get_diffuse_light(light_dir, surface_dir);
+        float specular    = get_specular_light(light_dir, surface_dir);
+        float diffuse     = get_diffuse_light(light_dir, surface_dir);
 
-        write_lbuffer(vec3(intensity, spot, 0));
+        write_lbuffer(light_color, diffuse, specular * get_reflectivity());
       }
     )"
   ) {}

@@ -56,11 +56,7 @@ TextureParticleShader::TextureParticleShader()
           age
         );
 
-        vec4 out_color  = texture2D(diffuse, tex_coords) * color;
-        vec4 out_normal = vec4(0.5, 0.5, 0, out_color.a);
-        vec4 out_emit   = vec4(1.0, 0, 0, out_color.a);
-
-        write_gbuffer(out_color, out_normal, out_emit);
+        write_gbuffer(texture2D(diffuse, tex_coords) * color);
       }
     )",
 
