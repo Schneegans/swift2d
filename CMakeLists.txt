@@ -49,6 +49,7 @@ set(LIBS
     ${PANGOCAIRO_LIBRARIES}
     ${OPENGL_LIBRARIES}
     miniupnpc
+    awesomium-1-7
 )
 link_libraries(${LIBS})
 
