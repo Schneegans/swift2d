@@ -227,7 +227,9 @@ int main(int argc, char** argv) {
 
   // rendering pipeline --------------------------------------------------------
   auto pipeline = Pipeline::create();
+
   pipeline->set_output_window(window);
+  Interface::instance()->set_window(window);
 
   Renderer renderer;
   renderer.set_pipeline(pipeline);
@@ -254,8 +256,7 @@ int main(int argc, char** argv) {
     window->process_input();
     scene->update(time);
     renderer.process(scene, camera);
-
-    // Interface::instance()->update();
+    Interface::instance()->update();
   });
 
   ticker->start();

@@ -11,6 +11,8 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Singleton.hpp>
+#include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/graphics/Window.hpp>
 
 // forward declares ------------------------------------------------------------
 namespace Awesomium {
@@ -31,6 +33,9 @@ class Interface : public Singleton<Interface> {
  public:
 
   void update() const;
+  bool bind(RenderContext const& ctx, unsigned location) const;
+
+  void set_window(WindowPtr& window) const;
 
   friend class Singleton<Interface>;
 

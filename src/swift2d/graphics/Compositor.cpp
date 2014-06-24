@@ -10,6 +10,8 @@
 #include <swift2d/graphics/Compositor.hpp>
 #include <swift2d/components/DrawableComponent.hpp>
 #include <swift2d/geometries/Quad.hpp>
+#include <swift2d/materials/ShadelessTextureShader.hpp>
+#include <swift2d/gui/Interface.hpp>
 
 #include <sstream>
 
@@ -103,7 +105,7 @@ void Compositor::init(RenderContext const& ctx) {
 
       uniform bool debug;
 
-      layout (location = 0) out vec3 fragColor;
+      layout (location = 0) out vec4 fragColor;
 
       void main(void) {
         vec3  diffuse  = get_diffuse();
@@ -111,10 +113,10 @@ void Compositor::init(RenderContext const& ctx) {
         vec3  specular = get_specular_light();
         float emit     = get_emit();
 
-        fragColor      = emit * diffuse + (1 - emit) * (light*diffuse + specular);
+        fragColor      = vec4(emit * diffuse + (1 - emit) * (light*diffuse + specular), 1.0);
 
         if (debug) {
-          fragColor = vec3(texture2D(g_buffer_aux, gl_FragCoord.xy/screen_size).g/20.0);
+          fragColor = texture2D(g_buffer_aux, gl_FragCoord.xy/screen_size);
         }
       }
     )");
@@ -199,9 +201,13 @@ void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext c
       init(ctx);
     }
 
+    ctx.gl.BlendFunc(
+      oglplus::BlendFunction::SrcAlpha,
+      oglplus::BlendFunction::OneMinusSrcAlpha
+    );
+
     oglplus::DefaultFramebuffer::Bind(oglplus::Framebuffer::Target::Draw);
     ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
-
 
     oglplus::Texture::Active(0);
     ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_color_);
@@ -229,13 +235,27 @@ void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext c
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Compositor::draw_gui(RenderContext const& ctx) {
+
+  if (Interface::instance()->bind(ctx, 0)) {
+    ShadelessTextureShader::instance()->use(ctx);
+    ShadelessTextureShader::instance()->set_uniform("projection", math::mat3());
+    ShadelessTextureShader::instance()->set_uniform("transform", math::mat3());
+    ShadelessTextureShader::instance()->set_uniform("diffuse", 0);
+
+    Quad::instance()->draw(ctx);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Compositor::clean_up() {
-  if(shader_)           delete shader_;             shader_ = nullptr;
-  if(fbo_)              delete fbo_;                fbo_ = nullptr;
-  if(offscreen_color_)  delete offscreen_color_;    offscreen_color_ = nullptr;
+  if(shader_)           delete shader_;             shader_           = nullptr;
+  if(fbo_)              delete fbo_;                fbo_              = nullptr;
+  if(offscreen_color_)  delete offscreen_color_;    offscreen_color_  = nullptr;
   if(offscreen_normal_) delete offscreen_normal_;   offscreen_normal_ = nullptr;
-  if(offscreen_light_)  delete offscreen_light_;    offscreen_light_ = nullptr;
-  if(offscreen_aux_)    delete offscreen_aux_;      offscreen_aux_ = nullptr;
+  if(offscreen_light_)  delete offscreen_light_;    offscreen_light_  = nullptr;
+  if(offscreen_aux_)    delete offscreen_aux_;      offscreen_aux_    = nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
