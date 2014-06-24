@@ -11,5 +11,6 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/gui/Interface.hpp>
+#include <swift2d/gui/GuiComponent.hpp>
 
 #endif // SWIFT2D_INCLUDE_GUI_HPP

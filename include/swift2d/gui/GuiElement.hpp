@@ -6,19 +6,15 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_INTERFACE_HPP
-#define SWIFT2D_INTERFACE_HPP
+#ifndef SWIFT2D_GUI_ELEMENT_HPP
+#define SWIFT2D_GUI_ELEMENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/utils/Singleton.hpp>
-#include <swift2d/graphics/RenderContext.hpp>
-#include <swift2d/graphics/Window.hpp>
+#include <swift2d/gui/Interface.hpp>
 
 // forward declares ------------------------------------------------------------
 namespace Awesomium {
-  class WebCore;
   class WebView;
-  class WebSession;
 }
 
 namespace swift {
@@ -26,34 +22,45 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+// forward declares ------------------------------------------------------------
+class GuiComponent;
+
+// shared pointer type definition ----------------------------------------------
+class GuiElement;
+typedef std::shared_ptr<GuiElement>       GuiElementPtr;
+typedef std::shared_ptr<const GuiElement> ConstGuiElementPtr;
+typedef Property<GuiElementPtr>           GuiElementProperty;
+
 // -----------------------------------------------------------------------------
-class Interface : public Singleton<Interface> {
+class GuiElement {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  void update() const;
+  // ---------------------------------------------------- construction interface
+  GuiElement(GuiComponent* parent);
+  ~GuiElement();
 
-  friend class GuiElement;
-  friend class Singleton<Interface>;
+  static GuiElementPtr create(GuiComponent* parent) {
+    return std::make_shared<GuiElement>(parent);
+  }
+
+  // ------------------------------------------------------------ public methods
+  void reload();
+
+  void draw(RenderContext const& ctx);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  // this class is a Singleton --- private c'tor and d'tor
-  Interface();
-  ~Interface();
-
-  bool bind(Awesomium::WebView* view, RenderContext const& ctx, unsigned location) const;
-  Awesomium::WebView* create_webview(int width, int height) const;
-
-  Awesomium::WebCore* web_core_;
-  Awesomium::WebSession* web_session_;
+  Awesomium::WebView* view_;
+  std::vector<int>    callbacks_;
+  GuiComponent*       parent_;
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_INTERFACE_HPP
+#endif // SWIFT2D_GUI_ELEMENT_HPP

@@ -136,6 +136,12 @@ int main(int argc, char** argv) {
        fps->Depth = 1000.f;
        fps->InScreenSpace = true;
 
+
+  auto menu = scene->add<GuiComponent>();
+       menu->Resource = app.get_resource("gui", "main_menu.html");
+       menu->Size = math::vec2i(240, 200);
+       menu->Anchor = math::vec2i(0, 0);
+
   // planet
   auto planet1 = scene->add_object();
        planet1->Transform = math::make_translate(-0.9, 0.5) * math::make_scale(1.2f);
@@ -229,7 +235,7 @@ int main(int argc, char** argv) {
   auto pipeline = Pipeline::create();
 
   pipeline->set_output_window(window);
-  Interface::instance()->set_window(window);
+
 
   Renderer renderer;
   renderer.set_pipeline(pipeline);
@@ -283,6 +289,8 @@ int main(int argc, char** argv) {
       bullet->Transform = player->Transform();
 
       ++particle_count;
+    } else if (key == swift::Key::F5 && action != 1) {
+      menu->reload();
     }
   });
 

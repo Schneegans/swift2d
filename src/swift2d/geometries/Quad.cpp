@@ -38,9 +38,9 @@ void Quad::upload_to(RenderContext const& ctx) const {
 
     std::vector<float> rect = {
       -1.0f, -1.0f,
-      -1.0f, 1.0f,
-      1.0f, -1.0f,
-      1.0f, 1.0f
+      -1.0f,  1.0f,
+       1.0f, -1.0f,
+       1.0f,  1.0f
     };
 
     // bind the VBO for the rectangle_ vertices

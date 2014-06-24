@@ -26,6 +26,7 @@ typedef NumericProperty<unsigned>       UInt;
 typedef NumericProperty<unsigned char>  UChar;
 
 typedef NumericProperty<math::vec3>     Vec3;
+typedef NumericProperty<math::vec2i>    Vec2i;
 typedef NumericProperty<math::vec2>     Vec2;
 typedef NumericProperty<math::mat3>     Mat3;
 

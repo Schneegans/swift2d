@@ -235,15 +235,9 @@ void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext c
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Compositor::draw_gui(RenderContext const& ctx) {
-
-  if (Interface::instance()->bind(ctx, 0)) {
-    ShadelessTextureShader::instance()->use(ctx);
-    ShadelessTextureShader::instance()->set_uniform("projection", math::mat3());
-    ShadelessTextureShader::instance()->set_uniform("transform", math::mat3());
-    ShadelessTextureShader::instance()->set_uniform("diffuse", 0);
-
-    Quad::instance()->draw(ctx);
+void Compositor::draw_gui(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
+  for (auto& gui: scene->gui_elements) {
+    gui.second->draw(ctx);
   }
 }
 

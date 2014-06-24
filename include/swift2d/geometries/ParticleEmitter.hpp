@@ -55,7 +55,6 @@ class ParticleEmitter {
   ColorProperty   StartColor;
   ColorProperty   EndColor;
 
-
   Float           Density;
 
   Float           StartScale;
