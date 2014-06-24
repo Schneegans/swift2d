@@ -258,34 +258,33 @@ class SwiftViewListener : public Awesomium::WebViewListener::View {
 class SwiftLoadListener : public Awesomium::WebViewListener::Load {
 
  public:
+
+  SwiftLoadListener(GuiComponent* parent)
+    : parent_(parent) {}
+
   void OnBeginLoadingFrame(
     Awesomium::WebView* caller, int64 frame_id,
     bool is_main_frame, const Awesomium::WebURL& url,
-    bool is_error_page) {
-
-    Logger::LOG_DEBUG << "OnBeginLoadingFrame" << std::endl;
-  }
+    bool is_error_page) {}
 
   void OnFailLoadingFrame(
     Awesomium::WebView* caller, int64 frame_id,
     bool is_main_frame, const Awesomium::WebURL& url,
-    int error_code, const Awesomium::WebString& error_desc) {
-
-    Logger::LOG_DEBUG << "OnFailLoadingFrame" << std::endl;
-  }
+    int error_code, const Awesomium::WebString& error_desc) {}
 
   void OnFinishLoadingFrame(
     Awesomium::WebView* caller, int64 frame_id,
-    bool is_main_frame, const Awesomium::WebURL& url) {
-
-    Logger::LOG_DEBUG << "OnFinishLoadingFrame" << std::endl;
-  }
+    bool is_main_frame, const Awesomium::WebURL& url) {}
 
   void OnDocumentReady(
     Awesomium::WebView* caller, const Awesomium::WebURL& url) {
 
-    Logger::LOG_DEBUG << "OnDocumentReady" << std::endl;
+    caller->CreateGlobalJavascriptObject(Awesomium::WSLit("Swift2D"));
+    parent_->on_loaded.emit();
   }
+
+ private:
+  GuiComponent* parent_;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -313,6 +312,35 @@ class SwiftProcessListener : public Awesomium::WebViewListener::Process {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+class SwiftJSMethodHandler : public Awesomium::JSMethodHandler {
+ public:
+
+  SwiftJSMethodHandler(GuiComponent* parent)
+    : parent_(parent) {}
+
+  void OnMethodCall(
+    Awesomium::WebView* caller, unsigned int remote_object_id,
+    const Awesomium::WebString& method_name, const Awesomium::JSArray& args) {
+
+    parent_->on_javascript_callback.emit(Awesomium::ToString(method_name));
+  }
+
+
+  Awesomium::JSValue OnMethodCallWithReturnValue(
+    Awesomium::WebView* caller, unsigned int remote_object_id,
+    const Awesomium::WebString& method_name, const Awesomium::JSArray& args) {
+
+  }
+
+ private:
+  GuiComponent* parent_;
+
+};
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -326,8 +354,9 @@ GuiElement::GuiElement(GuiComponent* parent)
   view_->SetTransparent(true);
   view_->Focus();
   view_->set_view_listener(new SwiftViewListener());
-  view_->set_load_listener(new SwiftLoadListener());
+  view_->set_load_listener(new SwiftLoadListener(parent_));
   view_->set_process_listener(new SwiftProcessListener());
+  view_->set_js_method_handler(new SwiftJSMethodHandler(parent_));
 
   auto window = WindowManager::instance()->get_default();
 
@@ -379,6 +408,7 @@ GuiElement::~GuiElement() {
   delete static_cast<SwiftViewListener*>(view_->view_listener());
   delete static_cast<SwiftLoadListener*>(view_->load_listener());
   delete static_cast<SwiftProcessListener*>(view_->process_listener());
+  delete static_cast<SwiftJSMethodHandler*>(view_->js_method_handler());
   view_->Destroy();
 
   auto window = WindowManager::instance()->get_default();
@@ -393,6 +423,33 @@ GuiElement::~GuiElement() {
 
 void GuiElement::reload() {
   view_->Reload(true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void GuiElement::call_javascript(std::string const& method, std::string const& arg) {
+  Awesomium::JSValue window = view_->ExecuteJavascriptWithResult(
+    Awesomium::WSLit("window"), Awesomium::WSLit("")
+  );
+
+  if (window.IsObject()) {
+    Awesomium::JSArray args;
+    args.Push(Awesomium::JSValue(Awesomium::ToWebString(arg)));
+
+    window.ToObject().Invoke(Awesomium::ToWebString(method), args);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void GuiElement::add_javascript_callback(std::string const& callback) {
+  Awesomium::JSValue o = view_->ExecuteJavascriptWithResult(
+    Awesomium::WSLit("Swift2D"), Awesomium::WSLit("")
+  );
+
+  if (o.IsObject()) {
+    o.ToObject().SetCustomMethod(Awesomium::ToWebString(callback), false);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

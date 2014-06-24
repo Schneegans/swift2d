@@ -1,11 +1,16 @@
+body {
+  color: white;
+  font: 16px Arial, Helvetica, sans-serif;
+  text-shadow: 0 1px 1px rgba(0,0,0,.3);
+  overflow: hidden;
+}
+
 .button {
   width: 200px;
   outline: none;
   cursor: pointer;
   text-align: center;
   text-decoration: none;
-  font: 14px Arial, Helvetica, sans-serif;
-  text-shadow: 0 1px 1px rgba(0,0,0,.3);
   -webkit-border-radius: 10px;
   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
   padding: 10px;

@@ -30,11 +30,17 @@ class GuiComponent : public DrawableComponent {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  // ---------------------------------------------------------------- properties
   Float  Depth;
   String Resource;
   Vec2i  Size;
   Vec2i  Anchor;
   Vec2i  Offset;
+
+  // ------------------------------------------------------------------- signals
+  Signal<std::string> on_javascript_callback;
+  Signal<>            on_loaded;
 
   // ---------------------------------------------------- construction interface
   GuiComponent()
@@ -55,6 +61,14 @@ class GuiComponent : public DrawableComponent {
   // ------------------------------------------------------------ public methods
   void reload() {
     gui_element_->reload();
+  }
+
+  void call_javascript(std::string const& method, std::string const& arg) {
+    gui_element_->call_javascript(method, arg);
+  }
+
+  void add_javascript_callback(std::string const& callback) {
+    gui_element_->add_javascript_callback(callback);
   }
 
   void draw(RenderContext const& ctx) {

@@ -105,6 +105,13 @@ int main(int argc, char** argv) {
   auto window = WindowManager::instance()->get_default();
   // window->Fullscreen = true;
 
+  // rendering pipeline --------------------------------------------------------
+  auto pipeline = Pipeline::create();
+  pipeline->set_output_window(window);
+
+  Renderer renderer;
+  renderer.set_pipeline(pipeline);
+
   // example scene setup -------------------------------------------------------
   auto scene = SceneManager::instance()->get_default();
 
@@ -130,17 +137,27 @@ int main(int argc, char** argv) {
   auto camera = scene->add<CameraComponent>();
        camera->Size = math::vec2(2.f, 2.f);
 
-  auto fps = scene->add<TextComponent>();
-       fps->Transform = math::make_translate(-1.9, -1.9);
-       fps->Text = Text::create("FPS", "sans", 12);
-       fps->Depth = 1000.f;
-       fps->InScreenSpace = true;
-
-
   auto menu = scene->add<GuiComponent>();
        menu->Resource = app.get_resource("gui", "main_menu.html");
        menu->Size = math::vec2i(240, 200);
        menu->Anchor = math::vec2i(0, 0);
+       menu->on_loaded.connect([&](){
+         menu->add_javascript_callback("start");
+         menu->add_javascript_callback("quit");
+       });
+       menu->on_javascript_callback.connect([&](std::string const& method) {
+         if (method == "quit") {
+           renderer.stop();
+           app.stop();
+         } else {
+          std::cout << "Start!!!" << std::endl;
+         }
+       });
+
+  auto fps = scene->add<GuiComponent>();
+       fps->Resource = app.get_resource("gui", "fps.html");
+       fps->Size = math::vec2i(240, 35);
+       fps->Anchor = math::vec2i(-1, -1);
 
   // planet
   auto planet1 = scene->add_object();
@@ -231,14 +248,6 @@ int main(int argc, char** argv) {
        fire_light->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
        fire_light->Emitter = fire_light_particles;
 
-  // rendering pipeline --------------------------------------------------------
-  auto pipeline = Pipeline::create();
-
-  pipeline->set_output_window(window);
-
-
-  Renderer renderer;
-  renderer.set_pipeline(pipeline);
 
   // main loop -----------------------------------------------------------------
   Timer timer;
@@ -257,7 +266,8 @@ int main(int argc, char** argv) {
          << particle_count + smoke->get_particle_count()
                            + fire->get_particle_count()
                            + fire_light->get_particle_count();
-    fps->Text->Content = sstr.str();
+
+    fps->call_javascript("set_fps_text", sstr.str());
 
     window->process_input();
     scene->update(time);
