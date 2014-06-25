@@ -11,12 +11,51 @@
 
 #include <swift2d/scene/SerializedScene.hpp>
 #include <swift2d/components/CameraComponent.hpp>
+#include <swift2d/utils/TextFile.hpp>
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 #include <iostream>
 #include <algorithm>
 
 namespace swift {
 
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObjectPtr SceneObject::create_from_file(std::string const& path) {
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+boost::property_tree::ptree SceneObject::to_json() const {
+  boost::property_tree::ptree tree;
+
+  tree.put("type", "SceneObject");
+
+
+  boost::property_tree::ptree components;
+  for (auto const& component: components_) {
+    components.push_back(std::make_pair("", component->to_json()));
+  }
+  tree.add_child("Components", components);
+
+
+  boost::property_tree::ptree objects;
+  for (auto const& object: objects_) {
+    objects.push_back(std::make_pair("", object->to_json()));
+  }
+  tree.add_child("Objects", objects);
+
+  return tree;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void SceneObject::save_to_file(std::string const& path) const {
+  boost::property_tree::write_json(path, to_json());
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

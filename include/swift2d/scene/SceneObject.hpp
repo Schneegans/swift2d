@@ -46,7 +46,12 @@ class SceneObject {
     return std::make_shared<SceneObject>();
   }
 
+  static SceneObjectPtr create_from_file(std::string const& path);
+
   SceneObject() : Parent(nullptr), remove_flag_(false) {}
+
+  virtual boost::property_tree::ptree to_json() const;
+  void save_to_file(std::string const& path) const;
 
   // ------------------------------------------------------------ public methods
 

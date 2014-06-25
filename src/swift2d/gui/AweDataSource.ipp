@@ -17,14 +17,11 @@ class AweDataSource : public Awesomium::DataSource {
                  Awesomium::WebString const& path) {
 
     std::string html_str("<h1>Failed to load resource.</h1>");
-    std::ifstream ifs(Awesomium::ToString(path), std::ios::in | std::ios::ate);
 
-    if (ifs) {
-      std::ifstream::pos_type fileSize = ifs.tellg();
-      ifs.seekg(0, std::ios::beg);
-      std::vector<char> bytes(fileSize);
-      ifs.read(&bytes[0], fileSize);
-      html_str = std::string(&bytes[0], fileSize);
+    TextFile file(Awesomium::ToString(path));
+
+    if (file.is_valid()) {
+      html_str = file.get_content();
     } else {
       Logger::LOG_WARNING << "Failed to load resource \"" << path << "\": File not found!" << std::endl;
     }

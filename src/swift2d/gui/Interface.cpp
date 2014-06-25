@@ -10,13 +10,13 @@
 #include <swift2d/gui/Interface.hpp>
 
 #include <swift2d/utils/Logger.hpp>
+#include <swift2d/utils/TextFile.hpp>
 
 #include <Awesomium/WebCore.h>
 #include <Awesomium/BitmapSurface.h>
 #include <Awesomium/STLHelpers.h>
 
 #include <mutex>
-#include <fstream>
 
 // Awesomium bug in linux
 Awesomium::DataSource::~DataSource(){}

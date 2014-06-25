@@ -59,6 +59,14 @@ class SpriteComponent : public DrawableComponent {
   void serialize(SerializedScenePtr& scene) const {
     scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
   }
+
+  virtual boost::property_tree::ptree to_json() const {
+    boost::property_tree::ptree tree;
+    tree.put("Type", "SpriteComponent");
+    tree.put("Transform", "dummy");
+    tree.put("Depth", Depth());
+    return tree;
+  };
 };
 
 // -----------------------------------------------------------------------------

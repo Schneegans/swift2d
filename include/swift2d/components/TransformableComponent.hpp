@@ -41,6 +41,12 @@ class TransformableComponent : public Component {
   virtual math::vec2 get_position() const;
   virtual math::vec2 get_world_position() const;
 
+  virtual boost::property_tree::ptree to_json() const {
+    boost::property_tree::ptree tree;
+    tree.put("Transform", "dummy");
+    return tree;
+  };
+
  ///////////////////////////////////////////////////////////////////////////////
  // -------------------------------------------------------- protected interface
  protected:

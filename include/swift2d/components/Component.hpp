@@ -14,6 +14,8 @@
 #include <swift2d/scene/SerializedScene.hpp>
 #include <swift2d/utils/Logger.hpp>
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 #include <vector>
 #include <memory>
 
@@ -61,6 +63,8 @@ class Component {
 
   void set_user(SceneObject* u) { user_ = u; }
   SceneObject* get_user() const { return user_; }
+
+  virtual boost::property_tree::ptree to_json() const { return boost::property_tree::ptree(); };
 
   friend class SceneObject;
 

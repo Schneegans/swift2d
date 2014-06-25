@@ -1,0 +1,36 @@
+{
+    "type": "SceneObject",
+    "Components":
+    [
+        "",
+        {
+            "Type": "ListenerComponent",
+            "Transform": "dummy",
+            "Volume": "1"
+        },
+        {
+            "Type": "SpriteComponent",
+            "Transform": "dummy",
+            "Depth": "1"
+        },
+        {
+            "Type": "ParticleSystemComponent",
+            "Transform": "dummy",
+            "Emitter": "dummy",
+            "Depth": "0.5"
+        },
+        {
+            "Type": "ParticleSystemComponent",
+            "Transform": "dummy",
+            "Emitter": "dummy",
+            "Depth": "0.6"
+        },
+        {
+            "Type": "ParticleSystemComponent",
+            "Transform": "dummy",
+            "Emitter": "dummy",
+            "Depth": "0.6"
+        }
+    ],
+    "Objects": ""
+}
