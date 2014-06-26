@@ -160,6 +160,11 @@ int main(int argc, char** argv) {
        fps->Size = math::vec2i(240, 35);
        fps->Anchor = math::vec2i(-1, -1);
 
+  auto video = scene->add<GuiComponent>();
+       video->Resource = app.get_resource("gui", "video.html");
+       video->Size = math::vec2i(420, 315);
+       video->Anchor = math::vec2i(1, -1);
+
   // planet
   auto planet1 = scene->add_object();
        planet1->Transform = math::make_translate(-0.9, 0.5) * math::make_scale(1.2f);
@@ -306,6 +311,7 @@ int main(int argc, char** argv) {
       ++particle_count;
     } else if (key == swift::Key::F5 && action != 1) {
       menu->reload();
+      fps->reload();
     }
   });
 

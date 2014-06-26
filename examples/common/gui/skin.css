@@ -33,9 +33,10 @@ body {
 }
 
 #fps {
-  transition: all 1s;
+  -webkit-transition: all 0.5s;
+  padding-top: 0px;
 }
 
 #fps:hover{
-  color: #573;
+  padding-top: 30px;
 }

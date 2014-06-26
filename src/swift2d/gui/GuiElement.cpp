@@ -54,7 +54,7 @@ GuiElement::GuiElement(GuiComponent* parent)
 
     math::vec2 corner(
       (size.x() - parent_->Size().x() + parent_->Anchor().x() * (size.x() - parent_->Size().x()))*0.5 + parent_->Offset().x(),
-      (size.y() - parent_->Size().y() + parent_->Anchor().y() * (size.y() - parent_->Size().y()))*0.5 + parent_->Offset().y()
+      (size.y() - parent_->Size().y() - parent_->Anchor().y() * (size.y() - parent_->Size().y()))*0.5 + parent_->Offset().y()
     );
 
     view_->InjectMouseMove(pos.x() - corner.x(), pos.y() - corner.y());
