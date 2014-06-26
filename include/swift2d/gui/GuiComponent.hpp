@@ -59,9 +59,8 @@ class GuiComponent : public DrawableComponent {
   }
 
   // ------------------------------------------------------------ public methods
-  virtual std::string get_type_name() const {
-    return "GuiComponent";
-  }
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "GuiComponent"; }
 
   void reload() {
     gui_element_->reload();

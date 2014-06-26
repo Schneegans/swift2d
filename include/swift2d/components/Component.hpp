@@ -13,6 +13,7 @@
 #include <swift2d/properties.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
 #include <swift2d/scene/SceneSaver.hpp>
+#include <swift2d/utils/Object.hpp>
 #include <swift2d/utils/Logger.hpp>
 
 #include <vector>
@@ -41,7 +42,7 @@ class Component;
 typedef std::shared_ptr<Component> ComponentPtr;
 
 // -----------------------------------------------------------------------------
-class Component {
+class Component : public Object {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -56,8 +57,6 @@ class Component {
   virtual ~Component() {}
 
   // ------------------------------------------------------------ public methods
-  virtual std::string get_type_name() const = 0;
-
   virtual void update(double time) {}
   virtual void serialize(SerializedScenePtr& scene) const {};
   virtual void save(SceneSaver& saver);

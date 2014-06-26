@@ -56,9 +56,8 @@ class MoveBehavior : public Behavior<SceneObject*> {
   }
 
   // ------------------------------------------------------------ public methods
-  virtual std::string get_type_name() const {
-    return "MoveBehavior";
-  }
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "MoveBehavior"; }
 
   virtual void update(double time) {
     auto user_transform(get_user()->Transform.get());

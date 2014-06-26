@@ -49,9 +49,8 @@ class TimedDeleteBehavior : public Behavior<SceneObject*> {
   }
 
   // ------------------------------------------------------------ public methods
-  virtual std::string get_type_name() const {
-    return "TimedDeleteBehavior";
-  }
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "TimedDeleteBehavior"; }
 
   /*virtual*/ void update(double time) {
     Life.set(Life.get()-time);

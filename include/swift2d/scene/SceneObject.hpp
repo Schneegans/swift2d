@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
+#include <swift2d/utils/Object.hpp>
 
 #include <unordered_set>
 #include <vector>
@@ -30,7 +31,7 @@ typedef std::shared_ptr<const SceneObject> ConstSceneObjectPtr;
 typedef Property<SceneObject*>             SceneObjectProperty;
 
 // -----------------------------------------------------------------------------
-class SceneObject {
+class SceneObject : public Object {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -53,10 +54,8 @@ class SceneObject {
   void save_to_file(std::string const& path) const;
 
   // ------------------------------------------------------------ public methods
-
-  virtual std::string get_type_name() const {
-    return "SceneObject";
-  }
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "SceneObject"; }
 
   // removes this scene object from its parent
   void detach();
@@ -159,6 +158,7 @@ class SceneObject {
  // ---------------------------------------------------------- private interface
  private:
   boost::property_tree::ptree to_json() const;
+  static SceneObjectPtr create_from_json(boost::property_tree::ptree const& json);
 
   // a collection of all objects attached to this object
   std::unordered_set<SceneObjectPtr> objects_;

@@ -72,9 +72,8 @@ class SoundComponent : public TransformableComponent {
   }
 
   // ------------------------------------------------------------ public methods
-  virtual std::string get_type_name() const {
-    return "SoundComponent";
-  }
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "SoundComponent"; }
 
   virtual void update(double time) {
     TransformableComponent::update(time);

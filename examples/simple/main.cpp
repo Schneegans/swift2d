@@ -249,7 +249,10 @@ int main(int argc, char** argv) {
        fire_light->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
        fire_light->Emitter = fire_light_particles;
 
+
   scene->save_to_file(app.get_resource("scene", "player.json"));
+  auto test = SceneObject::create_from_file(app.get_resource("scene", "player.json"));
+  test->save_to_file(app.get_resource("scene", "player2.json"));
 
   // main loop -----------------------------------------------------------------
   Timer timer;

@@ -6,35 +6,44 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SCENE_SAVER_HPP
-#define SWIFT2D_SCENE_SAVER_HPP
+#ifndef SWIFT2D_OBJECT_HPP
+#define SWIFT2D_OBJECT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/network/SerializableReference.hpp>
+#include <swift2d/utils/Logger.hpp>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+#include <functional>
+#include <unordered_map>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class SceneSaver {
+class Object {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-  void save(std::string const& name, SerializableReference const& value);
 
-  boost::property_tree::ptree to_json(std::string const& type_name);
-  void                        from_json(boost::property_tree::ptree const& json);
+  static Object* create(std::string const& type_name);
 
+  template<typename T>
+  static void init() {
+    factory_[T::get_type_name_static()] = [](){ return new T(); };
+  }
+
+  virtual std::string get_type_name() const = 0;
+
+ ///////////////////////////////////////////////////////////////////////////////
+ // ---------------------------------------------------------- private interface
  private:
-  std::vector<std::pair<std::string, SerializableReference>> saved_members_;
+  static std::unordered_map<std::string, std::function<Object*()>> factory_;
+
 };
 
 }
 
-#endif  // SWIFT2D_SCENE_SAVER_HPP
+#endif  // SWIFT2D_OBJECT_HPP

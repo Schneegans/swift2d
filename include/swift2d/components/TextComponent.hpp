@@ -60,9 +60,8 @@ class TextComponent : public DrawableComponent {
   }
 
   // ------------------------------------------------------------ public methods
-  virtual std::string get_type_name() const {
-    return "TextComponent";
-  }
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "TextComponent"; }
 
   void draw(RenderContext const& ctx) {
 

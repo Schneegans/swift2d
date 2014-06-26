@@ -23,7 +23,10 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 SceneObjectPtr SceneObject::create_from_file(std::string const& path) {
+  boost::property_tree::ptree json;
+  boost::property_tree::read_json(path, json);
 
+  return create_from_json(json);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -173,6 +176,7 @@ void SceneObject::update(double time) {
 boost::property_tree::ptree SceneObject::to_json() const {
   boost::property_tree::ptree json;
   json.put("Type", get_type_name());
+  json.put("Transform", Transform());
 
   if (components_.size() > 0) {
     boost::property_tree::ptree components;
@@ -193,6 +197,38 @@ boost::property_tree::ptree SceneObject::to_json() const {
   }
 
   return json;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObjectPtr SceneObject::create_from_json(boost::property_tree::ptree const& json) {
+
+  auto type(json.get<std::string>("Type"));
+  auto new_object(create());
+
+  new_object->Transform = json.get<math::mat3>("Transform");
+
+  auto components(json.get_child_optional("Components"));
+  if (components) {
+    for (auto const& component : components.get()) {
+      auto new_component(dynamic_cast<Component*>(
+        Object::create(component.second.get<std::string>("Type"))
+      ));
+      SceneSaver saver;
+      new_component->save(saver);
+      saver.from_json(component.second);
+      new_object->add(std::shared_ptr<Component>(new_component));
+    }
+  }
+
+  auto objects(json.get_child_optional("Objects"));
+  if (objects) {
+    for (auto const& object : objects.get()) {
+      new_object->add_object(create_from_json(object.second));
+    }
+  }
+
+  return new_object;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

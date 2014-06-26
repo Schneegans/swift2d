@@ -38,7 +38,7 @@ struct Serializer {
                  boost::any const& a) const = 0;
 
   virtual void deserialize(std::string const& name,
-                 boost::property_tree::ptree& tree,
+                 boost::property_tree::ptree const& tree,
                  boost::any const& a) const = 0;
 
   virtual Serializer* clone() const = 0;
@@ -69,9 +69,9 @@ struct SerializerImpl: Serializer {
     tree.put(name, *boost::any_cast<T>(a));
   }
 
-  void deserialize(std::string const& name, boost::property_tree::ptree& tree,
+  void deserialize(std::string const& name, boost::property_tree::ptree const& tree,
                  boost::any const& a) const {
-    // TODO
+    a = tree.get<T>(name);
   }
 
   Serializer* clone() const {
@@ -106,52 +106,15 @@ struct SerializerImpl<Property<T>*>: Serializer {
     tree.put(name, boost::any_cast<Property<T>*>(a)->get());
   }
 
-  void deserialize(std::string const& name, boost::property_tree::ptree& tree,
+  void deserialize(std::string const& name, boost::property_tree::ptree const& tree,
                  boost::any const& a) const {
-    // TODO
+    boost::any_cast<Property<T>*>(a)->set(tree.get<T>(name));
   }
 
   Serializer* clone() const {
     return new SerializerImpl<Property<T>*>();
   }
 };
-
-// ---------------------------------------------------------------------------
-// template <typename T>
-// struct SerializerImpl<LogicalProperty<T>*>: Serializer {
-
-//   void serialize(RakNet::VariableDeltaSerializer::SerializationContext* ctx,
-//                  RakNet::VariableDeltaSerializer* s,
-//                  boost::any const& a) const {
-
-//     s->SerializeVariable(ctx, boost::any_cast<LogicalProperty<T>*>(a)->get());
-//   }
-
-//   void deserialize(RakNet::VariableDeltaSerializer::DeserializationContext* ctx,
-//                  RakNet::VariableDeltaSerializer* s,
-//                  boost::any const& a) const {
-
-//     T val;
-//     if (s->DeserializeVariable(ctx, val)) {
-//       boost::any_cast<LogicalProperty<T>*>(a)->set(val);
-//     }
-//   }
-
-//   void serialize(std::string const& name, boost::property_tree::ptree& tree,
-//                  boost::any const& a) const {
-//     std::cout << "ser" << std::endl;
-//     tree.put(name, boost::any_cast<LogicalProperty<T>*>(a)->get());
-//   }
-
-//   void deserialize(std::string const& name, boost::property_tree::ptree& tree,
-//                  boost::any const& a) const {
-//     // TODO
-//   }
-
-//   Serializer* clone() const {
-//     return new SerializerImpl<NumericProperty<T>*>();
-//   }
-// };
 
 // ---------------------------------------------------------------------------
 template <typename T>
@@ -179,9 +142,9 @@ struct SerializerImpl<AnimatedProperty<T>*>: Serializer {
     tree.put(name, boost::any_cast<AnimatedProperty<T>*>(a)->get());
   }
 
-  void deserialize(std::string const& name, boost::property_tree::ptree& tree,
+  void deserialize(std::string const& name, boost::property_tree::ptree const& tree,
                  boost::any const& a) const {
-    // TODO
+    boost::any_cast<Property<T>*>(a)->set(tree.get<T>(name));
   }
 
   Serializer* clone() const {
@@ -201,10 +164,7 @@ class SerializableReference {
  // ----------------------------------------------------------- public interface
  public:
   SerializableReference()
-    : serializer_(nullptr) {
-
-    std::cout << "ser" << std::endl;
-    }
+    : serializer_(nullptr) {}
 
   template<class T> SerializableReference(T const& value)
     : serializer_(new SerializerImpl<T>())
@@ -238,7 +198,7 @@ class SerializableReference {
     serializer_->serialize(name, tree, value_);
   }
 
-  void deserialize(std::string const& name, boost::property_tree::ptree& tree) {
+  void deserialize(std::string const& name, boost::property_tree::ptree const& tree) {
     serializer_->deserialize(name, tree, value_);
   }
 

@@ -50,9 +50,8 @@ class ListenerComponent : public TransformableComponent {
   Float Volume;
 
   // ------------------------------------------------------------ public methods
-  virtual std::string get_type_name() const {
-    return "ListenerComponent";
-  }
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "ListenerComponent"; }
 
   virtual void update(double time);
 

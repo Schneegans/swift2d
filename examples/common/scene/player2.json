@@ -45,6 +45,54 @@
     [
         {
             "Type": "SceneObject",
+            "Transform": "(1.2 0 -0.9\n 0 1.2 0.5\n 0 0 1)",
+            "Components":
+            [
+                {
+                    "Type": "SpriteComponent",
+                    "Enabled": "true",
+                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)"
+                },
+                {
+                    "Type": "MoveBehavior",
+                    "Enabled": "true"
+                }
+            ]
+        },
+        {
+            "Type": "SceneObject",
+            "Transform": "(2.2 0 -1.2\n 0 2.2 -2\n 0 0 1)",
+            "Components":
+            [
+                {
+                    "Type": "SpriteComponent",
+                    "Enabled": "true",
+                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)"
+                },
+                {
+                    "Type": "MoveBehavior",
+                    "Enabled": "true"
+                }
+            ]
+        },
+        {
+            "Type": "SceneObject",
+            "Transform": "(1.5 0 1.2\n 0 1.5 -1\n 0 0 1)",
+            "Components":
+            [
+                {
+                    "Type": "SpriteComponent",
+                    "Enabled": "true",
+                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)"
+                },
+                {
+                    "Type": "MoveBehavior",
+                    "Enabled": "true"
+                }
+            ]
+        },
+        {
+            "Type": "SceneObject",
             "Transform": "(0.1 0 0\n 0 0.1 0\n 0 0 1)",
             "Components":
             [
@@ -79,54 +127,6 @@
                     "Enabled": "true",
                     "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
                     "Depth": "0.6"
-                }
-            ]
-        },
-        {
-            "Type": "SceneObject",
-            "Transform": "(1.5 0 1.2\n 0 1.5 -1\n 0 0 1)",
-            "Components":
-            [
-                {
-                    "Type": "SpriteComponent",
-                    "Enabled": "true",
-                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)"
-                },
-                {
-                    "Type": "MoveBehavior",
-                    "Enabled": "true"
-                }
-            ]
-        },
-        {
-            "Type": "SceneObject",
-            "Transform": "(2.2 0 -1.2\n 0 2.2 -2\n 0 0 1)",
-            "Components":
-            [
-                {
-                    "Type": "SpriteComponent",
-                    "Enabled": "true",
-                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)"
-                },
-                {
-                    "Type": "MoveBehavior",
-                    "Enabled": "true"
-                }
-            ]
-        },
-        {
-            "Type": "SceneObject",
-            "Transform": "(1.2 0 -0.9\n 0 1.2 0.5\n 0 0 1)",
-            "Components":
-            [
-                {
-                    "Type": "SpriteComponent",
-                    "Enabled": "true",
-                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)"
-                },
-                {
-                    "Type": "MoveBehavior",
-                    "Enabled": "true"
                 }
             ]
         }

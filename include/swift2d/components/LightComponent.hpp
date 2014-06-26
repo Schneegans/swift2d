@@ -52,9 +52,8 @@ class LightComponent : public DrawableComponent {
   }
 
   // ------------------------------------------------------------ public methods
-  virtual std::string get_type_name() const {
-    return "LightComponent";
-  }
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "LightComponent"; }
 
   void draw(RenderContext const& ctx) {
     Material()->use(ctx, WorldTransform());
@@ -63,6 +62,11 @@ class LightComponent : public DrawableComponent {
 
   void serialize(SerializedScenePtr& scene) const {
     scene->lights.insert(std::make_pair(Depth.get(), create_copy()));
+  }
+
+  virtual void save(SceneSaver& saver) {
+    DrawableComponent::save(saver);
+    saver.save("Depth", &Depth);
   }
 };
 

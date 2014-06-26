@@ -19,15 +19,24 @@ void SceneSaver::save(std::string const& name, SerializableReference const& valu
 ////////////////////////////////////////////////////////////////////////////////
 
 boost::property_tree::ptree SceneSaver::to_json(std::string const& type_name) {
-  boost::property_tree::ptree tree;
-  tree.put("Type", type_name);
+  boost::property_tree::ptree json;
+  json.put("Type", type_name);
 
   for (auto& member: saved_members_) {
-    member.second.serialize(member.first, tree);
+    member.second.serialize(member.first, json);
   }
 
-  return tree;
+  return json;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+void SceneSaver::from_json(boost::property_tree::ptree const& json) {
+  for (auto& member: saved_members_) {
+    member.second.deserialize(member.first, json);
+  }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
