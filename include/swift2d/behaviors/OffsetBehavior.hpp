@@ -71,6 +71,10 @@ class OffsetBehavior : public Behavior<SceneObject*> {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {
+    return "OffsetBehavior";
+  }
+
   virtual void update(double time) {
 
     float x = TranslationOffsetX.get();

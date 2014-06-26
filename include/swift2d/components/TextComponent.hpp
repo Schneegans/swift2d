@@ -60,6 +60,10 @@ class TextComponent : public DrawableComponent {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {
+    return "TextComponent";
+  }
+
   void draw(RenderContext const& ctx) {
 
     if (InScreenSpace()) {

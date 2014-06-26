@@ -51,6 +51,10 @@ class SpriteComponent : public DrawableComponent {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {
+    return "SpriteComponent";
+  }
+
   void draw(RenderContext const& ctx) {
     Material()->use(ctx, WorldTransform());
     Quad::instance()->draw(ctx);
@@ -60,13 +64,6 @@ class SpriteComponent : public DrawableComponent {
     scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
   }
 
-  virtual boost::property_tree::ptree to_json() const {
-    boost::property_tree::ptree tree;
-    tree.put("Type", "SpriteComponent");
-    tree.put("Transform", "dummy");
-    tree.put("Depth", Depth());
-    return tree;
-  };
 };
 
 // -----------------------------------------------------------------------------

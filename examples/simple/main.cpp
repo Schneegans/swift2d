@@ -76,6 +76,7 @@ int main(int argc, char** argv) {
   // initialize Swift2D
   Application app(argc, argv);
 
+
   // load resources ------------------------------------------------------------
   TextureDatabase::instance()->add("smoke", Texture::create(app.get_resource("images", "smoke.png")));
   TextureDatabase::instance()->add("fire", Texture::create(app.get_resource("images", "fire.png")));
@@ -248,7 +249,7 @@ int main(int argc, char** argv) {
        fire_light->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
        fire_light->Emitter = fire_light_particles;
 
-  player->save_to_file(app.get_resource("scene", "player.json"));
+  scene->save_to_file(app.get_resource("scene", "player.json"));
 
   // main loop -----------------------------------------------------------------
   Timer timer;

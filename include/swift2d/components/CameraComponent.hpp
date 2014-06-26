@@ -46,6 +46,10 @@ class CameraComponent : public TransformableComponent {
   CameraComponentPtr create_copy() const {
     return std::make_shared<CameraComponent>(*this);
   }
+
+  virtual std::string get_type_name() const {
+    return "CameraComponent";
+  }
 };
 
 // -----------------------------------------------------------------------------

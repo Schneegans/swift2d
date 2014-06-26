@@ -1,36 +1,127 @@
 {
-    "type": "SceneObject",
+    "Type": "SceneObject",
     "Components":
     [
-        "",
         {
-            "Type": "ListenerComponent",
-            "Transform": "dummy",
-            "Volume": "1"
+            "Type": "CircularShape",
+            "Enabled": "true",
+            "Transform": "(4, 0, 0, \n 0, 4, 0, \n 0, 0, 1)"
+        },
+        {
+            "Type": "LightComponent",
+            "Enabled": "true",
+            "Transform": "(1, 0, 0, \n 0, 1, 0, \n 0, 0, 1)"
+        },
+        {
+            "Type": "LightComponent",
+            "Enabled": "true",
+            "Transform": "(1, 0, 0, \n 0, 1, 0, \n 0, 0, 1)"
         },
         {
             "Type": "SpriteComponent",
-            "Transform": "dummy",
-            "Depth": "1"
+            "Enabled": "true",
+            "Transform": "(2, 0, 0, \n 0, 2, 0, \n 0, 0, 1)"
         },
         {
-            "Type": "ParticleSystemComponent",
-            "Transform": "dummy",
-            "Emitter": "dummy",
-            "Depth": "0.5"
+            "Type": "CameraComponent",
+            "Enabled": "true",
+            "Transform": "(1, 0, 0, \n 0, 1, 0, \n 0, 0, 1)"
         },
         {
-            "Type": "ParticleSystemComponent",
-            "Transform": "dummy",
-            "Emitter": "dummy",
-            "Depth": "0.6"
+            "Type": "GuiComponent",
+            "Enabled": "true",
+            "Transform": "(1, 0, 0, \n 0, 1, 0, \n 0, 0, 1)"
         },
         {
-            "Type": "ParticleSystemComponent",
-            "Transform": "dummy",
-            "Emitter": "dummy",
-            "Depth": "0.6"
+            "Type": "GuiComponent",
+            "Enabled": "true",
+            "Transform": "(1, 0, 0, \n 0, 1, 0, \n 0, 0, 1)"
         }
     ],
-    "Objects": ""
+    "Objects":
+    [
+        {
+            "Type": "SceneObject",
+            "Components":
+            [
+                {
+                    "Type": "MoveBehavior",
+                    "Enabled": "true"
+                },
+                {
+                    "Type": "ListenerComponent",
+                    "Enabled": "true",
+                    "Transform": "(1, 0, 0, \n 0, 1, 0, \n 0, 0, 1)"
+                },
+                {
+                    "Type": "SpriteComponent",
+                    "Enabled": "true",
+                    "Transform": "(1, 0, 0, \n 0, 1, 0, \n 0, 0, 1)"
+                },
+                {
+                    "Type": "ParticleSystemComponent",
+                    "Enabled": "true",
+                    "Transform": "(2, 0, -1, \n 0, 2, 0, \n 0, 0, 1)",
+                    "Depth": "0.5"
+                },
+                {
+                    "Type": "ParticleSystemComponent",
+                    "Enabled": "true",
+                    "Transform": "(2, 0, -1, \n 0, 2, 0, \n 0, 0, 1)",
+                    "Depth": "0.6"
+                },
+                {
+                    "Type": "ParticleSystemComponent",
+                    "Enabled": "true",
+                    "Transform": "(2, 0, -1, \n 0, 2, 0, \n 0, 0, 1)",
+                    "Depth": "0.6"
+                }
+            ]
+        },
+        {
+            "Type": "SceneObject",
+            "Components":
+            [
+                {
+                    "Type": "SpriteComponent",
+                    "Enabled": "true",
+                    "Transform": "(1, 0, 0, \n 0, 1, 0, \n 0, 0, 1)"
+                },
+                {
+                    "Type": "MoveBehavior",
+                    "Enabled": "true"
+                }
+            ]
+        },
+        {
+            "Type": "SceneObject",
+            "Components":
+            [
+                {
+                    "Type": "SpriteComponent",
+                    "Enabled": "true",
+                    "Transform": "(1, 0, 0, \n 0, 1, 0, \n 0, 0, 1)"
+                },
+                {
+                    "Type": "MoveBehavior",
+                    "Enabled": "true"
+                }
+            ]
+        },
+        {
+            "Type": "SceneObject",
+            "Components":
+            [
+                {
+                    "Type": "SpriteComponent",
+                    "Enabled": "true",
+                    "Transform": "(1, 0, 0, \n 0, 1, 0, \n 0, 0, 1)"
+                },
+                {
+                    "Type": "MoveBehavior",
+                    "Enabled": "true"
+                }
+            ]
+        }
+    ]
 }

@@ -72,6 +72,10 @@ class SoundComponent : public TransformableComponent {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {
+    return "SoundComponent";
+  }
+
   virtual void update(double time) {
     TransformableComponent::update(time);
     auto pos(get_world_position());

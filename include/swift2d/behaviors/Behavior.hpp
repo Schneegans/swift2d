@@ -32,7 +32,9 @@ class Behavior : public Component {
  // ----------------------------------------------------------- public interface
  public:
 
-  // ---------------------------------------------------------------- properties
+  // ----------------------------------------------------- contruction interface
+  Behavior()
+    : user_(nullptr) {}
 
   // ------------------------------------------------------------ public methods
   virtual void update(double time) {};
@@ -49,8 +51,6 @@ class Behavior : public Component {
  ///////////////////////////////////////////////////////////////////////////////
  // -------------------------------------------------------- protected interface
  protected:
-  Behavior() : user_(nullptr) {}
-
   UserType user_;
 };
 

@@ -52,6 +52,10 @@ class LightComponent : public DrawableComponent {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {
+    return "LightComponent";
+  }
+
   void draw(RenderContext const& ctx) {
     Material()->use(ctx, WorldTransform());
     Quad::instance()->draw(ctx);

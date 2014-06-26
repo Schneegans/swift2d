@@ -20,9 +20,21 @@
 
 namespace swift {
 
-Color::Color() : r_(0.0f), g_(0.0f), b_(0.0f) {}
+////////////////////////////////////////////////////////////////////////////////
 
-Color::Color(float r, float g, float b) : r_(r), g_(g), b_(b) {}
+Color::Color()
+  : r_(0.0f)
+  , g_(0.0f)
+  , b_(0.0f) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Color::Color(float r, float g, float b)
+  : r_(r)
+  , g_(g)
+  , b_(b) {}
+
+////////////////////////////////////////////////////////////////////////////////
 
 float Color::h() const {
 
@@ -40,6 +52,8 @@ float Color::h() const {
     return 0.0f;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 float Color::s() const {
   if (v() == 0)
     return 0;
@@ -47,21 +61,43 @@ float Color::s() const {
     return ((v() - std::min(std::min(r_, g_), b_)) / v());
 }
 
-void Color::r(float red) { r_ = math::clamp(red, 0.0f, 1.0f); }
+////////////////////////////////////////////////////////////////////////////////
 
-void Color::g(float green) { g_ = math::clamp(green, 0.0f, 1.0f); }
+void Color::r(float red) {
+  r_ = math::clamp(red, 0.0f, 1.0f);
+}
 
-void Color::b(float blue) { b_ = math::clamp(blue, 0.0f, 1.0f); }
+////////////////////////////////////////////////////////////////////////////////
 
-void Color::h(float hue) { set_hsv(hue, s(), v()); }
+void Color::g(float green) {
+  g_ = math::clamp(green, 0.0f, 1.0f);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Color::b(float blue) {
+  b_ = math::clamp(blue, 0.0f, 1.0f);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Color::h(float hue) {
+  set_hsv(hue, s(), v());
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 void Color::s(float saturation) {
   set_hsv(h(), math::clamp(saturation, 0.0f, 1.0f), v());
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 void Color::v(float value) {
   set_hsv(h(), s(), math::clamp(value, 0.0f, 1.0f));
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 void Color::set_hsv(float hue, float saturation, float value) {
 
@@ -110,7 +146,9 @@ void Color::set_hsv(float hue, float saturation, float value) {
   }
 }
 
-Color const Color::inverted() const {
+////////////////////////////////////////////////////////////////////////////////
+
+Color Color::inverted() const {
 
   Color inverted(*this);
   inverted.h(inverted.h() + 180.f);
@@ -119,7 +157,9 @@ Color const Color::inverted() const {
   return inverted;
 }
 
-Color const Color::brightened() const {
+////////////////////////////////////////////////////////////////////////////////
+
+Color Color::brightened() const {
 
   Color brightened(*this);
   if (brightened.v() < 0.5f)
@@ -129,9 +169,15 @@ Color const Color::brightened() const {
   return brightened;
 }
 
-math::vec3 const Color::vec3() const { return math::vec3(r_, g_, b_); }
+////////////////////////////////////////////////////////////////////////////////
 
-Color const Color::random() {
+math::vec3 Color::vec3() const {
+  return math::vec3(r_, g_, b_);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Color Color::random() {
 
   Color result(math::random::get(0.0f, 1.0f),
                  math::random::get(0.0f, 1.0f),
@@ -141,23 +187,37 @@ Color const Color::random() {
   return result;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 bool operator==(Color const& lhs, Color const& rhs) {
   return lhs.r() == rhs.r() && lhs.g() == rhs.g() && lhs.b() == rhs.b();
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 bool operator!=(Color const& lhs, Color const& rhs) {
   return !(lhs == rhs);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 Color operator*(float const& lhs, Color rhs) {
   return Color(rhs.r() * lhs, rhs.g() * lhs, rhs.b() * lhs);
 }
 
-Color operator*(Color const& lhs, float rhs) { return rhs * lhs; }
+////////////////////////////////////////////////////////////////////////////////
+
+Color operator*(Color const& lhs, float rhs) {
+  return rhs * lhs;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 Color operator/(Color const& lhs, float rhs) {
   return Color(lhs.r() / rhs, lhs.g() / rhs, lhs.b() / rhs);
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 Color operator+(Color const& lhs, Color const& rhs) {
   Color result;
@@ -167,6 +227,8 @@ Color operator+(Color const& lhs, Color const& rhs) {
   return result;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 Color operator-(Color const& lhs, Color const& rhs) {
   Color result;
   result.r(lhs.r() - rhs.r());
@@ -175,10 +237,14 @@ Color operator-(Color const& lhs, Color const& rhs) {
   return result;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 std::ostream& operator<<(std::ostream& os, Color const& color) {
   os << color.r() << " " << color.g() << " " << color.b() << std::endl;
   return os;
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 std::istream& operator>>(std::istream& is, Color& color) {
   float cur_val;
@@ -190,5 +256,7 @@ std::istream& operator>>(std::istream& is, Color& color) {
   color.b(cur_val);
   return is;
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 }

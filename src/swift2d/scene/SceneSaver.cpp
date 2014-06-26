@@ -6,39 +6,27 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <swift2d/components/TransformableComponent.hpp>
-
-#include <swift2d/scene/SceneObject.hpp>
+#include <swift2d/scene/SceneSaver.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TransformableComponent::update(double time) {
-  if (get_user()) {
-    WorldTransform = get_user()->WorldTransform.get() * Transform.get();
-  } else {
-    WorldTransform = Transform.get();
+void SceneSaver::save(std::string const& name, SerializableReference const& value) {
+  saved_members_.push_back(std::make_pair(name, value));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+boost::property_tree::ptree SceneSaver::to_json(std::string const& type_name) {
+  boost::property_tree::ptree tree;
+  tree.put("Type", type_name);
+
+  for (auto& member: saved_members_) {
+    member.second.serialize(member.first, tree);
   }
-}
 
-////////////////////////////////////////////////////////////////////////////////
-
-math::vec2 TransformableComponent::get_position() const {
-  return math::get_translate(Transform.get());
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-math::vec2 TransformableComponent::get_world_position() const {
-  return math::get_translate(WorldTransform.get());
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void TransformableComponent::save(SceneSaver& saver) {
-  Component::save(saver);
-  saver.save("Transform", &Transform);
+  return tree;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -50,15 +50,11 @@ class ListenerComponent : public TransformableComponent {
   Float Volume;
 
   // ------------------------------------------------------------ public methods
-  virtual void update(double time);
+  virtual std::string get_type_name() const {
+    return "ListenerComponent";
+  }
 
-  virtual boost::property_tree::ptree to_json() const {
-    boost::property_tree::ptree tree;
-    tree.put("Type", "ListenerComponent");
-    tree.put("Transform", "dummy");
-    tree.put("Volume", Volume());
-    return tree;
-  };
+  virtual void update(double time);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

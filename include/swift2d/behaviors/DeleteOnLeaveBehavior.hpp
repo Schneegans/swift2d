@@ -57,6 +57,10 @@ class DeleteOnLeaveBehavior : public Behavior<SceneObject*> {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {
+    return "DeleteOnLeaveBehavior";
+  }
+
   void set_shapes(CircularShapePtr const& a, CircularShapePtr const& b) {
     trigger_.set_shapes(a, b);
   }

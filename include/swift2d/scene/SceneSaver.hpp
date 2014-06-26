@@ -6,44 +6,34 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
-#define SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
+#ifndef SWIFT2D_SCENE_SAVER_HPP
+#define SWIFT2D_SCENE_SAVER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/Component.hpp>
-#include <swift2d/math.hpp>
+#include <swift2d/network/SerializableReference.hpp>
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-// shared pointer type definition ----------------------------------------------
-class TransformableComponent;
-typedef std::shared_ptr<TransformableComponent>       TransformableComponentPtr;
-typedef std::shared_ptr<const TransformableComponent> ConstTransformableComponentPtr;
-
 // -----------------------------------------------------------------------------
-class TransformableComponent : public Component {
+class SceneSaver {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  void save(std::string const& name, SerializableReference const& value);
 
-  // ---------------------------------------------------------------- properties
-  Mat3 Transform;
-  Mat3 WorldTransform;
+  boost::property_tree::ptree to_json(std::string const& type_name);
 
-  // ------------------------------------------------------------ public methods
-  virtual void update(double time);
-
-  virtual math::vec2 get_position() const;
-  virtual math::vec2 get_world_position() const;
-
-  virtual void save(SceneSaver& saver);
+ private:
+  std::vector<std::pair<std::string, SerializableReference>> saved_members_;
 };
 
 }
 
-#endif  // SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
+#endif  // SWIFT2D_SCENE_SAVER_HPP

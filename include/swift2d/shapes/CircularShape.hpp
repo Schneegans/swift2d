@@ -36,6 +36,10 @@ class CircularShape : public TransformableComponent {
  public:
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {
+    return "CircularShape";
+  }
+
   /*virtual*/ void update(double time) {
     TransformableComponent::update(time);
     center_ = (WorldTransform() * math::vec3(0, 0, 1)).xy();

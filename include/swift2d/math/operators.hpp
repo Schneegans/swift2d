@@ -6,17 +6,20 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_MATH_OPERATORS_HPP
-#define SWIFT2D_MATH_OPERATORS_HPP
+#ifndef SWIFT2D_MATH_OPERATORS_HPP__BLUPL
+#define SWIFT2D_MATH_OPERATORS_HPP__BLUPL
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/math/types.hpp>
 #include <iostream>
 
+
 ////////////////////////////////////////////////////////////////////////////////
 
+namespace oglplus {
+
 template<typename T>
-inline std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 2> const& vec) {
+inline std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 2ul> const& vec) {
   stream << "(" << vec.x() << ", " << vec.y() << ")";
   return stream;
 }
@@ -36,7 +39,6 @@ inline std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 4> cons
   stream << "(" << vec.x() << ", " << vec.y() << ", " << vec.z() << ", " << vec.w() << ")";
   return stream;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -74,7 +76,8 @@ inline std::ostream& operator<<(std::ostream& stream, oglplus::Matrix<T, 4, 4> c
   return stream;
 }
 
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif //SWIFT2D_MATH_OPERATORS_HPP
+#endif //SWIFT2D_MATH_OPERATORS_HPP__BLUPL

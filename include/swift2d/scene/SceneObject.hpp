@@ -50,10 +50,13 @@ class SceneObject {
 
   SceneObject() : Parent(nullptr), remove_flag_(false) {}
 
-  virtual boost::property_tree::ptree to_json() const;
   void save_to_file(std::string const& path) const;
 
   // ------------------------------------------------------------ public methods
+
+  virtual std::string get_type_name() const {
+    return "SceneObject";
+  }
 
   // removes this scene object from its parent
   void detach();
@@ -141,7 +144,6 @@ class SceneObject {
 
   // --------------------------------------------------- serialization interface
 
-
   // calls serialize() on all enabled components and objects --- the provided
   // SerializedScene is extended
   virtual void serialize(SerializedScenePtr& scene) const;
@@ -156,6 +158,7 @@ class SceneObject {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  boost::property_tree::ptree to_json() const;
 
   // a collection of all objects attached to this object
   std::unordered_set<SceneObjectPtr> objects_;

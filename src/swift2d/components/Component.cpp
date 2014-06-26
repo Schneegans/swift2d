@@ -6,41 +6,25 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <swift2d/components/TransformableComponent.hpp>
-
-#include <swift2d/scene/SceneObject.hpp>
+// includes  -------------------------------------------------------------------
+#include <swift2d/components/Component.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TransformableComponent::update(double time) {
-  if (get_user()) {
-    WorldTransform = get_user()->WorldTransform.get() * Transform.get();
-  } else {
-    WorldTransform = Transform.get();
-  }
-}
+Component::Component()
+  : Enabled(true)
+  , user_(nullptr)
+  , remove_flag_(false) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-math::vec2 TransformableComponent::get_position() const {
-  return math::get_translate(Transform.get());
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-math::vec2 TransformableComponent::get_world_position() const {
-  return math::get_translate(WorldTransform.get());
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void TransformableComponent::save(SceneSaver& saver) {
-  Component::save(saver);
-  saver.save("Transform", &Transform);
+void Component::save(SceneSaver& saver) {
+  saver.save("Enabled", &Enabled);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 }
+

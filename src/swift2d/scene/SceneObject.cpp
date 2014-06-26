@@ -10,11 +10,10 @@
 #include <swift2d/scene/SceneObject.hpp>
 
 #include <swift2d/scene/SerializedScene.hpp>
+#include <swift2d/scene/SceneSaver.hpp>
 #include <swift2d/components/CameraComponent.hpp>
-#include <swift2d/utils/TextFile.hpp>
+#include <swift2d/math/operators.hpp>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 #include <iostream>
 #include <algorithm>
 
@@ -25,30 +24,6 @@ namespace swift {
 
 SceneObjectPtr SceneObject::create_from_file(std::string const& path) {
 
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-boost::property_tree::ptree SceneObject::to_json() const {
-  boost::property_tree::ptree tree;
-
-  tree.put("type", "SceneObject");
-
-
-  boost::property_tree::ptree components;
-  for (auto const& component: components_) {
-    components.push_back(std::make_pair("", component->to_json()));
-  }
-  tree.add_child("Components", components);
-
-
-  boost::property_tree::ptree objects;
-  for (auto const& object: objects_) {
-    objects.push_back(std::make_pair("", object->to_json()));
-  }
-  tree.add_child("Objects", objects);
-
-  return tree;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -191,6 +166,33 @@ void SceneObject::update(double time) {
       (*current)->update(time);
     }
   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+boost::property_tree::ptree SceneObject::to_json() const {
+  boost::property_tree::ptree json;
+  json.put("Type", get_type_name());
+
+  if (components_.size() > 0) {
+    boost::property_tree::ptree components;
+    for (auto const& component: components_) {
+      SceneSaver saver;
+      component->save(saver);
+      components.push_back(std::make_pair("", saver.to_json(component->get_type_name())));
+    }
+    json.add_child("Components", components);
+  }
+
+  if (objects_.size() > 0) {
+    boost::property_tree::ptree objects;
+    for (auto const& object: objects_) {
+      objects.push_back(std::make_pair("", object->to_json()));
+    }
+    json.add_child("Objects", objects);
+  }
+
+  return json;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

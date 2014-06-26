@@ -36,6 +36,10 @@ class RectangularShape : public Shape {
  public:
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {
+    return "RectangularShape";
+  }
+
   /*virtual*/ bool contains(CircularShapePtr const& other) {
 
   };

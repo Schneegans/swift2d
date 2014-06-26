@@ -56,6 +56,10 @@ class MoveBehavior : public Behavior<SceneObject*> {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {
+    return "MoveBehavior";
+  }
+
   virtual void update(double time) {
     auto user_transform(get_user()->Transform.get());
     math::rotate(user_transform, AngularSpeed.get() * time);

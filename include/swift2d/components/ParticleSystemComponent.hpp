@@ -54,6 +54,10 @@ class ParticleSystemComponent : public DrawableComponent {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {
+    return "ParticleSystemComponent";
+  }
+
   void update(double time) {
     DrawableComponent::update(time);
     particle_system_->update(time);
@@ -75,14 +79,10 @@ class ParticleSystemComponent : public DrawableComponent {
     }
   }
 
-  virtual boost::property_tree::ptree to_json() const {
-    boost::property_tree::ptree tree;
-    tree.put("Type", "ParticleSystemComponent");
-    tree.put("Transform", "dummy");
-    tree.put("Emitter", "dummy");
-    tree.put("Depth", Depth());
-    return tree;
-  };
+  virtual void save(SceneSaver& saver) {
+    DrawableComponent::save(saver);
+    saver.save("Depth", &Depth);
+  }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
