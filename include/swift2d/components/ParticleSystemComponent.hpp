@@ -78,9 +78,10 @@ class ParticleSystemComponent : public DrawableComponent {
     }
   }
 
-  virtual void save(SceneSaver& saver) {
-    DrawableComponent::save(saver);
-    saver.save("Depth", &Depth);
+  virtual void accept(SavableObjectVisitor& visitor) {
+    DrawableComponent::accept(visitor);
+    visitor.add_member("Depth", Depth);
+    visitor.add_object("Emitter", Emitter);
   }
 
  ///////////////////////////////////////////////////////////////////////////////

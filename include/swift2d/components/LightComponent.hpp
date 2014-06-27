@@ -64,9 +64,10 @@ class LightComponent : public DrawableComponent {
     scene->lights.insert(std::make_pair(Depth.get(), create_copy()));
   }
 
-  virtual void save(SceneSaver& saver) {
-    DrawableComponent::save(saver);
-    saver.save("Depth", &Depth);
+  virtual void accept(SavableObjectVisitor& visitor) {
+    DrawableComponent::accept(visitor);
+    visitor.add_member("Depth", Depth);
+    visitor.add_object("Material", Material);
   }
 };
 

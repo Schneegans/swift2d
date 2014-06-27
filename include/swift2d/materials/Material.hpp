@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/utils/Object.hpp>
 #include <swift2d/properties.hpp>
 
 namespace swift {
@@ -25,7 +26,7 @@ typedef std::shared_ptr<const Material> ConstMaterialPtr;
 typedef Property<MaterialPtr>           MaterialProperty;
 
 // -----------------------------------------------------------------------------
-class Material {
+class Material : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

@@ -82,6 +82,15 @@ class GuiComponent : public DrawableComponent {
     scene->gui_elements.insert(std::make_pair(Depth.get(), create_copy()));
   }
 
+  virtual void accept(SavableObjectVisitor& visitor) {
+    DrawableComponent::accept(visitor);
+    visitor.add_member("Depth", Depth);
+    visitor.add_member("Resource", Resource);
+    visitor.add_member("Size", Size);
+    visitor.add_member("Anchor", Anchor);
+    visitor.add_member("Offset", Offset);
+  }
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:

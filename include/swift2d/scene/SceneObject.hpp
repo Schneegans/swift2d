@@ -11,7 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
-#include <swift2d/utils/Object.hpp>
+#include <swift2d/utils/SavableObject.hpp>
 
 #include <unordered_set>
 #include <vector>
@@ -31,7 +31,7 @@ typedef std::shared_ptr<const SceneObject> ConstSceneObjectPtr;
 typedef Property<SceneObject*>             SceneObjectProperty;
 
 // -----------------------------------------------------------------------------
-class SceneObject : public Object {
+class SceneObject : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -50,8 +50,6 @@ class SceneObject : public Object {
   static SceneObjectPtr create_from_file(std::string const& path);
 
   SceneObject() : Parent(nullptr), remove_flag_(false) {}
-
-  void save_to_file(std::string const& path) const;
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
@@ -154,11 +152,12 @@ class SceneObject : public Object {
   // calls update() on all components and objects
   virtual void update(double time);
 
+  virtual void accept(SavableObjectVisitor& visitor);
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  boost::property_tree::ptree to_json() const;
-  static SceneObjectPtr create_from_json(boost::property_tree::ptree const& json);
+  // static SceneObjectPtr create_from_json(boost::property_tree::ptree const& json);
 
   // a collection of all objects attached to this object
   std::unordered_set<SceneObjectPtr> objects_;

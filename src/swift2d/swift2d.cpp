@@ -27,21 +27,29 @@ namespace {
         Logger::LOG_MESSAGE << "Booting Swift2D..." << std::endl;
 
         // register all objects ------------------------------------------------
+        // Object::init<RectangularShape>();
+        Object::init<BumpTextureMaterial>();
         Object::init<CameraComponent>();
         Object::init<CircularShape>();
         Object::init<DeleteOnLeaveBehavior>();
+        Object::init<DirectionalLightMaterial>();
         Object::init<GuiComponent>();
         Object::init<GuiComponent>();
         Object::init<LightComponent>();
+        Object::init<LightParticleEmitter>();
         Object::init<ListenerComponent>();
         Object::init<MoveBehavior>();
         Object::init<OffsetBehavior>();
         Object::init<ParticleSystemComponent>();
-        // Object::init<RectangularShape>();
+        Object::init<PointLightMaterial>();
+        Object::init<SceneObject>();
+        Object::init<ShadelessTextureMaterial>();
         Object::init<SoundComponent>();
         Object::init<SpriteComponent>();
         Object::init<TextComponent>();
+        Object::init<TextureParticleEmitter>();
         Object::init<TimedDeleteBehavior>();
+        Object::init<Sound>();
 
         // init glfw -----------------------------------------------------------
         if (!glfwInit()) {

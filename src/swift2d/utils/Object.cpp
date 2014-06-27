@@ -10,9 +10,9 @@
 
 namespace swift {
 
-std::unordered_map<std::string, std::function<Object*()>> Object::factory_;
+std::unordered_map<std::string, std::function<ObjectPtr()>> Object::factory_;
 
-Object* Object::create(std::string const& type_name) {
+ObjectPtr Object::create(std::string const& type_name) {
   auto factory(factory_.find(type_name));
   if (factory != factory_.end()) {
     return (factory->second)();

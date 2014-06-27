@@ -6,37 +6,27 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <swift2d/scene/SceneSaver.hpp>
+#include <swift2d/utils/SavableObject.hpp>
+
+#include <swift2d/objects/SavableObjectVisitor.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SceneSaver::save(std::string const& name, SerializableReference const& value) {
-  saved_members_.push_back(std::make_pair(name, value));
+void SavableObject::save_to_file(std::string const& path) {
+  SavableObjectVisitor visitor(get_type_name());
+  accept(visitor);
+  visitor.write_json(path);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-boost::property_tree::ptree SceneSaver::to_json(std::string const& type_name) {
-  boost::property_tree::ptree json;
-  json.put("Type", type_name);
-
-  for (auto& member: saved_members_) {
-    member.second.serialize(member.first, json);
-  }
-
-  return json;
+SavableObjectPtr SavableObject::create_from_file(std::string const& path) {
+  SavableObjectVisitor visitor;
+  visitor.read_json(path);
+  return visitor.to_object();
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-void SceneSaver::from_json(boost::property_tree::ptree const& json) {
-  for (auto& member: saved_members_) {
-    member.second.deserialize(member.first, json);
-  }
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 

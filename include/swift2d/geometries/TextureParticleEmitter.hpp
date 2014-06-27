@@ -58,12 +58,24 @@ class TextureParticleEmitter : public ParticleEmitter {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "TextureParticleEmitter"; }
+
   bool serialize_as_light() const { return false; }
 
   void draw(RenderContext const& ctx, math::mat3 const& transform, int count) const;
 
   void spawn(math::mat3 transform, math::vec2& position, float& max_age,
              math::vec2& direction, float& rotation, float& rotation_speed) const;
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    ParticleEmitter::accept(visitor);
+    visitor.add_member("BlendAdditive", BlendAdditive);
+    visitor.add_member("RotationSpeed", RotationSpeed);
+    visitor.add_member("RotationSpeedVariance", RotationSpeedVariance);
+    visitor.add_member("Rotation", Rotation);
+    visitor.add_member("RotationVariance", RotationVariance);
+  }
 };
 
 }

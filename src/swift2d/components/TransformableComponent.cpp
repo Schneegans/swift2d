@@ -36,9 +36,9 @@ math::vec2 TransformableComponent::get_world_position() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TransformableComponent::save(SceneSaver& saver) {
-  Component::save(saver);
-  saver.save("Transform", &Transform);
+void TransformableComponent::accept(SavableObjectVisitor& visitor) {
+  Component::accept(visitor);
+  visitor.add_member("Transform", Transform);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

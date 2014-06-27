@@ -12,8 +12,8 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/properties.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
-#include <swift2d/scene/SceneSaver.hpp>
-#include <swift2d/utils/Object.hpp>
+#include <swift2d/objects/SavableObjectVisitor.hpp>
+#include <swift2d/utils/SavableObject.hpp>
 #include <swift2d/utils/Logger.hpp>
 
 #include <vector>
@@ -42,7 +42,7 @@ class Component;
 typedef std::shared_ptr<Component> ComponentPtr;
 
 // -----------------------------------------------------------------------------
-class Component : public Object {
+class Component : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -59,7 +59,7 @@ class Component : public Object {
   // ------------------------------------------------------------ public methods
   virtual void update(double time) {}
   virtual void serialize(SerializedScenePtr& scene) const {};
-  virtual void save(SceneSaver& saver);
+  virtual void accept(SavableObjectVisitor& visitor);
 
   void         set_user(SceneObject* u) { user_ = u; }
   SceneObject* get_user() const { return user_; }

@@ -79,6 +79,9 @@ class BumpTextureMaterial : public Material {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "BumpTextureMaterial"; }
+
   // uses the Material on the given context.
   /* virtual */ void use(RenderContext const& ctx,
                          math::mat3 const& object_transform) const {

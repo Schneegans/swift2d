@@ -89,6 +89,12 @@ class SoundComponent : public TransformableComponent {
     source_->Stop();
   }
 
+  virtual void accept(SavableObjectVisitor& visitor) {
+    TransformableComponent::accept(visitor);
+    visitor.add_member("Volume", Volume);
+    visitor.add_object("Sound", Sound);
+  }
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:

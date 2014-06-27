@@ -57,6 +57,9 @@ class DirectionalLightMaterial : public Material {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "DirectionalLightMaterial"; }
+
   // uses the Material on the given context.
   /* virtual */ void use(RenderContext const& ctx,
                          math::mat3 const& object_transform) const {
@@ -74,6 +77,12 @@ class DirectionalLightMaterial : public Material {
     DirectionalLightShader::instance()->set_uniform("g_buffer_aux", 3);
     DirectionalLightShader::instance()->set_uniform("light_dir", math::normalized(Direction()));
     DirectionalLightShader::instance()->set_uniform("light_color", Color().vec3());
+  }
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    Material::accept(visitor);
+    visitor.add_member("Direction", Direction);
+    visitor.add_member("Color", Color);
   }
 };
 

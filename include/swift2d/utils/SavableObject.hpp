@@ -6,35 +6,45 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SCENE_SAVER_HPP
-#define SWIFT2D_SCENE_SAVER_HPP
+#ifndef SWIFT2D_SAVABLE_OBJECT_HPP
+#define SWIFT2D_SAVABLE_OBJECT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/network/SerializableReference.hpp>
+#include <swift2d/utils/Object.hpp>
+#include <swift2d/properties.hpp>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+#include <memory>
+#include <functional>
+#include <unordered_map>
 
 namespace swift {
 
+// forward declares ------------------------------------------------------------
+class SavableObjectVisitor;
+
 ////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
+// shared pointer type definition ----------------------------------------------
+class SavableObject;
+typedef std::shared_ptr<SavableObject>       SavableObjectPtr;
+typedef std::shared_ptr<const SavableObject> ConstSavableObjectPtr;
+typedef Property<SavableObjectPtr>           SavableObjectProperty;
+
 // -----------------------------------------------------------------------------
-class SceneSaver {
+class SavableObject : public Object {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-  void save(std::string const& name, SerializableReference const& value);
 
-  boost::property_tree::ptree to_json(std::string const& type_name);
-  void                        from_json(boost::property_tree::ptree const& json);
+  void save_to_file(std::string const& path);
+  static SavableObjectPtr create_from_file(std::string const& path);
 
- private:
-  std::vector<std::pair<std::string, SerializableReference>> saved_members_;
+  virtual void accept(SavableObjectVisitor& to) {};
 };
 
 }
 
-#endif  // SWIFT2D_SCENE_SAVER_HPP
+#endif  // SWIFT2D_SAVABLE_OBJECT_HPP

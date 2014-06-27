@@ -10,6 +10,7 @@
 #define SWIFT2D_SOUND_HPP
 
 // includes  -------------------------------------------------------------------
+#include <swift2d/objects/SavableObjectVisitor.hpp>
 #include <swift2d/openal.hpp>
 #include <swift2d/properties.hpp>
 
@@ -29,7 +30,7 @@ typedef std::shared_ptr<const Sound> ConstSoundPtr;
 typedef Property<SoundPtr>           SoundProperty;
 
 // -----------------------------------------------------------------------------
-class Sound {
+class Sound : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -45,7 +46,15 @@ class Sound {
     return sound;
   }
 
+  // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "Sound"; }
+
   oalplus::Buffer const& get_buffer() const { return buffer_; }
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    // visitor.add_member("Size", Size);
+  }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

@@ -102,6 +102,20 @@ class Property {
   int connection_id_;
 };
 
+template<typename T>
+std::ostream& operator<<(std::ostream& out_stream, Property<T> const& val) {
+  out_stream << val.get();
+  return out_stream;
+}
+
+template<typename T>
+std::istream& operator>>(std::istream& in_stream, Property<T>& val) {
+  T tmp;
+  in_stream >> tmp;
+  val.set(tmp);
+  return in_stream;
+}
+
 }
 
 #endif /* SWIFT2D_EVENTS_PROPERTY_HPP */

@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Logger.hpp>
 
+#include <memory>
 #include <functional>
 #include <unordered_map>
 
@@ -21,6 +22,11 @@ namespace swift {
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
+// shared pointer type definition ----------------------------------------------
+class Object;
+typedef std::shared_ptr<Object>       ObjectPtr;
+typedef std::shared_ptr<const Object> ConstObjectPtr;
+
 // -----------------------------------------------------------------------------
 class Object {
 
@@ -28,11 +34,11 @@ class Object {
  // ----------------------------------------------------------- public interface
  public:
 
-  static Object* create(std::string const& type_name);
+  static ObjectPtr create(std::string const& type_name);
 
   template<typename T>
   static void init() {
-    factory_[T::get_type_name_static()] = [](){ return new T(); };
+    factory_[T::get_type_name_static()] = [](){ return std::make_shared<T>(); };
   }
 
   virtual std::string get_type_name() const = 0;
@@ -40,7 +46,7 @@ class Object {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  static std::unordered_map<std::string, std::function<Object*()>> factory_;
+  static std::unordered_map<std::string, std::function<ObjectPtr()>> factory_;
 
 };
 

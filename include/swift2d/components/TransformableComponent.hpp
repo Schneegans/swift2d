@@ -41,7 +41,7 @@ class TransformableComponent : public Component {
   virtual math::vec2 get_position() const;
   virtual math::vec2 get_world_position() const;
 
-  virtual void save(SceneSaver& saver);
+  virtual void accept(SavableObjectVisitor& visitor);
 };
 
 }

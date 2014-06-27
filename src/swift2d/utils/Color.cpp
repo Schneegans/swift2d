@@ -240,20 +240,20 @@ Color operator-(Color const& lhs, Color const& rhs) {
 ////////////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<(std::ostream& os, Color const& color) {
-  os << color.r() << " " << color.g() << " " << color.b() << std::endl;
+  os << color.vec3();
   return os;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 std::istream& operator>>(std::istream& is, Color& color) {
-  float cur_val;
-  is >> cur_val;
-  color.r(cur_val);
-  is >> cur_val;
-  color.g(cur_val);
-  is >> cur_val;
-  color.b(cur_val);
+  math::vec3 val;
+  is >> val;
+
+  color.r(val[0]);
+  color.g(val[1]);
+  color.b(val[2]);
+
   return is;
 }
 
