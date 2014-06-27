@@ -46,7 +46,6 @@ namespace {
         Object::init<ShadelessTextureMaterial>();
         Object::init<SoundComponent>();
         Object::init<SpriteComponent>();
-        Object::init<TextComponent>();
         Object::init<TextureParticleEmitter>();
         Object::init<TimedDeleteBehavior>();
         Object::init<Sound>();
