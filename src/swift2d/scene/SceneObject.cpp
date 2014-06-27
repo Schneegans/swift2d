@@ -168,6 +168,14 @@ void SceneObject::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Transform", Transform);
   visitor.add_array("Components", components_);
   visitor.add_array("Objects", objects_);
+
+  for (auto& ptr: objects_) {
+    ptr->Parent = this;
+  }
+
+  for (auto& ptr: components_) {
+    ptr->set_user(this);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

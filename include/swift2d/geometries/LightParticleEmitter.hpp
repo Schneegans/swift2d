@@ -61,6 +61,7 @@ class LightParticleEmitter : public ParticleEmitter {
 
   virtual void accept(SavableObjectVisitor& visitor) {
     ParticleEmitter::accept(visitor);
+    visitor.add_object("Texture", Texture);
   }
 };
 

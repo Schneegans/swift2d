@@ -10,7 +10,7 @@
 #define SWIFT2D_TIMED_DELETE_BEHAVIOR_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/behaviors/Behavior.hpp>
+#include <swift2d/components/Component.hpp>
 
 namespace swift {
 
@@ -24,7 +24,7 @@ typedef std::shared_ptr<TimedDeleteBehavior>       TimedDeleteBehaviorPtr;
 typedef std::shared_ptr<const TimedDeleteBehavior> ConstTimedDeleteBehaviorPtr;
 
 // -----------------------------------------------------------------------------
-class TimedDeleteBehavior : public Behavior<SceneObject*> {
+class TimedDeleteBehavior : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -58,6 +58,11 @@ class TimedDeleteBehavior : public Behavior<SceneObject*> {
       on_delete.emit();
       get_user()->detach();
     }
+  }
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    Component::accept(visitor);
+    visitor.add_member("Life", Life);
   }
 
 };

@@ -86,6 +86,12 @@ class PointLightMaterial : public Material {
     PointLightShader::instance()->set_uniform("light_tex", 0);
     PointLightShader::instance()->set_uniform("light_color", Color().vec3());
   }
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    Material::accept(visitor);
+    visitor.add_object("Texture", Texture);
+    visitor.add_member("Color", Color);
+  }
 };
 
 // -----------------------------------------------------------------------------

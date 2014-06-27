@@ -49,6 +49,7 @@ namespace {
         Object::init<TextureParticleEmitter>();
         Object::init<TimedDeleteBehavior>();
         Object::init<Sound>();
+        Object::init<Texture>();
 
         // init glfw -----------------------------------------------------------
         if (!glfwInit()) {

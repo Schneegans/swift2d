@@ -10,7 +10,7 @@
 #define SWIFT2D_DELETE_ON_LEAVE_BEHAVIOR_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/behaviors/Behavior.hpp>
+#include <swift2d/components/Component.hpp>
 #include <swift2d/triggers/ShapeTrigger.hpp>
 
 namespace swift {
@@ -25,7 +25,7 @@ typedef std::shared_ptr<DeleteOnLeaveBehavior>       DeleteOnLeaveBehaviorPtr;
 typedef std::shared_ptr<const DeleteOnLeaveBehavior> ConstDeleteOnLeaveBehaviorPtr;
 
 // -----------------------------------------------------------------------------
-class DeleteOnLeaveBehavior : public Behavior<SceneObject*> {
+class DeleteOnLeaveBehavior : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

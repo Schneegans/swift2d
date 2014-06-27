@@ -1,0 +1,149 @@
+{
+    "Type": "SceneObject",
+    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
+    "Components":
+    [
+        {
+            "Type": "LightComponent",
+            "Enabled": "1",
+            "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
+            "Depth": "0",
+            "Material":
+            {
+                "Type": "DirectionalLightMaterial",
+                "Direction": "(0.1 1 0)",
+                "Color": "(1 0.5 1)"
+            }
+        },
+        {
+            "Type": "LightComponent",
+            "Enabled": "1",
+            "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
+            "Depth": "0",
+            "Material":
+            {
+                "Type": "DirectionalLightMaterial",
+                "Direction": "(-1 -1 0)",
+                "Color": "(0.4 0.8 1)"
+            }
+        },
+        {
+            "Type": "SpriteComponent",
+            "Enabled": "1",
+            "Transform": "(2 0 0\n 0 2 0\n 0 0 1)",
+            "Depth": "-1000",
+            "Material":
+            {
+                "Type": "ShadelessTextureMaterial",
+                "Texture":
+                {
+                    "Type": "Texture",
+                    "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/bg.jpg"
+                }
+            }
+        }
+    ],
+    "Objects":
+    [
+        {
+            "Type": "SceneObject",
+            "Transform": "(1.5 0 1.2\n 0 1.5 -1\n 0 0 1)",
+            "Components":
+            [
+                {
+                    "Type": "SpriteComponent",
+                    "Enabled": "1",
+                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
+                    "Depth": "0",
+                    "Material":
+                    {
+                        "Type": "BumpTextureMaterial",
+                        "Texture":
+                        {
+                            "Type": "Texture",
+                            "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/planet_diffuse3.png"
+                        },
+                        "NormalMap":
+                        {
+                            "Type": "Texture",
+                            "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/planet_normal3.png"
+                        },
+                        "Emit": "0.1",
+                        "Shinyness": "20",
+                        "Reflectivity": "0.3"
+                    }
+                },
+                {
+                    "Type": "MoveBehavior",
+                    "Enabled": "1",
+                    "LinearSpeed": "0",
+                    "AngularSpeed": "0.03"
+                }
+            ]
+        },
+        {
+            "Type": "SceneObject",
+            "Transform": "(2.2 0 -1.2\n 0 2.2 -2\n 0 0 1)",
+            "Components":
+            [
+                {
+                    "Type": "SpriteComponent",
+                    "Enabled": "1",
+                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
+                    "Depth": "40",
+                    "Material":
+                    {
+                        "Type": "ShadelessTextureMaterial",
+                        "Texture":
+                        {
+                            "Type": "Texture",
+                            "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/planet_diffuse2.png"
+                        }
+                    }
+                },
+                {
+                    "Type": "MoveBehavior",
+                    "Enabled": "1",
+                    "LinearSpeed": "0",
+                    "AngularSpeed": "-0.1"
+                }
+            ]
+        },
+        {
+            "Type": "SceneObject",
+            "Transform": "(1.2 0 -0.9\n 0 1.2 0.5\n 0 0 1)",
+            "Components":
+            [
+                {
+                    "Type": "SpriteComponent",
+                    "Enabled": "1",
+                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
+                    "Depth": "0",
+                    "Material":
+                    {
+                        "Type": "BumpTextureMaterial",
+                        "Texture":
+                        {
+                            "Type": "Texture",
+                            "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/planet_diffuse.png"
+                        },
+                        "NormalMap":
+                        {
+                            "Type": "Texture",
+                            "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/planet_normal.png"
+                        },
+                        "Emit": "0.1",
+                        "Shinyness": "50",
+                        "Reflectivity": "0.8"
+                    }
+                },
+                {
+                    "Type": "MoveBehavior",
+                    "Enabled": "1",
+                    "LinearSpeed": "0",
+                    "AngularSpeed": "0.1"
+                }
+            ]
+        }
+    ]
+}

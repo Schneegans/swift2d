@@ -71,6 +71,11 @@ class ShadelessTextureMaterial : public Material {
     ShadelessTextureShader::instance()->set_uniform("transform", object_transform);
     ShadelessTextureShader::instance()->set_uniform("diffuse", 0);
   }
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    Material::accept(visitor);
+    visitor.add_object("Texture", Texture);
+  }
 };
 
 // -----------------------------------------------------------------------------

@@ -75,6 +75,7 @@ class TextureParticleEmitter : public ParticleEmitter {
     visitor.add_member("RotationSpeedVariance", RotationSpeedVariance);
     visitor.add_member("Rotation", Rotation);
     visitor.add_member("RotationVariance", RotationVariance);
+    visitor.add_object("Texture", Texture);
   }
 };
 

@@ -97,6 +97,15 @@ class BumpTextureMaterial : public Material {
     BumpTextureShader::instance()->set_uniform("shinyness", Shinyness());
     BumpTextureShader::instance()->set_uniform("reflectivity", Reflectivity());
   }
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    Material::accept(visitor);
+    visitor.add_object("Texture", Texture);
+    visitor.add_object("NormalMap", NormalMap);
+    visitor.add_member("Emit", Emit);
+    visitor.add_member("Shinyness", Shinyness);
+    visitor.add_member("Reflectivity", Reflectivity);
+  }
 };
 
 // -----------------------------------------------------------------------------
