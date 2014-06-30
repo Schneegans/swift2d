@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" type="text/css" href="third_party/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="third_party/css/bootstrap-theme.css">
+<link rel="stylesheet" type="text/css" href="bootstrap_overrides.css">
+<link rel="stylesheet" type="text/css" href="window.css">
+
+<script type="text/javascript" src="third_party/js/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="third_party/js/jquery-ui-1.10.4.min.js"></script>
+<script type="text/javascript" src="third_party/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+
+  $(document).ready( function() {
+    var on = true;
+    var flicCount = 1;
+
+    function flicker() {
+      on = !on;
+
+      if (flicCount == 0) {
+        flicCount =  Math.floor(Math.random()*10)*2+1;
+      }
+      flicCount --;
+
+      var time;
+      if (on) {
+        document.getElementById("mars-window").className = "mars-window light-on";
+        if (flicCount > 0) {
+          time = Math.floor((Math.random()*50) + 1);
+        } else {
+          time = Math.floor((Math.random()*10000) + 1);
+        }
+      } else {
+        document.getElementById("mars-window").className = "mars-window";
+        if (flicCount > 0) {
+          time = Math.floor((Math.random()*10) + 1);
+        } else {
+          time = Math.floor((Math.random()*2000) + 1);
+        }
+      }
+      setTimeout(function() { flicker(); }, time);
+    }
+
+    // var audioElement = document.createElement('audio');
+    // audioElement.setAttribute('src', 'sound/rolldown.wav');
+    // audioElement.setAttribute('autoplay', 'autoplay');
+    // $("body").append(audioElement);
+    //audioElement.load()
+
+    // $.get();
+
+    // var roller = new Audio("sound/rolldown.wav");
+    // roller.play();
+    // setTimeout(function() {
+      // $("#mars-window").css({"-webkit-transform": "translate(0px, -100px)"});
+      // audioElement.play();
+    // }, 1000);
+
+
+    // var snd = new Audio("sound/tick.mp3");
+    // $(".button").click(function() {
+    // });
+
+
+
+    flicker();
+
+    $('.swift-tooltip').tooltip({container:"body"});
+  });
+</script>
+
+
+</head>
+<body>
+<!-- <audio src="sound/rolldown.wav" autoplay="autoplay"></audio> -->
+<div id="mars-window" class="mars-window">
+  <div class="mars-window-inner">
+    <h1>Es beginnt...</h1>
+    <p>
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+    </p>
+
+    <!-- Buttons -->
+    <div class="row">
+      <div class="col-sm-6">
+        <div onclick="Swift2D.quit()" class="button">Spiel beenden!</div>
+      </div>
+      <div class="col-sm-6">
+        <div onclick="Swift2D.pause()" class="button">Musik pausieren!</div>
+      </div>
+    </div>
+
+    <br>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="active"><a href="#home" role="tab" data-toggle="tab">Home</a></li>
+      <li><a href="#messages" role="tab" data-toggle="tab">Messages</a></li>
+      <li><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <div class="tab-pane fade active in" id="home">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="button swift-tooltip" data-toggle="tooltip" data-placement="top" title="Tooltip">Tooltip oben</div>
+          </div>
+          <div class="col-sm-4">
+            <div class="button swift-tooltip" data-toggle="tooltip" data-placement="right" title="Tooltip, der etwas länger ist als der Rest...">Tooltip rechts</div>
+          </div>
+          <div class="col-sm-4">
+            <div class="button swift-tooltip" data-toggle="tooltip" data-placement="bottom" title="Tooltip">Tooltip unten</div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="messages">
+        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
+      </div>
+      <div class="tab-pane fade" id="settings">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="input-group">
+              <span class="input-group-addon">@</span>
+              <input type="text" class="form-control" placeholder="Username">
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="input-group">
+              <input type="text" class="form-control">
+              <span class="input-group-addon">.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,145 @@
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('fonts/Comfortaa-Regular.eot?') format('eot'),
+       url('fonts/Comfortaa-Regular.woff') format('woff'),
+       url('fonts/Comfortaa-Regular.ttf')  format('truetype'),
+       url('fonts/Comfortaa-Regular.svg#Comfortaa-Regular') format('svg');
+}
+
+
+body {
+  font-family: 'Comfortaa' !important;
+  /*font-size: 1.1em;*/
+  margin: 0;
+  zoom: 1;
+  -webkit-user-select: none;
+  /*background-color: black;*/
+  background-color: transparent;
+}
+
+::selection {
+  background: rgb(255, 171, 235) !important;
+  color: black !important;
+}
+
+/* ####################### Window Stuff ##################################### */
+.mars-window {
+  position: absolute;
+  margin: 320px 200px 90px 190px;
+}
+
+.mars-window:after {
+  content:"";
+  position:absolute;
+  top:0; bottom:0; left:0; right:0;
+
+  border-image-source: url("img/gui_off.png");
+  border-image-slice: 500 320 140 320;
+  border-width: 500px 320px 140px 320px;
+  margin: -320px -200px -100px -185px;
+  pointer-events:none;
+}
+
+.mars-window.light-on:after {
+  border-image-source: url("img/gui_on.png");
+}
+
+
+.mars-window-inner {
+  position:relative;
+  padding: 30px 30px 60px 30px;
+
+  color: rgb(255, 171, 235);
+  background-color: rgba(0, 0, 0, 0.8);
+  background-image: url("img/gloss.png");
+  background-repeat: no-repeat;
+  background-size: 100% 80px;
+
+  border-radius: 3px;
+  border: 1px rgba(255, 171, 235, 0.5) solid;
+  box-shadow: 0 0 5px rgba(255, 171, 235, 0.5) inset;
+}
+
+.mars-window.light-on
+.mars-window-inner {
+  border: 1px rgb(255, 171, 235) solid;
+  box-shadow: 0 0 10px rgb(255, 171, 235) inset;
+}
+
+/* ######################### Typography ##################################### */
+h1 {
+  margin-top: 10px;
+  margin-bottom: 20px;
+
+  /*font-family: 'Heading' !important;*/
+  font-size: 2.5em;
+  font-weight: normal;
+  border-style:solid;
+  -webkit-border-image:
+    -webkit-linear-gradient(left, rgb(255, 171, 235) 0%,rgba(0,0,0,0) 100%) 0 0 100% 0/0 0 3px 0 stretch;
+}
+
+
+/* ############################ Widgets ##################################### */
+
+/*Buttons*/
+.button {
+  position: relative;
+  padding: 10px;
+  margin: 10px 0;
+
+  background-color: rgba(0,0,0,0.8);
+  background-image: url("img/gloss.png");
+  background-repeat: no-repeat;
+  background-size: 100% 10px;
+
+  border-radius: 3px;
+  border: 1px rgba(255, 171, 235, 0.5) solid;
+  box-shadow: 0 0 5px rgba(255, 171, 235, 0.5) inset, 0 1px 5px rgb(0, 0, 0);
+
+  text-align: center;
+  -webkit-transition: all 0.1s;
+}
+
+.button:hover {
+  border: 1px rgb(255, 171, 235) solid;
+  box-shadow: 0 0 10px rgb(255, 171, 235) inset, 0 1px 5px rgb(0, 0, 0);
+}
+
+.button:active {
+  border: 1px rgb(255, 171, 235) solid;
+  box-shadow: none;
+  top: 1px;
+  /*padding: 11px 10px 9px 10px;*/
+  -webkit-transition: none;
+}
+
+.button:after {
+  display: block;
+  content:"";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 20px;
+  width: 100%;
+  border-radius: 30% / 50%;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background-image: -webkit-linear-gradient(bottom, rgba(255, 171, 235, 0.4) 1%,rgba(0,0,0,0) 100%);
+  opacity: 0.5;
+
+  -webkit-transition: all 0.25s;
+}
+
+.button:hover:after {
+  opacity: 1.0;
+}
+
+
+
+
+
+
+
+
+

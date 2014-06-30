@@ -105,6 +105,7 @@ add_subdirectory(src)
 
 add_subdirectory(examples/simple)
 add_subdirectory(examples/network)
+add_subdirectory(examples/mars)
 
 ################################################################
 # Summary

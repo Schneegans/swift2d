@@ -85,6 +85,11 @@ class SoundComponent : public TransformableComponent {
     source_->Play();
   }
 
+  virtual void pause() {
+    source_->Pause();
+  }
+
+
   virtual void stop() {
     source_->Stop();
   }
