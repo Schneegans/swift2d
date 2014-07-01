@@ -7,12 +7,14 @@
 
 <link rel="stylesheet" type="text/css" href="third_party/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="third_party/css/bootstrap-theme.css">
+<link rel="stylesheet" type="text/css" href="third_party/css/bootstrap-slider.css">
 <link rel="stylesheet" type="text/css" href="bootstrap_overrides.css">
 <link rel="stylesheet" type="text/css" href="window.css">
 
 <script type="text/javascript" src="third_party/js/jquery-1.10.2.js"></script>
 <script type="text/javascript" src="third_party/js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="third_party/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="third_party/js/bootstrap-slider.js"></script>
 
 <script type="text/javascript">
 
@@ -72,6 +74,8 @@
     flicker();
 
     $('.swift-tooltip').tooltip({container:"body"});
+    $('.slider').slider()
+
   });
 </script>
 
@@ -100,14 +104,15 @@
 
     <!-- Tabs -->
     <ul class="nav nav-tabs" role="tablist">
-      <li class="active"><a href="#home" role="tab" data-toggle="tab">Home</a></li>
-      <li><a href="#messages" role="tab" data-toggle="tab">Messages</a></li>
-      <li><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
+      <li class="active"><a href="#tooltips" role="tab" data-toggle="tab">Tooltips</a></li>
+      <li><a href="#scrollbox" role="tab" data-toggle="tab">ScrollBox</a></li>
+      <li><a href="#inputs" role="tab" data-toggle="tab">Inputs</a></li>
+      <li><a href="#checkboxes" role="tab" data-toggle="tab">Checkboxes</a></li>
     </ul>
 
     <!-- Tab panes -->
     <div class="tab-content">
-      <div class="tab-pane fade active in" id="home">
+      <div class="tab-pane fade active in" id="tooltips">
         <div class="row">
           <div class="col-sm-4">
             <div class="button swift-tooltip" data-toggle="tooltip" data-placement="top" title="Tooltip">Tooltip oben</div>
@@ -120,10 +125,14 @@
           </div>
         </div>
       </div>
-      <div class="tab-pane fade" id="messages">
-        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
+      <div class="tab-pane fade" id="scrollbox">
+        <div class="scroll-box" style="max-height:150px">
+          <div class="scroll-box-content">
+            <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
+          </div>
+        </div>
       </div>
-      <div class="tab-pane fade" id="settings">
+      <div class="tab-pane fade" id="inputs">
         <div class="row">
           <div class="col-sm-6">
             <div class="input-group">
@@ -134,7 +143,42 @@
           <div class="col-sm-6">
             <div class="input-group">
               <input type="text" class="form-control">
-              <span class="input-group-addon">.00</span>
+              <span class="input-group-addon">@</span>
+            </div>
+          </div>
+        </div>
+
+        <input class="slider" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14" handle="custom"/>
+
+      </div>
+      <div class="tab-pane fade" id="checkboxes">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" value="">
+                <span>Option one is this and that&mdash;be sure to include why it's great</span>
+              </label>
+            </div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" value="">
+                <span>Option two is disabled</span>
+              </label>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="radio">
+              <label>
+                <input type="radio" name="optionsRadios" id="optionsRadios1" value="" checked>
+                <span>Option one is this and that&mdash;be sure to include why it's great</span>
+              </label>
+            </div>
+            <div class="radio">
+              <label>
+                <input type="radio" name="optionsRadios" id="optionsRadios2" value="">
+                <span>Option two can be something else and selecting it will deselect option one</span>
+              </label>
             </div>
           </div>
         </div>
