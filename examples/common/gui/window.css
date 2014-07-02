@@ -13,8 +13,8 @@ body {
   margin: 0;
   zoom: 1;
   -webkit-user-select: none;
-  /*background-color: black;*/
-  background-color: transparent;
+  background-color: black;
+  /*background-color: transparent;*/
 }
 
 ::selection {

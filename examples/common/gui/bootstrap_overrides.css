@@ -9,15 +9,15 @@ a:hover {
 
 /*Tabs*/
 .nav-tabs {
-  border-bottom:none;
-  background-image: -webkit-linear-gradient(left, rgb(255, 171, 235), transparent);
-  background-size: 100%  2px;
-  background-position: 0 100%, 0 0;
-  background-repeat: no-repeat;
+  border-bottom: 2px solid rgb(255, 171, 235);
 }
 
 .nav>li>a {
   padding: 5px 15px;
+}
+
+.nav-tabs>li {
+  margin-bottom: -2px;
 }
 
 .nav-tabs>li>a:hover {
@@ -25,16 +25,17 @@ a:hover {
   background-color: rgba(0, 0, 0, 0);
   background-image: -webkit-linear-gradient(bottom, rgba(255, 171, 235, 0.4) 0%,rgba(0,0,0,0) 50%);
   border-top: none;
-  border-bottom: 3px solid rgb(255, 171, 235);
 }
 
 .nav-tabs>li.active>a,
 .nav-tabs>li.active>a:hover,
 .nav-tabs>li.active>a:focus {
   color: rgb(255, 171, 235);
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(0, 0, 0, 1);
+
   border: 2px solid rgb(255, 171, 235);
-  border-bottom: 3px solid #000;
+
+  border-bottom: 0px solid #000;
 
   background-image: url("img/gloss.png");
   background-repeat: no-repeat;
@@ -43,12 +44,22 @@ a:hover {
 
 
 .tab-pane {
+  position: relative;
   padding: 15px;
+}
 
-  background-image: -webkit-linear-gradient(rgb(255, 171, 235), transparent);
-  background-size:  2px 100% ;
-  background-position: 0 0, 100% 0;
-  background-repeat: no-repeat;
+.tab-pane:before {
+  content:"";
+  top: 0;
+  left: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  border-left: 2px solid rgb(255, 171, 235);
+  border-right: 2px solid rgb(255, 171, 235);
+  -webkit-mask-image: -webkit-linear-gradient(rgba(255, 255, 255, 1) 0,
+                                              rgba(255, 255, 255, 0) 100%);
 }
 
 /*Tooltips*/

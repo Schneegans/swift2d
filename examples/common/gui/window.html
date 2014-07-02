@@ -8,13 +8,16 @@
 <link rel="stylesheet" type="text/css" href="third_party/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="third_party/css/bootstrap-theme.css">
 <link rel="stylesheet" type="text/css" href="third_party/css/bootstrap-slider.css">
+<link rel="stylesheet" type="text/css" href="third_party/css/bootstrap.colorpickersliders.css">
 <link rel="stylesheet" type="text/css" href="bootstrap_overrides.css">
 <link rel="stylesheet" type="text/css" href="window.css">
 
 <script type="text/javascript" src="third_party/js/jquery-1.10.2.js"></script>
 <script type="text/javascript" src="third_party/js/jquery-ui-1.10.4.min.js"></script>
+<script type="text/javascript" src="third_party/js/tinycolor.js"></script>
 <script type="text/javascript" src="third_party/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="third_party/js/bootstrap-slider.js"></script>
+<script type="text/javascript" src="third_party/js/bootstrap.colorpickersliders.js"></script>
 
 <script type="text/javascript">
 
@@ -49,32 +52,64 @@
       setTimeout(function() { flicker(); }, time);
     }
 
-    // var audioElement = document.createElement('audio');
-    // audioElement.setAttribute('src', 'sound/rolldown.wav');
-    // audioElement.setAttribute('autoplay', 'autoplay');
-    // $("body").append(audioElement);
-    //audioElement.load()
-
-    // $.get();
-
-    // var roller = new Audio("sound/rolldown.wav");
-    // roller.play();
-    // setTimeout(function() {
-      // $("#mars-window").css({"-webkit-transform": "translate(0px, -100px)"});
-      // audioElement.play();
-    // }, 1000);
-
-
-    // var snd = new Audio("sound/tick.mp3");
-    // $(".button").click(function() {
-    // });
 
 
 
-    flicker();
+    var html5_audiotypes = {
+      "mp3": "audio/mpeg",
+      "mp4": "audio/mp4",
+      "ogg": "audio/ogg",
+      "wav": "audio/wav"
+    }
+
+    function createSound(sound) {
+      var html5audio=document.createElement('audio')
+      if (html5audio.canPlayType){ //check support for HTML5 audio
+        for (var i=0; i<arguments.length; i++){
+          var sourceel=document.createElement('source')
+          sourceel.setAttribute('src', arguments[i])
+          if (arguments[i].match(/\.(\w+)$/i))
+            sourceel.setAttribute('type', html5_audiotypes[RegExp.$1])
+          html5audio.appendChild(sourceel)
+        }
+        html5audio.load()
+        html5audio.playclip=function(){
+          html5audio.pause()
+          html5audio.currentTime=0
+          html5audio.play()
+        }
+        return html5audio
+      }
+      else{
+        return {playclip:function(){throw new Error("Your browser doesn't support HTML5 audio unfortunately")}}
+      }
+    }
+
+    var clicksound = createSound("sound/tick.wav");
+
+    $(".button").click(function(){
+      clicksound.playclip();
+    });
 
     $('.swift-tooltip').tooltip({container:"body"});
+    $('.swift-popover').popover({container:"body"});
     $('.slider').slider()
+
+    $("input#color-picker").ColorPickerSliders({
+      placement: 'bottom',
+      size: "sm",
+      swatches: false,
+      order: {
+        hsl: 1
+      },
+      labels: {
+        hslhue: '',
+        hslsaturation: '',
+        hsllightness: ''
+      }
+    });
+
+    flicker();
 
   });
 </script>
@@ -104,7 +139,7 @@
 
     <!-- Tabs -->
     <ul class="nav nav-tabs" role="tablist">
-      <li class="active"><a href="#tooltips" role="tab" data-toggle="tab">Tooltips</a></li>
+      <li class="active"><a href="#tooltips" role="tab" data-toggle="tab">Tooltips and Popovers</a></li>
       <li><a href="#scrollbox" role="tab" data-toggle="tab">ScrollBox</a></li>
       <li><a href="#inputs" role="tab" data-toggle="tab">Inputs</a></li>
       <li><a href="#checkboxes" role="tab" data-toggle="tab">Checkboxes</a></li>
@@ -112,7 +147,7 @@
 
     <!-- Tab panes -->
     <div class="tab-content">
-      <div class="tab-pane fade active in" id="tooltips">
+      <div class="tab-pane active" id="tooltips">
         <div class="row">
           <div class="col-sm-4">
             <div class="button swift-tooltip" data-toggle="tooltip" data-placement="top" title="Tooltip">Tooltip oben</div>
@@ -124,15 +159,27 @@
             <div class="button swift-tooltip" data-toggle="tooltip" data-placement="bottom" title="Tooltip">Tooltip unten</div>
           </div>
         </div>
+
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="button swift-popover" data-placement="top" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Popover oben</div>
+          </div>
+          <div class="col-sm-4">
+            <div class="button swift-popover" data-placement="right" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Popover rechts</div>
+          </div>
+          <div class="col-sm-4">
+            <div class="button swift-popover" data-placement="bottom" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Popover unten</div>
+          </div>
+        </div>
       </div>
-      <div class="tab-pane fade" id="scrollbox">
+      <div class="tab-pane" id="scrollbox">
         <div class="scroll-box" style="max-height:150px">
           <div class="scroll-box-content">
             <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
           </div>
         </div>
       </div>
-      <div class="tab-pane fade" id="inputs">
+      <div class="tab-pane" id="inputs">
         <div class="row">
           <div class="col-sm-6">
             <div class="input-group">
@@ -147,11 +194,22 @@
             </div>
           </div>
         </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="input-group">
+              <input type="text" class="form-control" id="color-picker" value="#7f7f7f">
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="input-group">
+            </div>
+          </div>
+        </div>
 
         <input class="slider" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14" handle="custom"/>
 
       </div>
-      <div class="tab-pane fade" id="checkboxes">
+      <div class="tab-pane" id="checkboxes">
         <div class="row">
           <div class="col-sm-6">
             <div class="checkbox">
