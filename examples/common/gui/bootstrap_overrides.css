@@ -72,7 +72,6 @@ a:hover {
   border-width: 1px;
   padding: 1px 6px;
   max-width: 250px;
-  /*font-weight: bold;*/
   box-shadow: 0 0 10px rgba(255, 171, 235, 0.5) inset;
 }
 
@@ -95,6 +94,84 @@ a:hover {
 .tooltip-arrow {
     border-right-color: rgb(255, 171, 235);
 }
+
+/* ############################ Buttons ##################################### */
+
+.btn {
+  position: relative;
+  padding: 10px;
+  margin: 10px 0;
+
+  background-color: rgba(0,0,0,0.8);
+  background-image: url("img/gloss.png");
+  background-repeat: no-repeat;
+  background-size: 100% 10px;
+
+  border-radius: 3px;
+  border: 1px rgba(255, 171, 235, 0.5) solid;
+  box-shadow: 0 0 5px rgba(255, 171, 235, 0.5) inset, 0 1px 5px rgb(0, 0, 0);
+
+  text-align: center;
+  -webkit-transition: all 0.1s;
+}
+
+.btn:hover {
+  color: #FFC7ED;
+  border: 1px rgb(255, 171, 235) solid;
+  box-shadow: 0 0 10px rgb(255, 171, 235) inset, 0 1px 5px rgb(0, 0, 0);
+}
+
+.btn:active {
+  border: 1px rgb(255, 171, 235) solid;
+  box-shadow: none;
+  top: 1px;
+  -webkit-transition: none;
+}
+
+.btn:after {
+  display: block;
+  content:"";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 20px;
+  width: 100%;
+  border-radius: 30% / 50%;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background-image: -webkit-linear-gradient(bottom, rgba(255, 171, 235, 0.4) 1%,rgba(0,0,0,0) 100%);
+  opacity: 0.5;
+
+  -webkit-transition: all 0.25s;
+}
+
+.btn:hover:after {
+  opacity: 1.0;
+}
+
+.btn-default,
+.btn-default:hover, .btn-default:focus,
+.btn-default:active, .btn-default.active,
+.open>.dropdown-toggle.btn-default {
+  background-color: inherit;
+  background-position: inherit;
+  color: inherit;
+  text-shadow: inherit;
+  border: 1px rgb(255, 171, 235) solid;
+}
+
+.btn-default {
+  border: 1px rgba(255, 171, 235, 0.5) solid;
+}
+
+.btn:focus,
+.btn-default:focus,
+.bootstrap-select .btn:focus {
+  outline: none;
+  color: inherit;
+  background-color: rgba(255, 171, 235, 0.2);
+}
+
 
 /* ################################ Inputs ################################## */
 *::-webkit-input-placeholder {

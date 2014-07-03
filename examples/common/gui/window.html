@@ -9,6 +9,7 @@
 <link rel="stylesheet" type="text/css" href="third_party/css/bootstrap-theme.css">
 <link rel="stylesheet" type="text/css" href="third_party/css/bootstrap-slider.css">
 <link rel="stylesheet" type="text/css" href="third_party/css/bootstrap.colorpickersliders.css">
+<link rel="stylesheet" type="text/css" href="third_party/css/bootstrap-select.min.css">
 <link rel="stylesheet" type="text/css" href="bootstrap_overrides.css">
 <link rel="stylesheet" type="text/css" href="window.css">
 
@@ -18,6 +19,7 @@
 <script type="text/javascript" src="third_party/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="third_party/js/bootstrap-slider.js"></script>
 <script type="text/javascript" src="third_party/js/bootstrap.colorpickersliders.js"></script>
+<script type="text/javascript" src="third_party/js/bootstrap-select.min.js"></script>
 
 <script type="text/javascript">
 
@@ -93,6 +95,8 @@
 
     $('.swift-tooltip').tooltip({container:"body"});
 
+    $('.swift-select').selectpicker();
+
     $('.swift-popover').popover({container:"body"});
     $('body').on('click', function (e) {
       $('[data-toggle="popover"]').each(function () {
@@ -134,13 +138,14 @@
       Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
     </p>
 
+
     <!-- Buttons -->
     <div class="row">
       <div class="col-sm-6">
-        <div onclick="Swift2D.quit()" class="button">Spiel beenden!</div>
+        <button onclick="Swift2D.quit()" class="btn btn-block">Spiel beenden!</button>
       </div>
       <div class="col-sm-6">
-        <div onclick="Swift2D.pause()" class="button">Musik pausieren!</div>
+        <button onclick="Swift2D.pause()" class="btn btn-block">Musik pausieren!</button>
       </div>
     </div>
 
@@ -159,25 +164,25 @@
       <div class="tab-pane active" id="tooltips">
         <div class="row">
           <div class="col-sm-4">
-            <div class="button swift-tooltip" data-toggle="tooltip" data-placement="top" title="Tooltip">Tooltip oben</div>
+            <button class="btn btn-block swift-tooltip" data-toggle="tooltip" data-placement="top" title="Tooltip">Tooltip oben</button>
           </div>
           <div class="col-sm-4">
-            <div class="button swift-tooltip" data-toggle="tooltip" data-placement="right" title="Tooltip, der etwas länger ist als der Rest...">Tooltip rechts</div>
+            <button class="btn btn-block swift-tooltip" data-toggle="tooltip" data-placement="right" title="Tooltip, der etwas länger ist als der Rest...">Tooltip rechts</button>
           </div>
           <div class="col-sm-4">
-            <div class="button swift-tooltip" data-toggle="tooltip" data-placement="bottom" title="Tooltip">Tooltip unten</div>
+            <button class="btn btn-block swift-tooltip" data-toggle="tooltip" data-placement="bottom" title="Tooltip">Tooltip unten</button>
           </div>
         </div>
 
         <div class="row">
           <div class="col-sm-4">
-            <div class="button swift-popover" data-placement="top" data-toggle="popover" title="Popover title" data-content="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.">Popover oben</div>
+            <button class="btn btn-block swift-popover" data-placement="top" data-toggle="popover" title="Popover title" data-content="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.">Popover oben</button>
           </div>
           <div class="col-sm-4">
-            <div class="button swift-popover" data-placement="right" data-toggle="popover" title="Popover title" data-content="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.">Popover rechts</div>
+            <button class="btn btn-block swift-popover" data-placement="right" data-toggle="popover" title="Popover title" data-content="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.">Popover rechts</button>
           </div>
           <div class="col-sm-4">
-            <div class="button swift-popover" data-placement="bottom" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Popover unten</div>
+            <button class="btn btn-block swift-popover" data-placement="bottom" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Popover unten</button>
           </div>
         </div>
       </div>
@@ -189,6 +194,7 @@
         </div>
       </div>
       <div class="tab-pane" id="inputs">
+
         <div class="row">
           <div class="col-sm-6">
             <div class="input-group">
@@ -210,8 +216,13 @@
             </div>
           </div>
           <div class="col-sm-6">
-            <div class="input-group">
-            </div>
+
+            <select class="swift-select">
+              <option>Mustard</option>
+              <option>Ketchup</option>
+              <option>Relish</option>
+            </select>
+
           </div>
         </div>
 

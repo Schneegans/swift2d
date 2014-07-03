@@ -9,9 +9,9 @@
 
 body {
   font-family: 'Comfortaa' !important;
-  /*font-size: 1.1em;*/
   margin: 0;
   zoom: 1;
+  overflow: hidden;
   -webkit-user-select: none;
   background-color: black;
   /*background-color: transparent;*/
@@ -127,59 +127,17 @@ h1:before {
 }
 
 
-/* ############################ Buttons ##################################### */
-
-.button {
-  position: relative;
-  padding: 10px;
-  margin: 10px 0;
-
-  background-color: rgba(0,0,0,0.8);
-  background-image: url("img/gloss.png");
-  background-repeat: no-repeat;
-  background-size: 100% 10px;
-
-  border-radius: 3px;
-  border: 1px rgba(255, 171, 235, 0.5) solid;
-  box-shadow: 0 0 5px rgba(255, 171, 235, 0.5) inset, 0 1px 5px rgb(0, 0, 0);
-
-  text-align: center;
-  -webkit-transition: all 0.1s;
+/* ############################## Selects ################################### */
+.form-control select {
+   background: transparent;
+   width: 150px;
+   padding: 5px;
+   font-size: 16px;
+   border: 1px solid #ccc;
+   height: 34px;
+    -webkit-appearance: none;
 }
 
-.button:hover {
-  color: #FFC7ED;
-  border: 1px rgb(255, 171, 235) solid;
-  box-shadow: 0 0 10px rgb(255, 171, 235) inset, 0 1px 5px rgb(0, 0, 0);
-}
-
-.button:active {
-  border: 1px rgb(255, 171, 235) solid;
-  box-shadow: none;
-  top: 1px;
-  -webkit-transition: none;
-}
-
-.button:after {
-  display: block;
-  content:"";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 20px;
-  width: 100%;
-  border-radius: 30% / 50%;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  background-image: -webkit-linear-gradient(bottom, rgba(255, 171, 235, 0.4) 1%,rgba(0,0,0,0) 100%);
-  opacity: 0.5;
-
-  -webkit-transition: all 0.25s;
-}
-
-.button:hover:after {
-  opacity: 1.0;
-}
 
 /* ###################### Check and Radio buttons ########################### */
 
