@@ -110,11 +110,20 @@ h1 {
   margin-bottom: 20px;
   padding-bottom: 10px;
 
+  position: relative;
+
   font-size: 2.5em;
   font-weight: normal;
-  border-style:solid;
-  -webkit-border-image:
-    -webkit-linear-gradient(left, rgb(255, 171, 235) 0%,rgba(0,0,0,0) 100%) 0 0 100% 0/0 0 3px 0 stretch;
+}
+
+h1:before {
+  content: "";
+  width: 90%;
+  height: 3px;
+  position: absolute;
+  bottom: 0;
+  border-bottom: none;
+  background-image: -webkit-linear-gradient(left, rgb(255, 171, 235) 0%,rgba(0,0,0,0) 100%);
 }
 
 

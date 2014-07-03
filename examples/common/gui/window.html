@@ -92,7 +92,16 @@
     });
 
     $('.swift-tooltip').tooltip({container:"body"});
+
     $('.swift-popover').popover({container:"body"});
+    $('body').on('click', function (e) {
+      $('[data-toggle="popover"]').each(function () {
+        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+            $(this).popover('hide');
+        }
+      });
+    });
+
     $('.slider').slider()
 
     $("input#color-picker").ColorPickerSliders({
@@ -162,10 +171,10 @@
 
         <div class="row">
           <div class="col-sm-4">
-            <div class="button swift-popover" data-placement="top" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Popover oben</div>
+            <div class="button swift-popover" data-placement="top" data-toggle="popover" title="Popover title" data-content="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.">Popover oben</div>
           </div>
           <div class="col-sm-4">
-            <div class="button swift-popover" data-placement="right" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Popover rechts</div>
+            <div class="button swift-popover" data-placement="right" data-toggle="popover" title="Popover title" data-content="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.">Popover rechts</div>
           </div>
           <div class="col-sm-4">
             <div class="button swift-popover" data-placement="bottom" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Popover unten</div>

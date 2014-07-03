@@ -1,4 +1,4 @@
-/*General*/
+/* ################################ General ################################# */
 a {
   color: rgb(255, 171, 235);
 }
@@ -7,7 +7,7 @@ a:hover {
   color: #FFC7ED;
 }
 
-/*Tabs*/
+/* ################################ Tabs #################################### */
 .nav-tabs {
   border-bottom: 2px solid rgb(255, 171, 235);
 }
@@ -62,17 +62,18 @@ a:hover {
                                               rgba(255, 255, 255, 0) 100%);
 }
 
-/*Tooltips*/
+/* ################################ Tooltips ################################ */
 .tooltip-inner {
   border-color: rgb(255, 171, 235);
   font-size: 14px;
   color: rgb(255, 171, 235);
-  border-radius: 4px;
+  border-radius: 3px;
   border-style: solid;
-  border-width: 2px;
+  border-width: 1px;
   padding: 1px 6px;
   max-width: 250px;
-  font-weight: bold;
+  /*font-weight: bold;*/
+  box-shadow: 0 0 10px rgba(255, 171, 235, 0.5) inset;
 }
 
 .tooltip.bottom
@@ -95,7 +96,7 @@ a:hover {
     border-right-color: rgb(255, 171, 235);
 }
 
-/*Inputs*/
+/* ################################ Inputs ################################## */
 *::-webkit-input-placeholder {
   color: rgba(255, 171, 235, 0.5);
 }
@@ -141,7 +142,7 @@ input[type="color"]:focus,
   box-shadow: 0 0 8px rgba(255, 171, 235, 0.6);
 }
 
-/*Slider*/
+/* ################################## Slider ################################ */
 .slider.slider-horizontal {
   width: 100%;
   height: 60px;
@@ -165,4 +166,51 @@ input[type="color"]:focus,
   opacity: 1.0;
   box-shadow: none;
 }
+
+/* ################################# Popovers ############################### */
+.popover {
+  color: rgb(255, 171, 235);
+  background-color: rgba(0, 0, 0, 0.8);
+  background-image: url("img/gloss.png");
+  background-repeat: no-repeat;
+  background-size: 100% 40px;
+
+  border-radius: 3px;
+  border: 1px rgb(255, 171, 235) solid;
+  box-shadow: 0 0 10px rgb(255, 171, 235) inset;
+}
+
+.popover-title {
+  background-color: transparent;
+  border-bottom: none;
+  position: relative;
+}
+
+.popover-title:before {
+  content: "";
+  width: 100%;
+  height: 2px;
+  position: absolute;
+  bottom: 0;
+  left: -1px;
+  border-bottom: none;
+  background-image: -webkit-linear-gradient(left, rgb(255, 171, 235) 0%,rgba(0,0,0,0) 100%);
+}
+
+.popover.top>.arrow:after {
+  border-top-color: rgb(255, 171, 235);
+}
+.popover.left>.arrow:after {
+  border-left-color: rgb(255, 171, 235);
+}
+.popover.right>.arrow:after {
+  border-right-color: rgb(255, 171, 235);
+}
+.popover.bottom>.arrow:after {
+  border-bottom-color: rgb(255, 171, 235);
+}
+
+
+
+
 
