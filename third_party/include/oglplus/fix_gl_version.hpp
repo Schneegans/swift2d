@@ -15,25 +15,4 @@
 #ifdef GL_VERSION_4_4
 #undef GL_VERSION_4_4
 #endif //GL_VERSION_4_4
-#ifdef GL_VERSION_4_3
-#undef GL_VERSION_4_3
-#endif //GL_VERSION_4_3
-#ifdef GL_VERSION_4_2
-#undef GL_VERSION_4_2
-#endif //GL_VERSION_4_2
-#ifdef GL_VERSION_4_1
-#undef GL_VERSION_4_1
-#endif //GL_VERSION_4_1
-#ifdef GL_VERSION_4_0
-#undef GL_VERSION_4_0
-#endif //GL_VERSION_4_0
-#ifdef GL_VERSION_3_3
-#undef GL_VERSION_3_3
-#endif //GL_VERSION_3_3
-#ifdef GL_VERSION_3_2
-#undef GL_VERSION_3_2
-#endif //GL_VERSION_3_2
-#ifdef GL_VERSION_3_1
-#undef GL_VERSION_3_1
-#endif //GL_VERSION_3_1
 #endif //include guard

@@ -13,7 +13,7 @@
 #ifndef OGLPLUS_ONE_OF_1107121519_HPP
 #define OGLPLUS_ONE_OF_1107121519_HPP
 
-#include <oglplus/config.hpp>
+#include <oglplus/config/compiler.hpp>
 
 #include <type_traits>
 #include <tuple>
@@ -101,11 +101,7 @@ public:
 	): _value(Common(V2(value)))
 	{ }
 
-#if !OGLPLUS_NO_EXPLICIT_CONVERSION_OPERATORS
-	explicit operator Common (void) const
-#else
-	operator Common (void) const
-#endif
+	OGLPLUS_EXPLICIT operator Common (void) const
 	OGLPLUS_NOEXCEPT(true)
 	{
 		return _value;
@@ -158,11 +154,7 @@ public:
 	): _value(Common(V3(value)))
 	{ }
 
-#if !OGLPLUS_NO_EXPLICIT_CONVERSION_OPERATORS
-	explicit operator Common (void) const
-#else
-	operator Common (void) const
-#endif
+	OGLPLUS_EXPLICIT operator Common (void) const
 	OGLPLUS_NOEXCEPT(true)
 	{
 		return _value;
@@ -219,11 +211,7 @@ public:
 	): _value(aux::OneOfBase<Common, typename find<T>::type>::Accept(value))
 	{ }
 
-#if !OGLPLUS_NO_EXPLICIT_CONVERSION_OPERATORS
-	explicit operator Common (void) const
-#else
-	operator Common (void) const
-#endif
+	OGLPLUS_EXPLICIT operator Common (void) const
 	OGLPLUS_NOEXCEPT(true)
 	{
 		return _value;

@@ -13,7 +13,7 @@
 #ifndef OGLPLUS_BITFIELD_1107121519_HPP
 #define OGLPLUS_BITFIELD_1107121519_HPP
 
-#include <oglplus/config_compiler.hpp>
+#include <oglplus/config/compiler.hpp>
 
 #include <type_traits>
 
@@ -125,11 +125,7 @@ public:
 		return (this->_bits & BF(b)) == BF(b);
 	}
 
-#if !OGLPLUS_NO_EXPLICIT_CONVERSION_OPERATORS
-	explicit operator BF (void) const
-#else
-	operator BF (void) const
-#endif
+	OGLPLUS_EXPLICIT operator BF (void) const
 	{
 		return _bits;
 	}

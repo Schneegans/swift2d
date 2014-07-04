@@ -4,7 +4,7 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2012-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -16,13 +16,48 @@
 #include <oalplus/config.hpp>
 #include <oalplus/fwd.hpp>
 #include <oalplus/alfunc.hpp>
-#include <oalplus/error.hpp>
-#include <oalplus/object.hpp>
 #include <oalplus/data_format.hpp>
+#include <oalplus/error/object.hpp>
+#include <oalplus/object/wrapper.hpp>
 
 #include <cassert>
 
 namespace oalplus {
+
+/// Class wrapping AL buffer construction/destruction functions
+/** @note Do not use this class directly, use Buffer instead.
+ *
+ *  @alsymbols
+ *  @alfunref{GenBuffers}
+ *  @alfunref{DeleteBuffers}
+ *  @alfunref{IsBuffer}
+ */
+template <>
+class ObjGenDelOps<tag::Buffer>
+{
+protected:
+	static void Gen(ALsizei count, ALuint* names)
+	{
+		assert(names != nullptr);
+		OALPLUS_ALFUNC(GenBuffers)(count, names);
+		OALPLUS_CHECK_SIMPLE(GenBuffers);
+	}
+
+	static void Delete(ALsizei count, ALuint* names)
+	{
+		assert(names != nullptr);
+		OALPLUS_ALFUNC(DeleteBuffers)(count, names);
+		OALPLUS_VERIFY_SIMPLE(DeleteBuffers);
+	}
+
+	static ALboolean IsA(ALuint name)
+	{
+		assert(name != 0);
+		ALboolean result = OALPLUS_ALFUNC(IsBuffer)(name);
+		OALPLUS_VERIFY_SIMPLE(IsBuffer);
+		return result;
+	}
+};
 
 /// Wrapper for OpenAL buffer operations
 /**
@@ -30,39 +65,13 @@ namespace oalplus {
  *
  *  @see Buffer
  *
- *  @alsymbols
- *  @alfunref{GenBuffers}
- *  @alfunref{DeleteBuffers}
- *  @alfunref{IsBuffer}
  */
-class BufferOps
- : public Named
+template <>
+class ObjectOps<tag::DirectState, tag::Buffer>
+ : public ObjectName<tag::Buffer>
 {
 protected:
-	friend class FriendOf<BufferOps>;
-
-	static void _init(ALsizei count, ALuint* _name)
-	{
-		assert(_name != nullptr);
-		OALPLUS_ALFUNC(al,GenBuffers)(count, _name);
-		OALPLUS_CHECK(OALPLUS_ERROR_INFO(al,GenBuffers));
-	}
-
-	static void _cleanup(ALsizei count, ALuint* _name)
-	{
-		assert(_name != nullptr);
-		assert(*_name != 0);
-		try{OALPLUS_ALFUNC(al,DeleteBuffers)(count, _name);}
-		catch(...){ }
-	}
-
-	static ALboolean _is_x(ALuint _name)
-	{
-		assert(_name != 0);
-		try{return OALPLUS_ALFUNC(al,IsBuffer)(_name);}
-		catch(...){ }
-		return AL_FALSE;
-	}
+	ObjectOps(void) { }
 public:
 	/// Specifies the buffer data
 	/**
@@ -76,14 +85,18 @@ public:
 		ALsizei frequency
 	)
 	{
-		OALPLUS_ALFUNC(al,BufferData)(
+		OALPLUS_ALFUNC(BufferData)(
 			ALuint(this->_name),
 			ALenum(format),
 			data,
 			size,
 			frequency
 		);
-		OALPLUS_CHECK(OALPLUS_ERROR_INFO(al,BufferData));
+		OALPLUS_CHECK(
+			BufferData,
+			ObjectError,
+			Object(*this)
+		);
 	}
 
 	/// Returns the sampling frequency of the data stored in this buffer
@@ -95,12 +108,16 @@ public:
 	ALsizei Frequency(void) const
 	{
 		ALint result = 0;
-		OALPLUS_ALFUNC(al,GetBufferiv)(
+		OALPLUS_ALFUNC(GetBufferiv)(
 			_name,
 			AL_FREQUENCY,
 			&result
 		);
-		OALPLUS_VERIFY(OALPLUS_ERROR_INFO(al,GetBufferiv));
+		OALPLUS_VERIFY(
+			GetBufferiv,
+			ObjectError,
+			Object(*this)
+		);
 		return ALsizei(result);
 	}
 
@@ -113,12 +130,16 @@ public:
 	ALsizei Size(void) const
 	{
 		ALint result = 0;
-		OALPLUS_ALFUNC(al,GetBufferiv)(
+		OALPLUS_ALFUNC(GetBufferiv)(
 			_name,
 			AL_SIZE,
 			&result
 		);
-		OALPLUS_VERIFY(OALPLUS_ERROR_INFO(al,GetBufferiv));
+		OALPLUS_VERIFY(
+			GetBufferiv,
+			ObjectError,
+			Object(*this)
+		);
 		return ALsizei(result);
 	}
 
@@ -131,12 +152,16 @@ public:
 	ALsizei Bits(void) const
 	{
 		ALint result = 0;
-		OALPLUS_ALFUNC(al,GetBufferiv)(
+		OALPLUS_ALFUNC(GetBufferiv)(
 			_name,
 			AL_BITS,
 			&result
 		);
-		OALPLUS_VERIFY(OALPLUS_ERROR_INFO(al,GetBufferiv));
+		OALPLUS_VERIFY(
+			GetBufferiv,
+			ObjectError,
+			Object(*this)
+		);
 		return ALsizei(result);
 	}
 
@@ -149,12 +174,16 @@ public:
 	ALsizei Channels(void) const
 	{
 		ALint result = 0;
-		OALPLUS_ALFUNC(al,GetBufferiv)(
+		OALPLUS_ALFUNC(GetBufferiv)(
 			_name,
 			AL_CHANNELS,
 			&result
 		);
-		OALPLUS_VERIFY(OALPLUS_ERROR_INFO(al,GetBufferiv));
+		OALPLUS_VERIFY(
+			GetBufferiv,
+			ObjectError,
+			Object(*this)
+		);
 		return ALsizei(result);
 	}
 
@@ -178,17 +207,29 @@ public:
 	}
 };
 
-#if OALPLUS_DOCUMENTATION_ONLY
+} // namespace oalplus
+namespace oglplus {
+
+template <>
+class ObjGenDelOps<oalplus::tag::Buffer>
+ : public oalplus::ObjGenDelOps<oalplus::tag::Buffer>
+{ };
+
+template <typename OpsTag>
+class ObjectOps<OpsTag, oalplus::tag::Buffer>
+ : public oalplus::ObjectOps<OpsTag, oalplus::tag::Buffer>
+{ };
+
+} // namespace oglplus
+namespace oalplus {
+
+typedef oglplus::ObjectOps<tag::DirectState, tag::Buffer> BufferOps;
+
 /// An @ref oalplus_object encapsulating the OpenAL buffer functionality
 /**
  *  @ingroup oalplus_objects
  */
-class Buffer
- : public BufferOps
-{ };
-#else
 typedef Object<BufferOps> Buffer;
-#endif
 
 } // namespace oalplus
 

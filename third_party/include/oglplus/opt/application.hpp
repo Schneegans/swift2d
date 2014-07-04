@@ -4,7 +4,7 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2010-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2010-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -13,8 +13,8 @@
 #ifndef OGLPLUS_OPT_APPLICATION_1107121519_HPP
 #define OGLPLUS_OPT_APPLICATION_1107121519_HPP
 
-#include <oglplus/config_compiler.hpp>
-#include <oglplus/auxiliary/filesystem.hpp>
+#include <oglplus/config/compiler.hpp>
+#include <oglplus/utils/filesystem.hpp>
 
 #include <string>
 #include <cassert>

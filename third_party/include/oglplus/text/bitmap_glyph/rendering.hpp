@@ -4,7 +4,7 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2010-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2010-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -13,7 +13,7 @@
 #ifndef OGLPLUS_TEXT_BITMAP_GLYPH_RENDERING_HPP
 #define OGLPLUS_TEXT_BITMAP_GLYPH_RENDERING_HPP
 
-#include <oglplus/config.hpp>
+#include <oglplus/config/basic.hpp>
 
 #include <oglplus/text/bitmap_glyph/layout_storage.hpp>
 #include <oglplus/text/bitmap_glyph/layout.hpp>
@@ -126,7 +126,7 @@ public:
 	{
 		return CustomRenderer(
 			*this,
-			Group<Shader>(
+			StaticGroup<ShaderName, 3>(
 				layout_transform_shader,
 				glyph_transform_shader,
 				pixel_color_shader

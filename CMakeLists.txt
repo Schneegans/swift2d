@@ -24,7 +24,9 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 # Configure and find libraries
 ################################################################
 
-pkg_check_modules(GLFW          REQUIRED glfw3)
+find_package(GLFW3 REQUIRED)
+
+#pkg_check_modules(GLFW          REQUIRED glfw3)
 pkg_check_modules(GLEW          REQUIRED glew)
 pkg_check_modules(PNG           REQUIRED libpng)
 pkg_check_modules(OPENAL        REQUIRED openal)
@@ -33,6 +35,7 @@ pkg_check_modules(ALUT          REQUIRED freealut)
 pkg_check_modules(PANGOCAIRO    REQUIRED pangocairo)
 pkg_check_modules(OPENGL        REQUIRED gl)
 
+set(BOOST_ROOT "/opt/boost/current")
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)

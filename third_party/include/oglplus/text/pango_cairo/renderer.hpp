@@ -4,7 +4,7 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2010-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2010-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -13,7 +13,7 @@
 #ifndef OGLPLUS_TEXT_PANGO_CAIRO_RENDERER_HPP
 #define OGLPLUS_TEXT_PANGO_CAIRO_RENDERER_HPP
 
-#include <oglplus/config.hpp>
+#include <oglplus/config/basic.hpp>
 #include <oglplus/text/common.hpp>
 #include <oglplus/text/pango_cairo/fwd.hpp>
 #include <oglplus/text/pango_cairo/layout.hpp>
@@ -43,13 +43,13 @@ protected:
 public:
 	PangoCairoRenderer(
 		PangoCairoRendering& parent,
-		const Group<Shader>& shaders
+		const Sequence<ShaderName>& shaders
 	);
 
 	void Use(void)
 	{
 		_program.Use();
-		// VertexArray::Unbind();
+		VertexArray::Unbind();
 	}
 
 	void Render(const PangoCairoLayout& layout)

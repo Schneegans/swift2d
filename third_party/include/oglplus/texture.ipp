@@ -83,13 +83,8 @@ GLuint TextureTargetDimensions(TextureTarget target)
 }
 
 OGLPLUS_LIB_FUNC
-GLuint DefaultTextureOps::_binding(Target target)
-{
-	return BindingQuery<TextureOps>::QueryBinding(target);
-}
-
-OGLPLUS_LIB_FUNC
-GLenum TextureOps::_binding_query(Target target)
+GLenum ObjBindingOps<tag::Texture>::
+_binding_query(Target target)
 {
 	switch(GLenum(target))
 	{
@@ -99,10 +94,104 @@ GLenum TextureOps::_binding_query(Target target)
 	return 0;
 }
 
-#if GL_VERSION_3_0
+OGLPLUS_LIB_FUNC
+GLuint ObjBindingOps<tag::Texture>::
+_binding(Target target)
+{
+	GLint name = 0;
+	OGLPLUS_GLFUNC(GetIntegerv)(_binding_query(target), &name);
+	OGLPLUS_VERIFY(
+		GetIntegerv,
+		Error,
+		EnumParam(_binding_query(target))
+	);
+	return name;
+}
 
 OGLPLUS_LIB_FUNC
-void DefaultTextureOps::GetImage(
+GLint ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+GetIntParam(Target target, GLenum query)
+{
+	GLint result = 0;
+	OGLPLUS_GLFUNC(GetTexParameteriv)(
+		GLenum(target),
+		query,
+		&result
+	);
+	OGLPLUS_CHECK(
+		GetTexParameteriv,
+		ObjectError,
+		ObjectBinding(target).
+		EnumParam(query)
+	);
+	return result;
+}
+
+OGLPLUS_LIB_FUNC
+GLfloat ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+GetFloatParam(Target target, GLenum query)
+{
+	GLfloat result = 0;
+	OGLPLUS_GLFUNC(GetTexParameterfv)(
+		GLenum(target),
+		query,
+		&result
+	);
+	OGLPLUS_CHECK(
+		GetTexParameterfv,
+		ObjectError,
+		ObjectBinding(target).
+		EnumParam(query)
+	);
+	return result;
+}
+
+#if GL_VERSION_3_0
+OGLPLUS_LIB_FUNC
+GLint ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+GetIntParam(Target target, GLint level, GLenum query)
+{
+	GLint result = 0;
+	OGLPLUS_GLFUNC(GetTexLevelParameteriv)(
+		GLenum(target),
+		level,
+		query,
+		&result
+	);
+	OGLPLUS_CHECK(
+		GetTexLevelParameteriv,
+		ObjectError,
+		ObjectBinding(target).
+		EnumParam(query).
+		Index(level)
+	);
+	return result;
+}
+
+OGLPLUS_LIB_FUNC
+GLfloat ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+GetFloatParam(Target target, GLint level, GLenum query)
+{
+	GLfloat result = 0;
+	OGLPLUS_GLFUNC(GetTexLevelParameterfv)(
+		GLenum(target),
+		level,
+		query,
+		&result
+	);
+	OGLPLUS_CHECK(
+		GetTexLevelParameterfv,
+		ObjectError,
+		ObjectBinding(target).
+		EnumParam(query).
+		Index(level)
+	);
+	return result;
+}
+
+OGLPLUS_LIB_FUNC
+void ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+GetImage(
 	Target target,
 	GLint level,
 	PixelDataFormat format,
@@ -120,12 +209,13 @@ void DefaultTextureOps::GetImage(
 		size,
 		buffer
 	);
-	OGLPLUS_CHECK(OGLPLUS_OBJECT_ERROR_INFO(
+	OGLPLUS_CHECK(
 		GetnTexImageARB,
-		Texture,
-		EnumValueName(target),
-		BindingQuery<TextureOps>::QueryBinding(target)
-	));
+		ObjectError,
+		ObjectBinding(target).
+		EnumParam(format).
+		Index(level)
+	);
 #else
 	OGLPLUS_FAKE_USE(size);
 	OGLPLUS_GLFUNC(GetTexImage)(
@@ -135,17 +225,19 @@ void DefaultTextureOps::GetImage(
 		GLenum(type),
 		buffer
 	);
-	OGLPLUS_CHECK(OGLPLUS_OBJECT_ERROR_INFO(
+	OGLPLUS_CHECK(
 		GetTexImage,
-		Texture,
-		EnumValueName(target),
-		BindingQuery<TextureOps>::QueryBinding(target)
-	));
+		ObjectError,
+		ObjectBinding(target).
+		EnumParam(format).
+		Index(level)
+	);
 #endif
 }
 
 OGLPLUS_LIB_FUNC
-void DefaultTextureOps::GetCompressedImage(
+void ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+GetCompressedImage(
 	Target target,
 	GLint level,
 	GLsizei size,
@@ -159,12 +251,12 @@ void DefaultTextureOps::GetCompressedImage(
 		size,
 		buffer
 	);
-	OGLPLUS_CHECK(OGLPLUS_OBJECT_ERROR_INFO(
+	OGLPLUS_CHECK(
 		GetnCompressedTexImageARB,
-		Texture,
-		EnumValueName(target),
-		BindingQuery<TextureOps>::QueryBinding(target)
-	));
+		ObjectError,
+		ObjectBinding(target).
+		Index(level)
+	);
 #else
 	OGLPLUS_FAKE_USE(size);
 	OGLPLUS_GLFUNC(GetCompressedTexImage)(
@@ -172,17 +264,18 @@ void DefaultTextureOps::GetCompressedImage(
 		level,
 		buffer
 	);
-	OGLPLUS_CHECK(OGLPLUS_OBJECT_ERROR_INFO(
+	OGLPLUS_CHECK(
 		GetCompressedTexImage,
-		Texture,
-		EnumValueName(target),
-		BindingQuery<TextureOps>::QueryBinding(target)
-	));
+		ObjectError,
+		ObjectBinding(target).
+		Index(level)
+	);
 #endif
 }
 
 OGLPLUS_LIB_FUNC
-void DefaultTextureOps::GetCompressedImage(
+void ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+GetCompressedImage(
 	Target target,
 	GLint level,
 	std::vector<GLubyte>& dest
@@ -200,7 +293,8 @@ void DefaultTextureOps::GetCompressedImage(
 #endif
 
 OGLPLUS_LIB_FUNC
-void DefaultTextureOps::Image3D(
+void ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+Image3D(
 	Target target,
 	const images::Image& image,
 	GLint level,
@@ -219,16 +313,17 @@ void DefaultTextureOps::Image3D(
 		GLenum(image.Type()),
 		image.RawData()
 	);
-	OGLPLUS_CHECK(OGLPLUS_OBJECT_ERROR_INFO(
+	OGLPLUS_CHECK(
 		TexImage3D,
-		Texture,
-		EnumValueName(target),
-		BindingQuery<TextureOps>::QueryBinding(target)
-	));
+		ObjectError,
+		ObjectBinding(target).
+		Index(level)
+	);
 }
 
 OGLPLUS_LIB_FUNC
-void DefaultTextureOps::SubImage3D(
+void ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+SubImage3D(
 	Target target,
 	const images::Image& image,
 	GLint xoffs,
@@ -250,16 +345,17 @@ void DefaultTextureOps::SubImage3D(
 		GLenum(image.Type()),
 		image.RawData()
 	);
-	OGLPLUS_CHECK(OGLPLUS_OBJECT_ERROR_INFO(
+	OGLPLUS_CHECK(
 		TexSubImage3D,
-		Texture,
-		EnumValueName(target),
-		BindingQuery<TextureOps>::QueryBinding(target)
-	));
+		ObjectError,
+		ObjectBinding(target).
+		Index(level)
+	);
 }
 
 OGLPLUS_LIB_FUNC
-void DefaultTextureOps::Image2D(
+void ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+Image2D(
 	Target target,
 	const images::Image& image,
 	GLint level,
@@ -277,16 +373,17 @@ void DefaultTextureOps::Image2D(
 		GLenum(image.Type()),
 		image.RawData()
 	);
-	OGLPLUS_CHECK(OGLPLUS_OBJECT_ERROR_INFO(
+	OGLPLUS_CHECK(
 		TexImage2D,
-		Texture,
-		EnumValueName(target),
-		BindingQuery<TextureOps>::QueryBinding(target)
-	));
+		ObjectError,
+		ObjectBinding(target).
+		Index(level)
+	);
 }
 
 OGLPLUS_LIB_FUNC
-void DefaultTextureOps::ImageCM(
+void ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+ImageCM(
 	GLuint face,
 	const images::Image& image,
 	GLint level,
@@ -306,16 +403,17 @@ void DefaultTextureOps::ImageCM(
 		GLenum(image.Type()),
 		image.RawData()
 	);
-	OGLPLUS_CHECK(OGLPLUS_OBJECT_ERROR_INFO(
+	OGLPLUS_CHECK(
 		TexImage2D,
-		Texture,
-		EnumValueName(target),
-		BindingQuery<TextureOps>::QueryBinding(target)
-	));
+		ObjectError,
+		ObjectBinding(target).
+		Index(level)
+	);
 }
 
 OGLPLUS_LIB_FUNC
-void DefaultTextureOps::SubImage2D(
+void ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+SubImage2D(
 	Target target,
 	const images::Image& image,
 	GLint xoffs,
@@ -334,18 +432,19 @@ void DefaultTextureOps::SubImage2D(
 		GLenum(image.Type()),
 		image.RawData()
 	);
-	OGLPLUS_CHECK(OGLPLUS_OBJECT_ERROR_INFO(
+	OGLPLUS_CHECK(
 		TexSubImage2D,
-		Texture,
-		EnumValueName(target),
-		BindingQuery<TextureOps>::QueryBinding(target)
-	));
+		ObjectError,
+		ObjectBinding(target).
+		Index(level)
+	);
 }
 
 #if GL_VERSION_3_0
 
 OGLPLUS_LIB_FUNC
-void DefaultTextureOps::Image1D(
+void ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+Image1D(
 	Target target,
 	const images::Image& image,
 	GLint level,
@@ -362,16 +461,17 @@ void DefaultTextureOps::Image1D(
 		GLenum(image.Type()),
 		image.RawData()
 	);
-	OGLPLUS_CHECK(OGLPLUS_OBJECT_ERROR_INFO(
+	OGLPLUS_CHECK(
 		TexImage1D,
-		Texture,
-		EnumValueName(target),
-		BindingQuery<TextureOps>::QueryBinding(target)
-	));
+		ObjectError,
+		ObjectBinding(target).
+		Index(level)
+	);
 }
 
 OGLPLUS_LIB_FUNC
-void DefaultTextureOps::SubImage1D(
+void ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+SubImage1D(
 	Target target,
 	const images::Image& image,
 	GLint xoffs,
@@ -387,18 +487,19 @@ void DefaultTextureOps::SubImage1D(
 		GLenum(image.Type()),
 		image.RawData()
 	);
-	OGLPLUS_CHECK(OGLPLUS_OBJECT_ERROR_INFO(
+	OGLPLUS_CHECK(
 		TexSubImage1D,
-		Texture,
-		EnumValueName(target),
-		BindingQuery<TextureOps>::QueryBinding(target)
-	));
+		ObjectError,
+		ObjectBinding(target).
+		Index(level)
+	);
 }
 
 #endif // GL_VERSION_3_0
 
 OGLPLUS_LIB_FUNC
-void DefaultTextureOps::Image(
+void ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+Image(
 	Target target,
 	const images::Image& image,
 	GLint level,
@@ -409,18 +510,18 @@ void DefaultTextureOps::Image(
 	{
 		case 3:
 		{
-			DefaultTextureOps::Image3D(target, image, level, border);
+			Image3D(target, image, level, border);
 			break;
 		}
 		case 2:
 		{
-			DefaultTextureOps::Image2D(target, image, level, border);
+			Image2D(target, image, level, border);
 			break;
 		}
 #if GL_VERSION_3_0
 		case 1:
 		{
-			DefaultTextureOps::Image1D(target, image, level, border);
+			Image1D(target, image, level, border);
 			break;
 		}
 #endif
@@ -429,7 +530,8 @@ void DefaultTextureOps::Image(
 }
 
 OGLPLUS_LIB_FUNC
-void DefaultTextureOps::Image(
+void ObjZeroOps<tag::ExplicitSel, tag::Texture>::
+Image(
 	Target target,
 	const images::ImageSpec& image_spec,
 	GLint level,

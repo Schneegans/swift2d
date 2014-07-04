@@ -4,7 +4,7 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2012-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -14,15 +14,15 @@
 #define OALPLUS_CONTEXT_1303201648_HPP
 
 #include <oalplus/config.hpp>
-#include <oalplus/device.hpp>
-#include <oalplus/error.hpp>
 #include <oalplus/alfunc.hpp>
+#include <oalplus/device.hpp>
 #include <oalplus/distance_model.hpp>
 #include <oalplus/context_attrib.hpp>
 #include <oalplus/string_query.hpp>
 #include <oalplus/attrib_list.hpp>
+#include <oalplus/error/alc.hpp>
 
-#include <oalplus/auxiliary/sep_str_range.hpp>
+#include <oalplus/detail/sep_str_range.hpp>
 
 namespace oalplus {
 
@@ -73,24 +73,7 @@ public:
 	 *  @alcfunref{GetCurrentContext}
 	 *  @alcfunref{GetContextsDevice}
 	 */
-	static ContextOps Current(void)
-	{
-		::ALCcontext* context =
-			OALPLUS_ALFUNC(alc,GetCurrentContext)();
-		if(!context) HandleALCError(
-			ALC_INVALID_CONTEXT,
-			OALPLUS_ERROR_INFO(alc,GetCurrentContext),
-			true
-		);
-		::ALCdevice* device =
-			OALPLUS_ALFUNC(alc,GetContextsDevice)(context);
-		if(!device) HandleALCError(
-			ALC_INVALID_DEVICE,
-			OALPLUS_ERROR_INFO(alc,GetContextsDevice),
-			true
-		);
-		return ContextOps(device, context);
-	}
+	static ContextOps Current(void);
 
 	/// Queries a string from the current OpenAL context
 	/**
@@ -99,8 +82,8 @@ public:
 	 */
 	static const ALchar* GetString(StringQuery query)
 	{
-		const ALchar* str = OALPLUS_ALFUNC(al,GetString)(ALenum(query));
-		OALPLUS_VERIFY(OALPLUS_ERROR_INFO(al,GetString));
+		const ALchar* str = OALPLUS_ALFUNC(GetString)(ALenum(query));
+		OALPLUS_VERIFY_SIMPLE(GetString);
 		return str;
 	}
 
@@ -168,11 +151,8 @@ public:
 	 */
 	bool MakeCurrent(void)
 	{
-		bool result = OALPLUS_ALFUNC(alc,MakeContextCurrent)(_context);
-		OALPLUS_VERIFY_ALC(
-			OALPLUS_ERROR_INFO(alc,MakeContextCurrent),
-			_device
-		);
+		bool result = OALPLUS_ALCFUNC(MakeContextCurrent)(_context);
+		OALPLUS_VERIFY_SIMPLE_ALC(_device, MakeContextCurrent);
 		return result;
 	}
 
@@ -183,11 +163,8 @@ public:
 	 */
 	void Process(void)
 	{
-		OALPLUS_ALFUNC(alc,ProcessContext)(_context);
-		OALPLUS_VERIFY_ALC(
-			OALPLUS_ERROR_INFO(alc,ProcessContext),
-			_device
-		);
+		OALPLUS_ALCFUNC(ProcessContext)(_context);
+		OALPLUS_VERIFY_SIMPLE_ALC(_device, ProcessContext);
 	}
 
 	/// Suspends this context
@@ -197,11 +174,8 @@ public:
 	 */
 	void Suspend(void)
 	{
-		OALPLUS_ALFUNC(alc,SuspendContext)(_context);
-		OALPLUS_VERIFY_ALC(
-			OALPLUS_ERROR_INFO(alc,SuspendContext),
-			_device
-		);
+		OALPLUS_ALCFUNC(SuspendContext)(_context);
+		OALPLUS_VERIFY_SIMPLE_ALC(_device, SuspendContext);
 	}
 
 	/// Sets the distance model to be used by the current context
@@ -211,8 +185,8 @@ public:
 	 */
 	static void DistanceModel(oalplus::DistanceModel dist_model)
 	{
-		OALPLUS_ALFUNC(al,DistanceModel(ALenum(dist_model)));
-		OALPLUS_VERIFY(OALPLUS_ERROR_INFO(al,DistanceModel));
+		OALPLUS_ALFUNC(DistanceModel(ALenum(dist_model)));
+		OALPLUS_VERIFY_SIMPLE(DistanceModel);
 	}
 
 	/// Returns the distance model used by the current context
@@ -224,11 +198,11 @@ public:
 	static oalplus::DistanceModel DistanceModel(void)
 	{
 		ALint result;
-		OALPLUS_ALFUNC(al,GetIntegerv(
+		OALPLUS_ALFUNC(GetIntegerv(
 			AL_DISTANCE_MODEL,
 			&result
 		));
-		OALPLUS_VERIFY(OALPLUS_ERROR_INFO(al,GetIntegerv));
+		OALPLUS_VERIFY_SIMPLE(GetIntegerv);
 		return oalplus::DistanceModel(result);
 	}
 
@@ -239,8 +213,8 @@ public:
 	 */
 	static void DopplerFactor(ALfloat doppler_factor)
 	{
-		OALPLUS_ALFUNC(al,DopplerFactor(doppler_factor));
-		OALPLUS_CHECK(OALPLUS_ERROR_INFO(al,DopplerFactor));
+		OALPLUS_ALFUNC(DopplerFactor(doppler_factor));
+		OALPLUS_CHECK_SIMPLE(DopplerFactor);
 	}
 
 	/// Returns the doppler factor used by the current context
@@ -252,11 +226,11 @@ public:
 	static ALfloat DopplerFactor(void)
 	{
 		ALfloat result;
-		OALPLUS_ALFUNC(al,GetFloatv(
+		OALPLUS_ALFUNC(GetFloatv(
 			AL_DOPPLER_FACTOR,
 			&result
 		));
-		OALPLUS_VERIFY(OALPLUS_ERROR_INFO(al,GetFloatv));
+		OALPLUS_VERIFY_SIMPLE(GetFloatv);
 		return result;
 	}
 
@@ -267,8 +241,8 @@ public:
 	 */
 	static void SpeedOfSound(ALfloat speed_of_sound)
 	{
-		OALPLUS_ALFUNC(al,SpeedOfSound(speed_of_sound));
-		OALPLUS_CHECK(OALPLUS_ERROR_INFO(al,SpeedOfSound));
+		OALPLUS_ALFUNC(SpeedOfSound(speed_of_sound));
+		OALPLUS_CHECK_SIMPLE(SpeedOfSound);
 	}
 
 	/// Returns the value of speed of sound used by the current context
@@ -280,11 +254,11 @@ public:
 	static ALfloat SpeedOfSound(void)
 	{
 		ALfloat result;
-		OALPLUS_ALFUNC(al,GetFloatv(
+		OALPLUS_ALFUNC(GetFloatv(
 			AL_SPEED_OF_SOUND,
 			&result
 		));
-		OALPLUS_VERIFY(OALPLUS_ERROR_INFO(al,GetFloatv));
+		OALPLUS_VERIFY_SIMPLE(GetFloatv);
 		return result;
 	}
 };
@@ -304,13 +278,10 @@ public:
 	Context(const DeviceOps& device)
 	 : ContextOps(
 		device._device,
-		OALPLUS_ALFUNC(alc,CreateContext)(device._device, nullptr)
+		OALPLUS_ALCFUNC(CreateContext)(device._device, nullptr)
 	)
 	{
-		OALPLUS_CHECK_ALC(
-			OALPLUS_ERROR_INFO(alc,CreateContext),
-			_device
-		);
+		OALPLUS_CHECK_SIMPLE_ALC(_device, CreateContext);
 	}
 
 	/// Construct a context with the specified attributes using the device
@@ -323,16 +294,13 @@ public:
 		const FinishedContextAttribs& attribs
 	): ContextOps(
 		device._device,
-		OALPLUS_ALFUNC(alc,CreateContext)(
+		OALPLUS_ALCFUNC(CreateContext)(
 			device._device,
 			attribs.Get()
 		)
 	)
 	{
-		OALPLUS_CHECK_ALC(
-			OALPLUS_ERROR_INFO(alc,CreateContext),
-			_device
-		);
+		OALPLUS_CHECK_SIMPLE_ALC(_device, CreateContext);
 	}
 
 	/// Contexts are move-only
@@ -352,8 +320,8 @@ public:
 	{
 		if(_context)
 		{
-			OALPLUS_ALFUNC(alc,MakeContextCurrent)(nullptr);
-			OALPLUS_ALFUNC(alc,DestroyContext)(_context);
+			OALPLUS_ALCFUNC(MakeContextCurrent)(nullptr);
+			OALPLUS_ALCFUNC(DestroyContext)(_context);
 		}
 	}
 };

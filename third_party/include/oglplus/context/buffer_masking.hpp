@@ -4,7 +4,7 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2010-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2010-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -13,9 +13,7 @@
 #ifndef OGLPLUS_CONTEXT_BUFFER_MASKING_1201040722_HPP
 #define OGLPLUS_CONTEXT_BUFFER_MASKING_1201040722_HPP
 
-#include <oglplus/config_compiler.hpp>
 #include <oglplus/glfunc.hpp>
-#include <oglplus/error.hpp>
 #include <oglplus/face_mode.hpp>
 
 namespace oglplus {
@@ -72,7 +70,7 @@ public:
 			b ? GL_TRUE : GL_FALSE,
 			a ? GL_TRUE : GL_FALSE
 		);
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(ColorMask));
+		OGLPLUS_VERIFY_SIMPLE(ColorMask);
 	}
 
 #if OGLPLUS_DOCUMENTATION_ONLY || GL_VERSION_3_0
@@ -90,7 +88,11 @@ public:
 			b ? GL_TRUE : GL_FALSE,
 			a ? GL_TRUE : GL_FALSE
 		);
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(ColorMaski));
+		OGLPLUS_VERIFY(
+			ColorMaski,
+			Error,
+			Index(buffer)
+		);
 	}
 #endif
 
@@ -102,7 +104,7 @@ public:
 	static void DepthMask(bool mask)
 	{
 		OGLPLUS_GLFUNC(DepthMask)(mask ? GL_TRUE : GL_FALSE);
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(DepthMask));
+		OGLPLUS_VERIFY_SIMPLE(DepthMask);
 	}
 
 	/// Sets the stencil @p mask
@@ -113,7 +115,7 @@ public:
 	static void StencilMask(GLuint mask)
 	{
 		OGLPLUS_GLFUNC(StencilMask)(mask);
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(StencilMask));
+		OGLPLUS_VERIFY_SIMPLE(StencilMask);
 	}
 
 	/// Sets the stencil mask separately for front and back faces
@@ -124,7 +126,7 @@ public:
 	static void StencilMaskSeparate(Face face, GLuint mask)
 	{
 		OGLPLUS_GLFUNC(StencilMaskSeparate)(GLenum(face), mask);
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(StencilMaskSeparate));
+		OGLPLUS_VERIFY_SIMPLE(StencilMaskSeparate);
 	}
 
 	/// Returns the value of color buffer write mask
@@ -141,7 +143,11 @@ public:
 			buffer,
 			result._v
 		);
-		OGLPLUS_CHECK(OGLPLUS_ERROR_INFO(GetIntegeri_v));
+		OGLPLUS_CHECK(
+			GetIntegeri_v,
+			Error,
+			Index(buffer)
+		);
 		return result;
 	}
 
@@ -155,7 +161,7 @@ public:
 	{
 		GLint result;
 		OGLPLUS_GLFUNC(GetIntegerv)(GL_DEPTH_WRITEMASK, &result);
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(GetIntegerv));
+		OGLPLUS_VERIFY_SIMPLE(GetIntegerv);
 		return result == GL_TRUE;
 	}
 
@@ -175,7 +181,7 @@ public:
 			GL_STENCIL_WRITEMASK,
 			&result
 		);
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(GetIntegerv));
+		OGLPLUS_VERIFY_SIMPLE(GetIntegerv);
 		return GLuint(result);
 	}
 };

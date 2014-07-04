@@ -4,7 +4,7 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2010-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2010-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -13,9 +13,7 @@
 #ifndef OGLPLUS_CONTEXT_SYNCHRONIZATION_1201040722_HPP
 #define OGLPLUS_CONTEXT_SYNCHRONIZATION_1201040722_HPP
 
-#include <oglplus/config_compiler.hpp>
 #include <oglplus/glfunc.hpp>
-#include <oglplus/error.hpp>
 #include <oglplus/memory_barrier.hpp>
 #include <oglplus/bitfield.hpp>
 
@@ -65,7 +63,7 @@ public:
 	static void MemoryBarrier(Bitfield<MemoryBarrierBit> bits)
 	{
 		OGLPLUS_GLFUNC(MemoryBarrier)(GLbitfield(bits));
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(MemoryBarrier));
+		OGLPLUS_VERIFY_SIMPLE(MemoryBarrier);
 	}
 #endif
 
@@ -73,14 +71,14 @@ public:
 	static void Flush(void)
 	{
 		OGLPLUS_GLFUNC(Flush)();
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(Flush));
+		OGLPLUS_VERIFY_SIMPLE(Flush);
 	}
 
 	/// Force all previous GL commands to complete before returning
 	static void Finish(void)
 	{
 		OGLPLUS_GLFUNC(Finish)();
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(Finish));
+		OGLPLUS_VERIFY_SIMPLE(Finish);
 	}
 };
 

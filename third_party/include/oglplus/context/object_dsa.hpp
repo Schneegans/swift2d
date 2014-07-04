@@ -13,7 +13,6 @@
 #ifndef OGLPLUS_CONTEXT_OBJECT_DSA_1404232057_HPP
 #define OGLPLUS_CONTEXT_OBJECT_DSA_1404232057_HPP
 
-#include <oglplus/config_compiler.hpp>
 #include <oglplus/fwd.hpp>
 
 namespace oglplus {
@@ -27,33 +26,21 @@ class ObjectDSA
 {
 public:
 	/// Returns a direct state access wrapper for @p object
-	template <typename Object>
-	static Managed<
-		typename NonDSAtoDSA<
-			typename ObjectBaseOps<Object>::Type
-		>::Type
-	> Direct(const Object& object)
+	template <typename OpsTag, typename ObjTag>
+	static Reference<ObjectOps<tag::DirectState, ObjTag>>
+	Direct(const ObjectOps<OpsTag, ObjTag>& object)
 	{
-		return Managed<
-			typename NonDSAtoDSA<
-				typename ObjectBaseOps<Object>::Type
-			>::Type
-		>(object);
+		return object;
 	}
 
-	/// Returns a direct state access wrapper for @p object
-	template <typename Object>
-	static Managed<
-		typename NonDSAtoDSA<
-			typename ObjectBaseOps<Object>::Type
-		>::Type
-	> Direct(typename Object::Target target, const Object& object)
+	template <typename OpsTag, typename ObjTag>
+	static Reference<ObjectOps<tag::DirectState, ObjTag>>
+	Direct(
+		typename ObjectOps<OpsTag, ObjTag>::Target target,
+		const ObjectOps<OpsTag, ObjTag>& object
+	)
 	{
-		Managed<
-			typename NonDSAtoDSA<
-				typename ObjectBaseOps<Object>::Type
-			>::Type
-		> result(object);
+		Reference<ObjectOps<tag::DirectState, ObjTag>> result(object);
 		result.target = target;
 		return result;
 	}

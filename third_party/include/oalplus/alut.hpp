@@ -4,7 +4,7 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2012-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -16,8 +16,8 @@
 #include <oalplus/config.hpp>
 #include <oalplus/fwd.hpp>
 #include <oalplus/alfunc.hpp>
-#include <oalplus/error.hpp>
 #include <oalplus/string.hpp>
+#include <oalplus/error/alut.hpp>
 
 #include <oalplus/data_format.hpp>
 
@@ -37,9 +37,9 @@ private:
 	static bool _initialize(bool with_context, int argc, char** argv)
 	{
 		bool result = with_context
-		?(OALPLUS_ALFUNC(alut,Init)(&argc, argv) == AL_TRUE)
-		:(OALPLUS_ALFUNC(alut,InitWithoutContext)(&argc, argv)==AL_TRUE);
-		OALPLUS_CHECK_ALUT(OALPLUS_ERROR_INFO(alut, Init));
+		?(OALPLUS_ALUTFUNC(Init)(&argc, argv) == AL_TRUE)
+		:(OALPLUS_ALUTFUNC(InitWithoutContext)(&argc, argv)==AL_TRUE);
+		OALPLUS_CHECK_SIMPLE_ALUT(Init);
 		return result;
 
 	}
@@ -87,7 +87,7 @@ public:
 	{
 		if(_initialized)
 		{
-			OALPLUS_ALFUNC(alut,Exit)();
+			OALPLUS_ALUTFUNC(Exit)();
 		}
 	}
 
@@ -196,9 +196,9 @@ public:
 	Buffer CreateBufferHelloWorld(void) const
 	{
 		assert(_initialized);
-		ALuint name = OALPLUS_ALFUNC(alut,CreateBufferHelloWorld)();
-		OALPLUS_VERIFY_ALUT(OALPLUS_ERROR_INFO(alut, CreateBufferHelloWorld));
-		return Buffer::FromRawName(name);
+		ALuint name = OALPLUS_ALUTFUNC(CreateBufferHelloWorld)();
+		OALPLUS_VERIFY_SIMPLE_ALUT(CreateBufferHelloWorld);
+		return Buffer::FromRawName(BufferName(name));
 	}
 
 	/// Create a buffer containing the samples from a specified sound file
@@ -211,9 +211,9 @@ public:
 	Buffer CreateBufferFromFile(const ALchar* file_path) const
 	{
 		assert(_initialized);
-		ALuint name = OALPLUS_ALFUNC(alut,CreateBufferFromFile)(file_path);
-		OALPLUS_VERIFY_ALUT(OALPLUS_ERROR_INFO(alut, CreateBufferFromFile));
-		return Buffer::FromRawName(name);
+		ALuint name = OALPLUS_ALUTFUNC(CreateBufferFromFile)(file_path);
+		OALPLUS_VERIFY_SIMPLE_ALUT(CreateBufferFromFile);
+		return Buffer::FromRawName(BufferName(name));
 	}
 
 	/// Loads samples of a 'Hello World' sound into a buffer
@@ -231,12 +231,12 @@ public:
 	{
 		::ALenum format = 0;
 		::ALsizei size = 0;
-		::ALvoid* ptr = OALPLUS_ALFUNC(alut,LoadMemoryHelloWorld)(
+		::ALvoid* ptr = OALPLUS_ALUTFUNC(LoadMemoryHelloWorld)(
 			&format,
 			&size,
 			frequency
 		);
-		OALPLUS_CHECK_ALUT(OALPLUS_ERROR_INFO(alut, LoadMemoryHelloWorld));
+		OALPLUS_CHECK_SIMPLE_ALUT(LoadMemoryHelloWorld);
 
 		_free_on_scope_exit cleaner = { ptr };
 		OALPLUS_FAKE_USE(cleaner);
@@ -263,13 +263,13 @@ public:
 	{
 		::ALenum format = 0;
 		::ALsizei size = 0;
-		::ALvoid* ptr = OALPLUS_ALFUNC(alut,LoadMemoryFromFile)(
+		::ALvoid* ptr = OALPLUS_ALUTFUNC(LoadMemoryFromFile)(
 			file_path,
 			&format,
 			&size,
 			frequency
 		);
-		OALPLUS_CHECK_ALUT(OALPLUS_ERROR_INFO(alut, LoadMemoryFromFile));
+		OALPLUS_CHECK_SIMPLE_ALUT(LoadMemoryFromFile);
 
 		_free_on_scope_exit cleaner = { ptr };
 		OALPLUS_FAKE_USE(cleaner);
@@ -295,13 +295,13 @@ public:
 	{
 		::ALenum format = 0;
 		::ALsizei size = 0;
-		::ALvoid* ptr = OALPLUS_ALFUNC(alut,LoadMemoryFromFile)(
+		::ALvoid* ptr = OALPLUS_ALUTFUNC(LoadMemoryFromFile)(
 			file_path,
 			&format,
 			&size,
 			frequency
 		);
-		OALPLUS_CHECK_ALUT(OALPLUS_ERROR_INFO(alut, LoadMemoryFromFile));
+		OALPLUS_CHECK_SIMPLE_ALUT(LoadMemoryFromFile);
 
 		_free_on_scope_exit cleaner = { ptr };
 		OALPLUS_FAKE_USE(cleaner);
@@ -332,13 +332,13 @@ public:
 	{
 		::ALenum format = 0;
 		::ALsizei size = 0;
-		::ALvoid* ptr = OALPLUS_ALFUNC(alut,LoadMemoryFromFile)(
+		::ALvoid* ptr = OALPLUS_ALUTFUNC(LoadMemoryFromFile)(
 			file_path,
 			&format,
 			&size,
 			frequency
 		);
-		OALPLUS_CHECK_ALUT(OALPLUS_ERROR_INFO(alut, LoadMemoryFromFile));
+		OALPLUS_CHECK_SIMPLE_ALUT(LoadMemoryFromFile);
 
 		_free_on_scope_exit cleaner = { ptr };
 		OALPLUS_FAKE_USE(cleaner);

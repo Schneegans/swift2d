@@ -4,7 +4,7 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2010-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2010-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -13,11 +13,9 @@
 #ifndef OGLPLUS_OPT_DEBUG_OUTPUT_1209031534_HPP
 #define OGLPLUS_OPT_DEBUG_OUTPUT_1209031534_HPP
 
-#include <oglplus/config.hpp>
-#include <oglplus/string.hpp>
 #include <oglplus/glfunc.hpp>
-#include <oglplus/object.hpp>
-#include <oglplus/friend_of.hpp>
+#include <oglplus/string/ref.hpp>
+#include <oglplus/object/wrapper.hpp>
 #include <oglplus/enumerations.hpp>
 
 #include <cassert>
@@ -114,7 +112,7 @@ public:
 			0, nullptr,
 			enable ? GL_TRUE : GL_FALSE
 		);
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(DebugMessageControl));
+		OGLPLUS_VERIFY_SIMPLE(DebugMessageControl);
 	}
 
 	/// Structure containing data passed to Callback functor
@@ -153,10 +151,10 @@ public:
 			GLenum severity,
 			GLsizei length,
 			const GLchar* message,
-			GLvoid* user_param
+			const GLvoid* user_param
 		)
 		{
-			LogSink* self = static_cast<LogSink*>(user_param);
+			LogSink* self = (LogSink*)(user_param);
 			assert(self);
 			if(self->_callback)
 			{
@@ -187,12 +185,13 @@ public:
 		{
 			// get the previous callback
 			GLDEBUGPROC _tmp_callback = nullptr;
-			void** _tmp_ptr=reinterpret_cast<void**>(&_tmp_callback);
+			void** _tmp_ptr =
+				reinterpret_cast<void**>(&_tmp_callback);
 			OGLPLUS_GLFUNC(GetPointerv)(
 				GL_DEBUG_CALLBACK_FUNCTION,
 				_tmp_ptr
 			);
-			OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(GetPointerv));
+			OGLPLUS_VERIFY_SIMPLE(GetPointerv);
 			_prev_callback = _tmp_callback;
 
 			//get the previous context
@@ -200,13 +199,13 @@ public:
 				GL_DEBUG_CALLBACK_USER_PARAM,
 				&_prev_context
 			);
-			OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(GetPointerv));
+			OGLPLUS_VERIFY_SIMPLE(GetPointerv);
 
 			OGLPLUS_GLFUNC(DebugMessageCallback)(
 				&LogSink::_gl_debug_proc,
 				static_cast<void*>(this)
 			);
-			OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(DebugMessageCallback));
+			OGLPLUS_VERIFY_SIMPLE(DebugMessageCallback);
 		}
 
 #if !OGLPLUS_NO_DELETED_FUNCTIONS
@@ -229,7 +228,7 @@ public:
 				_prev_callback,
 				_prev_context
 			);
-			OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(DebugMessageCallback));
+			OGLPLUS_VERIFY_SIMPLE(DebugMessageCallback);
 		}
 	};
 
@@ -255,7 +254,7 @@ public:
 				length,
 				message
 			);
-			OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(PushDebugGroup));
+			OGLPLUS_VERIFY_SIMPLE(PushDebugGroup);
 		}
 
 		/// Pushes a debug group with the specified parameters
@@ -277,7 +276,7 @@ public:
 				message.size(),
 				message.c_str()
 			);
-			OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(PushDebugGroup));
+			OGLPLUS_VERIFY_SIMPLE(PushDebugGroup);
 		}
 
 		/// Pushes a debug group with the specified parameters
@@ -299,7 +298,7 @@ public:
 				message.size(),
 				message.c_str()
 			);
-			OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(PushDebugGroup));
+			OGLPLUS_VERIFY_SIMPLE(PushDebugGroup);
 		}
 
 #if !OGLPLUS_NO_DELETED_FUNCTIONS
@@ -318,7 +317,7 @@ public:
 		~Group(void)
 		{
 			OGLPLUS_GLFUNC(PopDebugGroup)();
-			OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(PopDebugGroup));
+			OGLPLUS_VERIFY_SIMPLE(PopDebugGroup);
 		}
 	};
 
@@ -327,64 +326,19 @@ public:
 	 *  @glsymbols
 	 *  @glfunref{ObjectLabel}
 	 */
-	template <typename ObjectOps>
+	template <typename ObjTag>
 	static void ObjectLabel(
-		const Object<ObjectOps>& object,
-		const GLchar* label,
-		GLint length = -1
+		const ObjectName<ObjTag>& object,
+		StrCRef label
 	)
 	{
 		OGLPLUS_GLFUNC(ObjectLabel)(
-			FriendOf<ObjectOps>.GetName(object),
-			object.ObjectType(),
-			length,
-			label
-		);
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(ObjectLabel));
-	}
-
-	/// Annotate @p object with the @p label
-	/**
-	 *  @overload
-	 *
-	 *  @glsymbols
-	 *  @glfunref{ObjectLabel}
-	 */
-	template <typename ObjectOps>
-	static void ObjectLabel(
-		const Object<ObjectOps>& object,
-		const StrLit& label
-	)
-	{
-		OGLPLUS_GLFUNC(ObjectLabel)(
-			FriendOf<ObjectOps>.GetName(object),
-			object.ObjectType(),
+			GetGLName(object),
+			ObjTypeOps<ObjTag>::ObjectType(),
 			label.size(),
 			label.c_str()
 		);
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(ObjectLabel));
-	}
-
-	/// Annotate @p object with the @p label
-	/**
-	 *  @overload
-	 *
-	 *  @glsymbols
-	 *  @glfunref{ObjectLabel}
-	 */
-	template <typename ObjectOps>
-	static void ObjectLabel(
-		const Object<ObjectOps>& object,
-		const String& label
-	)
-	{
-		OGLPLUS_GLFUNC(ObjectLabel)(
-			FriendOf<ObjectOps>.GetName(object),
-			object.ObjectType(),
-			label.size(),
-			label.c_str()
-		);
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(ObjectLabel));
+		OGLPLUS_VERIFY_SIMPLE(ObjectLabel);
 	}
 
 	/// Enables or disables synchronous debug output
@@ -401,14 +355,14 @@ public:
 			OGLPLUS_GLFUNC(Enable)(
 				GL_DEBUG_OUTPUT_SYNCHRONOUS
 			);
-			OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(Enable));
+			OGLPLUS_VERIFY_SIMPLE(Enable);
 		}
 		else
 		{
 			OGLPLUS_GLFUNC(Disable)(
 				GL_DEBUG_OUTPUT_SYNCHRONOUS
 			);
-			OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(Disable));
+			OGLPLUS_VERIFY_SIMPLE(Disable);
 		}
 	}
 
@@ -434,7 +388,7 @@ public:
 			length,
 			buffer
 		);
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(DebugMessageInsert));
+		OGLPLUS_VERIFY_SIMPLE(DebugMessageInsert);
 	}
 
 	/// Inserts a new message into the debug output
@@ -460,7 +414,7 @@ public:
 			message.size(),
 			message.c_str()
 		);
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(DebugMessageInsert));
+		OGLPLUS_VERIFY_SIMPLE(DebugMessageInsert);
 	}
 
 	/// Inserts a new message into the debug output
@@ -486,7 +440,7 @@ public:
 			message.size(),
 			message.c_str()
 		);
-		OGLPLUS_VERIFY(OGLPLUS_ERROR_INFO(DebugMessageInsert));
+		OGLPLUS_VERIFY_SIMPLE(DebugMessageInsert);
 	}
 };
 #endif

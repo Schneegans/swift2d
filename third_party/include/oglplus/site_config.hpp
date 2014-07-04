@@ -4,17 +4,17 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2010-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2010-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #ifndef OGLPLUS_SITE_CONFIG_120305_HPP
 #define OGLPLUS_SITE_CONFIG_120305_HPP
 
-#define OGLPLUS_OPENAL_FOUND 0
-#define OGLPLUS_FREEGLUT_FOUND 
+#define OGLPLUS_OPENAL_FOUND 1
+#define OGLPLUS_FREEGLUT_FOUND 1
 #define OGLPLUS_PNG_FOUND 1
-#define OGLPLUS_PANGO_CAIRO_FOUND 0
+#define OGLPLUS_PANGO_CAIRO_FOUND 1
 
 #ifndef OGLPLUS_LOW_PROFILE
 #if 0
@@ -23,7 +23,7 @@
 #endif
 
 #ifndef OGLPLUS_USE_GLCOREARB_H
-#define OGLPLUS_USE_GLCOREARB_H 1
+#define OGLPLUS_USE_GLCOREARB_H 0
 #endif
 
 #ifndef OGLPLUS_USE_GL3_H
@@ -31,14 +31,14 @@
 #endif
 
 #ifndef OGLPLUS_USE_GLEW
-#define OGLPLUS_USE_GLEW 0
+#define OGLPLUS_USE_GLEW 1
 #endif
 
 #ifndef OGLPLUS_USE_GL3W
 #define OGLPLUS_USE_GL3W 0
 #endif
 
-#define OGLPLUS_USE_BOOST_CONFIG 1
+#define OGLPLUS_USE_BOOST_CONFIG 0
 
 #if !OGLPLUS_USE_BOOST_CONFIG
 #ifndef OGLPLUS_NO_SCOPED_ENUMS
@@ -85,6 +85,10 @@
 #define OGLPLUS_NO_USER_DEFINED_LITERALS 0
 #endif
 
+#ifndef OGLPLUS_NO_TEMPLATE_ALIASES
+#define OGLPLUS_NO_TEMPLATE_ALIASES 0
+#endif
+
 #ifndef OGLPLUS_NO_CONSTEXPR
 #define OGLPLUS_NO_CONSTEXPR 0
 #endif
@@ -104,6 +108,10 @@
 
 #endif // !OGLPLUS_USE_BOOST_CONFIG
 
+
+#ifndef OGLPLUS_NO_INHERITED_CONSTRUCTORS
+#define OGLPLUS_NO_INHERITED_CONSTRUCTORS 0
+#endif
 
 #ifndef OGLPLUS_NO_CHRONO
 #define OGLPLUS_NO_CHRONO 0

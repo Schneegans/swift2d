@@ -13,14 +13,11 @@
 #ifndef OGLPLUS_FWD_1107121519_HPP
 #define OGLPLUS_FWD_1107121519_HPP
 
-#include <oglplus/config_compiler.hpp>
+#include <oglplus/config/compiler.hpp>
 #include <type_traits>
 #include <cstddef>
 
 namespace oglplus {
-
-// Nothing
-struct Nothing { typedef int _value_type; };
 
 // Angle
 template <typename T>
@@ -80,96 +77,157 @@ std::size_t Cols(const Matrix<T, R, C>&);
 template <typename T, std::size_t R, std::size_t C>
 T At(const Matrix<T, R, C>& matrix, std::size_t i, std::size_t j);
 
-// ObjectTypeId
-template <typename ObjectOps>
-struct ObjectTypeId;
+// Tags
+namespace tag {
 
-template <typename Id>
-struct ObjectTypeById;
+struct OGLplus;
 
-#define OGLPLUS_OBJECT_TYPE_ID(OBJECT, ID) \
-template <> struct ObjectTypeId<OBJECT##Ops> \
- : public std::integral_constant<int, ID> { }; \
-template <> struct ObjectTypeById<std::integral_constant<int, ID> > \
-{ typedef OBJECT##Ops Type; };
+struct ObjectName;
+struct ObjectOps;
+struct Object;
+struct ProgVar;
 
-class RenderbufferOps;
-OGLPLUS_OBJECT_TYPE_ID(Renderbuffer, 1)
+struct Renderbuffer;
+struct Framebuffer;
+struct Texture;
+struct Buffer;
+struct Query;
+struct ProgramPipeline;
+struct Program;
+struct TransformFeedback;
+struct Sampler;
+struct VertexArray;
+struct Shader;
+struct PerfMonitorAMD;
+struct PathNV;
 
-class FramebufferOps;
-OGLPLUS_OBJECT_TYPE_ID(Framebuffer, 2)
+struct VertexAttrib;
+struct Uniform;
+struct UniformBlock;
+struct Subroutine;
+struct SubroutineUniform;
 
-class TextureOps;
-OGLPLUS_OBJECT_TYPE_ID(Texture, 3)
+struct NativeTypes;
+struct MatrixTypes;
 
-class BufferOps;
-OGLPLUS_OBJECT_TYPE_ID(Buffer, 4)
+struct DirectInit;
+struct EagerInit;
+struct LazyInit;
 
-class QueryOps;
-OGLPLUS_OBJECT_TYPE_ID(Query, 5)
+struct Typecheck;
+struct NoTypecheck;
 
-class ProgramPipelineOps;
-OGLPLUS_OBJECT_TYPE_ID(ProgramPipeline, 6)
+struct ExplicitSel;
+struct ImplicitSel;
+struct DirectState;
+struct CurrentBound;
+} // namespace tag
 
-class ProgramOps;
-OGLPLUS_OBJECT_TYPE_ID(Program, 7)
+template <typename X>
+struct Classify;
 
-class TransformFeedbackOps;
-OGLPLUS_OBJECT_TYPE_ID(TransformFeedback, 8)
+// Object
+template <typename ObjTag>
+class ObjectName;
 
-class SamplerOps;
-OGLPLUS_OBJECT_TYPE_ID(Sampler, 9)
+template <typename ObjName>
+class Sequence;
 
-class VertexArrayOps;
-OGLPLUS_OBJECT_TYPE_ID(VertexArray, 10)
+template <typename ObjTag>
+class ObjGenDelOps;
 
-class ShaderOps;
-OGLPLUS_OBJECT_TYPE_ID(Shader, 11)
+template <typename ObjTag>
+class ObjBindingOps;
 
-class PerfMonitorAMDOps;
-OGLPLUS_OBJECT_TYPE_ID(PerfMonitorAMD, 12)
+template <typename ObjTag>
+class ObjCommonOps;
 
-class PathNVOps;
-OGLPLUS_OBJECT_TYPE_ID(PathNV, 13)
+template <typename ObjTag>
+class BoundObjOps;
 
-class DSATextureEXTOps;
-OGLPLUS_OBJECT_TYPE_ID(DSATextureEXT, 14)
+template <typename OpsTag, typename ObjTag>
+class ObjZeroOps;
 
-class DSABufferEXTOps;
-OGLPLUS_OBJECT_TYPE_ID(DSABufferEXT, 15)
-
-class DSAFramebufferEXTOps;
-OGLPLUS_OBJECT_TYPE_ID(DSAFramebufferEXT, 16)
-
-class DSARenderbufferEXTOps;
-OGLPLUS_OBJECT_TYPE_ID(DSARenderbufferEXT, 17)
-
-class DSAVertexArrayEXTOps;
-OGLPLUS_OBJECT_TYPE_ID(DSAVertexArrayEXT, 18)
-
-template <typename ObjectOps>
-struct ObjectBaseOps;
-
-template <typename Target>
-struct ObjectTargetOps;
+template <typename CommonOps>
+class ObjectZero;
 
 template <typename ObjectOps>
 class Object;
 
-template <typename ObjectOps>
-class Managed;
+template <typename ObjTag>
+struct ObjectSubtype;
 
-template <class Object>
-class FriendOf;
+template <typename Target>
+struct ObjectTargetTag;
 
-template <template <class, class> class Base, class BaseParam, class Bindable>
-class BoundTemplate;
+template <typename ObjectT>
+class Reference;
 
-template <typename ObjectOps>
-struct NonDSAtoDSA;
+template <typename ObjectT>
+struct Classify<Reference<ObjectT>>
+ : Classify<ObjectT>
+{ };
 
-template <typename ObjectOps>
-struct DSAtoNonDSA;
+template <typename X>
+class Optional;
+
+template <typename Object>
+class Array;
+
+template <typename Object>
+class Group;
+
+class Shader;
+
+template <typename VarTag>
+class ProgVarLoc;
+
+typedef ProgVarLoc<tag::VertexAttrib> VertexAttribLoc;
+typedef ProgVarLoc<tag::Uniform> UniformLoc;
+typedef ProgVarLoc<tag::UniformBlock> UniformBlockLoc;
+typedef ProgVarLoc<tag::Subroutine> SubroutineLoc;
+typedef ProgVarLoc<tag::SubroutineUniform> SubroutineUniformLoc;
+
+template <typename VarTag>
+class ProgVarLocOps;
+
+template <typename VarTag>
+class ProgVarTypeOps;
+
+template <typename ChkTag, typename VarTag>
+class ProgVarTypecheck;
+
+template <typename OpsTag, typename VarTag, typename TypTag>
+class ProgVarSetters;
+
+template <typename OpsTag, typename T>
+class ProgVarCallers;
+
+template <typename VarTag>
+class ProgVarCommonOps;
+
+template <typename OpsTag, typename VarTag, typename T>
+class ProgVarGetSetOps;
+
+template <typename OpsTag, typename VarTag, typename ChkTag, typename T>
+class ProgVar;
+
+template <typename OpsTg, typename VarTg, typename ChkTg, typename T>
+struct Classify<ProgVar<OpsTg, VarTg, ChkTg, T>>
+{
+	typedef ProgVar<OpsTg, VarTg, ChkTg, T> Base;
+	typedef tag::ProgVar Tag;
+	typedef OpsTg OpsTag;
+	typedef VarTg VarTag;
+	typedef ChkTg ChkTag;
+	typedef T Type;
+};
+
+template <typename ProgVar>
+class Typechecked;
+
+template <typename ProgVar>
+class Lazy;
 
 } // namespace oglplus
 

@@ -4,7 +4,7 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2010-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2010-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -13,12 +13,12 @@
 #ifndef OGLPLUS_TEXT_BITMAP_GLYPH_FONT_ESSENCE_HPP
 #define OGLPLUS_TEXT_BITMAP_GLYPH_FONT_ESSENCE_HPP
 
-#include <oglplus/config.hpp>
+#include <oglplus/config/basic.hpp>
 #include <oglplus/text/bitmap_glyph/fwd.hpp>
 #include <oglplus/text/bitmap_glyph/page_storage.hpp>
 #include <oglplus/text/bitmap_glyph/pager.hpp>
 
-#include <oglplus/auxiliary/filesystem.hpp>
+#include <oglplus/utils/filesystem.hpp>
 #include <oglplus/opt/resources.hpp>
 
 namespace oglplus {
