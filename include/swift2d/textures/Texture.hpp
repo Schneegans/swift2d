@@ -10,6 +10,7 @@
 #define SWIFT2D_TEXTURE_HPP
 
 // includes  -------------------------------------------------------------------
+#include <swift2d/objects/SavableObjectVisitor.hpp>
 #include <swift2d/graphics/RenderContext.hpp>
 #include <swift2d/properties.hpp>
 
@@ -30,11 +31,14 @@ typedef std::shared_ptr<const Texture> ConstTexturePtr;
 typedef Property<TexturePtr>           TextureProperty;
 
 // -----------------------------------------------------------------------------
-class Texture {
+class Texture : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  // ---------------------------------------------------------------- properties
+  String FileName;
 
   // ---------------------------------------------------- construction interface
   template <typename... Args>
@@ -42,9 +46,13 @@ class Texture {
     return std::make_shared<Texture>(a...);
   }
 
-  Texture() {};
+  Texture();
   Texture(std::string const& file_name);
   ~Texture();
+
+  // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "Texture"; }
 
   // initializes the contained data from a given texture file.
   void load_from_file(std::string const& file_name);
@@ -52,6 +60,10 @@ class Texture {
   // Binds the texture on the given context to the given location.
   void bind(RenderContext const& context, unsigned location) const;
   void unbind() const;
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    visitor.add_member("FileName", FileName);
+  }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
@@ -61,7 +73,6 @@ class Texture {
   mutable oglplus::Texture* texture_;
 
   mutable bool needs_update_;
-  std::string  file_name_;
 
 };
 

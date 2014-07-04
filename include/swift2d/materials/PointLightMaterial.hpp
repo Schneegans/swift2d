@@ -35,8 +35,12 @@ class PointLightMaterial : public Material {
 
   // ---------------------------------------------------------------- properties
   TextureProperty Texture;
+  ColorProperty   Color;
 
   // ----------------------------------------------------- contruction interface
+  PointLightMaterial()
+    : Color(swift::Color(1.f, 1.f, 1.f)) {}
+
   // Creates a new material and returns a shared pointer.
   static PointLightMaterialPtr create() {
     return std::make_shared<PointLightMaterial>();
@@ -60,6 +64,9 @@ class PointLightMaterial : public Material {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "PointLightMaterial"; }
+
   // uses the Material on the given context.
   /* virtual */ void use(RenderContext const& ctx,
                          math::mat3 const& object_transform) const {
@@ -73,8 +80,17 @@ class PointLightMaterial : public Material {
     PointLightShader::instance()->set_uniform("projection", ctx.projection_matrix);
     PointLightShader::instance()->set_uniform("transform", transform);
     PointLightShader::instance()->set_uniform("screen_size", ctx.size);
+    // PointLightShader::instance()->set_uniform("g_buffer_color", 1);
     PointLightShader::instance()->set_uniform("g_buffer_normal", 2);
+    PointLightShader::instance()->set_uniform("g_buffer_aux", 3);
     PointLightShader::instance()->set_uniform("light_tex", 0);
+    PointLightShader::instance()->set_uniform("light_color", Color().vec3());
+  }
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    Material::accept(visitor);
+    visitor.add_object("Texture", Texture);
+    visitor.add_member("Color", Color);
   }
 };
 

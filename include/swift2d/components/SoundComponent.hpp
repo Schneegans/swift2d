@@ -72,6 +72,9 @@ class SoundComponent : public TransformableComponent {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "SoundComponent"; }
+
   virtual void update(double time) {
     TransformableComponent::update(time);
     auto pos(get_world_position());
@@ -82,8 +85,19 @@ class SoundComponent : public TransformableComponent {
     source_->Play();
   }
 
+  virtual void pause() {
+    source_->Pause();
+  }
+
+
   virtual void stop() {
     source_->Stop();
+  }
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    TransformableComponent::accept(visitor);
+    visitor.add_member("Volume", Volume);
+    visitor.add_object("Sound", Sound);
   }
 
  ///////////////////////////////////////////////////////////////////////////////

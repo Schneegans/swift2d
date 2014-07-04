@@ -41,11 +41,7 @@ class TransformableComponent : public Component {
   virtual math::vec2 get_position() const;
   virtual math::vec2 get_world_position() const;
 
- ///////////////////////////////////////////////////////////////////////////////
- // -------------------------------------------------------- protected interface
- protected:
-  TransformableComponent() {}
-
+  virtual void accept(SavableObjectVisitor& visitor);
 };
 
 }

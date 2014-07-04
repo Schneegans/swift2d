@@ -54,6 +54,9 @@ class ParticleSystemComponent : public DrawableComponent {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "ParticleSystemComponent"; }
+
   void update(double time) {
     DrawableComponent::update(time);
     particle_system_->update(time);
@@ -73,6 +76,12 @@ class ParticleSystemComponent : public DrawableComponent {
     } else {
       scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
     }
+  }
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    DrawableComponent::accept(visitor);
+    visitor.add_member("Depth", Depth);
+    visitor.add_object("Emitter", Emitter);
   }
 
  ///////////////////////////////////////////////////////////////////////////////

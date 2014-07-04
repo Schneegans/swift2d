@@ -1,0 +1,293 @@
+/* ################################ General ################################# */
+a {
+  color: rgb(255, 171, 235);
+}
+
+a:hover {
+  color: #FFC7ED;
+}
+
+/* ################################ Tabs #################################### */
+.nav-tabs {
+  border-bottom: 2px solid rgb(255, 171, 235);
+}
+
+.nav>li>a {
+  padding: 5px 15px;
+}
+
+.nav-tabs>li {
+  margin-bottom: -2px;
+}
+
+.nav-tabs>li>a:hover {
+  border-color: rgba(0, 0, 0, 0);
+  background-color: rgba(0, 0, 0, 0);
+  background-image: -webkit-linear-gradient(bottom, rgba(255, 171, 235, 0.4) 0%,rgba(0,0,0,0) 50%);
+  border-top: none;
+}
+
+.nav-tabs>li.active>a,
+.nav-tabs>li.active>a:hover,
+.nav-tabs>li.active>a:focus {
+  color: rgb(255, 171, 235);
+  background-color: rgba(0, 0, 0, 1);
+
+  border: 2px solid rgb(255, 171, 235);
+
+  border-bottom: 0px solid #000;
+
+  background-image: url("img/gloss.png");
+  background-repeat: no-repeat;
+  background-size: 100% 10px;
+}
+
+
+.tab-pane {
+  position: relative;
+  padding: 15px;
+}
+
+.tab-pane:before {
+  content:"";
+  top: 0;
+  left: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  border-left: 2px solid rgb(255, 171, 235);
+  border-right: 2px solid rgb(255, 171, 235);
+  -webkit-mask-image: -webkit-linear-gradient(rgba(255, 255, 255, 1) 0,
+                                              rgba(255, 255, 255, 0) 100%);
+}
+
+/* ################################ Tooltips ################################ */
+.tooltip-inner {
+  border-color: rgb(255, 171, 235);
+  font-size: 14px;
+  color: rgb(255, 171, 235);
+  border-radius: 3px;
+  border-style: solid;
+  border-width: 1px;
+  padding: 1px 6px;
+  max-width: 250px;
+  box-shadow: 0 0 10px rgba(255, 171, 235, 0.5) inset;
+}
+
+.tooltip.bottom
+.tooltip-arrow {
+    border-bottom-color: rgb(255, 171, 235);
+}
+
+.tooltip.top
+.tooltip-arrow {
+    border-top-color: rgb(255, 171, 235);
+}
+
+.tooltip.left
+.tooltip-arrow {
+    border-left-color: rgb(255, 171, 235);
+}
+
+.tooltip.right
+.tooltip-arrow {
+    border-right-color: rgb(255, 171, 235);
+}
+
+/* ############################ Buttons ##################################### */
+
+.btn {
+  position: relative;
+  padding: 10px;
+  margin: 10px 0;
+
+  background-color: rgba(0,0,0,0.8);
+  background-image: url("img/gloss.png");
+  background-repeat: no-repeat;
+  background-size: 100% 10px;
+
+  border-radius: 3px;
+  border: 1px rgba(255, 171, 235, 0.5) solid;
+  box-shadow: 0 0 5px rgba(255, 171, 235, 0.5) inset, 0 1px 5px rgb(0, 0, 0);
+
+  text-align: center;
+  -webkit-transition: all 0.1s;
+}
+
+.btn:hover {
+  color: #FFC7ED;
+  border: 1px rgb(255, 171, 235) solid;
+  box-shadow: 0 0 10px rgb(255, 171, 235) inset, 0 1px 5px rgb(0, 0, 0);
+}
+
+.btn:active {
+  border: 1px rgb(255, 171, 235) solid;
+  box-shadow: none;
+  top: 1px;
+  -webkit-transition: none;
+}
+
+.btn:after {
+  display: block;
+  content:"";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 20px;
+  width: 100%;
+  border-radius: 30% / 50%;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background-image: -webkit-linear-gradient(bottom, rgba(255, 171, 235, 0.4) 1%,rgba(0,0,0,0) 100%);
+  opacity: 0.5;
+
+  -webkit-transition: all 0.25s;
+}
+
+.btn:hover:after {
+  opacity: 1.0;
+}
+
+.btn-default,
+.btn-default:hover, .btn-default:focus,
+.btn-default:active, .btn-default.active,
+.open>.dropdown-toggle.btn-default {
+  background-color: inherit;
+  background-position: inherit;
+  color: inherit;
+  text-shadow: inherit;
+  border: 1px rgb(255, 171, 235) solid;
+}
+
+.btn-default {
+  border: 1px rgba(255, 171, 235, 0.5) solid;
+}
+
+.btn:focus,
+.btn-default:focus,
+.bootstrap-select .btn:focus {
+  outline: none;
+  color: inherit;
+  background-color: rgba(255, 171, 235, 0.2);
+}
+
+
+/* ################################ Inputs ################################## */
+*::-webkit-input-placeholder {
+  color: rgba(255, 171, 235, 0.5);
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+.form-control {
+  border: 1px rgba(255, 171, 235, 0.5) solid;
+  box-shadow: 0 0 5px rgba(255, 171, 235, 0.5) inset;
+  color: rgb(255, 171, 235);
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.form-control::-webkit-input-placeholder {
+  color: rgba(255, 171, 235, 0.5);
+}
+
+.input-group-addon {
+  color: rgb(255, 171, 235);
+  background-color: rgba(255, 171, 235, 0.5);
+  border: 1px solid rgba(255, 171, 235, 0.0);
+}
+
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus,
+.uneditable-input:focus {
+  border-color: rgb(255, 171, 235);
+  box-shadow: 0 0 8px rgba(255, 171, 235, 0.6);
+}
+
+/* ################################## Slider ################################ */
+.slider.slider-horizontal {
+  width: 100%;
+  height: 60px;
+}
+
+.slider-track {
+  background-image: none;
+  -webkit-box-shadow: inset 0 0 6px rgba(255, 171, 235, 0.5);
+  /*box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);*/
+  border-radius: 4px;
+}
+
+.slider-selection {
+  background-color: rgb(255, 171, 235);
+  background-image: none;
+}
+
+.slider-handle {
+  background-color: rgb(255, 171, 235);
+  background-image: none;
+  opacity: 1.0;
+  box-shadow: none;
+}
+
+/* ################################# Popovers ############################### */
+.popover {
+  color: rgb(255, 171, 235);
+  background-color: rgba(0, 0, 0, 0.8);
+  background-image: url("img/gloss.png");
+  background-repeat: no-repeat;
+  background-size: 100% 40px;
+
+  border-radius: 3px;
+  border: 1px rgb(255, 171, 235) solid;
+  box-shadow: 0 0 10px rgb(255, 171, 235) inset;
+}
+
+.popover-title {
+  background-color: transparent;
+  border-bottom: none;
+  position: relative;
+}
+
+.popover-title:before {
+  content: "";
+  width: 100%;
+  height: 2px;
+  position: absolute;
+  bottom: 0;
+  left: -1px;
+  border-bottom: none;
+  background-image: -webkit-linear-gradient(left, rgb(255, 171, 235) 0%,rgba(0,0,0,0) 100%);
+}
+
+.popover.top>.arrow:after {
+  border-top-color: rgb(255, 171, 235);
+}
+.popover.left>.arrow:after {
+  border-left-color: rgb(255, 171, 235);
+}
+.popover.right>.arrow:after {
+  border-right-color: rgb(255, 171, 235);
+}
+.popover.bottom>.arrow:after {
+  border-bottom-color: rgb(255, 171, 235);
+}
+
+
+
+
+

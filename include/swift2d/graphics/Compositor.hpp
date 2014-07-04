@@ -49,7 +49,7 @@ class Compositor {
   void draw_objects(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
   void draw_lights(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
   void composite(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
-
+  void draw_gui(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
@@ -62,7 +62,7 @@ class Compositor {
   oglplus::Texture* offscreen_color_;
   oglplus::Texture* offscreen_normal_;
   oglplus::Texture* offscreen_light_;
-  oglplus::Texture* offscreen_emit_;
+  oglplus::Texture* offscreen_aux_;
 };
 
 }

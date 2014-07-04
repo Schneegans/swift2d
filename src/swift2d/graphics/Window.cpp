@@ -112,6 +112,22 @@ void Window::open_() {
       WindowManager::instance()->glfw_windows[w]->on_key_press.emit(static_cast<Key>(key), scancode, action, mods);
     });
 
+    glfwSetCursorPosCallback(window_, [](GLFWwindow* w, double x, double y) {
+      WindowManager::instance()->glfw_windows[w]->on_mouse_move.emit(math::vec2(x, y));
+    });
+
+    glfwSetMouseButtonCallback(window_, [](GLFWwindow* w, int button, int action, int mods) {
+      WindowManager::instance()->glfw_windows[w]->on_button_press.emit(static_cast<Button>(button), action, mods);
+    });
+
+    glfwSetScrollCallback(window_, [](GLFWwindow* w, double x, double y) {
+      WindowManager::instance()->glfw_windows[w]->on_scroll.emit(math::vec2(x, y));
+    });
+
+    glfwSetCharCallback(window_, [](GLFWwindow* w, unsigned c) {
+      WindowManager::instance()->glfw_windows[w]->on_char.emit(c);
+    });
+
     // apply vsync -------------------------------------------------------------
     auto on_vsync_change = [&](bool val) {
       glfwSwapInterval(val ? 1 : 0);

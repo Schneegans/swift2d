@@ -32,6 +32,9 @@ class ListenerComponent : public TransformableComponent {
  // ----------------------------------------------------------- public interface
  public:
 
+  // ---------------------------------------------------------------- properties
+  Float Volume;
+
   // ----------------------------------------------------- constrution interface
   ListenerComponent();
 
@@ -46,11 +49,16 @@ class ListenerComponent : public TransformableComponent {
     return std::make_shared<ListenerComponent>(*this);
   }
 
-  // ---------------------------------------------------------------- properties
-  Float Volume;
-
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "ListenerComponent"; }
+
   virtual void update(double time);
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    TransformableComponent::accept(visitor);
+    visitor.add_member("Volume", Volume);
+  }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

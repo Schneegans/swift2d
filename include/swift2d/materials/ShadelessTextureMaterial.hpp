@@ -59,6 +59,9 @@ class ShadelessTextureMaterial : public Material {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "ShadelessTextureMaterial"; }
+
   // uses the Material on the given context.
   /* virtual */ void use(RenderContext const& ctx,
                          math::mat3 const& object_transform) const {
@@ -67,6 +70,11 @@ class ShadelessTextureMaterial : public Material {
     ShadelessTextureShader::instance()->set_uniform("projection", ctx.projection_matrix);
     ShadelessTextureShader::instance()->set_uniform("transform", object_transform);
     ShadelessTextureShader::instance()->set_uniform("diffuse", 0);
+  }
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    Material::accept(visitor);
+    visitor.add_object("Texture", Texture);
   }
 };
 

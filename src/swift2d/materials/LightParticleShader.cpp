@@ -16,6 +16,7 @@ namespace swift {
 LightParticleShader::LightParticleShader()
   : Shader(
     R"(
+      // vertex shader ---------------------------------------------------------
       @include "version"
 
       layout(location=0) in vec2  position;
@@ -31,23 +32,23 @@ LightParticleShader::LightParticleShader()
 
 
     R"(
+      // fragment shader -------------------------------------------------------
       @include "version"
 
       in float age;
       in vec2  tex_coords;
 
       // uniforms
+      uniform vec3  start_color;
+      uniform vec3  end_color;
+      uniform float start_opacity;
+      uniform float end_opacity;
+
       uniform sampler2D light_tex;
-      uniform vec3      start_color;
-      uniform vec3      end_color;
-      uniform float     start_opacity;
-      uniform float     end_opacity;
 
-      uniform ivec2 screen_size;
-      uniform sampler2D g_buffer_normal;
-
-      // output
-      out vec3 fragColor;
+      @include "gbuffer_input"
+      @include "write_lbuffer"
+      @include "light_helpers"
 
       void main(void) {
         vec4 color = mix(
@@ -56,22 +57,23 @@ LightParticleShader::LightParticleShader()
           age
         );
 
-        vec4 normal       = texture2D(g_buffer_normal, gl_FragCoord.xy/screen_size);
+        vec3 normal       = get_normal();
         vec4 light        = texture2D(light_tex, tex_coords);
 
         vec3 light_dir    = normalize(light.rgb - 0.5);
-        vec3 surface_dir  = normalize(normal.rgb - 0.5);
-        float attenuation = light.a * normal.a * color.a;
+        vec3 surface_dir  = normalize(normal - 0.5);
+        float attenuation = light.a * color.a;
 
-        float spot        = pow(max(0, dot(vec3(0, 0, 1), reflect(light_dir, surface_dir))), 50) * attenuation;
-        float intensity   = max(0, dot(light_dir, surface_dir)) * attenuation;
+        float specular    = get_specular_light(light_dir, surface_dir) * attenuation;
+        float diffuse     = get_diffuse_light(light_dir, surface_dir) * attenuation;
 
-        fragColor         = vec3(intensity, spot, 0) + color.rga*0.00001;
+        write_lbuffer(color.rgb, diffuse, specular * get_reflectivity());
       }
     )",
 
 
     R"(
+      // geometry shader -------------------------------------------------------
       @include "version"
 
       layout(points) in;
@@ -81,6 +83,7 @@ LightParticleShader::LightParticleShader()
 
       uniform mat3  transform;
       uniform mat3  projection;
+
       uniform float start_scale;
       uniform float end_scale;
 

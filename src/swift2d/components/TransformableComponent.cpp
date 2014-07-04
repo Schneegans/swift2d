@@ -36,4 +36,11 @@ math::vec2 TransformableComponent::get_world_position() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void TransformableComponent::accept(SavableObjectVisitor& visitor) {
+  Component::accept(visitor);
+  visitor.add_member("Transform", Transform);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 }

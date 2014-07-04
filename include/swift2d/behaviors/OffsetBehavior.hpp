@@ -10,7 +10,7 @@
 #define SWIFT2D_OFFSET_BEHAVIOR_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/behaviors/Behavior.hpp>
+#include <swift2d/components/Component.hpp>
 #include <swift2d/math.hpp>
 
 namespace swift {
@@ -25,7 +25,7 @@ typedef std::shared_ptr<OffsetBehavior>       OffsetBehaviorPtr;
 typedef std::shared_ptr<const OffsetBehavior> ConstOffsetBehaviorPtr;
 
 // -----------------------------------------------------------------------------
-class OffsetBehavior : public Behavior<SceneObject*> {
+class OffsetBehavior : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -71,6 +71,9 @@ class OffsetBehavior : public Behavior<SceneObject*> {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "OffsetBehavior"; }
+
   virtual void update(double time) {
 
     float x = TranslationOffsetX.get();

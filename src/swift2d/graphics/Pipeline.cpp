@@ -64,6 +64,9 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   // draw transparent objects
   compositor_->composite(scene, window_->get_context());
 
+  // draw user interface
+  compositor_->draw_gui(scene, window_->get_context());
+
   // finish frame
   window_->display();
 }

@@ -6,75 +6,130 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_MATH_OPERATORS_HPP
-#define SWIFT2D_MATH_OPERATORS_HPP
+#ifndef SWIFT2D_MATH_OPERATORS_HPP__BLUPL
+#define SWIFT2D_MATH_OPERATORS_HPP__BLUPL
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/math/types.hpp>
 #include <iostream>
 
+
 ////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-inline std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 2> const& vec) {
-  stream << "(" << vec.x() << ", " << vec.y() << ")";
-  return stream;
+namespace oglplus {
+
+////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, std::size_t C>
+std::ostream& operator<<(std::ostream& out_stream, Vector<T, C> const& vec) {
+
+  out_stream << "(";
+  for (unsigned c = 0; c < C; ++c) {
+    out_stream << (c != 0 ? " " : "") << vec[c];
+  }
+  out_stream << ")";
+
+  return out_stream;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-inline std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 3> const& vec) {
-  stream << "(" << vec.x() << ", " << vec.y() << ", " << vec.z() << ")";
-  return stream;
+template<typename T, std::size_t C>
+std::istream& operator>>(std::istream& in_stream, Vector<T, C>& vec) {
+
+  Vector<T, C> tmp_vec;
+  std::istream::char_type cur_char(0);
+  bool bracket_version(false);
+
+  in_stream >> cur_char;
+
+  bracket_version = (cur_char == std::istream::char_type('('));
+
+  if (!bracket_version) {
+    in_stream.putback(cur_char);
+  }
+
+  for (unsigned c = 0; c < C; ++c) {
+    in_stream >> tmp_vec[c];
+  }
+
+  if (bracket_version) {
+    in_stream >> cur_char;
+    if (cur_char != std::istream::char_type(')')) {
+      in_stream.clear(std::ios_base::badbit);
+    }
+  }
+
+  if (in_stream) {
+    vec = tmp_vec;
+  }
+
+  return in_stream;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-inline std::ostream& operator<<(std::ostream& stream, oglplus::Vector<T, 4> const& vec) {
-  stream << "(" << vec.x() << ", " << vec.y() << ", " << vec.z() << ", " << vec.w() << ")";
-  return stream;
-}
+template<typename T, std::size_t R, std::size_t C>
+std::ostream& operator<<(std::ostream& out_stream, Matrix<T, R, C> const& mat) {
 
+  out_stream << "(";
+  for (unsigned r = 0; r < R; ++r) {
+    for (unsigned c = 0; c < C; ++c) {
+      unsigned out_index = r + c * R;
+      out_stream << (out_index != 0 ? " " : "") << mat.At(r, c);
+    }
 
-////////////////////////////////////////////////////////////////////////////////
+    if (r != R - 1) {
+      out_stream << std::endl;
+    }
+  }
+  out_stream << ")";
 
-template<typename T>
-inline std::ostream& operator<<(std::ostream& stream, oglplus::Matrix<T, 2, 2> const& mat) {
-
-  stream << "(" << mat.At(0,0) << ", " << mat.At(0,1) << "," << std::endl;
-  stream << " " << mat.At(1,0) << ", " << mat.At(1,1) << ")";
-
-  return stream;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-inline std::ostream& operator<<(std::ostream& stream, oglplus::Matrix<T, 3, 3> const& mat) {
-
-  stream << "(" << mat.At(0,0) << ", " << mat.At(0,1) << ", " << mat.At(0,2) << ", " << std::endl;
-  stream << " " << mat.At(1,0) << ", " << mat.At(1,1) << ", " << mat.At(1,2) << ", " << std::endl;
-  stream << " " << mat.At(2,0) << ", " << mat.At(2,1) << ", " << mat.At(2,2) << ")";
-
-  return stream;
+  return (out_stream);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-inline std::ostream& operator<<(std::ostream& stream, oglplus::Matrix<T, 4, 4> const& mat) {
+template<typename T, std::size_t R, std::size_t C>
+std::istream& operator>>(std::istream& in_stream, Matrix<T, R, C>& mat) {
 
-  stream << "(" << mat.At(0,0) << ", " << mat.At(0,1) << ", " << mat.At(0,2) << ", " << mat.At(0,3) << ", " << std::endl;
-  stream << " " << mat.At(1,0) << ", " << mat.At(1,1) << ", " << mat.At(1,2) << ", " << mat.At(1,3) << ", " << std::endl;
-  stream << " " << mat.At(2,0) << ", " << mat.At(2,1) << ", " << mat.At(2,2) << ", " << mat.At(2,3) << ", " << std::endl;
-  stream << " " << mat.At(3,0) << ", " << mat.At(3,1) << ", " << mat.At(3,2) << ", " << mat.At(3,3) << ")";
+  Matrix<T, R, C> tmp_mat;
+  std::istream::char_type cur_char(0);
+  bool bracket_version(false);
 
-  return stream;
+  in_stream >> cur_char;
+
+  bracket_version = (cur_char == std::istream::char_type('('));
+
+  if (!bracket_version) {
+    in_stream.putback(cur_char);
+  }
+  for (unsigned r = 0; r < R; ++r) {
+    for (unsigned c = 0; c < C; ++c) {
+      T val;
+      in_stream >> val;
+      tmp_mat.Set(r, c, val);
+    }
+  }
+
+  if (bracket_version) {
+    in_stream >> cur_char;
+    if (cur_char != std::istream::char_type(')')) {
+      in_stream.clear(std::ios_base::badbit);
+    }
+  }
+
+  if (in_stream) {
+    mat = tmp_mat;
+  }
+
+  return in_stream;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif //SWIFT2D_MATH_OPERATORS_HPP
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+#endif //SWIFT2D_MATH_OPERATORS_HPP__BLUPL

@@ -6,97 +6,69 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef COLOR_3F_HPP
-#define COLOR_3F_HPP
+#ifndef SWIFT2D_COLOR_HPP
+#define SWIFT2D_COLOR_HPP
 
 #include <swift2d/math.hpp>
 #include <swift2d/properties.hpp>
 
 namespace swift {
 
-/**
- * A struct for color handling.
- *
- * This class stores color values in RGB manner, but provides an HSV
- * interface as well.
- */
+////////////////////////////////////////////////////////////////////////////////
+// This class stores color values in RGB manner, but provides an HSV          //
+// interface as well.                                                         //
+////////////////////////////////////////////////////////////////////////////////
 
 struct Color {
+
+ ///////////////////////////////////////////////////////////////////////////////
+ // ----------------------------------------------------------- public interface
  public:
 
-  /**
-   * Constructor.
-   *
-   * This constructs a Color with all values set to 0 (black).
-   */
+  // ----------------------------------------------------- contruction interface
+  // This constructs a Color with all values set to 0 (black).
   Color();
 
-  /**
-   * Constructor.
-   *
-   * This constructs a Color from given RGB values.
-   *
-   * \param red       The red value.
-   * \param green     The green value.
-   * \param blue      The blue value.
-   */
+  // This constructs a Color from given RGB values.
   Color(float red, float green, float blue);
 
-  ///@{
-  /**
-   * Returns a single Color value.
-   */
+  // Returns a randomly generated Color.
+  static Color random();
+
+  // ------------------------------------------------------------ public methods
+  // Returns a single Color value.
   inline float r() const { return r_; }
   inline float g() const { return g_; }
   inline float b() const { return b_; }
   float h() const;
   float s() const;
   inline float v() const { return std::max(std::max(r_, g_), b_); }
-  ///@}
 
-  ///@{
-  /**
-   * Sets a single Color value.
-   *
-   * \param value    The new value to be set.
-   */
+  // Sets a single Color value.
   void r(float red);
   void g(float green);
   void b(float blue);
   void h(float hue);
   void s(float saturation);
   void v(float value);
-  ///@}
 
-  /**
-   * Returns an inverted copy of the Color.
-   *
-   * \param color      The inverted copy of the Color.
-   */
-  Color const inverted() const;
+  // Returns an inverted copy of the Color.
+  Color inverted() const;
 
-  /**
-   * Returns an inverted copy of the Color.
-   *
-   * \param color      The inverted copy of the Color.
-   */
-  Color const brightened() const;
+  // Returns an inverted copy of the Color.
+  Color brightened() const;
 
-  math::vec3 const vec3() const;
+  math::vec3 vec3() const;
 
-  /**
-   * Returns a randomly generated Color.
-   *
-   * \return color      A randomly generated color.
-   */
-  static const Color random();
-
+ ///////////////////////////////////////////////////////////////////////////////
+ // ---------------------------------------------------------- private interface
  private:
   void set_hsv(float hue, float saturation, float value);
 
   float r_, g_, b_;
 };
 
+// ------------------------------------------------------------------- operators
 bool operator==(Color const& lhs, Color const& rhs);
 bool operator!=(Color const& lhs, Color const& rhs);
 
@@ -116,8 +88,8 @@ Color operator/(Color const& lhs, float rhs);
 std::ostream& operator<<(std::ostream& os, Color const& color);
 std::istream& operator>>(std::istream& is, Color& color);
 
-typedef StreamableProperty<Color> ColorProperty;
+typedef Property<Color> ColorProperty;
 
 }
 
-#endif  //COLOR_3F_HPP
+#endif // SWIFT2D_COLOR_HPP

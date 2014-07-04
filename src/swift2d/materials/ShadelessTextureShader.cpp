@@ -15,29 +15,25 @@ namespace swift {
 
 ShadelessTextureShader::ShadelessTextureShader()
   : Shader(
-    // vertex shader
     R"(
+      // vertex shader ---------------------------------------------------------
       @include "quad_vertext_shader"
     )",
-    // fragment shader
     R"(
+      // fragment shader -------------------------------------------------------
       @include "version"
 
-      // varyings
+      // input
       in vec2 tex_coords;
 
       // uniforms
       uniform sampler2D diffuse;
 
       // output
-      layout (location = 0) out vec4 fragColor;
-      layout (location = 1) out vec4 fragNormal;
-      layout (location = 2) out vec4 fragEmit;
+      @include "write_gbuffer"
 
       void main(void){
-        fragColor  = texture2D(diffuse, tex_coords);
-        fragNormal = vec4(0.5, 0.5, 0, fragColor.a);
-        fragEmit   = vec4(1.0, 0, 0, fragColor.a);
+        write_gbuffer(texture2D(diffuse, tex_coords));
       }
     )"
   ) {}

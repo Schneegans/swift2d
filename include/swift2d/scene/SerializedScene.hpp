@@ -40,6 +40,7 @@ class SerializedScene {
   CameraComponentPtr camera;
   std::multimap<float, DrawableComponentPtr> objects;
   std::multimap<float, DrawableComponentPtr> lights;
+  std::multimap<float, DrawableComponentPtr> gui_elements;
 
 };
 

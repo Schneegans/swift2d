@@ -10,8 +10,11 @@
 #include <swift2d/network/Network.hpp>
 
 #include <swift2d/network/ReplicationManager.hpp>
-
 #include <swift2d/utils/Logger.hpp>
+#include <swift2d/math/operators.hpp>
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 #include <raknet/src/MessageIdentifiers.h>
 #include <raknet/src/RakNetTypes.h>
@@ -20,9 +23,6 @@
 #include <raknet/src/FullyConnectedMesh2.h>
 #include <raknet/src/PacketLogger.h>
 #include <raknet/src/NatTypeDetectionClient.h>
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <sstream>
 

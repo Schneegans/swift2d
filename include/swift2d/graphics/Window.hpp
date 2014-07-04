@@ -46,6 +46,10 @@ class Window {
   Signal<>                    on_close;
   Signal<Key, int, int, int>  on_key_press;
   Signal<math::vec2i>         on_resize;
+  Signal<math::vec2>          on_mouse_move;
+  Signal<Button, int, int>    on_button_press;
+  Signal<math::vec2>          on_scroll;
+  Signal<unsigned>            on_char;
 
   // ---------------------------------------------------- construction interface
   Window();

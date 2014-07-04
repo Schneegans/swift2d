@@ -19,11 +19,27 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+Texture::Texture()
+  : FileName("")
+  , texture_(nullptr)
+  , needs_update_(true) {
+
+  FileName.on_change().connect([&](std::string const& path){
+    load_from_file(path);
+  });
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 Texture::Texture(std::string const& file_name)
-  : texture_(nullptr)
-  , file_name_(file_name)
-  , needs_update_(true)
-{}
+  : FileName(file_name)
+  , texture_(nullptr)
+  , needs_update_(true) {
+
+  FileName.on_change().connect([&](std::string const& path){
+    load_from_file(path);
+  });
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -35,7 +51,7 @@ Texture::~Texture() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Texture::load_from_file(std::string const& file_name) {
-  file_name_ = file_name_;
+  FileName.set(file_name);
   needs_update_ = true;
 }
 
@@ -65,7 +81,7 @@ void Texture::upload_to(RenderContext const& context) const {
   }
 
   int width(0), height(0), channels(0);
-  unsigned char* data(stbi_load(file_name_.c_str(), &width, &height,
+  unsigned char* data(stbi_load(FileName().c_str(), &width, &height,
                                 &channels, STBI_default));
 
   bool success(data && width && height);

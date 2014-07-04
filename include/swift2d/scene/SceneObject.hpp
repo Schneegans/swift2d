@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
+#include <swift2d/utils/SavableObject.hpp>
 
 #include <unordered_set>
 #include <vector>
@@ -30,7 +31,7 @@ typedef std::shared_ptr<const SceneObject> ConstSceneObjectPtr;
 typedef Property<SceneObject*>             SceneObjectProperty;
 
 // -----------------------------------------------------------------------------
-class SceneObject {
+class SceneObject : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -46,9 +47,13 @@ class SceneObject {
     return std::make_shared<SceneObject>();
   }
 
+  static SceneObjectPtr create_from_file(std::string const& path);
+
   SceneObject() : Parent(nullptr), remove_flag_(false) {}
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "SceneObject"; }
 
   // removes this scene object from its parent
   void detach();
@@ -136,7 +141,6 @@ class SceneObject {
 
   // --------------------------------------------------- serialization interface
 
-
   // calls serialize() on all enabled components and objects --- the provided
   // SerializedScene is extended
   virtual void serialize(SerializedScenePtr& scene) const;
@@ -148,9 +152,12 @@ class SceneObject {
   // calls update() on all components and objects
   virtual void update(double time);
 
+  virtual void accept(SavableObjectVisitor& visitor);
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  // static SceneObjectPtr create_from_json(boost::property_tree::ptree const& json);
 
   // a collection of all objects attached to this object
   std::unordered_set<SceneObjectPtr> objects_;

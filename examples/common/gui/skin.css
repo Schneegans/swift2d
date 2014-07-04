@@ -1,0 +1,42 @@
+body {
+  color: white;
+  font: 16px Arial, Helvetica, sans-serif;
+  text-shadow: 0 1px 1px rgba(0,0,0,.3);
+  overflow: hidden;
+
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+}
+
+.button {
+  width: 200px;
+  background-color: #940;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  -webkit-border-radius: 10px;
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.button:hover {
+  background-color: #e73;
+  text-decoration: none;
+}
+
+.button:active {
+  background-color: #720;
+  position: relative;
+  top: 1px;
+}
+
+#fps {
+  -webkit-transition: all 0.5s;
+  padding-top: 0px;
+}
+
+#fps:hover{
+  padding-top: 30px;
+}

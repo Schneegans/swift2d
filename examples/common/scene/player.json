@@ -1,0 +1,133 @@
+{
+    "Type": "SceneObject",
+    "Transform": "(0.1 0 0\n 0 0.1 0\n 0 0 1)",
+    "Components":
+    [
+        {
+            "Type": "Mover",
+            "Enabled": "1",
+            "LinearSpeed": "0",
+            "AngularSpeed": "0"
+        },
+        {
+            "Type": "ListenerComponent",
+            "Enabled": "1",
+            "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
+            "Volume": "1"
+        },
+        {
+            "Type": "SpriteComponent",
+            "Enabled": "1",
+            "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
+            "Depth": "1",
+            "Material":
+            {
+                "Type": "ShadelessTextureMaterial",
+                "Texture":
+                {
+                    "Type": "Texture",
+                    "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/ship.png"
+                }
+            }
+        },
+        {
+            "Type": "ParticleSystemComponent",
+            "Enabled": "1",
+            "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
+            "Depth": "0.5",
+            "Emitter":
+            {
+                "Type": "TextureParticleEmitter",
+                "WorldSpacePosition": "1",
+                "WorldSpaceDirection": "0",
+                "Life": "5",
+                "LifeVariance": "3",
+                "Position": "(0 0)",
+                "Direction": "(-2 0)",
+                "DirectionVariance": "0.3",
+                "StartOpacity": "1",
+                "EndOpacity": "0",
+                "RotationSpeed": "0",
+                "RotationSpeedVariance": "2",
+                "StartColor": "(0 0 0)",
+                "EndColor": "(1 1 1)",
+                "Density": "5",
+                "StartScale": "0.1",
+                "EndScale": "5",
+                "BlendAdditive": "0",
+                "Rotation": "0",
+                "RotationVariance": "0",
+                "Texture":
+                {
+                    "Type": "Texture",
+                    "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/smoke.png"
+                }
+            }
+        },
+        {
+            "Type": "ParticleSystemComponent",
+            "Enabled": "1",
+            "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
+            "Depth": "0.6",
+            "Emitter":
+            {
+                "Type": "TextureParticleEmitter",
+                "WorldSpacePosition": "1",
+                "WorldSpaceDirection": "0",
+                "Life": "1",
+                "LifeVariance": "0.5",
+                "Position": "(0 0)",
+                "Direction": "(-2 0)",
+                "DirectionVariance": "0.3",
+                "StartOpacity": "0.5",
+                "EndOpacity": "0",
+                "RotationSpeed": "0",
+                "RotationSpeedVariance": "0",
+                "StartColor": "(1 1 1)",
+                "EndColor": "(0.8 0 0)",
+                "Density": "5",
+                "StartScale": "0.2",
+                "EndScale": "2",
+                "BlendAdditive": "1",
+                "Rotation": "0",
+                "RotationVariance": "0",
+                "Texture":
+                {
+                    "Type": "Texture",
+                    "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/fire.png"
+                }
+            }
+        },
+        {
+            "Type": "ParticleSystemComponent",
+            "Enabled": "1",
+            "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
+            "Depth": "0.6",
+            "Emitter":
+            {
+                "Type": "LightParticleEmitter",
+                "WorldSpacePosition": "1",
+                "WorldSpaceDirection": "0",
+                "Life": "1",
+                "LifeVariance": "0.5",
+                "Position": "(0 0)",
+                "Direction": "(-2 0)",
+                "DirectionVariance": "0.3",
+                "StartOpacity": "0.5",
+                "EndOpacity": "0",
+                "RotationSpeed": "0",
+                "RotationSpeedVariance": "0",
+                "StartColor": "(1 0.1 0.1)",
+                "EndColor": "(1 0 0)",
+                "Density": "5",
+                "StartScale": "10",
+                "EndScale": "20",
+                "Texture":
+                {
+                    "Type": "Texture",
+                    "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/light.png"
+                }
+            }
+        }
+    ]
+}

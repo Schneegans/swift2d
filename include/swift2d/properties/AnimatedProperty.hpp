@@ -21,7 +21,7 @@ namespace swift {
 
 // -----------------------------------------------------------------------------
 template <typename T>
-class AnimatedProperty: public NumericProperty<T> {
+class AnimatedProperty: public Property<T> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -36,7 +36,7 @@ class AnimatedProperty: public NumericProperty<T> {
 
   // ----------------------------------------------------- contruction interface
   AnimatedProperty()
-    : NumericProperty<T>()
+    : Property<T>()
     , direction_(IN_OUT)
     , start_()
     , end_()
@@ -45,7 +45,7 @@ class AnimatedProperty: public NumericProperty<T> {
     , exp_(0.0) {}
 
   AnimatedProperty(T const& value)
-    : NumericProperty<T>(value)
+    : Property<T>(value)
     , direction_(IN_OUT)
     , start_(value)
     , end_(value)
@@ -55,7 +55,7 @@ class AnimatedProperty: public NumericProperty<T> {
 
   AnimatedProperty(T const& start, T const& end, double duration = 1.0,
                    Direction direction = IN_OUT, double exponent = 0.0)
-    : NumericProperty<T>(start)
+    : Property<T>(start)
     , direction_(direction)
     , start_(start)
     , end_(end)
@@ -76,7 +76,7 @@ class AnimatedProperty: public NumericProperty<T> {
     end_ = value;
     duration_ = 0.0;
     state_ = -1.0;
-    NumericProperty<T>::set(value);
+    Property<T>::set(value);
   }
 
   void update(double time) {
@@ -85,23 +85,23 @@ class AnimatedProperty: public NumericProperty<T> {
 
       switch (direction_) {
         case LINEAR:
-          NumericProperty<T>::set(updateLinear(state_, start_, end_));
+          Property<T>::set(updateLinear(state_, start_, end_));
           break;
         case IN:
-          NumericProperty<T>::set(updateEaseIn(state_, start_, end_));
+          Property<T>::set(updateEaseIn(state_, start_, end_));
           return;
         case OUT:
-          NumericProperty<T>::set(updateEaseOut(state_, start_, end_));
+          Property<T>::set(updateEaseOut(state_, start_, end_));
           return;
         case IN_OUT:
-          NumericProperty<T>::set(updateEaseInOut(state_, start_, end_));
+          Property<T>::set(updateEaseInOut(state_, start_, end_));
           return;
         case OUT_IN:
-          NumericProperty<T>::set(updateEaseOutIn(state_, start_, end_));
+          Property<T>::set(updateEaseOutIn(state_, start_, end_));
           return;
       }
     } else if (state_ != -1.0) {
-      NumericProperty<T>::set(end_);
+      Property<T>::set(end_);
       state_ = -1.0;
       on_finish_.emit();
     }

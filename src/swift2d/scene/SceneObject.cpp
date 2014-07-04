@@ -10,13 +10,21 @@
 #include <swift2d/scene/SceneObject.hpp>
 
 #include <swift2d/scene/SerializedScene.hpp>
+#include <swift2d/objects/SavableObjectVisitor.hpp>
 #include <swift2d/components/CameraComponent.hpp>
+#include <swift2d/math/operators.hpp>
 
 #include <iostream>
 #include <algorithm>
 
 namespace swift {
 
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObjectPtr SceneObject::create_from_file(std::string const& path) {
+  return std::dynamic_pointer_cast<SceneObject>(SavableObject::create_from_file(path));
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -151,6 +159,22 @@ void SceneObject::update(double time) {
     } else {
       (*current)->update(time);
     }
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void SceneObject::accept(SavableObjectVisitor& visitor) {
+  visitor.add_member("Transform", Transform);
+  visitor.add_array("Components", components_);
+  visitor.add_array("Objects", objects_);
+
+  for (auto& ptr: objects_) {
+    ptr->Parent = this;
+  }
+
+  for (auto& ptr: components_) {
+    ptr->set_user(this);
   }
 }
 

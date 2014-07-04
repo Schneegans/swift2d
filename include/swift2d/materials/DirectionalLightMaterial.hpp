@@ -34,19 +34,22 @@ class DirectionalLightMaterial : public Material {
  public:
 
   // ---------------------------------------------------------------- properties
-  Vec3 Direction;
+  Vec3          Direction;
+  ColorProperty Color;
 
   // ----------------------------------------------------- contruction interface
+  DirectionalLightMaterial(math::vec3 const& dir = math::vec3(0.f, 0.f, -1.f),
+                           swift::Color const& color = swift::Color(1.f, 1.f, 1.f))
+    : Direction(dir)
+    , Color(color) {}
+
   // Creates a new material and returns a shared pointer.
-  static DirectionalLightMaterialPtr create() {
-    return std::make_shared<DirectionalLightMaterial>();
+  template <typename... Args>
+  static DirectionalLightMaterialPtr create(Args&& ... a) {
+    return std::make_shared<DirectionalLightMaterial>(a...);
   }
 
-  static DirectionalLightMaterialPtr create(math::vec3 const& direction) {
-    auto mat(std::make_shared<DirectionalLightMaterial>());
-    mat->Direction = direction;
-    return mat;
-  }
+
 
   // creates a copy from this
   DirectionalLightMaterialPtr create_copy() const {
@@ -54,6 +57,9 @@ class DirectionalLightMaterial : public Material {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "DirectionalLightMaterial"; }
+
   // uses the Material on the given context.
   /* virtual */ void use(RenderContext const& ctx,
                          math::mat3 const& object_transform) const {
@@ -66,8 +72,17 @@ class DirectionalLightMaterial : public Material {
     DirectionalLightShader::instance()->set_uniform("projection", math::mat3());
     DirectionalLightShader::instance()->set_uniform("transform", math::mat3());
     DirectionalLightShader::instance()->set_uniform("screen_size", ctx.size);
+    // DirectionalLightShader::instance()->set_uniform("g_buffer_color", 1);
     DirectionalLightShader::instance()->set_uniform("g_buffer_normal", 2);
+    DirectionalLightShader::instance()->set_uniform("g_buffer_aux", 3);
     DirectionalLightShader::instance()->set_uniform("light_dir", math::normalized(Direction()));
+    DirectionalLightShader::instance()->set_uniform("light_color", Color().vec3());
+  }
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    Material::accept(visitor);
+    visitor.add_member("Direction", Direction);
+    visitor.add_member("Color", Color);
   }
 };
 

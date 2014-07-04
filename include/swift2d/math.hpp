@@ -13,7 +13,7 @@
 #include <swift2d/math/types.hpp>
 #include <swift2d/math/random.hpp>
 #include <swift2d/math/transformations.hpp>
-#include <swift2d/math/operators.hpp>
 #include <swift2d/math/helpers.hpp>
+#include <swift2d/math/operators.hpp>
 
 #endif  // SWIFT2D_INCLUDE_MATH_HPP

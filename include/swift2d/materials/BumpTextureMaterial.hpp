@@ -36,6 +36,8 @@ class BumpTextureMaterial : public Material {
   TextureProperty Texture;
   TextureProperty NormalMap;
   Float           Emit;
+  Float           Shinyness;
+  Float           Reflectivity;
 
   // ----------------------------------------------------- contruction interface
   // Creates a new material and returns a shared pointer.
@@ -45,21 +47,29 @@ class BumpTextureMaterial : public Material {
 
   static BumpTextureMaterialPtr create_from_files(std::string const& texture,
                                                   std::string const& normal_texture,
-                                                  float emit = 0.f) {
+                                                  float emit = 0.f,
+                                                  float shinyness = 10.f,
+                                                  float reflectivity = 0.5f) {
     auto mat(std::make_shared<BumpTextureMaterial>());
     mat->Texture = Texture::create(texture);
     mat->NormalMap = Texture::create(normal_texture);
     mat->Emit = emit;
+    mat->Shinyness = shinyness;
+    mat->Reflectivity = reflectivity;
     return mat;
   }
 
   static BumpTextureMaterialPtr create_from_database(std::string const& id,
                                                      std::string const& normal_id,
-                                                     float emit = 0.f) {
+                                                     float emit = 0.f,
+                                                     float shinyness = 10.f,
+                                                     float reflectivity = 0.5f) {
     auto mat(std::make_shared<BumpTextureMaterial>());
     mat->Texture = TextureDatabase::instance()->get(id);
     mat->NormalMap = TextureDatabase::instance()->get(normal_id);
     mat->Emit = emit;
+    mat->Shinyness = shinyness;
+    mat->Reflectivity = reflectivity;
     return mat;
   }
 
@@ -69,6 +79,9 @@ class BumpTextureMaterial : public Material {
   }
 
   // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "BumpTextureMaterial"; }
+
   // uses the Material on the given context.
   /* virtual */ void use(RenderContext const& ctx,
                          math::mat3 const& object_transform) const {
@@ -77,9 +90,21 @@ class BumpTextureMaterial : public Material {
     BumpTextureShader::instance()->use(ctx);
     BumpTextureShader::instance()->set_uniform("projection", ctx.projection_matrix);
     BumpTextureShader::instance()->set_uniform("transform", object_transform);
+    BumpTextureShader::instance()->set_uniform("normal_transform", math::transposed(math::inversed(object_transform)));
     BumpTextureShader::instance()->set_uniform("diffuse", 0);
     BumpTextureShader::instance()->set_uniform("normal", 1);
     BumpTextureShader::instance()->set_uniform("emit", Emit());
+    BumpTextureShader::instance()->set_uniform("shinyness", Shinyness());
+    BumpTextureShader::instance()->set_uniform("reflectivity", Reflectivity());
+  }
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    Material::accept(visitor);
+    visitor.add_object("Texture", Texture);
+    visitor.add_object("NormalMap", NormalMap);
+    visitor.add_member("Emit", Emit);
+    visitor.add_member("Shinyness", Shinyness);
+    visitor.add_member("Reflectivity", Reflectivity);
   }
 };
 
