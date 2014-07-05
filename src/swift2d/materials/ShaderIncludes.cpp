@@ -36,6 +36,16 @@ ShaderIncludes::ShaderIncludes() {
     }
   )");
 
+  add_include("fullscreen_quad_vertext_shader", R"(
+    @include "version"
+
+    layout(location=0) in vec2 position;
+
+    void main(void){
+      gl_Position = vec4(position, 0.0, 1.0);
+    }
+  )");
+
   add_include("version", R"(
     #version 330
   )");
@@ -48,19 +58,25 @@ ShaderIncludes::ShaderIncludes() {
     void write_gbuffer(vec4 color, vec4 normal, float emit, float shinyness, float reflectivity) {
       fragColor   = color;
       fragNormal  = normal;
-      fragAux     = vec4(emit, shinyness/100.0, reflectivity, color.a);
+      fragAux     = vec4(emit*0.5, shinyness/100.0, reflectivity, color.a);
     }
 
     void write_gbuffer(vec4 color, vec4 normal) {
       fragColor   = color;
       fragNormal  = normal;
-      fragAux     = vec4(1.0, 1.0, 1.0, color.a);
+      fragAux     = vec4(0.5, 1.0, 1.0, color.a);
+    }
+
+    void write_gbuffer(vec4 color, float emit) {
+      fragColor   = color;
+      fragNormal  = vec4(0.5, 0.5, 0, 0);
+      fragAux     = vec4(emit*0.5, 1.0, 1.0, color.a);
     }
 
     void write_gbuffer(vec4 color) {
       fragColor   = color;
       fragNormal  = vec4(0.5, 0.5, 0, 0);
-      fragAux     = vec4(1.0, 1.0, 1.0, color.a);
+      fragAux     = vec4(0.5, 1.0, 1.0, color.a);
     }
   )");
 
@@ -91,7 +107,7 @@ ShaderIncludes::ShaderIncludes() {
     }
 
     float get_emit() {
-      return texture2D(g_buffer_aux, gl_FragCoord.xy/screen_size).r;
+      return texture2D(g_buffer_aux, gl_FragCoord.xy/screen_size).r * 2.0;
     }
 
     float get_shinyness() {

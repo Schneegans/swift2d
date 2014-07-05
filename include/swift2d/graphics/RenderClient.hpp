@@ -42,13 +42,13 @@ class RenderClient {
     , running_(true) {
 
     forever_ = boost::thread([this, fun]() {
-      this->fps_counter.start();
+      fps_counter.start();
 
       while (running_) {
-        auto sg = this->double_buffer_.read();
+        auto sg = double_buffer_.read();
         if (sg) {
           fun(sg);
-          this->fps_counter.step();
+          fps_counter.step();
         }
       }
     });

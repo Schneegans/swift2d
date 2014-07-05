@@ -34,8 +34,16 @@ class ShadelessTextureMaterial : public Material {
 
   // ---------------------------------------------------------------- properties
   TextureProperty Texture;
+  ColorProperty   Colorize;
+  Float           Glow;
 
   // ----------------------------------------------------- contruction interface
+
+  ShadelessTextureMaterial()
+    : Texture()
+    , Colorize(Color(1, 1, 1))
+    , Glow(0.f) {}
+
   // Creates a new material and returns a shared pointer.
   static ShadelessTextureMaterialPtr create() {
     return std::make_shared<ShadelessTextureMaterial>();
@@ -69,12 +77,16 @@ class ShadelessTextureMaterial : public Material {
     ShadelessTextureShader::instance()->use(ctx);
     ShadelessTextureShader::instance()->set_uniform("projection", ctx.projection_matrix);
     ShadelessTextureShader::instance()->set_uniform("transform", object_transform);
+    ShadelessTextureShader::instance()->set_uniform("colorize", Colorize().vec3());
+    ShadelessTextureShader::instance()->set_uniform("glow", Glow());
     ShadelessTextureShader::instance()->set_uniform("diffuse", 0);
   }
 
   virtual void accept(SavableObjectVisitor& visitor) {
     Material::accept(visitor);
     visitor.add_object("Texture", Texture);
+    visitor.add_member("Colorize", Colorize);
+    visitor.add_member("Glow", Glow);
   }
 };
 

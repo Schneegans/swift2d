@@ -23,6 +23,7 @@ class Mover: public MoveBehavior {
           get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 0.0;
           get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 0.0;
           get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 0.0;
+          get_user()->get_components<ParticleSystemComponent>()[3]->Emitter()->Density = 0.0;
         }
         if (key == Key::S) LinearSpeed.set(0);
         if (key == Key::A) AngularSpeed.set(0);
@@ -32,7 +33,8 @@ class Mover: public MoveBehavior {
           LinearSpeed.set( 10);
           get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 100.0;
           get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 100.0;
-          get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 15.0;
+          get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 25.0;
+          get_user()->get_components<ParticleSystemComponent>()[3]->Emitter()->Density = 15.0;
         }
         if (key == Key::S) LinearSpeed.set(-10);
         if (key == Key::A) AngularSpeed.set(-2 );
@@ -110,10 +112,10 @@ int main(int argc, char** argv) {
   // example scene setup -------------------------------------------------------
   auto scene = SceneManager::instance()->get_default();
 
-  auto music = scene->add<SoundComponent>();
-       music->Sound = Sound::create_from_file(app.get_resource("audio", "music.ogg"));
-       music->Volume = 0.1f;
-       music->play();
+  // auto music = scene->add<SoundComponent>();
+  //      music->Sound = Sound::create_from_file(app.get_resource("audio", "music.ogg"));
+  //      music->Volume = 0.5f;
+  //      music->play();
 
   auto field = scene->add<CircularShape>();
        field->Transform = math::make_scale(4);
@@ -122,35 +124,35 @@ int main(int argc, char** argv) {
        camera->Size = math::vec2(2.f, 2.f);
 
 
-  auto menu = scene->add<GuiComponent>();
-       menu->Resource = app.get_resource("gui", "window.html");
-       menu->Size = math::vec2i(1000, 1000);
-       menu->Anchor = math::vec2i(0, 1);
-       menu->on_loaded.connect([&](){
-         menu->add_javascript_callback("start");
-         menu->add_javascript_callback("quit");
-         menu->add_javascript_callback("pause");
-       });
-       menu->on_javascript_callback.connect([&](std::string const& method) {
-         if (method == "quit") {
-           renderer.stop();
-           app.stop();
-         } else if (method == "pause") {
-            music->pause();
-         } else {
-          std::cout << "Start!!!" << std::endl;
-         }
-       });
+  // auto menu = scene->add<GuiComponent>();
+  //      menu->Resource = app.get_resource("gui", "window.html");
+  //      menu->Size = math::vec2i(1000, 1000);
+  //      menu->Anchor = math::vec2i(0, 1);
+  //      menu->on_loaded.connect([&](){
+  //        menu->add_javascript_callback("start");
+  //        menu->add_javascript_callback("quit");
+  //        menu->add_javascript_callback("pause");
+  //      });
+  //      menu->on_javascript_callback.connect([&](std::string const& method) {
+  //        if (method == "quit") {
+  //          renderer.stop();
+  //          app.stop();
+  //        } else if (method == "pause") {
+  //           music->pause();
+  //        } else {
+  //         std::cout << "Start!!!" << std::endl;
+  //        }
+  //      });
 
   auto fps = scene->add<GuiComponent>();
        fps->Resource = app.get_resource("gui", "fps.html");
        fps->Size = math::vec2i(240, 35);
        fps->Anchor = math::vec2i(-1, -1);
 
-  auto video = scene->add<GuiComponent>();
-       video->Resource = app.get_resource("gui", "video.html");
-       video->Size = math::vec2i(420, 315);
-       video->Anchor = math::vec2i(1, -1);
+  // auto video = scene->add<GuiComponent>();
+  //      video->Resource = app.get_resource("gui", "video.html");
+  //      video->Size = math::vec2i(420, 315);
+  //      video->Anchor = math::vec2i(1, -1);
 
   // scene
   scene->add_object(SceneObject::create_from_file(
@@ -209,7 +211,7 @@ int main(int argc, char** argv) {
       scene->add_object(bullet);
       bullet->Transform = player->Transform();
     } else if (key == swift::Key::F5 && action != 1) {
-      menu->reload();
+      // menu->reload();
       fps->reload();
     }
   });

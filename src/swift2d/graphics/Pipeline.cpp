@@ -40,7 +40,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   if (!window_->Open()) {
     window_->Open = true;
     compositor_ = Compositor::create();
-    compositor_->EnableDynamicLighting = true;
+    compositor_->ShadingQuality = 2;
   }
 
   // update window size
@@ -63,6 +63,9 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   // draw transparent objects
   compositor_->composite(scene, window_->get_context());
+
+  // perform post processing
+  compositor_->post_process(scene, window_->get_context());
 
   // draw user interface
   compositor_->draw_gui(scene, window_->get_context());

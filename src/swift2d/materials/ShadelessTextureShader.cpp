@@ -28,12 +28,16 @@ ShadelessTextureShader::ShadelessTextureShader()
 
       // uniforms
       uniform sampler2D diffuse;
+      uniform vec3 colorize;
+      uniform float glow;
 
       // output
       @include "write_gbuffer"
 
-      void main(void){
-        write_gbuffer(texture2D(diffuse, tex_coords));
+      void main(void) {
+        vec4 color = texture2D(diffuse, tex_coords);
+        color.rgb *= colorize;
+        write_gbuffer(color, 1.0 + glow);
       }
     )"
   ) {}

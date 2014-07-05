@@ -56,7 +56,10 @@ class SavableObjectVisitor {
   template <class T>
   void add_member(std::string const& name, T& value) {
     if (loaded_object_) {
-      value = json_.get<T>(name);
+      auto value_tmp = json_.get_optional<T>(name);
+      if (value_tmp) {
+        value = value_tmp.get();
+      }
     } else {
       json_.put(name, value);
     }

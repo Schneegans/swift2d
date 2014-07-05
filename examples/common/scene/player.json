@@ -34,7 +34,7 @@
             "Type": "ParticleSystemComponent",
             "Enabled": "1",
             "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
-            "Depth": "0.5",
+            "Depth": "1.5",
             "Emitter":
             {
                 "Type": "TextureParticleEmitter",
@@ -68,7 +68,7 @@
             "Type": "ParticleSystemComponent",
             "Enabled": "1",
             "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
-            "Depth": "0.6",
+            "Depth": "1.6",
             "Emitter":
             {
                 "Type": "TextureParticleEmitter",
@@ -101,6 +101,40 @@
         {
             "Type": "ParticleSystemComponent",
             "Enabled": "1",
+            "Transform": "(2 0 -0.5\n 0 2 0\n 0 0 1)",
+            "Depth": "3.6",
+            "Emitter":
+            {
+                "Type": "TextureParticleEmitter",
+                "WorldSpacePosition": "0",
+                "WorldSpaceDirection": "1",
+                "Life": "0.5",
+                "LifeVariance": "0.1",
+                "Position": "(0 0)",
+                "Direction": "(-1 0)",
+                "DirectionVariance": "0.1",
+                "StartOpacity": "1",
+                "EndOpacity": "0",
+                "RotationSpeed": "0",
+                "RotationSpeedVariance": "0",
+                "StartColor": "(1 1 0.8)",
+                "EndColor": "(1 1 0.8)",
+                "Density": "15",
+                "StartScale": "0",
+                "EndScale": "1",
+                "BlendAdditive": "1",
+                "Rotation": "0",
+                "RotationVariance": "0",
+                "Texture":
+                {
+                    "Type": "Texture",
+                    "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/bullet.png"
+                }
+            }
+        },
+        {
+            "Type": "ParticleSystemComponent",
+            "Enabled": "1",
             "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
             "Depth": "0.6",
             "Emitter":
@@ -113,11 +147,11 @@
                 "Position": "(0 0)",
                 "Direction": "(-2 0)",
                 "DirectionVariance": "0.3",
-                "StartOpacity": "0.5",
+                "StartOpacity": "0.8",
                 "EndOpacity": "0",
                 "RotationSpeed": "0",
                 "RotationSpeedVariance": "0",
-                "StartColor": "(1 0.1 0.1)",
+                "StartColor": "(1 0.8 0.3)",
                 "EndColor": "(1 0 0)",
                 "Density": "5",
                 "StartScale": "10",

@@ -250,7 +250,7 @@ input[type="color"]:focus,
   background-color: rgba(0, 0, 0, 0.8);
   background-image: url("img/gloss.png");
   background-repeat: no-repeat;
-  background-size: 100% 40px;
+  background-size: 100% 30px;
 
   border-radius: 3px;
   border: 1px rgb(255, 171, 235) solid;
@@ -265,11 +265,11 @@ input[type="color"]:focus,
 
 .popover-title:before {
   content: "";
-  width: 100%;
+  width: 90%;
   height: 2px;
   position: absolute;
   bottom: 0;
-  left: -1px;
+  /*left: -1px;*/
   border-bottom: none;
   background-image: -webkit-linear-gradient(left, rgb(255, 171, 235) 0%,rgba(0,0,0,0) 100%);
 }

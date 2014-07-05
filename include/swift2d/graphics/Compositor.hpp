@@ -31,7 +31,7 @@ class Compositor {
  public:
 
   // ---------------------------------------------------------------- properties
-  Bool EnableDynamicLighting;
+  Int ShadingQuality;
 
   // ---------------------------------------------------- construction interface
   template <typename... Args>
@@ -49,6 +49,7 @@ class Compositor {
   void draw_objects(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
   void draw_lights(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
   void composite(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
+  void post_process(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
   void draw_gui(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -57,12 +58,20 @@ class Compositor {
   void upload_to(RenderContext const& context) const;
   void clean_up();
 
-  mutable Shader* shader_;
+  mutable Shader*   shader_;
+  mutable Shader*   post_fx_shader_;
+
   oglplus::Framebuffer* fbo_;
   oglplus::Texture* offscreen_color_;
   oglplus::Texture* offscreen_normal_;
   oglplus::Texture* offscreen_light_;
   oglplus::Texture* offscreen_aux_;
+
+  mutable Shader*       glow_threshold_shader_;
+  mutable Shader*       glow_shader_;
+  oglplus::Framebuffer* glow_fbo_;
+  oglplus::Texture*     glow_ping_;
+  oglplus::Texture*     glow_pong_;
 };
 
 }
