@@ -124,25 +124,25 @@ int main(int argc, char** argv) {
        camera->Size = math::vec2(2.f, 2.f);
 
 
-  // auto menu = scene->add<GuiComponent>();
-  //      menu->Resource = app.get_resource("gui", "window.html");
-  //      menu->Size = math::vec2i(1000, 1000);
-  //      menu->Anchor = math::vec2i(0, 1);
-  //      menu->on_loaded.connect([&](){
-  //        menu->add_javascript_callback("start");
-  //        menu->add_javascript_callback("quit");
-  //        menu->add_javascript_callback("pause");
-  //      });
-  //      menu->on_javascript_callback.connect([&](std::string const& method) {
-  //        if (method == "quit") {
-  //          renderer.stop();
-  //          app.stop();
-  //        } else if (method == "pause") {
-  //           music->pause();
-  //        } else {
-  //         std::cout << "Start!!!" << std::endl;
-  //        }
-  //      });
+  auto menu = scene->add<GuiComponent>();
+       menu->Resource = app.get_resource("gui", "window.html");
+       menu->Size = math::vec2i(1000, 1000);
+       menu->Anchor = math::vec2i(0, 1);
+       menu->on_loaded.connect([&](){
+         menu->add_javascript_callback("start");
+         menu->add_javascript_callback("quit");
+         menu->add_javascript_callback("pause");
+       });
+       menu->on_javascript_callback.connect([&](std::string const& method) {
+         if (method == "quit") {
+           renderer.stop();
+           app.stop();
+         } else if (method == "pause") {
+            // music->pause();
+         } else {
+          std::cout << "Start!!!" << std::endl;
+         }
+       });
 
   auto fps = scene->add<GuiComponent>();
        fps->Resource = app.get_resource("gui", "fps.html");
