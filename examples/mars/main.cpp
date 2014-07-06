@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
   // window setup --------------------------------------------------------------
   auto window = WindowManager::instance()->get_default();
   window->Fullscreen = true;
-  window->VSync = false;
+  window->VSync = true;
 
   // rendering pipeline --------------------------------------------------------
   auto pipeline = Pipeline::create();

@@ -83,7 +83,7 @@ class PointLightMaterial : public Material {
     PointLightShader::instance()->set_uniform("screen_size", ctx.size);
     // PointLightShader::instance()->set_uniform("g_buffer_color", 1);
     PointLightShader::instance()->set_uniform("g_buffer_normal", 2);
-    PointLightShader::instance()->set_uniform("g_buffer_aux", 3);
+    PointLightShader::instance()->set_uniform("g_buffer_aux_1", 3);
     PointLightShader::instance()->set_uniform("light_tex", 0);
     PointLightShader::instance()->set_uniform("light_color", Color().vec3());
 

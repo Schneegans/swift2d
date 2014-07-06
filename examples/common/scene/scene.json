@@ -30,12 +30,31 @@
         {
             "Type": "SpriteComponent",
             "Enabled": "1",
-            "Transform": "(3 0 3\n 0 3 0\n 0 0 1)",
-            "Depth": "-10",
+            "Transform": "(32 0 0\n 0 18 0\n 0 0 1)",
+            "Depth": "-40",
             "Material":
             {
                 "Type": "SpriteMaterial",
                 "BlendAdditive": "1",
+                "Emit": "1",
+                "Glow": "0.1",
+                "DiffuseTexture":
+                {
+                    "Type": "Texture",
+                    "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/bg.jpg"
+                }
+            }
+        },
+        {
+            "Type": "SpriteComponent",
+            "Enabled": "1",
+            "Transform": "(3 0 3\n 0 3 0\n 0 0 1)",
+            "Depth": "-20",
+            "Material":
+            {
+                "Type": "SpriteMaterial",
+                "BlendAdditive": "1",
+                "Emit": "1",
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
@@ -52,6 +71,7 @@
             {
                 "Type": "SpriteMaterial",
                 "BlendAdditive": "1",
+                "Emit": "1",
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
@@ -63,11 +83,12 @@
             "Type": "SpriteComponent",
             "Enabled": "1",
             "Transform": "(2 0 -4\n 0 2 1\n 0 0 1)",
-            "Depth": "-9",
+            "Depth": "-15",
             "Material":
             {
                 "Type": "SpriteMaterial",
                 "BlendAdditive": "1",
+                "Emit": "1",
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
@@ -79,11 +100,12 @@
             "Type": "SpriteComponent",
             "Enabled": "1",
             "Transform": "(3 0 -1\n 0 3 -3\n 0 0 1)",
-            "Depth": "-7",
+            "Depth": "-27",
             "Material":
             {
                 "Type": "SpriteMaterial",
                 "BlendAdditive": "1",
+                "Emit": "1",
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
@@ -94,7 +116,7 @@
         {
             "Type": "SpriteComponent",
             "Enabled": "1",
-            "Transform": "(0.5 0 1\n 0 0.5 1\n 0 0 1)",
+            "Transform": "(1 0 1\n 0 1 1\n 0 0 1)",
             "Depth": "-3",
             "Material":
             {
@@ -104,14 +126,14 @@
                     "Type": "Texture",
                     "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/sun1.png"
                 },
-                "Glow": "0.2",
-                "Diffuse": "(0.7 0.9 1.0)"
+                "Glow": "1",
+                "Emit": "1"
             }
         },
         {
             "Type": "SpriteComponent",
             "Enabled": "1",
-            "Transform": "(0.2 0 -3\n 0 0.2 1\n 0 0 1)",
+            "Transform": "(0.4 0 -3\n 0 0.4 1\n 0 0 1)",
             "Depth": "-3",
             "Material":
             {
@@ -121,14 +143,14 @@
                     "Type": "Texture",
                     "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/sun1.png"
                 },
-                "Glow": "0.2",
-                "Diffuse": "(0.85 0.85 1.0)"
+                "Glow": "1",
+                "Emit": "1"
             }
         },
         {
             "Type": "SpriteComponent",
             "Enabled": "1",
-            "Transform": "(0.9 0 -2.5\n 0 0.9 -1.5\n 0 0 1)",
+            "Transform": "(2 0 -2.5\n 0 2 -1.5\n 0 0 1)",
             "Depth": "-4",
             "Material":
             {
@@ -136,10 +158,10 @@
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
-                    "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/sun1.png"
+                    "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/sun2.png"
                 },
-                "Glow": "0.2",
-                "Diffuse": "(1.0 0.7 0.9)"
+                "Glow": "1",
+                "Emit": "1"
             }
         }
     ],
@@ -198,7 +220,8 @@
                         {
                             "Type": "Texture",
                             "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/planet_diffuse2.png"
-                        }
+                        },
+                        "Emit": "1"
                     }
                 },
                 {

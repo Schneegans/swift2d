@@ -55,36 +55,28 @@ ShaderIncludes::ShaderIncludes() {
   add_include("write_gbuffer", R"(
     layout (location = 0) out vec4 fragColor;
     layout (location = 1) out vec4 fragNormal;
-    layout (location = 2) out vec4 fragAux;
+    layout (location = 2) out vec4 fragAux1;
+    layout (location = 3) out vec4 fragAux2;
 
     void write_gbuffer(vec4 color, vec4 normal, float emit, float glow, float shinyness, float reflectivity) {
       fragColor   = color;
       fragNormal  = normal;
-      fragAux     = vec4(emit*0.5, shinyness, reflectivity + glow*0.0001, color.a);
+      fragAux1    = vec4(emit, shinyness, reflectivity, color.a);
+      fragAux2    = vec4(glow, 0.0, 0.0, color.a);
     }
 
-    void write_gbuffer(vec4 color, vec4 normal, float emit, float shinyness, float reflectivity) {
-      fragColor   = color;
-      fragNormal  = normal;
-      fragAux     = vec4(emit*0.5, shinyness, reflectivity, color.a);
-    }
-
-    void write_gbuffer(vec4 color, vec4 normal) {
-      fragColor   = color;
-      fragNormal  = normal;
-      fragAux     = vec4(0.5, 1.0, 1.0, color.a);
-    }
-
-    void write_gbuffer(vec4 color, float emit) {
+    void write_gbuffer(vec4 color, float glow) {
       fragColor   = color;
       fragNormal  = vec4(0.5, 0.5, 0, 0);
-      fragAux     = vec4(emit*0.5, 1.0, 1.0, color.a);
+      fragAux1    = vec4(1.0, 1.0, 1.0, color.a);
+      fragAux2    = vec4(glow, 0.0, 0.0, color.a);
     }
 
     void write_gbuffer(vec4 color) {
       fragColor   = color;
       fragNormal  = vec4(0.5, 0.5, 0, 0);
-      fragAux     = vec4(0.5, 1.0, 1.0, color.a);
+      fragAux1    = vec4(1.0, 1.0, 1.0, color.a);
+      fragAux2    = vec4(0.0, 0.0, 0.0, color.a);
     }
   )");
 
@@ -104,7 +96,8 @@ ShaderIncludes::ShaderIncludes() {
     uniform ivec2     screen_size;
     uniform sampler2D g_buffer_diffuse;
     uniform sampler2D g_buffer_normal;
-    uniform sampler2D g_buffer_aux;
+    uniform sampler2D g_buffer_aux_1;
+    uniform sampler2D g_buffer_aux_2;
 
     vec3 get_normal() {
       return texture2D(g_buffer_normal, gl_FragCoord.xy/screen_size).rgb;
@@ -115,15 +108,19 @@ ShaderIncludes::ShaderIncludes() {
     }
 
     float get_emit() {
-      return texture2D(g_buffer_aux, gl_FragCoord.xy/screen_size).r * 2.0;
+      return texture2D(g_buffer_aux_1, gl_FragCoord.xy/screen_size).r;
     }
 
     float get_shinyness() {
-      return texture2D(g_buffer_aux, gl_FragCoord.xy/screen_size).g;
+      return texture2D(g_buffer_aux_1, gl_FragCoord.xy/screen_size).g;
     }
 
     float get_reflectivity() {
-      return texture2D(g_buffer_aux, gl_FragCoord.xy/screen_size).b;
+      return texture2D(g_buffer_aux_1, gl_FragCoord.xy/screen_size).b;
+    }
+
+    float get_glow() {
+      return texture2D(g_buffer_aux_2, gl_FragCoord.xy/screen_size).r;
     }
 
   )");

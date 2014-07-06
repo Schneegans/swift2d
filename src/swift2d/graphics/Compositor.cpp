@@ -26,7 +26,8 @@ Compositor::Compositor()
   , offscreen_color_  (nullptr)
   , offscreen_normal_ (nullptr)
   , offscreen_light_  (nullptr)
-  , offscreen_aux_    (nullptr)
+  , offscreen_aux_1_  (nullptr)
+  , offscreen_aux_2_  (nullptr)
   , glow_threshold_shader_ (nullptr)
   , glow_shader_      (nullptr)
   , glow_fbo_         (nullptr)
@@ -51,7 +52,8 @@ void Compositor::init(RenderContext const& ctx) {
     offscreen_color_  = new oglplus::Texture();
     offscreen_normal_ = new oglplus::Texture();
     offscreen_light_  = new oglplus::Texture();
-    offscreen_aux_    = new oglplus::Texture();
+    offscreen_aux_1_  = new oglplus::Texture();
+    offscreen_aux_2_  = new oglplus::Texture();
 
     auto create_texture = [&](
       oglplus::Texture* tex, int width, int height, bool nearest,
@@ -80,9 +82,14 @@ void Compositor::init(RenderContext const& ctx) {
       oglplus::PixelDataFormat::RGB
     );
     create_texture(
-      offscreen_aux_, ctx.size.x(), ctx.size.y(), true,
+      offscreen_aux_1_, ctx.size.x(), ctx.size.y(), true,
       oglplus::PixelDataInternalFormat::RGB,
       oglplus::PixelDataFormat::RGB
+    );
+    create_texture(
+      offscreen_aux_2_, ctx.size.x(), ctx.size.y(), true,
+      oglplus::PixelDataInternalFormat::Red,
+      oglplus::PixelDataFormat::Red
     );
     create_texture(
       offscreen_light_, ctx.size.x(), ctx.size.y(), true,
@@ -101,10 +108,13 @@ void Compositor::init(RenderContext const& ctx) {
       oglplus::Framebuffer::Target::Draw, 1, *offscreen_normal_, 0
     );
     oglplus::Framebuffer::AttachColorTexture(
-      oglplus::Framebuffer::Target::Draw, 2, *offscreen_aux_, 0
+      oglplus::Framebuffer::Target::Draw, 2, *offscreen_aux_1_, 0
     );
     oglplus::Framebuffer::AttachColorTexture(
-      oglplus::Framebuffer::Target::Draw, 3, *offscreen_light_, 0
+      oglplus::Framebuffer::Target::Draw, 3, *offscreen_aux_2_, 0
+    );
+    oglplus::Framebuffer::AttachColorTexture(
+      oglplus::Framebuffer::Target::Draw, 4, *offscreen_light_, 0
     );
 
     // create shaders ----------------------------------------------------------
@@ -131,7 +141,7 @@ void Compositor::init(RenderContext const& ctx) {
         fragColor      = vec4(emit * diffuse + (1 - emit) * (light*diffuse + specular), 1.0);
 
         if (debug) {
-          fragColor = texture2D(g_buffer_aux, gl_FragCoord.xy/screen_size);
+          fragColor = vec4(vec3(get_emit())  , 1.0);
         }
       }
     )");
@@ -142,15 +152,15 @@ void Compositor::init(RenderContext const& ctx) {
       glow_pong_ = new oglplus::Texture();
 
       create_texture(
-        glow_ping_, ctx.size.x()/3, ctx.size.y()/3, false,
-        oglplus::PixelDataInternalFormat::RGB,
-        oglplus::PixelDataFormat::RGB
+        glow_ping_, ctx.size.x()/2, ctx.size.y()/2, false,
+        oglplus::PixelDataInternalFormat::Red,
+        oglplus::PixelDataFormat::Red
       );
 
       create_texture(
-        glow_pong_, ctx.size.x()/3, ctx.size.y()/3, false,
-        oglplus::PixelDataInternalFormat::RGB,
-        oglplus::PixelDataFormat::RGB
+        glow_pong_, ctx.size.x()/2, ctx.size.y()/2, false,
+        oglplus::PixelDataInternalFormat::Red,
+        oglplus::PixelDataFormat::Red
       );
 
       // create framebuffer object -----------------------------------------------
@@ -180,8 +190,9 @@ void Compositor::init(RenderContext const& ctx) {
 
         void main(void) {
           vec3  diffuse  = texture2D(g_buffer_shaded, gl_FragCoord.xy/screen_size).rgb;
-          vec3  glow     = texture2D(g_glow, gl_FragCoord.xy/screen_size).rgb;
-          fragColor      = vec4(diffuse + glow*5.0, 1.0);
+          float glow     = texture2D(g_glow, gl_FragCoord.xy/screen_size).r;
+
+          fragColor      = vec4(diffuse + vec3(0, 0, glow), 1.0);
         }
       )");
 
@@ -197,14 +208,42 @@ void Compositor::init(RenderContext const& ctx) {
         layout (location = 0) out vec4 fragColor;
 
         void main(void) {
-          float fac = max(0, get_emit() - 1.0);
-          fragColor = vec4(get_diffuse() * fac, 1.0);
+          vec3 c = get_diffuse();
+          fragColor = vec4(get_glow() * max(max(c.r, c.g), c.b), 0.0, 0.0, 1.0);
         }
       )");
 
       glow_shader_ = new Shader(R"(
         // vertex shader ---------------------------------------------------------
-        @include "fullscreen_quad_vertext_shader"
+        @include "version"
+
+        layout(location=0) in vec2 position;
+
+        uniform ivec2 screen_size;
+        uniform float flare_length;
+
+        out vec2 blur_texcoords[14];
+
+        void main(void){
+          gl_Position     = vec4(position, 0.0, 1.0);
+          vec2 tex_coords = vec2(position.x + 1.0, position.y + 1.0) * 0.5;
+          vec2 scale = vec2(1, 0) * flare_length / screen_size;
+
+          blur_texcoords[ 0] = tex_coords + vec2(-1.000) * scale;
+          blur_texcoords[ 1] = tex_coords + vec2(-0.857) * scale;
+          blur_texcoords[ 2] = tex_coords + vec2(-0.714) * scale;
+          blur_texcoords[ 3] = tex_coords + vec2(-0.571) * scale;
+          blur_texcoords[ 4] = tex_coords + vec2(-0.428) * scale;
+          blur_texcoords[ 5] = tex_coords + vec2(-0.285) * scale;
+          blur_texcoords[ 6] = tex_coords + vec2(-0.143) * scale;
+          blur_texcoords[ 7] = tex_coords + vec2( 0.143) * scale;
+          blur_texcoords[ 8] = tex_coords + vec2( 0.285) * scale;
+          blur_texcoords[ 9] = tex_coords + vec2( 0.428) * scale;
+          blur_texcoords[10] = tex_coords + vec2( 0.571) * scale;
+          blur_texcoords[11] = tex_coords + vec2( 0.714) * scale;
+          blur_texcoords[12] = tex_coords + vec2( 0.857) * scale;
+          blur_texcoords[13] = tex_coords + vec2( 1.000) * scale;
+        }
       )", R"(
         // fragment shader -------------------------------------------------------
         @include "version"
@@ -213,22 +252,33 @@ void Compositor::init(RenderContext const& ctx) {
         uniform ivec2     screen_size;
         uniform float     flare_length;
 
+        in vec2 blur_texcoords[14];
+
         layout (location = 0) out vec4 fragColor;
 
         void main(void) {
 
-          const float samples = 10.0;
-
           vec2 texcoords = gl_FragCoord.xy/screen_size;
-          vec2 step = vec2(flare_length / samples, 0);
-          vec3 base = texture2D(g_glow, texcoords).rgb;
-          vec3 col = vec3(0.0);
 
-          for (float i = 0.0; i < samples; i += 1.0) {
-            col += texture2D(g_glow, texcoords + (i-samples/2 + 0.5)*step).rgb;
-          }
+          float col = 0.0;
 
-          fragColor = vec4(col / samples + 0.2*base, 1.0);
+          col += texture2D(g_glow, blur_texcoords[ 0]).r*0.0044299121055113265;
+          col += texture2D(g_glow, blur_texcoords[ 1]).r*0.00895781211794;
+          col += texture2D(g_glow, blur_texcoords[ 2]).r*0.0215963866053;
+          col += texture2D(g_glow, blur_texcoords[ 3]).r*0.0443683338718;
+          col += texture2D(g_glow, blur_texcoords[ 4]).r*0.0776744219933;
+          col += texture2D(g_glow, blur_texcoords[ 5]).r*0.115876621105;
+          col += texture2D(g_glow, blur_texcoords[ 6]).r*0.147308056121;
+          col += texture2D(g_glow, texcoords         ).r*0.159576912161;
+          col += texture2D(g_glow, blur_texcoords[ 7]).r*0.147308056121;
+          col += texture2D(g_glow, blur_texcoords[ 8]).r*0.115876621105;
+          col += texture2D(g_glow, blur_texcoords[ 9]).r*0.0776744219933;
+          col += texture2D(g_glow, blur_texcoords[10]).r*0.0443683338718;
+          col += texture2D(g_glow, blur_texcoords[11]).r*0.0215963866053;
+          col += texture2D(g_glow, blur_texcoords[12]).r*0.00895781211794;
+          col += texture2D(g_glow, blur_texcoords[13]).r*0.0044299121055113265;
+
+          fragColor = vec4(col, 0.0, 0.0, 1.0);
         }
       )");
     }
@@ -251,25 +301,32 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
 
     fbo_->Bind(oglplus::Framebuffer::Target::Draw);
 
-    oglplus::Context::ColorBuffer draw_buffs[3] =  {
+    oglplus::Context::ColorBuffer draw_buffs[4] =  {
       oglplus::FramebufferColorAttachment::_0,
       oglplus::FramebufferColorAttachment::_1,
-      oglplus::FramebufferColorAttachment::_2
+      oglplus::FramebufferColorAttachment::_2,
+      oglplus::FramebufferColorAttachment::_3
     };
     ctx.gl.DrawBuffers(draw_buffs);
+
+    GLfloat clear0[3] = {0.f, 0.f, 0.f};
+    ctx.gl.ClearColorBuffer(0, clear0);
 
     GLfloat clear1[3] = {0.5f, 0.5f, 0.f};
     ctx.gl.ClearColorBuffer(1, clear1);
 
-    GLfloat clear2[3] = {0.5f, 1.f, 1.f};
+    GLfloat clear2[3] = {1.f, 1.f, 1.f};
     ctx.gl.ClearColorBuffer(2, clear2);
+
+    GLfloat clear3[1] = {0.0f};
+    ctx.gl.ClearColorBuffer(3, clear3);
 
   } else {
     oglplus::DefaultFramebuffer::Bind(oglplus::Framebuffer::Target::Draw);
     ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
+    ctx.gl.Clear().ColorBuffer();
   }
 
-  ctx.gl.Clear().ColorBuffer();
 
   for (auto& object: scene->objects) {
     object.second->draw(ctx);
@@ -291,7 +348,7 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
       oglplus::BlendFunction::OneMinusSrcColor
     );
 
-    ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_3);
+    ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_4);
 
     GLfloat clear[3] = {0.f, 0.f, 0.f};
     ctx.gl.ClearColorBuffer(0, clear);
@@ -303,7 +360,7 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
     ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_normal_);
 
     oglplus::Texture::Active(3);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_aux_);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_aux_1_);
 
     for (auto& light: scene->lights) {
       light.second->draw(ctx);
@@ -338,12 +395,12 @@ void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext c
     ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_light_);
 
     oglplus::Texture::Active(2);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_aux_);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_aux_1_);
 
     shader_->use(ctx);
     shader_->set_uniform("g_buffer_diffuse", 0);
     shader_->set_uniform("g_buffer_light", 1);
-    shader_->set_uniform("g_buffer_aux", 2);
+    shader_->set_uniform("g_buffer_aux_1", 2);
     shader_->set_uniform("screen_size", ctx.size);
     shader_->set_uniform("debug", 0);
 
@@ -363,7 +420,7 @@ void Compositor::post_process(ConstSerializedScenePtr const& scene, RenderContex
     ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_normal_);
 
     oglplus::Texture::Active(2);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_aux_);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_aux_2_);
 
     ctx.gl.Disable(oglplus::Capability::Blend);
 
@@ -371,53 +428,56 @@ void Compositor::post_process(ConstSerializedScenePtr const& scene, RenderContex
     // glow thresholding
     glow_fbo_->Bind(oglplus::Framebuffer::Target::Draw);
 
+    ctx.gl.Viewport(ctx.size.x()/2, ctx.size.y()/2);
+
     ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
 
     glow_threshold_shader_->use(ctx);
-    glow_threshold_shader_->set_uniform("g_buffer_diffuse", 0);
-    glow_threshold_shader_->set_uniform("g_buffer_aux", 2);
-    glow_threshold_shader_->set_uniform("screen_size", ctx.size/3);
+    // glow_threshold_shader_->set_uniform("g_buffer_diffuse", 0);
+    glow_threshold_shader_->set_uniform("g_buffer_aux_2", 2);
+    glow_threshold_shader_->set_uniform("screen_size", ctx.size/2);
 
     Quad::instance()->draw(ctx);
 
     // glow blurring
     glow_shader_->use(ctx);
-    glow_shader_->set_uniform("screen_size", ctx.size/3);
+    glow_shader_->set_uniform("screen_size", ctx.size/2);
     oglplus::Texture::Active(1);
     glow_shader_->set_uniform("g_glow", 1);
 
     // pass 1
     ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_1);
     ctx.gl.Bind(oglplus::smart_enums::_2D(), *glow_ping_);
-    glow_shader_->set_uniform("flare_length", 0.05f);
+    glow_shader_->set_uniform("flare_length", 20.f);
     Quad::instance()->draw(ctx);
 
     // pass 2
     ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
     ctx.gl.Bind(oglplus::smart_enums::_2D(), *glow_pong_);
-    glow_shader_->set_uniform("flare_length", 0.09f);
+    glow_shader_->set_uniform("flare_length", 100.f);
     Quad::instance()->draw(ctx);
 
     // pass 3
     ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_1);
     ctx.gl.Bind(oglplus::smart_enums::_2D(), *glow_ping_);
-    glow_shader_->set_uniform("flare_length", 0.29f);
+    glow_shader_->set_uniform("flare_length", 400.f);
     Quad::instance()->draw(ctx);
 
-    // pass 4
-    ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), *glow_pong_);
-    glow_shader_->set_uniform("flare_length", 0.5f);
-    Quad::instance()->draw(ctx);
+    // // pass 4
+    // ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
+    // ctx.gl.Bind(oglplus::smart_enums::_2D(), *glow_pong_);
+    // glow_shader_->set_uniform("flare_length", 0.5f);
+    // Quad::instance()->draw(ctx);
 
 
 
+    ctx.gl.Viewport(ctx.size.x(), ctx.size.y());
 
     oglplus::DefaultFramebuffer::Bind(oglplus::Framebuffer::Target::Draw);
     ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
 
     oglplus::Texture::Active(1);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), *glow_ping_);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), *glow_pong_);
 
     post_fx_shader_->use(ctx);
     post_fx_shader_->set_uniform("g_buffer_shaded", 0);
@@ -448,7 +508,8 @@ void Compositor::clean_up() {
   if(offscreen_color_)  delete offscreen_color_;    offscreen_color_  = nullptr;
   if(offscreen_normal_) delete offscreen_normal_;   offscreen_normal_ = nullptr;
   if(offscreen_light_)  delete offscreen_light_;    offscreen_light_  = nullptr;
-  if(offscreen_aux_)    delete offscreen_aux_;      offscreen_aux_    = nullptr;
+  if(offscreen_aux_1_)  delete offscreen_aux_1_;    offscreen_aux_1_  = nullptr;
+  if(offscreen_aux_2_)  delete offscreen_aux_2_;    offscreen_aux_2_  = nullptr;
 
   if(glow_fbo_)         delete glow_fbo_;           glow_fbo_         = nullptr;
   if(glow_ping_)        delete glow_ping_;          glow_ping_        = nullptr;

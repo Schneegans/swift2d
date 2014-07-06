@@ -76,7 +76,7 @@ class DirectionalLightMaterial : public Material {
     DirectionalLightShader::instance()->set_uniform("depth", 1.f);
     DirectionalLightShader::instance()->set_uniform("parallax", 1.f);
     DirectionalLightShader::instance()->set_uniform("g_buffer_normal", 2);
-    DirectionalLightShader::instance()->set_uniform("g_buffer_aux", 3);
+    DirectionalLightShader::instance()->set_uniform("g_buffer_aux_1", 3);
     DirectionalLightShader::instance()->set_uniform("light_dir", math::normalized(Direction()));
     DirectionalLightShader::instance()->set_uniform("light_color", Color().vec3());
 

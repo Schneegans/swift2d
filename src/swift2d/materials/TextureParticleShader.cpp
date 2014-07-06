@@ -46,6 +46,8 @@ TextureParticleShader::TextureParticleShader()
       uniform vec3      end_color;
       uniform float     start_opacity;
       uniform float     end_opacity;
+      uniform float     start_glow;
+      uniform float     end_glow;
 
       @include "write_gbuffer"
 
@@ -56,7 +58,13 @@ TextureParticleShader::TextureParticleShader()
           age
         );
 
-        write_gbuffer(texture2D(diffuse, tex_coords) * color);
+        float glow = mix(
+          start_glow,
+          end_glow,
+          age
+        );
+
+        write_gbuffer(texture2D(diffuse, tex_coords) * color, glow);
       }
     )",
 

@@ -74,9 +74,9 @@ ShaderPtr SpriteShader::get_shader(int capabilities) {
     )";
   }
 
-  auto append_float_parameter = [&](std::string const& name) {
-    if (capabilities & EMIT_TEX) {
-      f_shader << "uniform sampler2D " << name << "_tex;"                 << std::endl;
+  auto append_float_parameter = [&](std::string const& name, Capabilities cap) {
+    if (capabilities & cap) {
+      f_shader << "uniform sampler2D " << name << "_tex;"             << std::endl;
       f_shader << "uniform float " << name << ";"                     << std::endl;
       f_shader << "float get_" << name << "() {"                      << std::endl;
       f_shader << "  return texture2D(" << name << "_tex, tex_coords).r * " << name << ";" << std::endl;
@@ -89,10 +89,10 @@ ShaderPtr SpriteShader::get_shader(int capabilities) {
     }
   };
 
-  append_float_parameter("emit");
-  append_float_parameter("glow");
-  append_float_parameter("shinyness");
-  append_float_parameter("reflectivity");
+  append_float_parameter("emit", EMIT_TEX);
+  append_float_parameter("glow", GLOW_TEX);
+  append_float_parameter("shinyness", SHINYNESS_TEX);
+  append_float_parameter("reflectivity", REFLECTIVITY_TEX);
 
   f_shader << R"(
     void main(void) {

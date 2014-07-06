@@ -21,7 +21,9 @@ TextureParticleEmitter::TextureParticleEmitter()
   , RotationSpeed         (0.f)
   , RotationSpeedVariance (0.f)
   , Rotation              (0.f)
-  , RotationVariance      (0.f) {}
+  , RotationVariance      (0.f)
+  , StartGlow             (0.f)
+  , EndGlow               (0.f) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -51,6 +53,9 @@ void TextureParticleEmitter::draw(RenderContext const& ctx, math::mat3 const& tr
 
   shader->set_uniform("start_opacity",  StartOpacity());
   shader->set_uniform("end_opacity",    EndOpacity());
+
+  shader->set_uniform("start_glow",     StartGlow());
+  shader->set_uniform("end_glow",       EndGlow());
 
   shader->set_uniform("enable_rotation", (int)(
     RotationSpeed() + RotationSpeedVariance() +

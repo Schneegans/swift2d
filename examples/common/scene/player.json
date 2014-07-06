@@ -27,7 +27,8 @@
                 {
                     "Type": "Texture",
                     "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/ship.png"
-                }
+                },
+                "Emit": "1"
             }
         },
         {
@@ -122,6 +123,8 @@
                 "Density": "15",
                 "StartScale": "0",
                 "EndScale": "1",
+                "StartGlow": "1",
+                "EndGlow": "1",
                 "BlendAdditive": "1",
                 "Rotation": "0",
                 "RotationVariance": "0",

@@ -65,7 +65,8 @@ class Compositor {
   oglplus::Texture* offscreen_color_;
   oglplus::Texture* offscreen_normal_;
   oglplus::Texture* offscreen_light_;
-  oglplus::Texture* offscreen_aux_;
+  oglplus::Texture* offscreen_aux_1_;
+  oglplus::Texture* offscreen_aux_2_;
 
   mutable Shader*       glow_threshold_shader_;
   mutable Shader*       glow_shader_;
