@@ -23,14 +23,16 @@ ShaderIncludes::ShaderIncludes() {
     layout(location=0) in vec2 position;
 
     // uniforms
-    uniform mat3 projection;
-    uniform mat3 transform;
+    uniform mat3  projection;
+    uniform mat3  transform;
+    uniform float depth;
+    uniform float parallax;
 
     // varyings
     out vec2 tex_coords;
 
     void main(void) {
-      vec3 pos    = projection * transform * vec3(position, 1.0);
+      vec3 pos    = projection * transform * vec3(position, 1.0) * pow(parallax, depth);
       tex_coords  = vec2(position.x + 1.0, 1.0 - position.y) * 0.5;
       gl_Position = vec4(pos.xy, 0.0, 1.0);
     }
@@ -55,10 +57,16 @@ ShaderIncludes::ShaderIncludes() {
     layout (location = 1) out vec4 fragNormal;
     layout (location = 2) out vec4 fragAux;
 
+    void write_gbuffer(vec4 color, vec4 normal, float emit, float glow, float shinyness, float reflectivity) {
+      fragColor   = color;
+      fragNormal  = normal;
+      fragAux     = vec4(emit*0.5, shinyness, reflectivity + glow*0.0001, color.a);
+    }
+
     void write_gbuffer(vec4 color, vec4 normal, float emit, float shinyness, float reflectivity) {
       fragColor   = color;
       fragNormal  = normal;
-      fragAux     = vec4(emit*0.5, shinyness/100.0, reflectivity, color.a);
+      fragAux     = vec4(emit*0.5, shinyness, reflectivity, color.a);
     }
 
     void write_gbuffer(vec4 color, vec4 normal) {
@@ -111,7 +119,7 @@ ShaderIncludes::ShaderIncludes() {
     }
 
     float get_shinyness() {
-      return texture2D(g_buffer_aux, gl_FragCoord.xy/screen_size).g * 100;
+      return texture2D(g_buffer_aux, gl_FragCoord.xy/screen_size).g;
     }
 
     float get_reflectivity() {
@@ -135,7 +143,7 @@ ShaderIncludes::ShaderIncludes() {
 
   add_include("light_helpers", R"(
     float get_specular_light(vec3 light_dir, vec3 surface_dir) {
-      return pow(max(0, dot(vec3(0, 0, 1), reflect(light_dir, surface_dir))), get_shinyness());
+      return pow(max(0, dot(vec3(0, 0, 1), reflect(light_dir, surface_dir))), get_shinyness()*100);
     }
 
     float get_diffuse_light(vec3 light_dir, vec3 surface_dir) {

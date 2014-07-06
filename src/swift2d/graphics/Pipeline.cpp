@@ -54,6 +54,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   math::mat3 view_matrix(scene->camera->WorldTransform.get());
   math::scale(view_matrix, scene->camera->Size.get());
   window_->get_context().projection_matrix = math::inversed(view_matrix);
+  window_->get_context().projection_parallax = scene->camera->Parallax();
 
   // draw opaque objects
   compositor_->draw_objects(scene, window_->get_context());

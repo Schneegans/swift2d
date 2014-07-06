@@ -28,7 +28,6 @@ namespace {
 
         // register all objects ------------------------------------------------
         // Object::init<RectangularShape>();
-        Object::init<BumpTextureMaterial>();
         Object::init<CameraComponent>();
         Object::init<CircularShape>();
         Object::init<DeleteOnLeaveBehavior>();
@@ -43,7 +42,7 @@ namespace {
         Object::init<ParticleSystemComponent>();
         Object::init<PointLightMaterial>();
         Object::init<SceneObject>();
-        Object::init<ShadelessTextureMaterial>();
+        Object::init<SpriteMaterial>();
         Object::init<SoundComponent>();
         Object::init<SpriteComponent>();
         Object::init<TextureParticleEmitter>();

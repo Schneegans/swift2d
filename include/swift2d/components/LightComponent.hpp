@@ -56,8 +56,7 @@ class LightComponent : public DrawableComponent {
   static  std::string get_type_name_static() { return "LightComponent"; }
 
   void draw(RenderContext const& ctx) {
-    Material()->use(ctx, WorldTransform());
-    Quad::instance()->draw(ctx);
+    Material()->draw_quad(ctx, WorldTransform(), Depth());
   }
 
   void serialize(SerializedScenePtr& scene) const {

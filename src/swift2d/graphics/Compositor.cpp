@@ -10,7 +10,6 @@
 #include <swift2d/graphics/Compositor.hpp>
 #include <swift2d/components/DrawableComponent.hpp>
 #include <swift2d/geometries/Quad.hpp>
-#include <swift2d/materials/ShadelessTextureShader.hpp>
 #include <swift2d/gui/Interface.hpp>
 
 #include <sstream>
@@ -63,8 +62,8 @@ void Compositor::init(RenderContext const& ctx) {
       ctx.gl.Bound(oglplus::Texture::Target::_2D, *tex)
         .MinFilter(nearest ? oglplus::TextureMinFilter::Nearest : oglplus::TextureMinFilter::Linear)
         .MagFilter(nearest ? oglplus::TextureMagFilter::Nearest : oglplus::TextureMagFilter::Linear)
-        .WrapS(oglplus::TextureWrap::ClampToEdge)
-        .WrapT(oglplus::TextureWrap::ClampToEdge)
+        .WrapS(oglplus::TextureWrap::MirroredRepeat)
+        .WrapT(oglplus::TextureWrap::MirroredRepeat)
         .Image2D(0, i_format, width, height,
           0, p_format, oglplus::PixelDataType::Float, nullptr
         );
@@ -259,8 +258,11 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
     };
     ctx.gl.DrawBuffers(draw_buffs);
 
-    GLfloat clear[3] = {0.5f, 0.5f, 0.f};
-    ctx.gl.ClearColorBuffer(1, clear);
+    GLfloat clear1[3] = {0.5f, 0.5f, 0.f};
+    ctx.gl.ClearColorBuffer(1, clear1);
+
+    GLfloat clear2[3] = {0.5f, 1.f, 1.f};
+    ctx.gl.ClearColorBuffer(2, clear2);
 
   } else {
     oglplus::DefaultFramebuffer::Bind(oglplus::Framebuffer::Target::Draw);

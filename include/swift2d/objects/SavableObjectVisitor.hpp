@@ -42,9 +42,13 @@ class SavableObjectVisitor {
   template <class T>
   void add_object(std::string const& name, T& target) {
     if (loaded_object_) {
-      SavableObjectVisitor sub_visitor;
-      sub_visitor.read_json(json_.get_child(name));
-      target.set(std::dynamic_pointer_cast<typename T::value_type::element_type>(sub_visitor.to_object()));
+      auto child(json_.get_child_optional(name));
+
+      if (child) {
+        SavableObjectVisitor sub_visitor;
+        sub_visitor.read_json(child.get());
+        target.set(std::dynamic_pointer_cast<typename T::value_type::element_type>(sub_visitor.to_object()));
+      }
 
     } else {
       SavableObjectVisitor visitor(target()->get_type_name());

@@ -6,29 +6,36 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_RENDER_CONTEXT_HPP
-#define SWIFT2D_RENDER_CONTEXT_HPP
+#ifndef MARS_MOVER_HPP
+#define MARS_MOVER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/opengl.hpp>
-#include <swift2d/math.hpp>
+#include <swift2d/swift2d.hpp>
 
-namespace swift {
+using namespace swift;
 
-////////////////////////////////////////////////////////////////////////////////
-// Stores all relevant information on a OpenGL context.                       //
-////////////////////////////////////////////////////////////////////////////////
+class Mover: public MoveBehavior {
+ public:
+  Mover();
 
-// -----------------------------------------------------------------------------
-struct RenderContext {
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "Mover"; }
 
-  oglplus::Context gl;
+  virtual void accept(SavableObjectVisitor& visitor) {
+    MoveBehavior::accept(visitor);
+  }
 
-  math::vec2i size;
-  math::mat3  projection_matrix;
-  float       projection_parallax;
+  virtual void update(double time);
+
+  void set_camera(CameraComponentPtr const& camera) {
+    camera_ = camera;
+  }
+
+ private:
+  CameraComponentPtr camera_;
+
 };
 
-}
+// -----------------------------------------------------------------------------
 
-#endif // SWIFT2D_RENDER_CONTEXT_HPP
+#endif // MARS_MOVER_HPP

@@ -55,8 +55,7 @@ class SpriteComponent : public DrawableComponent {
   static  std::string get_type_name_static() { return "SpriteComponent"; }
 
   void draw(RenderContext const& ctx) {
-    Material()->use(ctx, WorldTransform());
-    Quad::instance()->draw(ctx);
+    Material()->draw_quad(ctx, WorldTransform(), Depth());
   }
 
   void serialize(SerializedScenePtr& scene) const {

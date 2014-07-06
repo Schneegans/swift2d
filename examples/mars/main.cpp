@@ -6,76 +6,36 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <swift2d/swift2d.hpp>
+#include "Mover.hpp"
 
 #include <iostream>
 
 using namespace swift;
 
-class Mover: public MoveBehavior {
- public:
-  Mover() {
-    auto w = WindowManager::instance()->get_default();
-    w->on_key_press.connect([&](Key key, int scancode, int action, int mods){
-      if (action == 0) {
-        if (key == Key::W) {
-          LinearSpeed.set(0);
-          get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 0.0;
-          get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 0.0;
-          get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 0.0;
-          get_user()->get_components<ParticleSystemComponent>()[3]->Emitter()->Density = 0.0;
-        }
-        if (key == Key::S) LinearSpeed.set(0);
-        if (key == Key::A) AngularSpeed.set(0);
-        if (key == Key::D) AngularSpeed.set(0);
-      } else if (action == 1) {
-        if (key == Key::W) {
-          LinearSpeed.set( 10);
-          get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 100.0;
-          get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 100.0;
-          get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 25.0;
-          get_user()->get_components<ParticleSystemComponent>()[3]->Emitter()->Density = 15.0;
-        }
-        if (key == Key::S) LinearSpeed.set(-10);
-        if (key == Key::A) AngularSpeed.set(-2 );
-        if (key == Key::D) AngularSpeed.set( 2 );
-      }
-    });
-  }
 
-  virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "Mover"; }
+// class Bullet: public SceneObject {
+//  public:
+//   Bullet(SceneObjectPtr const& scene) {
 
-  virtual void accept(SavableObjectVisitor& visitor) {
-    MoveBehavior::accept(visitor);
-  }
-};
+//     auto move = add<MoveBehavior>();
+//          move->LinearSpeed.set(10);
 
+//     auto tex = add<SpriteComponent>();
+//          tex->Depth = 10.0f;
+//          tex->Material = MaterialDatabase::instance()->get("bullet");
+//          tex->Transform = math::make_scale(1.0f);
 
+//     auto light = add<LightComponent>();
+//          light->Depth = 1.0f;
+//          light->Transform = math::make_scale(5.0f);
+//          light->Material = MaterialDatabase::instance()->get("light");
 
-class Bullet: public SceneObject {
- public:
-  Bullet(SceneObjectPtr const& scene) {
+//     auto shape = add<CircularShape>();
 
-    auto move = add<MoveBehavior>();
-         move->LinearSpeed.set(10);
-
-    auto tex = add<SpriteComponent>();
-         tex->Depth = 10.0f;
-         tex->Material = MaterialDatabase::instance()->get("bullet");
-         tex->Transform = math::make_scale(1.0f);
-
-    auto light = add<LightComponent>();
-         light->Depth = 1.0f;
-         light->Transform = math::make_scale(5.0f);
-         light->Material = MaterialDatabase::instance()->get("light");
-
-    auto shape = add<CircularShape>();
-
-    auto deleter = add<DeleteOnLeaveBehavior>();
-         deleter->set_shapes(shape, scene->get_component<CircularShape>());
-  }
-};
+//     auto deleter = add<DeleteOnLeaveBehavior>();
+//          deleter->set_shapes(shape, scene->get_component<CircularShape>());
+//   }
+// };
 
 int main(int argc, char** argv) {
 
@@ -86,8 +46,6 @@ int main(int argc, char** argv) {
 
   // load resources ------------------------------------------------------------
   TextureDatabase::instance()->add("point_light", Texture::create(app.get_resource("images", "light.png")));
-
-  MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_file(app.get_resource("images", "bullet.png")));
 
   auto mat = PointLightMaterial::create_from_database("point_light");
   mat->Color = Color(0.4, 0.3, 1.0);
@@ -122,27 +80,28 @@ int main(int argc, char** argv) {
 
   auto camera = scene->add<CameraComponent>();
        camera->Size = math::vec2(2.f, 2.f);
+       camera->Parallax = 1.05;
 
 
-  auto menu = scene->add<GuiComponent>();
-       menu->Resource = app.get_resource("gui", "window.html");
-       menu->Size = math::vec2i(1000, 1000);
-       menu->Anchor = math::vec2i(0, 1);
-       menu->on_loaded.connect([&](){
-         menu->add_javascript_callback("start");
-         menu->add_javascript_callback("quit");
-         menu->add_javascript_callback("pause");
-       });
-       menu->on_javascript_callback.connect([&](std::string const& method) {
-         if (method == "quit") {
-           renderer.stop();
-           app.stop();
-         } else if (method == "pause") {
-            // music->pause();
-         } else {
-          std::cout << "Start!!!" << std::endl;
-         }
-       });
+  // auto menu = scene->add<GuiComponent>();
+  //      menu->Resource = app.get_resource("gui", "window.html");
+  //      menu->Size = math::vec2i(1000, 1000);
+  //      menu->Anchor = math::vec2i(0, 1);
+  //      menu->on_loaded.connect([&](){
+  //        menu->add_javascript_callback("start");
+  //        menu->add_javascript_callback("quit");
+  //        menu->add_javascript_callback("pause");
+  //      });
+  //      menu->on_javascript_callback.connect([&](std::string const& method) {
+  //        if (method == "quit") {
+  //          renderer.stop();
+  //          app.stop();
+  //        } else if (method == "pause") {
+  //           // music->pause();
+  //        } else {
+  //         std::cout << "Start!!!" << std::endl;
+  //        }
+  //      });
 
   auto fps = scene->add<GuiComponent>();
        fps->Resource = app.get_resource("gui", "fps.html");
@@ -163,6 +122,8 @@ int main(int argc, char** argv) {
   auto player = scene->add_object(SceneObject::create_from_file(
     app.get_resource("scene", "player.json")
   ));
+
+  player->get_component<Mover>()->set_camera(camera);
 
   // main loop -----------------------------------------------------------------
   Timer timer;
@@ -207,9 +168,9 @@ int main(int argc, char** argv) {
       renderer.stop();
       app.stop();
     } else if (key == swift::Key::SPACE && action != 1) {
-      auto bullet = std::make_shared<Bullet>(scene);
-      scene->add_object(bullet);
-      bullet->Transform = player->Transform();
+      // auto bullet = std::make_shared<Bullet>(scene);
+      // scene->add_object(bullet);
+      // bullet->Transform = player->Transform();
     } else if (key == swift::Key::F5 && action != 1) {
       // menu->reload();
       fps->reload();
