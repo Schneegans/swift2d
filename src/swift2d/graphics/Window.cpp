@@ -70,7 +70,7 @@ void Window::open_() {
 
   if (!window_) {
 
-    render_context_.size = math::vec2i(800, 800);
+    render_context_.size = math::vec2i(1200, 1200);
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);

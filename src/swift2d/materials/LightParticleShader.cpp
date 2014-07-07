@@ -61,7 +61,7 @@ LightParticleShader::LightParticleShader()
         vec4 light        = texture2D(light_tex, tex_coords);
 
         vec3 light_dir    = normalize(light.rgb - 0.5);
-        vec3 surface_dir  = normalize(normal - 0.5);
+        vec3 surface_dir  = normal - 0.5;
         float attenuation = light.a * color.a;
 
         float specular    = get_specular_light(light_dir, surface_dir) * attenuation;
