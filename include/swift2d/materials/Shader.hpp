@@ -56,8 +56,8 @@ class Shader {
   }
 
   template<typename T>
-  oglplus::LazyUniform<T> get_uniform(std::string name) {
-    return oglplus::LazyUniform<T>(program_, name);
+  oglplus::Lazy<oglplus::Uniform<T>> get_uniform(std::string const& name) {
+    return oglplus::Lazy<oglplus::Uniform<T>>(program_, name.c_str());
   }
 
  ///////////////////////////////////////////////////////////////////////////////

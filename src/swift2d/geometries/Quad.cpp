@@ -51,10 +51,9 @@ void Quad::upload_to(RenderContext const& ctx) const {
     oglplus::Buffer::Data(oglplus::Buffer::Target::Array, rect);
 
     // setup the vertex attribs array for the vertices
-    oglplus::VertexAttribArray(0).Setup<oglplus::Vec2f>().Enable();
+    oglplus::VertexArrayAttrib(0).Setup<oglplus::Vec2f>().Enable();
 
   }
-  rectangle_->Unbind();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

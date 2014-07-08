@@ -51,6 +51,7 @@ set(LIBS
     ${OPENGL_LIBRARIES}
     miniupnpc
     awesomium-1-7
+    Xxf86vm
 )
 link_libraries(${LIBS})
 

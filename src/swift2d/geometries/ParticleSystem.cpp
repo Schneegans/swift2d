@@ -86,17 +86,16 @@ void ParticleSystem::upload_to(RenderContext const& ctx) const {
 
     // bind the VBO for the particle positions
     pos_buf_->Bind(oglplus::Buffer::Target::Array);
-    oglplus::VertexAttribArray(0).Setup<oglplus::Vec2f>().Enable();
+    oglplus::VertexArrayAttrib(0).Setup<oglplus::Vec2f>().Enable();
 
     // bind the VBO for the particle ages
     age_buf_->Bind(oglplus::Buffer::Target::Array);
-    oglplus::VertexAttribArray(1).Setup<float>().Enable();
+    oglplus::VertexArrayAttrib(1).Setup<float>().Enable();
 
     // bind the VBO for the particle rotations
     rot_buf_->Bind(oglplus::Buffer::Target::Array);
-    oglplus::VertexAttribArray(2).Setup<float>().Enable();
+    oglplus::VertexArrayAttrib(2).Setup<float>().Enable();
   }
-  particles_->Unbind();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

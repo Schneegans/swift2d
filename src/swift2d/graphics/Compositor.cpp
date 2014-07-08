@@ -322,7 +322,7 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
     ctx.gl.ClearColorBuffer(3, clear3);
 
   } else {
-    oglplus::DefaultFramebuffer::Bind(oglplus::Framebuffer::Target::Draw);
+    oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
     ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
     ctx.gl.Clear().ColorBuffer();
   }
@@ -384,7 +384,7 @@ void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext c
     if (ShadingQuality() > 1) {
       ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_1);
     } else {
-      oglplus::DefaultFramebuffer::Bind(oglplus::Framebuffer::Target::Draw);
+      oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
       ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
     }
 
@@ -473,7 +473,7 @@ void Compositor::post_process(ConstSerializedScenePtr const& scene, RenderContex
 
     ctx.gl.Viewport(ctx.size.x(), ctx.size.y());
 
-    oglplus::DefaultFramebuffer::Bind(oglplus::Framebuffer::Target::Draw);
+    oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
     ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
 
     oglplus::Texture::Active(1);

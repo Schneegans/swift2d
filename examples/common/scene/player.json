@@ -26,7 +26,7 @@
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
-                    "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/ship.png"
+                    "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/ship.png"
                 },
                 "Emit": "1"
             }
@@ -61,7 +61,7 @@
                 "Texture":
                 {
                     "Type": "Texture",
-                    "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/smoke.png"
+                    "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/smoke.png"
                 }
             }
         },
@@ -95,7 +95,7 @@
                 "Texture":
                 {
                     "Type": "Texture",
-                    "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/fire.png"
+                    "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/fire.png"
                 }
             }
         },
@@ -131,7 +131,7 @@
                 "Texture":
                 {
                     "Type": "Texture",
-                    "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/bullet.png"
+                    "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/bullet.png"
                 }
             }
         },
@@ -162,7 +162,7 @@
                 "Texture":
                 {
                     "Type": "Texture",
-                    "FileName": "\/home\/simon\/.data\/Uni\/Hiwi\/guacamole\/current\/swift2d\/examples\/simple\/images\/light.png"
+                    "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/light.png"
                 }
             }
         }

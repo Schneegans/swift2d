@@ -23,7 +23,7 @@
 #endif
 
 #ifndef OGLPLUS_USE_GLCOREARB_H
-#define OGLPLUS_USE_GLCOREARB_H 0
+#define OGLPLUS_USE_GLCOREARB_H 1
 #endif
 
 #ifndef OGLPLUS_USE_GL3_H
@@ -31,7 +31,7 @@
 #endif
 
 #ifndef OGLPLUS_USE_GLEW
-#define OGLPLUS_USE_GLEW 1
+#define OGLPLUS_USE_GLEW 0
 #endif
 
 #ifndef OGLPLUS_USE_GL3W

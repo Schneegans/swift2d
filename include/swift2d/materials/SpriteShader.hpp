@@ -44,22 +44,22 @@ class SpriteShader : public Shader {
                std::string const& f_source);
 
   // ------------------------------------------------------------------ uniforms
-  oglplus::LazyUniform<math::mat3>  projection;
-  oglplus::LazyUniform<math::mat3>  transform;
-  oglplus::LazyUniform<float>       depth;
-  oglplus::LazyUniform<float>       parallax;
-  oglplus::LazyUniform<int>         diffuse_tex;
-  oglplus::LazyUniform<math::vec3>  diffuse;
-  oglplus::LazyUniform<int>         normal_tex;
-  oglplus::LazyUniform<math::mat3>  normal_transform;
-  oglplus::LazyUniform<int>         emit_tex;
-  oglplus::LazyUniform<float>       emit;
-  oglplus::LazyUniform<int>         glow_tex;
-  oglplus::LazyUniform<float>       glow;
-  oglplus::LazyUniform<int>         shinyness_tex;
-  oglplus::LazyUniform<float>       shinyness;
-  oglplus::LazyUniform<int>         reflectivity_tex;
-  oglplus::LazyUniform<float>       reflectivity;
+  oglplus::Lazy<oglplus::Uniform<math::mat3>>  projection;
+  oglplus::Lazy<oglplus::Uniform<math::mat3>>  transform;
+  oglplus::Lazy<oglplus::Uniform<float>>       depth;
+  oglplus::Lazy<oglplus::Uniform<float>>       parallax;
+  oglplus::Lazy<oglplus::Uniform<int>>         diffuse_tex;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>>  diffuse;
+  oglplus::Lazy<oglplus::Uniform<int>>         normal_tex;
+  oglplus::Lazy<oglplus::Uniform<math::mat3>>  normal_transform;
+  oglplus::Lazy<oglplus::Uniform<int>>         emit_tex;
+  oglplus::Lazy<oglplus::Uniform<float>>       emit;
+  oglplus::Lazy<oglplus::Uniform<int>>         glow_tex;
+  oglplus::Lazy<oglplus::Uniform<float>>       glow;
+  oglplus::Lazy<oglplus::Uniform<int>>         shinyness_tex;
+  oglplus::Lazy<oglplus::Uniform<float>>       shinyness;
+  oglplus::Lazy<oglplus::Uniform<int>>         reflectivity_tex;
+  oglplus::Lazy<oglplus::Uniform<float>>       reflectivity;
 };
 
 // -----------------------------------------------------------------------------
