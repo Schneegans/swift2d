@@ -24,7 +24,8 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Pipeline::Pipeline()
-  : old_size_(-1, -1) {}
+  : old_size_(-1, -1)
+  , compositor_(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -39,14 +40,18 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   // create & update window
   if (!window_->Open()) {
     window_->Open = true;
-    compositor_ = Compositor::create();
-    compositor_->ShadingQuality = 2;
   }
 
   // update window size
   if (old_size_ != window_->get_context().size) {
     old_size_ = window_->get_context().size;
-    compositor_->init(window_->get_context());
+
+    if (compositor_) {
+      delete compositor_;
+      compositor_ = nullptr;
+    }
+
+    compositor_ = new Compositor(window_->get_context(), 2);
   }
 
   window_->get_context().gl.Viewport(old_size_.x(), old_size_.y());

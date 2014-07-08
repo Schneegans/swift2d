@@ -58,7 +58,7 @@ class Pipeline {
     WindowPtr window_;
     math::vec2i old_size_;
 
-    CompositorPtr compositor_;
+    Compositor* compositor_;
 };
 
 }

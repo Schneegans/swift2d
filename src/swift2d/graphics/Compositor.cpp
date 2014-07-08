@@ -18,45 +18,27 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Compositor::Compositor()
-  : ShadingQuality    (0)
+Compositor::Compositor(RenderContext const& ctx, int shading_quality)
+  : shading_quality_  (shading_quality)
   , shader_           (nullptr)
-  , fbo_              (nullptr)
-  , offscreen_color_  (nullptr)
-  , offscreen_normal_ (nullptr)
-  , offscreen_light_  (nullptr)
-  , offscreen_aux_1_  (nullptr)
-  , offscreen_aux_2_  (nullptr)
-  , post_processor_   (nullptr) {}
+  , fbo_              ()
+  , offscreen_color_  ()
+  , offscreen_normal_ ()
+  , offscreen_light_  ()
+  , offscreen_aux_1_  ()
+  , offscreen_aux_2_  ()
+  , post_processor_   (nullptr) {
 
-////////////////////////////////////////////////////////////////////////////////
-
-Compositor::~Compositor() {
-  clean_up();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Compositor::init(RenderContext const& ctx) {
-
-  clean_up();
-
-  if (ShadingQuality() > 0) {
+  if (shading_quality_ > 0) {
 
     // create textures for G-Buffer and L-Buffer -------------------------------
-    offscreen_color_  = new oglplus::Texture();
-    offscreen_normal_ = new oglplus::Texture();
-    offscreen_light_  = new oglplus::Texture();
-    offscreen_aux_1_  = new oglplus::Texture();
-    offscreen_aux_2_  = new oglplus::Texture();
-
     auto create_texture = [&](
-      oglplus::Texture* tex, int width, int height, bool nearest,
+      oglplus::Texture& tex, int width, int height, bool nearest,
       oglplus::enums::PixelDataInternalFormat i_format,
       oglplus::enums::PixelDataFormat         p_format) {
 
       oglplus::Texture::Active(0);
-      ctx.gl.Bound(oglplus::Texture::Target::_2D, *tex)
+      ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
         .Image2D(0, i_format, width, height,
           0, p_format, oglplus::PixelDataType::Float, nullptr)
         .MinFilter(nearest ? oglplus::TextureMinFilter::Nearest : oglplus::TextureMinFilter::Linear)
@@ -92,23 +74,22 @@ void Compositor::init(RenderContext const& ctx) {
     );
 
     // create framebuffer object -----------------------------------------------
-    fbo_ = new oglplus::Framebuffer();
-    fbo_->Bind(oglplus::Framebuffer::Target::Draw);
+    fbo_.Bind(oglplus::Framebuffer::Target::Draw);
 
     oglplus::Framebuffer::AttachColorTexture(
-      oglplus::Framebuffer::Target::Draw, 0, *offscreen_color_, 0
+      oglplus::Framebuffer::Target::Draw, 0, offscreen_color_, 0
     );
     oglplus::Framebuffer::AttachColorTexture(
-      oglplus::Framebuffer::Target::Draw, 1, *offscreen_normal_, 0
+      oglplus::Framebuffer::Target::Draw, 1, offscreen_normal_, 0
     );
     oglplus::Framebuffer::AttachColorTexture(
-      oglplus::Framebuffer::Target::Draw, 2, *offscreen_aux_1_, 0
+      oglplus::Framebuffer::Target::Draw, 2, offscreen_aux_1_, 0
     );
     oglplus::Framebuffer::AttachColorTexture(
-      oglplus::Framebuffer::Target::Draw, 3, *offscreen_aux_2_, 0
+      oglplus::Framebuffer::Target::Draw, 3, offscreen_aux_2_, 0
     );
     oglplus::Framebuffer::AttachColorTexture(
-      oglplus::Framebuffer::Target::Draw, 4, *offscreen_light_, 0
+      oglplus::Framebuffer::Target::Draw, 4, offscreen_light_, 0
     );
 
     // create shaders ----------------------------------------------------------
@@ -140,11 +121,19 @@ void Compositor::init(RenderContext const& ctx) {
       }
     )");
 
-    if (ShadingQuality() > 1) {
+    if (shading_quality_ > 1) {
       post_processor_ = new PostProcessor(ctx);
     }
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+Compositor::~Compositor() {
+  if(shader_)         delete shader_;
+  if(post_processor_) delete post_processor_;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -155,12 +144,9 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
     oglplus::BlendFunction::OneMinusSrcAlpha
   );
 
-  if (ShadingQuality() > 0) {
-    if (!fbo_) {
-      init(ctx);
-    }
+  if (shading_quality_ > 0) {
 
-    fbo_->Bind(oglplus::Framebuffer::Target::Draw);
+    fbo_.Bind(oglplus::Framebuffer::Target::Draw);
 
     oglplus::Context::ColorBuffer draw_buffs[4] =  {
       oglplus::FramebufferColorAttachment::_0,
@@ -199,11 +185,7 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
 void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
                              RenderContext const& ctx) {
 
-  if (ShadingQuality() > 0) {
-    if (!fbo_) {
-      init(ctx);
-    }
-
+  if (shading_quality_ > 0) {
     ctx.gl.BlendFunc(
       oglplus::BlendFunction::One,
       oglplus::BlendFunction::OneMinusSrcColor
@@ -215,13 +197,13 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
     ctx.gl.ClearColorBuffer(0, clear);
 
     oglplus::Texture::Active(1);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_color_);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_color_);
 
     oglplus::Texture::Active(2);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_normal_);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_normal_);
 
     oglplus::Texture::Active(3);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_aux_1_);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_aux_1_);
 
     for (auto& light: scene->lights) {
       light.second->draw(ctx);
@@ -232,17 +214,14 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
 ////////////////////////////////////////////////////////////////////////////////
 
 void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
-  if (ShadingQuality() > 0) {
-    if (!fbo_) {
-      init(ctx);
-    }
+  if (shading_quality_ > 0) {
 
     ctx.gl.BlendFunc(
       oglplus::BlendFunction::SrcAlpha,
       oglplus::BlendFunction::OneMinusSrcAlpha
     );
 
-    if (ShadingQuality() > 1) {
+    if (shading_quality_ > 1) {
       ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_1);
     } else {
       oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
@@ -250,13 +229,13 @@ void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext c
     }
 
     oglplus::Texture::Active(0);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_color_);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_color_);
 
     oglplus::Texture::Active(1);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_light_);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_light_);
 
     oglplus::Texture::Active(2);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_aux_1_);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_aux_1_);
 
     shader_->use(ctx);
     shader_->set_uniform("g_buffer_diffuse", 0);
@@ -272,13 +251,13 @@ void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext c
 ////////////////////////////////////////////////////////////////////////////////
 
 void Compositor::post_process(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
-  if (ShadingQuality() > 1) {
+  if (shading_quality_ > 1) {
 
     oglplus::Texture::Active(0);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_normal_);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_normal_);
 
     oglplus::Texture::Active(2);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), *offscreen_aux_2_);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_aux_2_);
 
     post_processor_->process(ctx);
   }
@@ -290,21 +269,6 @@ void Compositor::draw_gui(ConstSerializedScenePtr const& scene, RenderContext co
   for (auto& gui: scene->gui_elements) {
     gui.second->draw(ctx);
   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Compositor::clean_up() {
-  if(shader_)           delete shader_;             shader_           = nullptr;
-
-  if(post_processor_)   delete post_processor_;     post_processor_   = nullptr;
-
-  if(fbo_)              delete fbo_;                fbo_              = nullptr;
-  if(offscreen_color_)  delete offscreen_color_;    offscreen_color_  = nullptr;
-  if(offscreen_normal_) delete offscreen_normal_;   offscreen_normal_ = nullptr;
-  if(offscreen_light_)  delete offscreen_light_;    offscreen_light_  = nullptr;
-  if(offscreen_aux_1_)  delete offscreen_aux_1_;    offscreen_aux_1_  = nullptr;
-  if(offscreen_aux_2_)  delete offscreen_aux_2_;    offscreen_aux_2_  = nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

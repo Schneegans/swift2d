@@ -25,7 +25,6 @@ class PostProcessor {
  // ----------------------------------------------------------- public interface
  public:
 
-
   // ----------------------------------------------------- contruction interface
   PostProcessor(RenderContext const& ctx);
   ~PostProcessor();
