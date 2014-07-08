@@ -10,7 +10,7 @@
 #define SWIFT2D_COMPOSITOR_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/graphics/PostProcessor.hpp>
 #include <swift2d/materials/Shader.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
 #include <swift2d/properties.hpp>
@@ -43,7 +43,6 @@ class Compositor {
   ~Compositor();
 
   // ------------------------------------------------------------ public methods
-
   void init(RenderContext const& ctx);
 
   void draw_objects(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
@@ -59,7 +58,6 @@ class Compositor {
   void clean_up();
 
   mutable Shader*   shader_;
-  mutable Shader*   post_fx_shader_;
 
   oglplus::Framebuffer* fbo_;
   oglplus::Texture* offscreen_color_;
@@ -68,11 +66,7 @@ class Compositor {
   oglplus::Texture* offscreen_aux_1_;
   oglplus::Texture* offscreen_aux_2_;
 
-  mutable Shader*       glow_threshold_shader_;
-  mutable Shader*       glow_shader_;
-  oglplus::Framebuffer* glow_fbo_;
-  oglplus::Texture*     glow_ping_;
-  oglplus::Texture*     glow_pong_;
+  PostProcessor* post_processor_;
 };
 
 }
