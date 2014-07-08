@@ -11,7 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Material.hpp>
-#include <swift2d/materials/Shader.hpp>
+#include <swift2d/materials/SpriteShader.hpp>
 #include <swift2d/utils/Color.hpp>
 #include <swift2d/textures/Texture.hpp>
 
@@ -80,8 +80,8 @@ class SpriteMaterial : public Material {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  bool      current_shader_dirty_;
-  ShaderPtr current_shader_;
+  bool            current_shader_dirty_;
+  SpriteShaderPtr current_shader_;
 };
 
 // -----------------------------------------------------------------------------

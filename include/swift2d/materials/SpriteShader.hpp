@@ -20,34 +20,46 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+// shared pointer type definition ----------------------------------------------
+class SpriteShader;
+typedef std::shared_ptr<SpriteShader>       SpriteShaderPtr;
+typedef std::shared_ptr<const SpriteShader> ConstSpriteShaderPtr;
+
 // -----------------------------------------------------------------------------
-class SpriteShader : public Singleton<SpriteShader> {
+class SpriteShader : public Shader {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  enum Capabilities {
-    DIFFUSE_TEX = 1 << 0,
-    NORMAL_TEX = 1 << 1,
-    EMIT_TEX = 1 << 2,
-    GLOW_TEX = 1 << 3,
-    SHINYNESS_TEX = 1 << 4,
-    REFLECTIVITY_TEX = 1 << 5
-  };
+  // ----------------------------------------------------- contruction interface
 
-  ShaderPtr get_shader(int capabilities);
+  // Creates a new component and returns a shared pointer.
+  template <typename... Args>
+  static SpriteShaderPtr create(Args&& ... a) {
+    return std::make_shared<SpriteShader>(a...);
+  }
 
-  friend class Singleton<SpriteShader>;
+  SpriteShader(int capabilities, std::string const& v_source,
+               std::string const& f_source);
 
- ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
- private:
-  // this class is a Singleton --- private c'tor and d'tor
-  SpriteShader() {};
-  ~SpriteShader() {};
-
-  std::unordered_map<int, ShaderPtr> shaders_;
+  // ------------------------------------------------------------------ uniforms
+  oglplus::LazyUniform<math::mat3>  projection;
+  oglplus::LazyUniform<math::mat3>  transform;
+  oglplus::LazyUniform<float>       depth;
+  oglplus::LazyUniform<float>       parallax;
+  oglplus::LazyUniform<int>         diffuse_tex;
+  oglplus::LazyUniform<math::vec3>  diffuse;
+  oglplus::LazyUniform<int>         normal_tex;
+  oglplus::LazyUniform<math::mat3>  normal_transform;
+  oglplus::LazyUniform<int>         emit_tex;
+  oglplus::LazyUniform<float>       emit;
+  oglplus::LazyUniform<int>         glow_tex;
+  oglplus::LazyUniform<float>       glow;
+  oglplus::LazyUniform<int>         shinyness_tex;
+  oglplus::LazyUniform<float>       shinyness;
+  oglplus::LazyUniform<int>         reflectivity_tex;
+  oglplus::LazyUniform<float>       reflectivity;
 };
 
 // -----------------------------------------------------------------------------

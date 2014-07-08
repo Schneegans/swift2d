@@ -6,12 +6,14 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TEXTURE_PARTICLE_SHADER_HPP
-#define SWIFT2D_TEXTURE_PARTICLE_SHADER_HPP
+#ifndef SWIFT2D_SPRITE_SHADER_FACTORY_HPP
+#define SWIFT2D_SPRITE_SHADER_FACTORY_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/Shader.hpp>
+#include <swift2d/materials/SpriteShader.hpp>
 #include <swift2d/utils/Singleton.hpp>
+
+#include <unordered_map>
 
 namespace swift {
 
@@ -19,39 +21,37 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class TextureParticleShader : public Shader,
-                              public Singleton<TextureParticleShader> {
+class SpriteShaderFactory : public Singleton<SpriteShaderFactory> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ------------------------------------------------------------------ uniforms
-  oglplus::LazyUniform<math::mat3>  projection;
-  oglplus::LazyUniform<math::mat3>  transform;
-  oglplus::LazyUniform<int>         diffuse;
-  oglplus::LazyUniform<float>       start_scale;
-  oglplus::LazyUniform<float>       end_scale;
-  oglplus::LazyUniform<math::vec3>  start_color;
-  oglplus::LazyUniform<math::vec3>  end_color;
-  oglplus::LazyUniform<float>       start_opacity;
-  oglplus::LazyUniform<float>       end_opacity;
-  oglplus::LazyUniform<float>       start_glow;
-  oglplus::LazyUniform<float>       end_glow;
-  oglplus::LazyUniform<int>         enable_rotation;
+  enum Capabilities {
+    DIFFUSE_TEX = 1 << 0,
+    NORMAL_TEX = 1 << 1,
+    EMIT_TEX = 1 << 2,
+    GLOW_TEX = 1 << 3,
+    SHINYNESS_TEX = 1 << 4,
+    REFLECTIVITY_TEX = 1 << 5
+  };
 
-  friend class Singleton<TextureParticleShader>;
+  SpriteShaderPtr get_shader(int capabilities);
+
+  friend class Singleton<SpriteShaderFactory>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  TextureParticleShader();
-  ~TextureParticleShader() {};
+  SpriteShaderFactory() {};
+  ~SpriteShaderFactory() {};
+
+  std::unordered_map<int, SpriteShaderPtr> shaders_;
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_TEXTURE_PARTICLE_SHADER_HPP
+#endif // SWIFT2D_SPRITE_SHADER_FACTORY_HPP

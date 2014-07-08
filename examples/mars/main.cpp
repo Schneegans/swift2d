@@ -56,30 +56,30 @@ int main(int argc, char** argv) {
        camera->Size = math::vec2(2.f, 2.f);
        camera->Parallax = 1.05;
 
-  auto menu = scene->add<GuiComponent>();
-       menu->Resource = app.get_resource("gui", "window.html");
-       menu->Size = math::vec2i(1000, 1000);
-       menu->Anchor = math::vec2i(0, 1);
-       menu->on_loaded.connect([&](){
-         menu->add_javascript_callback("start");
-         menu->add_javascript_callback("quit");
-         menu->add_javascript_callback("pause");
-       });
-       menu->on_javascript_callback.connect([&](std::string const& method) {
-         if (method == "quit") {
-           renderer.stop();
-           app.stop();
-         } else if (method == "pause") {
-            // music->pause();
-         } else {
-          std::cout << "Start!!!" << std::endl;
-         }
-       });
+  // auto menu = scene->add<GuiComponent>();
+  //      menu->Resource = app.get_resource("gui", "window.html");
+  //      menu->Size = math::vec2i(1000, 1000);
+  //      menu->Anchor = math::vec2i(0, 1);
+  //      menu->on_loaded.connect([&](){
+  //        menu->add_javascript_callback("start");
+  //        menu->add_javascript_callback("quit");
+  //        menu->add_javascript_callback("pause");
+  //      });
+  //      menu->on_javascript_callback.connect([&](std::string const& method) {
+  //        if (method == "quit") {
+  //          renderer.stop();
+  //          app.stop();
+  //        } else if (method == "pause") {
+  //           // music->pause();
+  //        } else {
+  //         std::cout << "Start!!!" << std::endl;
+  //        }
+  //      });
 
-  auto fps = scene->add<GuiComponent>();
-       fps->Resource = app.get_resource("gui", "fps.html");
-       fps->Size = math::vec2i(240, 35);
-       fps->Anchor = math::vec2i(-1, -1);
+  // auto fps = scene->add<GuiComponent>();
+  //      fps->Resource = app.get_resource("gui", "fps.html");
+  //      fps->Size = math::vec2i(240, 35);
+  //      fps->Anchor = math::vec2i(-1, -1);
 
   // scene
   scene->add_object(SceneObject::create_from_file(
@@ -104,13 +104,13 @@ int main(int argc, char** argv) {
     double time(timer.get_elapsed());
     timer.reset();
 
-    std::stringstream sstr;
-    sstr.precision(1);
-    sstr.setf(std::ios::fixed, std::ios::floatfield);
-    sstr << "FPS: " << pipeline->rendering_fps() << " / "
-         << pipeline->application_fps();
+    // std::stringstream sstr;
+    // sstr.precision(1);
+    // sstr.setf(std::ios::fixed, std::ios::floatfield);
+    // sstr << "FPS: " << pipeline->rendering_fps() << " / "
+    //      << pipeline->application_fps();
 
-    fps->call_javascript("set_fps_text", sstr.str());
+    // fps->call_javascript("set_fps_text", sstr.str());
 
     window->process_input();
     scene->update(time);
@@ -136,8 +136,8 @@ int main(int argc, char** argv) {
       renderer.stop();
       app.stop();
     } else if (key == swift::Key::F5 && action != 1) {
-      menu->reload();
-      fps->reload();
+      // menu->reload();
+      // fps->reload();
     }
   });
 

@@ -122,7 +122,19 @@ TextureParticleShader::TextureParticleShader()
         }
       }
     )"
-  ) {}
+  )
+  , projection(get_uniform<math::mat3>("projection"))
+  , transform(get_uniform<math::mat3>("transform"))
+  , diffuse(get_uniform<int>("diffuse"))
+  , start_scale(get_uniform<float>("start_scale"))
+  , end_scale(get_uniform<float>("end_scale"))
+  , start_color(get_uniform<math::vec3>("start_color"))
+  , end_color(get_uniform<math::vec3>("end_color"))
+  , start_opacity(get_uniform<float>("start_opacity"))
+  , end_opacity(get_uniform<float>("end_opacity"))
+  , start_glow(get_uniform<float>("start_glow"))
+  , end_glow(get_uniform<float>("end_glow"))
+  , enable_rotation(get_uniform<int>("enable_rotation")) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 

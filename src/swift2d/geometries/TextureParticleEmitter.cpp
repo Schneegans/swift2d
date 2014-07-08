@@ -37,27 +37,27 @@ void TextureParticleEmitter::draw(RenderContext const& ctx, math::mat3 const& tr
   // set uniforms
   if (WorldSpacePosition()) {
     auto scale(math::make_scale(math::get_scale(transform)));
-    shader->set_uniform("transform",    scale);
+    shader->transform.Set(scale);
   } else {
-    shader->set_uniform("transform",    transform);
+    shader->transform.Set(transform);
   }
 
-  shader->set_uniform("diffuse",        0);
-  shader->set_uniform("projection",     ctx.projection_matrix);
+  shader->diffuse.Set(0);
+  shader->projection.Set(ctx.projection_matrix);
 
-  shader->set_uniform("start_scale",    StartScale());
-  shader->set_uniform("end_scale",      EndScale());
+  shader->start_scale.Set(StartScale());
+  shader->end_scale.Set(EndScale());
 
-  shader->set_uniform("start_color",    StartColor().vec3());
-  shader->set_uniform("end_color",      EndColor().vec3());
+  shader->start_color.Set(StartColor().vec3());
+  shader->end_color.Set(EndColor().vec3());
 
-  shader->set_uniform("start_opacity",  StartOpacity());
-  shader->set_uniform("end_opacity",    EndOpacity());
+  shader->start_opacity.Set(StartOpacity());
+  shader->end_opacity.Set(EndOpacity());
 
-  shader->set_uniform("start_glow",     StartGlow());
-  shader->set_uniform("end_glow",       EndGlow());
+  shader->start_glow.Set(StartGlow());
+  shader->end_glow.Set(EndGlow());
 
-  shader->set_uniform("enable_rotation", (int)(
+  shader->enable_rotation.Set((int)(
     RotationSpeed() + RotationSpeedVariance() +
     Rotation() + RotationVariance()
   ));

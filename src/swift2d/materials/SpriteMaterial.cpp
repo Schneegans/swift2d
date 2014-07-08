@@ -10,7 +10,7 @@
 #include <swift2d/materials/SpriteMaterial.hpp>
 
 #include <swift2d/geometries/Quad.hpp>
-#include <swift2d/materials/SpriteShader.hpp>
+#include <swift2d/materials/SpriteShaderFactory.hpp>
 
 namespace swift {
 
@@ -61,74 +61,74 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
     int capabilities(0);
 
     if (DiffuseTexture()) {
-      capabilities |= SpriteShader::DIFFUSE_TEX;
+      capabilities |= SpriteShaderFactory::DIFFUSE_TEX;
     }
 
     if (NormalTexture()) {
-      capabilities |= SpriteShader::NORMAL_TEX;
+      capabilities |= SpriteShaderFactory::NORMAL_TEX;
     }
 
     if (EmitTexture()) {
-      capabilities |= SpriteShader::EMIT_TEX;
+      capabilities |= SpriteShaderFactory::EMIT_TEX;
     }
 
     if (GlowTexture()) {
-      capabilities |= SpriteShader::GLOW_TEX;
+      capabilities |= SpriteShaderFactory::GLOW_TEX;
     }
 
     if (ShinynessTexture()) {
-      capabilities |= SpriteShader::SHINYNESS_TEX;
+      capabilities |= SpriteShaderFactory::SHINYNESS_TEX;
     }
 
     if (ReflectivityTexture()) {
-      capabilities |= SpriteShader::REFLECTIVITY_TEX;
+      capabilities |= SpriteShaderFactory::REFLECTIVITY_TEX;
     }
 
-    current_shader_ = SpriteShader::instance()->get_shader(capabilities);
+    current_shader_ = SpriteShaderFactory::instance()->get_shader(capabilities);
   }
 
   current_shader_->use(ctx);
-  current_shader_->set_uniform("projection", ctx.projection_matrix);
-  current_shader_->set_uniform("transform",  object_transform);
-  current_shader_->set_uniform("depth",      object_depth);
-  current_shader_->set_uniform("parallax",   ctx.projection_parallax);
+  current_shader_->projection.Set(ctx.projection_matrix);
+  current_shader_->transform.Set(object_transform);
+  current_shader_->depth.Set(object_depth);
+  current_shader_->parallax.Set(ctx.projection_parallax);
 
   if (DiffuseTexture()) {
     DiffuseTexture()->bind(ctx, 0);
-    current_shader_->set_uniform("diffuse_tex", 0);
+    current_shader_->diffuse_tex.Set(0);
   }
-  current_shader_->set_uniform("diffuse", Diffuse().vec3());
+  current_shader_->diffuse.Set(Diffuse().vec3());
 
 
   if (NormalTexture()) {
     NormalTexture()->bind(ctx, 1);
-    current_shader_->set_uniform("normal_tex", 1);
-    current_shader_->set_uniform("normal_transform",  math::transposed(math::inversed(object_transform)));
+    current_shader_->normal_tex.Set(1);
+    current_shader_->normal_transform.Set(math::transposed(math::inversed(object_transform)));
   }
 
   if (EmitTexture()) {
     EmitTexture()->bind(ctx, 2);
-    current_shader_->set_uniform("emit_tex", 2);
+    current_shader_->emit_tex.Set(2);
   }
-  current_shader_->set_uniform("emit", Emit());
+  current_shader_->emit.Set(Emit());
 
   if (GlowTexture()) {
     GlowTexture()->bind(ctx, 3);
-    current_shader_->set_uniform("glow_tex", 3);
+    current_shader_->glow_tex.Set(3);
   }
-  current_shader_->set_uniform("glow", Glow());
+  current_shader_->glow.Set(Glow());
 
   if (ShinynessTexture()) {
     ShinynessTexture()->bind(ctx, 4);
-    current_shader_->set_uniform("shinyness_tex", 4);
+    current_shader_->shinyness_tex.Set(4);
   }
-  current_shader_->set_uniform("shinyness", Shinyness());
+  current_shader_->shinyness.Set(Shinyness());
 
   if (ReflectivityTexture()) {
     ReflectivityTexture()->bind(ctx, 5);
-    current_shader_->set_uniform("reflectivity_tex", 5);
+    current_shader_->reflectivity_tex.Set(5);
   }
-  current_shader_->set_uniform("reflectivity", Reflectivity());
+  current_shader_->reflectivity.Set(Reflectivity());
 
   if (BlendAdditive()) {
     ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::One);

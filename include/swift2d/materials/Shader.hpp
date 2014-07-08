@@ -52,7 +52,12 @@ class Shader {
 
   template<typename T>
   void set_uniform(std::string name, T const& val) {
-    oglplus::ProgramUniform<T>(*program_, name).Set(val);
+    oglplus::ProgramUniform<T>(program_, name).Set(val);
+  }
+
+  template<typename T>
+  oglplus::LazyUniform<T> get_uniform(std::string name) {
+    return oglplus::LazyUniform<T>(program_, name);
   }
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -60,10 +65,12 @@ class Shader {
  private:
   void upload_to(RenderContext const& ctx) const;
 
-  mutable oglplus::VertexShader*    v_shader_;
-  mutable oglplus::FragmentShader*  f_shader_;
-  mutable oglplus::GeometryShader*  g_shader_;
-  mutable oglplus::Program*         program_;
+  mutable oglplus::VertexShader     v_shader_;
+  mutable oglplus::FragmentShader   f_shader_;
+  mutable oglplus::GeometryShader   g_shader_;
+  mutable oglplus::Program          program_;
+
+  mutable bool dirty_;
 
   std::string v_source_;
   std::string f_source_;
