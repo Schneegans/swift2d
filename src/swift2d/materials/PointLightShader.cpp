@@ -47,7 +47,14 @@ PointLightShader::PointLightShader()
         write_lbuffer(light_color, diffuse, specular * get_reflectivity());
       }
     )"
-  ) {}
+  )
+  , projection(get_uniform<math::mat3>("projection"))
+  , transform(get_uniform<math::mat3>("transform"))
+  , screen_size(get_uniform<math::vec2i>("screen_size"))
+  , g_buffer_normal(get_uniform<int>("g_buffer_normal"))
+  , g_buffer_aux_1(get_uniform<int>("g_buffer_aux_1"))
+  , light_tex(get_uniform<int>("light_tex"))
+  , light_color(get_uniform<math::vec3>("light_color")) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 

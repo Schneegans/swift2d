@@ -157,9 +157,9 @@ void GuiElement::draw(RenderContext const& ctx) {
       (2.0 * parent_->Offset().y() + parent_->Anchor().y() * (ctx.size.y() - parent_->Size().y()))/ctx.size.y()
     );
 
-    GuiShader::instance()->set_uniform("size", size);
-    GuiShader::instance()->set_uniform("offset", offset);
-    GuiShader::instance()->set_uniform("diffuse", 0);
+    GuiShader::instance()->size.Set(size);
+    GuiShader::instance()->offset.Set(offset);
+    GuiShader::instance()->diffuse.Set(0);
     Quad::instance()->draw(ctx);
   }
 }

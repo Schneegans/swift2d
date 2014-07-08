@@ -47,8 +47,9 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   if (old_size_ != window_->get_context().size) {
     old_size_ = window_->get_context().size;
     compositor_->init(window_->get_context());
-    window_->get_context().gl.Viewport(old_size_.x(), old_size_.y());
   }
+
+  window_->get_context().gl.Viewport(old_size_.x(), old_size_.y());
 
   // setup projection matrix
   math::mat3 view_matrix(scene->camera->WorldTransform.get());

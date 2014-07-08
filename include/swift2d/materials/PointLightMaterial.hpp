@@ -14,6 +14,7 @@
 #include <swift2d/materials/PointLightShader.hpp>
 #include <swift2d/databases/TextureDatabase.hpp>
 #include <swift2d/textures/Texture.hpp>
+#include <swift2d/utils/Color.hpp>
 
 namespace swift {
 
@@ -38,8 +39,7 @@ class PointLightMaterial : public Material {
   ColorProperty   Color;
 
   // ----------------------------------------------------- contruction interface
-  PointLightMaterial()
-    : Color(swift::Color(1.f, 1.f, 1.f)) {}
+  PointLightMaterial();
 
   // Creates a new material and returns a shared pointer.
   static PointLightMaterialPtr create() {
@@ -70,31 +70,9 @@ class PointLightMaterial : public Material {
   // uses the Material on the given context.
   /* virtual */ void draw_quad(RenderContext const& ctx,
                                math::mat3 const& object_transform,
-                               float object_depth) {
+                               float object_depth);
 
-    // disable rotation
-    auto transform(math::make_translate(math::get_translate(object_transform)));
-    transform = transform * math::make_scale(math::get_scale(object_transform));
-
-    Texture()->bind(ctx, 0);
-    PointLightShader::instance()->use(ctx);
-    PointLightShader::instance()->set_uniform("projection", ctx.projection_matrix);
-    PointLightShader::instance()->set_uniform("transform", transform);
-    PointLightShader::instance()->set_uniform("screen_size", ctx.size);
-    // PointLightShader::instance()->set_uniform("g_buffer_color", 1);
-    PointLightShader::instance()->set_uniform("g_buffer_normal", 2);
-    PointLightShader::instance()->set_uniform("g_buffer_aux_1", 3);
-    PointLightShader::instance()->set_uniform("light_tex", 0);
-    PointLightShader::instance()->set_uniform("light_color", Color().vec3());
-
-    Quad::instance()->draw(ctx);
-  }
-
-  virtual void accept(SavableObjectVisitor& visitor) {
-    Material::accept(visitor);
-    visitor.add_object("Texture", Texture);
-    visitor.add_member("Color", Color);
-  }
+  virtual void accept(SavableObjectVisitor& visitor);
 };
 
 // -----------------------------------------------------------------------------

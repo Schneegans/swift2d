@@ -70,7 +70,7 @@ void Window::open_() {
 
   if (!window_) {
 
-    render_context_.size = math::vec2i(1200, 1200);
+    render_context_.size = math::vec2i(1000, 1000);
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -96,8 +96,8 @@ void Window::open_() {
                       << "." << render_context_.gl.MinorVersion() << std::endl;
 
     render_context_.gl.Disable(oglplus::Capability::DepthTest);
-    render_context_.gl.Enable(oglplus::Capability::Blend);
     render_context_.gl.Disable(oglplus::Capability::CullFace);
+    render_context_.gl.Enable(oglplus::Capability::Blend);
     render_context_.gl.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     glfwSetWindowCloseCallback(window_, [](GLFWwindow* w) {

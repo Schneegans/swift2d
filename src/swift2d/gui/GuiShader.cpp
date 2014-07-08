@@ -52,7 +52,10 @@ GuiShader::GuiShader()
         write_gbuffer(texture2D(diffuse, tex_coords));
       }
     )"
-  ) {}
+  )
+  , size(get_uniform<math::vec2>("size"))
+  , offset(get_uniform<math::vec2>("offset"))
+  , diffuse(get_uniform<int>("diffuse")) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 

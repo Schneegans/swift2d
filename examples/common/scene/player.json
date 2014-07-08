@@ -157,8 +157,8 @@
                 "StartColor": "(1 0.8 0.3)",
                 "EndColor": "(1 0 0)",
                 "Density": "5",
-                "StartScale": "5",
-                "EndScale": "10",
+                "StartScale": "1",
+                "EndScale": "25",
                 "Texture":
                 {
                     "Type": "Texture",

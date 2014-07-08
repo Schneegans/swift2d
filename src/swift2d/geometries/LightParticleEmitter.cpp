@@ -30,27 +30,26 @@ void LightParticleEmitter::draw(RenderContext const& ctx, math::mat3 const& tran
   // set uniforms
   if (WorldSpacePosition()) {
     auto scale(math::make_scale(math::get_scale(transform)));
-    shader->set_uniform("transform",    scale);
+    shader->transform.Set(scale);
   } else {
-    shader->set_uniform("transform",    transform);
+    shader->transform.Set(transform);
   }
 
-  shader->set_uniform("light_tex",      0);
-  shader->set_uniform("projection",     ctx.projection_matrix);
+  shader->light_tex.Set(0);
+  shader->projection.Set(ctx.projection_matrix);
 
-  shader->set_uniform("start_scale",    StartScale());
-  shader->set_uniform("end_scale",      EndScale());
+  shader->start_scale.Set(StartScale());
+  shader->end_scale.Set(EndScale());
 
-  shader->set_uniform("start_color",    StartColor().vec3());
-  shader->set_uniform("end_color",      EndColor().vec3());
+  shader->start_color.Set(StartColor().vec3());
+  shader->end_color.Set(EndColor().vec3());
 
-  shader->set_uniform("start_opacity",  StartOpacity());
-  shader->set_uniform("end_opacity",    EndOpacity());
+  shader->start_opacity.Set(StartOpacity());
+  shader->end_opacity.Set(EndOpacity());
 
-  shader->set_uniform("screen_size",    ctx.size);
-  // shader->set_uniform("g_buffer_color", 1);
-  shader->set_uniform("g_buffer_normal", 2);
-  shader->set_uniform("g_buffer_aux_1", 3);
+  shader->screen_size.Set(ctx.size);
+  shader->g_buffer_normal.Set(2);
+  shader->g_buffer_aux_1.Set(3);
 
   // draw
   ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, count);

@@ -26,6 +26,11 @@ class GuiShader : public Shader,
  // ----------------------------------------------------------- public interface
  public:
 
+  // ------------------------------------------------------------------ uniforms
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>  size;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>  offset;
+  oglplus::Lazy<oglplus::Uniform<int>>         diffuse;
+
   friend class Singleton<GuiShader>;
 
  ///////////////////////////////////////////////////////////////////////////////

@@ -90,11 +90,11 @@ void Texture::upload_to(RenderContext const& context) const {
     context.gl.Bound(oglplus::smart_enums::_2D(), *texture_)
       .Image2D(0, internal_format, width, height, 0, format,
                oglplus::DataType::UnsignedByte, data)
-      .MinFilter(oglplus::smart_enums::Linear())
+      .GenerateMipmap()
+      .MinFilter(oglplus::smart_enums::LinearMipmapLinear())
       .MagFilter(oglplus::smart_enums::Linear())
-      .Anisotropy(2.0f)
-      .WrapS(oglplus::smart_enums::ClampToEdge())
-      .WrapT(oglplus::smart_enums::ClampToEdge());
+      .WrapS(oglplus::smart_enums::Repeat())
+      .WrapT(oglplus::smart_enums::Repeat());
   }
 
   stbi_image_free(data);

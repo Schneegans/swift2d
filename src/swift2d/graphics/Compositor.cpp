@@ -62,13 +62,12 @@ void Compositor::init(RenderContext const& ctx) {
 
       oglplus::Texture::Active(0);
       ctx.gl.Bound(oglplus::Texture::Target::_2D, *tex)
+        .Image2D(0, i_format, width, height,
+          0, p_format, oglplus::PixelDataType::Float, nullptr)
         .MinFilter(nearest ? oglplus::TextureMinFilter::Nearest : oglplus::TextureMinFilter::Linear)
         .MagFilter(nearest ? oglplus::TextureMagFilter::Nearest : oglplus::TextureMagFilter::Linear)
         .WrapS(oglplus::TextureWrap::MirroredRepeat)
-        .WrapT(oglplus::TextureWrap::MirroredRepeat)
-        .Image2D(0, i_format, width, height,
-          0, p_format, oglplus::PixelDataType::Float, nullptr
-        );
+        .WrapT(oglplus::TextureWrap::MirroredRepeat);
     };
 
     create_texture(
@@ -163,7 +162,7 @@ void Compositor::init(RenderContext const& ctx) {
         oglplus::PixelDataFormat::Red
       );
 
-      // create framebuffer object -----------------------------------------------
+      // create framebuffer object ---------------------------------------------
       glow_fbo_ = new oglplus::Framebuffer();
       glow_fbo_->Bind(oglplus::Framebuffer::Target::Draw);
       oglplus::Framebuffer::AttachColorTexture(
@@ -174,12 +173,12 @@ void Compositor::init(RenderContext const& ctx) {
       );
 
 
-      // create shaders ----------------------------------------------------------
+      // create shaders --------------------------------------------------------
       post_fx_shader_ = new Shader(R"(
-        // vertex shader ---------------------------------------------------------
+        // vertex shader -------------------------------------------------------
         @include "fullscreen_quad_vertext_shader"
       )", R"(
-        // fragment shader -------------------------------------------------------
+        // fragment shader -----------------------------------------------------
         @include "version"
 
         uniform sampler2D g_buffer_shaded;
@@ -197,10 +196,10 @@ void Compositor::init(RenderContext const& ctx) {
       )");
 
       glow_threshold_shader_ = new Shader(R"(
-        // vertex shader ---------------------------------------------------------
+        // vertex shader -------------------------------------------------------
         @include "fullscreen_quad_vertext_shader"
       )", R"(
-        // fragment shader -------------------------------------------------------
+        // fragment shader -----------------------------------------------------
         @include "version"
 
         @include "gbuffer_input"
@@ -214,7 +213,7 @@ void Compositor::init(RenderContext const& ctx) {
       )");
 
       glow_shader_ = new Shader(R"(
-        // vertex shader ---------------------------------------------------------
+        // vertex shader -------------------------------------------------------
         @include "version"
 
         layout(location=0) in vec2 position;
@@ -245,7 +244,7 @@ void Compositor::init(RenderContext const& ctx) {
           blur_texcoords[13] = tex_coords + vec2( 1.000) * scale;
         }
       )", R"(
-        // fragment shader -------------------------------------------------------
+        // fragment shader -----------------------------------------------------
         @include "version"
 
         uniform sampler2D g_glow;

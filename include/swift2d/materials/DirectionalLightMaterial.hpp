@@ -14,6 +14,7 @@
 #include <swift2d/materials/DirectionalLightShader.hpp>
 #include <swift2d/databases/TextureDatabase.hpp>
 #include <swift2d/textures/Texture.hpp>
+#include <swift2d/utils/Color.hpp>
 
 namespace swift {
 
@@ -39,17 +40,13 @@ class DirectionalLightMaterial : public Material {
 
   // ----------------------------------------------------- contruction interface
   DirectionalLightMaterial(math::vec3 const& dir = math::vec3(0.f, 0.f, -1.f),
-                           swift::Color const& color = swift::Color(1.f, 1.f, 1.f))
-    : Direction(dir)
-    , Color(color) {}
+                           swift::Color const& color = swift::Color(1.f, 1.f, 1.f));
 
   // Creates a new material and returns a shared pointer.
   template <typename... Args>
   static DirectionalLightMaterialPtr create(Args&& ... a) {
     return std::make_shared<DirectionalLightMaterial>(a...);
   }
-
-
 
   // creates a copy from this
   DirectionalLightMaterialPtr create_copy() const {
@@ -63,31 +60,9 @@ class DirectionalLightMaterial : public Material {
   // uses the Material on the given context.
   /* virtual */ void draw_quad(RenderContext const& ctx,
                                math::mat3 const& object_transform,
-                               float object_depth) {
+                               float object_depth);
 
-    // disable rotation
-    // auto transform(math::make_translate(math::get_translate(object_transform)));
-    // transform = transform * math::make_scale(math::get_scale(object_transform));
-
-    DirectionalLightShader::instance()->use(ctx);
-    DirectionalLightShader::instance()->set_uniform("projection", math::mat3());
-    DirectionalLightShader::instance()->set_uniform("transform", math::mat3());
-    DirectionalLightShader::instance()->set_uniform("screen_size", ctx.size);
-    DirectionalLightShader::instance()->set_uniform("depth", 1.f);
-    DirectionalLightShader::instance()->set_uniform("parallax", 1.f);
-    DirectionalLightShader::instance()->set_uniform("g_buffer_normal", 2);
-    DirectionalLightShader::instance()->set_uniform("g_buffer_aux_1", 3);
-    DirectionalLightShader::instance()->set_uniform("light_dir", math::normalized(Direction()));
-    DirectionalLightShader::instance()->set_uniform("light_color", Color().vec3());
-
-    Quad::instance()->draw(ctx);
-  }
-
-  virtual void accept(SavableObjectVisitor& visitor) {
-    Material::accept(visitor);
-    visitor.add_member("Direction", Direction);
-    visitor.add_member("Color", Color);
-  }
+  virtual void accept(SavableObjectVisitor& visitor);
 };
 
 // -----------------------------------------------------------------------------
