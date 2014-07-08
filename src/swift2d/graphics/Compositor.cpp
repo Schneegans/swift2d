@@ -33,7 +33,7 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality)
 
     // create textures for G-Buffer and L-Buffer -------------------------------
     auto create_texture = [&](
-      oglplus::Texture& tex, int width, int height, bool nearest,
+      oglplus::Texture& tex, int width, int height,
       oglplus::enums::PixelDataInternalFormat i_format,
       oglplus::enums::PixelDataFormat         p_format) {
 
@@ -41,34 +41,34 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality)
       ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
         .Image2D(0, i_format, width, height,
           0, p_format, oglplus::PixelDataType::Float, nullptr)
-        .MinFilter(nearest ? oglplus::TextureMinFilter::Nearest : oglplus::TextureMinFilter::Linear)
-        .MagFilter(nearest ? oglplus::TextureMagFilter::Nearest : oglplus::TextureMagFilter::Linear)
+        .MinFilter(oglplus::TextureMinFilter::Nearest)
+        .MagFilter(oglplus::TextureMagFilter::Nearest)
         .WrapS(oglplus::TextureWrap::MirroredRepeat)
         .WrapT(oglplus::TextureWrap::MirroredRepeat);
     };
 
     create_texture(
-      offscreen_color_, ctx.size.x(), ctx.size.y(), true,
+      offscreen_color_, ctx.size.x(), ctx.size.y(),
       oglplus::PixelDataInternalFormat::RGB,
       oglplus::PixelDataFormat::RGB
     );
     create_texture(
-      offscreen_normal_, ctx.size.x(), ctx.size.y(), true,
+      offscreen_normal_, ctx.size.x(), ctx.size.y(),
       oglplus::PixelDataInternalFormat::RGB,
       oglplus::PixelDataFormat::RGB
     );
     create_texture(
-      offscreen_aux_1_, ctx.size.x(), ctx.size.y(), true,
+      offscreen_aux_1_, ctx.size.x(), ctx.size.y(),
       oglplus::PixelDataInternalFormat::RGB,
       oglplus::PixelDataFormat::RGB
     );
     create_texture(
-      offscreen_aux_2_, ctx.size.x(), ctx.size.y(), true,
+      offscreen_aux_2_, ctx.size.x(), ctx.size.y(),
       oglplus::PixelDataInternalFormat::Red,
       oglplus::PixelDataFormat::Red
     );
     create_texture(
-      offscreen_light_, ctx.size.x(), ctx.size.y(), true,
+      offscreen_light_, ctx.size.x(), ctx.size.y(),
       oglplus::PixelDataInternalFormat::RGBA,
       oglplus::PixelDataFormat::RGBA
     );
@@ -173,7 +173,6 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
     ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
     ctx.gl.Clear().ColorBuffer();
   }
-
 
   for (auto& object: scene->objects) {
     object.second->draw(ctx);

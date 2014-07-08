@@ -125,7 +125,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   , glow_pong_() {
 
   auto create_texture = [&](
-    oglplus::Texture& tex, int width, int height, bool nearest,
+    oglplus::Texture& tex, int width, int height,
     oglplus::enums::PixelDataInternalFormat i_format,
     oglplus::enums::PixelDataFormat         p_format) {
 
@@ -133,20 +133,20 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
     ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
         0, p_format, oglplus::PixelDataType::Float, nullptr)
-      .MinFilter(nearest ? oglplus::TextureMinFilter::Nearest : oglplus::TextureMinFilter::Linear)
-      .MagFilter(nearest ? oglplus::TextureMagFilter::Nearest : oglplus::TextureMagFilter::Linear)
+      .MinFilter(oglplus::TextureMinFilter::Linear)
+      .MagFilter(oglplus::TextureMagFilter::Linear)
       .WrapS(oglplus::TextureWrap::MirroredRepeat)
       .WrapT(oglplus::TextureWrap::MirroredRepeat);
   };
 
   create_texture(
-    glow_ping_, ctx.size.x()/2, ctx.size.y()/2, false,
+    glow_ping_, ctx.size.x()/2, ctx.size.y()/2,
     oglplus::PixelDataInternalFormat::Red,
     oglplus::PixelDataFormat::Red
   );
 
   create_texture(
-    glow_pong_, ctx.size.x()/2, ctx.size.y()/2, false,
+    glow_pong_, ctx.size.x()/2, ctx.size.y()/2,
     oglplus::PixelDataInternalFormat::Red,
     oglplus::PixelDataFormat::Red
   );
@@ -159,11 +159,6 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   oglplus::Framebuffer::AttachColorTexture(
     oglplus::Framebuffer::Target::Draw, 1, glow_pong_, 0
   );
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-PostProcessor::~PostProcessor() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
