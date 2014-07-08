@@ -41,7 +41,7 @@
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
-                    "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/bg.jpg"
+                    "FileName": "images\/bg.jpg"
                 }
             }
         },
@@ -58,7 +58,7 @@
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
-                    "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/stars01.png"
+                    "FileName": "images\/stars01.png"
                 }
             }
         },
@@ -75,7 +75,7 @@
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
-                    "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/stars02.png"
+                    "FileName": "images\/stars02.png"
                 }
             }
         },
@@ -92,7 +92,7 @@
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
-                    "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/stars03.png"
+                    "FileName": "images\/stars03.png"
                 }
             }
         },
@@ -109,7 +109,7 @@
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
-                    "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/stars04.png"
+                    "FileName": "images\/stars04.png"
                 }
             }
         },
@@ -124,7 +124,7 @@
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
-                    "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/sun1.png"
+                    "FileName": "images\/sun1.png"
                 },
                 "Glow": "1",
                 "Emit": "1"
@@ -141,7 +141,7 @@
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
-                    "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/sun1.png"
+                    "FileName": "images\/sun1.png"
                 },
                 "Glow": "1",
                 "Emit": "1"
@@ -158,7 +158,7 @@
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
-                    "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/sun2.png"
+                    "FileName": "images\/sun2.png"
                 },
                 "Glow": "1",
                 "Emit": "1"
@@ -183,12 +183,12 @@
                         "DiffuseTexture":
                         {
                             "Type": "Texture",
-                            "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/planet_diffuse3.png"
+                            "FileName": "images\/planet_diffuse3.png"
                         },
                         "NormalTexture":
                         {
                             "Type": "Texture",
-                            "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/planet_normal3.png"
+                            "FileName": "images\/planet_normal3.png"
                         },
                         "Emit": "0.1",
                         "Shinyness": "0.2",
@@ -219,7 +219,7 @@
                         "DiffuseTexture":
                         {
                             "Type": "Texture",
-                            "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/planet_diffuse2.png"
+                            "FileName": "images\/planet_diffuse2.png"
                         },
                         "Emit": "1"
                     }
@@ -248,12 +248,12 @@
                         "DiffuseTexture":
                         {
                             "Type": "Texture",
-                            "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/planet_diffuse.png"
+                            "FileName": "images\/planet_diffuse.png"
                         },
                         "NormalTexture":
                         {
                             "Type": "Texture",
-                            "FileName": "\/home\/rufu1194\/Desktop\/swift2d\/examples\/simple\/images\/planet_normal.png"
+                            "FileName": "images\/planet_normal.png"
                         },
                         "Emit": "0.1",
                         "Shinyness": "0.5",

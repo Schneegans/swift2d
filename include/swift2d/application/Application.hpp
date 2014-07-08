@@ -18,23 +18,29 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class Application {
+class Application : public Singleton<Application> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Application(int argc, char** argv);
-  virtual ~Application() {}
-
-  std::string get_resource(std::string const& type, std::string const& file) const;
+  void init(int argc, char** argv);
 
   void start();
   void stop();
 
+  std::string get_resource(std::string const& type, std::string const& file) const;
+  std::string make_absolute(std::string const& file) const;
+
+  friend class Singleton<Application>;
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  // this class is a Singleton --- private c'tor and d'tor
+  Application();
+  ~Application() {}
+
   std::string executable_;
   boost::asio::signal_set signals_;
 };

@@ -13,41 +13,41 @@ using namespace swift;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-swift::SceneObjectPtr SpaceScene::create(swift::Application const& app) {
+swift::SceneObjectPtr SpaceScene::create() {
 
-  TextureDatabase::instance()->add("smoke", Texture::create(app.get_resource("images", "smoke.png")));
-  TextureDatabase::instance()->add("fire",  Texture::create(app.get_resource("images", "fire.png")));
+  TextureDatabase::instance()->add("smoke", Texture::create(Application::instance()->get_resource("images", "smoke.png")));
+  TextureDatabase::instance()->add("fire",  Texture::create(Application::instance()->get_resource("images", "fire.png")));
 
   auto mat = SpriteMaterial::create();
-  mat->DiffuseTexture = Texture::create(app.get_resource("images", "bg.jpg"));
+  mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "bg.jpg"));
   MaterialDatabase::instance()->add("background", mat);
 
   mat = SpriteMaterial::create();
-  mat->DiffuseTexture = Texture::create(app.get_resource("images", "ship.jpg"));
+  mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "ship.jpg"));
   MaterialDatabase::instance()->add("ship", mat);
 
   mat = SpriteMaterial::create();
-  mat->DiffuseTexture = Texture::create(app.get_resource("images", "bullet.jpg"));
+  mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "bullet.jpg"));
   MaterialDatabase::instance()->add("bullet", mat);
 
   mat = SpriteMaterial::create();
-  mat->DiffuseTexture = Texture::create(app.get_resource("images", "planet_diffuse2.png"));
-  mat->NormalTexture = Texture::create(app.get_resource("images", "planet_normal2.png"));
+  mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "planet_diffuse2.png"));
+  mat->NormalTexture = Texture::create(Application::instance()->get_resource("images", "planet_normal2.png"));
   MaterialDatabase::instance()->add("planet1", mat);
 
   mat = SpriteMaterial::create();
-  mat->DiffuseTexture = Texture::create(app.get_resource("images", "planet_diffuse.png"));
-  mat->NormalTexture = Texture::create(app.get_resource("images", "planet_normal.png"));
+  mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "planet_diffuse.png"));
+  mat->NormalTexture = Texture::create(Application::instance()->get_resource("images", "planet_normal.png"));
   MaterialDatabase::instance()->add("planet2", mat);
 
-  MaterialDatabase::instance()->add("light",      PointLightMaterial::create_from_file(app.get_resource("images", "light.png")));
+  MaterialDatabase::instance()->add("light",      PointLightMaterial::create_from_file(Application::instance()->get_resource("images", "light.png")));
   MaterialDatabase::instance()->add("sun",        DirectionalLightMaterial::create(math::vec3(1, 1, -1)));
 
   // example scene setup -------------------------------------------------------
   auto scene = SceneManager::instance()->get_default();
 
   // auto music = scene->add<SoundComponent>();
-  //      music->Sound = Sound::create_from_file(app.get_resource("audio", "music.ogg"));
+  //      music->Sound = Sound::create_from_file(Application::instance()->get_resource("audio", "music.ogg"));
   //      music->Volume = 0.1f;
   //      music->play();
 

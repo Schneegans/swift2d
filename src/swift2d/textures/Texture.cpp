@@ -9,6 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/textures/Texture.hpp>
 
+#include <swift2d/application/Application.hpp>
 #include <oglplus/images/png.hpp>
 #include <oglplus/images/newton.hpp>
 #include <stb_image/stb_image.h>
@@ -25,7 +26,7 @@ Texture::Texture()
   , needs_update_(true) {
 
   FileName.on_change().connect([&](std::string const& path){
-    load_from_file(path);
+    needs_update_ = true;
   });
 }
 
@@ -37,7 +38,7 @@ Texture::Texture(std::string const& file_name)
   , needs_update_(true) {
 
   FileName.on_change().connect([&](std::string const& path){
-    load_from_file(path);
+    needs_update_ = true;
   });
 }
 
@@ -45,14 +46,6 @@ Texture::Texture(std::string const& file_name)
 
 Texture::~Texture() {
   if (texture_) delete texture_;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Texture::load_from_file(std::string const& file_name) {
-  FileName.set(file_name);
-  needs_update_ = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -68,20 +61,22 @@ void Texture::bind(RenderContext const& context, unsigned location) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture::unbind() const {
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void Texture::upload_to(RenderContext const& context) const {
+
+  needs_update_ = false;
 
   if (texture_) {
     delete texture_;
   }
 
+  std::string file(FileName.get());
+
+  if (file[0] != '/') {
+    file = Application::instance()->make_absolute(file);
+  }
+
   int width(0), height(0), channels(0);
-  unsigned char* data(stbi_load(FileName().c_str(), &width, &height,
+  unsigned char* data(stbi_load(file.c_str(), &width, &height,
                                 &channels, STBI_default));
 
   bool success(data && width && height);
@@ -93,27 +88,16 @@ void Texture::upload_to(RenderContext const& context) const {
     texture_ = new oglplus::Texture();
 
     context.gl.Bound(oglplus::smart_enums::_2D(), *texture_)
-      .Image2D(0,
-               internal_format,
-               width,
-               height,
-               0,
-               format,
-               oglplus::DataType::UnsignedByte,
-               data)
-
+      .Image2D(0, internal_format, width, height, 0, format,
+               oglplus::DataType::UnsignedByte, data)
       .MinFilter(oglplus::smart_enums::Linear())
       .MagFilter(oglplus::smart_enums::Linear())
       .Anisotropy(2.0f)
       .WrapS(oglplus::smart_enums::ClampToEdge())
       .WrapT(oglplus::smart_enums::ClampToEdge());
-
   }
 
   stbi_image_free(data);
-
-
-  needs_update_ = false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

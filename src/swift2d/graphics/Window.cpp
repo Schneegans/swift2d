@@ -97,6 +97,7 @@ void Window::open_() {
 
     render_context_.gl.Disable(oglplus::Capability::DepthTest);
     render_context_.gl.Enable(oglplus::Capability::Blend);
+    render_context_.gl.Disable(oglplus::Capability::CullFace);
     render_context_.gl.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     glfwSetWindowCloseCallback(window_, [](GLFWwindow* w) {

@@ -15,12 +15,12 @@ using namespace swift;
 int main(int argc, char** argv) {
 
   // initialize Swift2D
-  Application app(argc, argv);
+  Application::instance()->init(argc, argv);
 
   Object::init<Mover>();
 
   // load resources ------------------------------------------------------------
-  TextureDatabase::instance()->add("point_light", Texture::create(app.get_resource("images", "light.png")));
+  TextureDatabase::instance()->add("point_light", Texture::create(Application::instance()->get_resource("images", "light.png")));
 
   auto mat = PointLightMaterial::create_from_database("point_light");
   mat->Color = Color(0.4, 0.3, 1.0);
@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
   auto scene = SceneManager::instance()->get_default();
 
   auto music = scene->add<SoundComponent>();
-       music->Sound = Sound::create_from_file(app.get_resource("audio", "music.ogg"));
+       music->Sound = Sound::create_from_file(Application::instance()->get_resource("audio", "music.ogg"));
        music->Volume = 0.5f;
        music->play();
 
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
        camera->Parallax = 1.05;
 
   auto menu = scene->add<GuiComponent>();
-       menu->Resource = app.get_resource("gui", "window.html");
+       menu->Resource = Application::instance()->get_resource("gui", "window.html");
        menu->Size = math::vec2i(1000, 1000);
        menu->Anchor = math::vec2i(0, 1);
        menu->on_loaded.connect([&](){
@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
        menu->on_javascript_callback.connect([&](std::string const& method) {
          if (method == "quit") {
            renderer.stop();
-           app.stop();
+           Application::instance()->stop();
          } else if (method == "pause") {
             // music->pause();
          } else {
@@ -77,18 +77,18 @@ int main(int argc, char** argv) {
        });
 
   auto fps = scene->add<GuiComponent>();
-       fps->Resource = app.get_resource("gui", "fps.html");
+       fps->Resource = Application::instance()->get_resource("gui", "fps.html");
        fps->Size = math::vec2i(240, 35);
        fps->Anchor = math::vec2i(-1, -1);
 
   // scene
   scene->add_object(SceneObject::create_from_file(
-    app.get_resource("scene", "scene.json")
+    Application::instance()->get_resource("scene", "scene.json")
   ));
 
   // player
   auto player = scene->add_object(SceneObject::create_from_file(
-    app.get_resource("scene", "player.json")
+    Application::instance()->get_resource("scene", "player.json")
   ));
 
   player->get_component<Mover>()->set_camera(camera);
@@ -121,7 +121,7 @@ int main(int argc, char** argv) {
 
   window->on_close.connect([&](){
     renderer.stop();
-    app.stop();
+    Application::instance()->stop();
   });
 
   window->on_resize.connect([&](math::vec2i const& size){
@@ -134,14 +134,14 @@ int main(int argc, char** argv) {
   window->on_key_press.connect([&](swift::Key key, int scancode, int action, int mods) {
     if (key == swift::Key::ESCAPE) {
       renderer.stop();
-      app.stop();
+      Application::instance()->stop();
     } else if (key == swift::Key::F5 && action != 1) {
       // menu->reload();
       // fps->reload();
     }
   });
 
-  app.start();
+  Application::instance()->start();
 
   return 0;
 }

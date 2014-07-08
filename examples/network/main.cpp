@@ -16,11 +16,11 @@ using namespace swift;
 int main(int argc, char** argv) {
 
   // initialize Swift2D
-  Application app(argc, argv);
+  Application::instance()->init(argc, argv);
   Network::instance()->connect("myTestGame");
 
   // scene ---------------------------------------------------------------------
-  auto scene = SpaceScene::create(app);
+  auto scene = SpaceScene::create();
   auto camera = scene->add<CameraComponent>();
   camera->Size = math::vec2(2.f, 2.f);
 
@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
 
   window->on_close.connect([&](){
     renderer.stop();
-    app.stop();
+    Application::instance()->stop();
   });
 
   window->on_key_press.connect([&](Key key, int scancode, int action, int mods) {
@@ -63,13 +63,13 @@ int main(int argc, char** argv) {
       switch(key) {
         case Key::ESCAPE:
           renderer.stop();
-          app.stop();
+          Application::instance()->stop();
           break;
       }
     }
   });
 
-  app.start();
+  Application::instance()->start();
 
   Network::instance()->disconnect();
 

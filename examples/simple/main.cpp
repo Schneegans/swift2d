@@ -53,12 +53,12 @@ class Mover: public MoveBehavior {
 int main(int argc, char** argv) {
 
   // initialize Swift2D
-  Application app(argc, argv);
+  Application::instance()->init(argc, argv);
 
   Object::init<Mover>();
 
   // load resources ------------------------------------------------------------
-  TextureDatabase::instance()->add("point_light", Texture::create(app.get_resource("images", "light.png")));
+  TextureDatabase::instance()->add("point_light", Texture::create(Application::instance()->get_resource("images", "light.png")));
   MaterialDatabase::instance()->add("sun1",       DirectionalLightMaterial::create(math::vec3(0.1, 1, 0), Color(1, 0.5, 1.0)));
   MaterialDatabase::instance()->add("sun2",       DirectionalLightMaterial::create(math::vec3(-1, -1, 0), Color(0.4, 0.8, 1.0)));
 
@@ -80,12 +80,12 @@ int main(int argc, char** argv) {
 
   // scene
   scene->add_object(SceneObject::create_from_file(
-    app.get_resource("scene", "scene.json")
+    Application::instance()->get_resource("scene", "scene.json")
   ));
 
   // player
   auto player = scene->add_object(SceneObject::create_from_file(
-    app.get_resource("scene", "player.json")
+    Application::instance()->get_resource("scene", "player.json")
   ));
 
   // main loop -----------------------------------------------------------------
@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
 
   window->on_close.connect([&](){
     renderer.stop();
-    app.stop();
+    Application::instance()->stop();
   });
 
   window->on_resize.connect([&](math::vec2i const& size){
@@ -121,11 +121,11 @@ int main(int argc, char** argv) {
   window->on_key_press.connect([&](swift::Key key, int scancode, int action, int mods) {
     if (key == swift::Key::ESCAPE) {
       renderer.stop();
-      app.stop();
+      Application::instance()->stop();
     }
   });
 
-  app.start();
+  Application::instance()->start();
 
   return 0;
 }

@@ -21,7 +21,7 @@ class SpaceScene {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-  static swift::SceneObjectPtr create(swift::Application const& app);
+  static swift::SceneObjectPtr create();
 };
 
 #endif  // SPACE_SCENE

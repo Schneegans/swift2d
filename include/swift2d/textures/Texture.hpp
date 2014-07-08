@@ -54,12 +54,8 @@ class Texture : public SavableObject {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "Texture"; }
 
-  // initializes the contained data from a given texture file.
-  void load_from_file(std::string const& file_name);
-
   // Binds the texture on the given context to the given location.
   void bind(RenderContext const& context, unsigned location) const;
-  void unbind() const;
 
   virtual void accept(SavableObjectVisitor& visitor) {
     visitor.add_member("FileName", FileName);

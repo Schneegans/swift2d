@@ -16,11 +16,9 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Application::Application(int argc, char** argv)
-  : executable_(boost::filesystem::system_complete(argv[0]).normalize().remove_filename().string())
+Application::Application()
+  : executable_()
   , signals_(MainLoop::instance()->get_io_service(), SIGINT, SIGTERM) {
-
-  init(argc, argv);
 
   signals_.async_wait([&](boost::system::error_code const& error, int signal_number){
     if (!error) {
@@ -31,8 +29,21 @@ Application::Application(int argc, char** argv)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Application::init(int argc, char** argv) {
+  swift::init(argc, argv);
+  executable_ = boost::filesystem::system_complete(argv[0]).normalize().remove_filename().string();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 std::string Application::get_resource(std::string const& type, std::string const& file) const {
   return executable_ + "/" + type + "/" + file;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::string Application::make_absolute(std::string const& file) const {
+  return executable_ + "/" + file;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
