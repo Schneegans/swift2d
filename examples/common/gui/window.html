@@ -133,21 +133,21 @@
 <!-- <audio src="sound/rolldown.wav" autoplay="autoplay"></audio> -->
 <div id="mars-window" class="mars-window">
   <div class="mars-window-inner">
-    <h1>Es beginnt...</h1>
+    <h1>Optionen</h1>
     <p>
       Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
     </p>
 
 
     <!-- Buttons -->
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-sm-6">
         <button onclick="Swift2D.quit()" class="btn btn-block">Spiel beenden!</button>
       </div>
       <div class="col-sm-6">
         <button onclick="Swift2D.pause()" class="btn btn-block">Musik pausieren!</button>
       </div>
-    </div>
+    </div> -->
 
     <br>
 
@@ -161,7 +161,7 @@
 
     <!-- Tab panes -->
     <div class="tab-content">
-      <div class="tab-pane active" id="tooltips">
+      <div class="tab-pane active" id="tooltips" style="min-height:220px">
         <div class="row">
           <div class="col-sm-4">
             <button class="btn btn-block swift-tooltip" data-toggle="tooltip" data-placement="top" title="Tooltip">Tooltip oben</button>
@@ -186,14 +186,14 @@
           </div>
         </div>
       </div>
-      <div class="tab-pane" id="scrollbox">
+      <div class="tab-pane" id="scrollbox" style="min-height:220px">
         <div class="scroll-box" style="max-height:150px">
           <div class="scroll-box-content">
             <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
           </div>
         </div>
       </div>
-      <div class="tab-pane" id="inputs">
+      <div class="tab-pane" id="inputs" style="min-height:220px">
 
         <div class="row">
           <div class="col-sm-6">
@@ -229,7 +229,7 @@
         <input class="slider" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14" handle="custom"/>
 
       </div>
-      <div class="tab-pane" id="checkboxes">
+      <div class="tab-pane" id="checkboxes" style="min-height:220px">
         <div class="row">
           <div class="col-sm-6">
             <div class="checkbox">
@@ -262,6 +262,13 @@
         </div>
       </div>
     </div>
+
+    <div class="row">
+      <div class="col-sm-offset-8 col-sm-4">
+        <button onclick="Swift2D.quit()" class="btn btn-block">Zurück</button>
+      </div>
+    </div>
+
   </div>
 </div>
 </body>

@@ -41,6 +41,9 @@ class TextureParticleEmitter : public ParticleEmitter {
   Float           Rotation;
   Float           RotationVariance;
 
+  Float           StartGlow;
+  Float           EndGlow;
+
   TextureProperty Texture;
 
 
@@ -75,6 +78,8 @@ class TextureParticleEmitter : public ParticleEmitter {
     visitor.add_member("RotationSpeedVariance", RotationSpeedVariance);
     visitor.add_member("Rotation", Rotation);
     visitor.add_member("RotationVariance", RotationVariance);
+    visitor.add_member("StartGlow", StartGlow);
+    visitor.add_member("EndGlow", EndGlow);
     visitor.add_object("Texture", Texture);
   }
 };

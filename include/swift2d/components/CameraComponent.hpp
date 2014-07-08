@@ -32,9 +32,12 @@ class CameraComponent : public TransformableComponent {
 
   // ---------------------------------------------------------------- properties
   Vec2 Size;
+  Float Parallax;
 
   // ----------------------------------------------------- contruction interface
-  CameraComponent() : Size(math::vec2(1.f, 1.f)) {}
+  CameraComponent()
+    : Size(math::vec2(1.f, 1.f))
+    , Parallax(1.0) {}
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
@@ -54,6 +57,7 @@ class CameraComponent : public TransformableComponent {
   virtual void accept(SavableObjectVisitor& visitor) {
     TransformableComponent::accept(visitor);
     visitor.add_member("Size", Size);
+    visitor.add_member("Parallax", Parallax);
   }
 };
 

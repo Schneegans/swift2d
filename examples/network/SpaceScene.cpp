@@ -16,14 +16,29 @@ using namespace swift;
 swift::SceneObjectPtr SpaceScene::create(swift::Application const& app) {
 
   TextureDatabase::instance()->add("smoke", Texture::create(app.get_resource("images", "smoke.png")));
-  TextureDatabase::instance()->add("fire", Texture::create(app.get_resource("images", "fire.png")));
+  TextureDatabase::instance()->add("fire",  Texture::create(app.get_resource("images", "fire.png")));
 
-  MaterialDatabase::instance()->add("background", ShadelessTextureMaterial::create_from_file(app.get_resource("images", "bg.jpg")));
-  MaterialDatabase::instance()->add("ship",       ShadelessTextureMaterial::create_from_file(app.get_resource("images", "ship.png")));
-  MaterialDatabase::instance()->add("bullet",     ShadelessTextureMaterial::create_from_file(app.get_resource("images", "bullet.png")));
+  auto mat = SpriteMaterial::create();
+  mat->DiffuseTexture = Texture::create(app.get_resource("images", "bg.jpg"));
+  MaterialDatabase::instance()->add("background", mat);
 
-  MaterialDatabase::instance()->add("planet1",    BumpTextureMaterial::create_from_files(app.get_resource("images", "planet_diffuse2.png"), app.get_resource("images", "planet_normal2.png")));
-  MaterialDatabase::instance()->add("planet2",    BumpTextureMaterial::create_from_files(app.get_resource("images", "planet_diffuse.png"), app.get_resource("images", "planet_normal.png")));
+  mat = SpriteMaterial::create();
+  mat->DiffuseTexture = Texture::create(app.get_resource("images", "ship.jpg"));
+  MaterialDatabase::instance()->add("ship", mat);
+
+  mat = SpriteMaterial::create();
+  mat->DiffuseTexture = Texture::create(app.get_resource("images", "bullet.jpg"));
+  MaterialDatabase::instance()->add("bullet", mat);
+
+  mat = SpriteMaterial::create();
+  mat->DiffuseTexture = Texture::create(app.get_resource("images", "planet_diffuse2.png"));
+  mat->NormalTexture = Texture::create(app.get_resource("images", "planet_normal2.png"));
+  MaterialDatabase::instance()->add("planet1", mat);
+
+  mat = SpriteMaterial::create();
+  mat->DiffuseTexture = Texture::create(app.get_resource("images", "planet_diffuse.png"));
+  mat->NormalTexture = Texture::create(app.get_resource("images", "planet_normal.png"));
+  MaterialDatabase::instance()->add("planet2", mat);
 
   MaterialDatabase::instance()->add("light",      PointLightMaterial::create_from_file(app.get_resource("images", "light.png")));
   MaterialDatabase::instance()->add("sun",        DirectionalLightMaterial::create(math::vec3(1, 1, -1)));

@@ -13,8 +13,8 @@ body {
   zoom: 1;
   overflow: hidden;
   -webkit-user-select: none;
-  background-color: black;
-  /*background-color: transparent;*/
+  /*background-color: black;*/
+  background-color: transparent;
 }
 
 ::selection {
@@ -118,10 +118,11 @@ h1 {
 
 h1:before {
   content: "";
-  width: 90%;
+  width: 100%;
   height: 3px;
   position: absolute;
   bottom: 0;
+  left: -1px;
   border-bottom: none;
   background-image: -webkit-linear-gradient(left, rgb(255, 171, 235) 0%,rgba(0,0,0,0) 100%);
 }

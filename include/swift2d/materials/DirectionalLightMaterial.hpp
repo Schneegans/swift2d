@@ -61,8 +61,9 @@ class DirectionalLightMaterial : public Material {
   static  std::string get_type_name_static() { return "DirectionalLightMaterial"; }
 
   // uses the Material on the given context.
-  /* virtual */ void use(RenderContext const& ctx,
-                         math::mat3 const& object_transform) const {
+  /* virtual */ void draw_quad(RenderContext const& ctx,
+                               math::mat3 const& object_transform,
+                               float object_depth) {
 
     // disable rotation
     // auto transform(math::make_translate(math::get_translate(object_transform)));
@@ -72,11 +73,14 @@ class DirectionalLightMaterial : public Material {
     DirectionalLightShader::instance()->set_uniform("projection", math::mat3());
     DirectionalLightShader::instance()->set_uniform("transform", math::mat3());
     DirectionalLightShader::instance()->set_uniform("screen_size", ctx.size);
-    // DirectionalLightShader::instance()->set_uniform("g_buffer_color", 1);
+    DirectionalLightShader::instance()->set_uniform("depth", 1.f);
+    DirectionalLightShader::instance()->set_uniform("parallax", 1.f);
     DirectionalLightShader::instance()->set_uniform("g_buffer_normal", 2);
-    DirectionalLightShader::instance()->set_uniform("g_buffer_aux", 3);
+    DirectionalLightShader::instance()->set_uniform("g_buffer_aux_1", 3);
     DirectionalLightShader::instance()->set_uniform("light_dir", math::normalized(Direction()));
     DirectionalLightShader::instance()->set_uniform("light_color", Color().vec3());
+
+    Quad::instance()->draw(ctx);
   }
 
   virtual void accept(SavableObjectVisitor& visitor) {

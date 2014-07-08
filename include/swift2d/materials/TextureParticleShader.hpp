@@ -26,6 +26,20 @@ class TextureParticleShader : public Shader,
  // ----------------------------------------------------------- public interface
  public:
 
+  // ------------------------------------------------------------------ uniforms
+  oglplus::LazyUniform<math::mat3>  projection;
+  oglplus::LazyUniform<math::mat3>  transform;
+  oglplus::LazyUniform<int>         diffuse;
+  oglplus::LazyUniform<float>       start_scale;
+  oglplus::LazyUniform<float>       end_scale;
+  oglplus::LazyUniform<math::vec3>  start_color;
+  oglplus::LazyUniform<math::vec3>  end_color;
+  oglplus::LazyUniform<float>       start_opacity;
+  oglplus::LazyUniform<float>       end_opacity;
+  oglplus::LazyUniform<float>       start_glow;
+  oglplus::LazyUniform<float>       end_glow;
+  oglplus::LazyUniform<int>         enable_rotation;
+
   friend class Singleton<TextureParticleShader>;
 
  ///////////////////////////////////////////////////////////////////////////////

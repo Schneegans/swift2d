@@ -68,8 +68,9 @@ class PointLightMaterial : public Material {
   static  std::string get_type_name_static() { return "PointLightMaterial"; }
 
   // uses the Material on the given context.
-  /* virtual */ void use(RenderContext const& ctx,
-                         math::mat3 const& object_transform) const {
+  /* virtual */ void draw_quad(RenderContext const& ctx,
+                               math::mat3 const& object_transform,
+                               float object_depth) {
 
     // disable rotation
     auto transform(math::make_translate(math::get_translate(object_transform)));
@@ -82,9 +83,11 @@ class PointLightMaterial : public Material {
     PointLightShader::instance()->set_uniform("screen_size", ctx.size);
     // PointLightShader::instance()->set_uniform("g_buffer_color", 1);
     PointLightShader::instance()->set_uniform("g_buffer_normal", 2);
-    PointLightShader::instance()->set_uniform("g_buffer_aux", 3);
+    PointLightShader::instance()->set_uniform("g_buffer_aux_1", 3);
     PointLightShader::instance()->set_uniform("light_tex", 0);
     PointLightShader::instance()->set_uniform("light_color", Color().vec3());
+
+    Quad::instance()->draw(ctx);
   }
 
   virtual void accept(SavableObjectVisitor& visitor) {

@@ -40,7 +40,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   if (!window_->Open()) {
     window_->Open = true;
     compositor_ = Compositor::create();
-    compositor_->EnableDynamicLighting = true;
+    compositor_->ShadingQuality = 2;
   }
 
   // update window size
@@ -54,6 +54,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   math::mat3 view_matrix(scene->camera->WorldTransform.get());
   math::scale(view_matrix, scene->camera->Size.get());
   window_->get_context().projection_matrix = math::inversed(view_matrix);
+  window_->get_context().projection_parallax = scene->camera->Parallax();
 
   // draw opaque objects
   compositor_->draw_objects(scene, window_->get_context());
@@ -66,6 +67,9 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   // draw user interface
   compositor_->draw_gui(scene, window_->get_context());
+
+  // perform post processing
+  compositor_->post_process(scene, window_->get_context());
 
   // finish frame
   window_->display();

@@ -11,7 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
-#include <swift2d/utils/Object.hpp>
+#include <swift2d/utils/SavableObject.hpp>
 #include <swift2d/properties.hpp>
 
 namespace swift {
@@ -33,8 +33,9 @@ class Material : public SavableObject {
  public:
 
   // uses the Material on the given context.
-  virtual void use(RenderContext const& context,
-                   math::mat3 const& object_transform) const = 0;
+  virtual void draw_quad(RenderContext const& context,
+                         math::mat3 const& object_transform,
+                         float object_depth) = 0;
 
   template<typename T>
   void set_uniform(std::string name, T const& val) {

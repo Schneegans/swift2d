@@ -41,11 +41,11 @@ void Renderer::set_pipeline(PipelinePtr const& pipeline) {
     delete render_client_;
   }
 
-   auto fun = [pipeline, this](ConstSerializedScenePtr const& scene) {
+   auto func = [pipeline, this](ConstSerializedScenePtr const& scene) {
     pipeline->draw(scene);
   };
 
-  render_client_ = new RenderClient<ConstSerializedScenePtr>(fun);
+  render_client_ = new RenderClient<ConstSerializedScenePtr>(func);
   pipeline->application_fps.connect_from(this->application_fps_.fps);
   pipeline->rendering_fps.connect_from(render_client_->fps_counter.fps);
 }

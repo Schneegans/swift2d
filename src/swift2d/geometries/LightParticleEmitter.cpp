@@ -50,7 +50,7 @@ void LightParticleEmitter::draw(RenderContext const& ctx, math::mat3 const& tran
   shader->set_uniform("screen_size",    ctx.size);
   // shader->set_uniform("g_buffer_color", 1);
   shader->set_uniform("g_buffer_normal", 2);
-  shader->set_uniform("g_buffer_aux", 3);
+  shader->set_uniform("g_buffer_aux_1", 3);
 
   // draw
   ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, count);
