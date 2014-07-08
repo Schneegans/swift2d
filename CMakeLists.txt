@@ -34,7 +34,7 @@ pkg_check_modules(SNDFILE       REQUIRED sndfile)
 pkg_check_modules(ALUT          REQUIRED freealut)
 pkg_check_modules(OPENGL        REQUIRED gl)
 
-set(BOOST_ROOT "/opt/boost/current")
+set(BOOST_ROOT "/opt/boost/boost_1_55_0")
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
