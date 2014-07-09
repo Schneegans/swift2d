@@ -69,8 +69,8 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality)
     );
     create_texture(
       offscreen_light_, ctx.size.x(), ctx.size.y(),
-      oglplus::PixelDataInternalFormat::RGBA,
-      oglplus::PixelDataFormat::RGBA
+      oglplus::PixelDataInternalFormat::RGB,
+      oglplus::PixelDataFormat::RGB
     );
 
     // create framebuffer object -----------------------------------------------
