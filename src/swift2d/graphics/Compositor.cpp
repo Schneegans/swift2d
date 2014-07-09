@@ -116,7 +116,7 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality)
         fragColor      = vec4(emit * diffuse + (1 - emit) * (light*diffuse + specular), 1.0);
 
         if (debug) {
-          fragColor = vec4(vec3(get_emit())  , 1.0);
+          fragColor = vec4(texture2D(g_buffer_light, gl_FragCoord.xy/screen_size).rgb , 1.0);
         }
       }
     )");
@@ -133,7 +133,6 @@ Compositor::~Compositor() {
   if(shader_)         delete shader_;
   if(post_processor_) delete post_processor_;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -190,7 +189,12 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
       oglplus::BlendFunction::OneMinusSrcColor
     );
 
-    ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_4);
+    if (shading_quality_ > 1) {
+      ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_4);
+    } else {
+      oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
+      ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
+    }
 
     GLfloat clear[3] = {0.f, 0.f, 0.f};
     ctx.gl.ClearColorBuffer(0, clear);
@@ -212,48 +216,11 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Compositor::composite(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
-  if (shading_quality_ > 0) {
-
-    ctx.gl.BlendFunc(
-      oglplus::BlendFunction::SrcAlpha,
-      oglplus::BlendFunction::OneMinusSrcAlpha
-    );
-
-    if (shading_quality_ > 1) {
-      ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_1);
-    } else {
-      oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
-      ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
-    }
-
-    oglplus::Texture::Active(0);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_color_);
-
-    oglplus::Texture::Active(1);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_light_);
-
-    oglplus::Texture::Active(2);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_aux_1_);
-
-    shader_->use(ctx);
-    shader_->set_uniform("g_buffer_diffuse", 0);
-    shader_->set_uniform("g_buffer_light", 1);
-    shader_->set_uniform("g_buffer_aux_1", 2);
-    shader_->set_uniform("screen_size", ctx.size);
-    shader_->set_uniform("debug", 0);
-
-    Quad::instance()->draw(ctx);
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void Compositor::post_process(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
   if (shading_quality_ > 1) {
 
     oglplus::Texture::Active(0);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_normal_);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_light_);
 
     oglplus::Texture::Active(2);
     ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_aux_2_);
