@@ -140,7 +140,7 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
     GLfloat clear1[3] = {0.5f, 0.5f, 0.f};
     ctx.gl.ClearColorBuffer(1, clear1);
 
-    GLfloat clear2[3] = {1.f, 1.f, 1.f};
+    GLfloat clear2[3] = {1.f, 1.f, 0.f};
     ctx.gl.ClearColorBuffer(2, clear2);
 
   } else {

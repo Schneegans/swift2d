@@ -51,7 +51,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
       compositor_ = nullptr;
     }
 
-    compositor_ = new Compositor(window_->get_context(), 1);
+    compositor_ = new Compositor(window_->get_context(), 2);
   }
 
   window_->get_context().gl.Viewport(old_size_.x(), old_size_.y());

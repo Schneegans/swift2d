@@ -49,7 +49,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
       void main(void) {
         vec3 c = get_diffuse();
-        fragColor = vec4(get_glow() * max(max(c.r, c.g), c.b), 0.0, 0.0, 1.0);
+        fragColor = vec4(get_light_info().b * max(max(c.r, c.g), c.b), 0.0, 0.0, 1.0);
       }
     )")
   , glow_shader_(R"(
