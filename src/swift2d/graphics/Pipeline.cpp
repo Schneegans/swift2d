@@ -51,7 +51,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
       compositor_ = nullptr;
     }
 
-    compositor_ = new Compositor(window_->get_context(), 2);
+    compositor_ = new Compositor(window_->get_context(), 1);
   }
 
   window_->get_context().gl.Viewport(old_size_.x(), old_size_.y());
@@ -67,9 +67,6 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   // draw lights
   compositor_->draw_lights(scene, window_->get_context());
-
-  // draw transparent objects
-  // compositor_->composite(scene, window_->get_context());
 
   // draw user interface
   compositor_->draw_gui(scene, window_->get_context());

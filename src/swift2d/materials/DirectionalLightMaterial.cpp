@@ -27,11 +27,7 @@ void DirectionalLightMaterial::draw_quad(RenderContext const& ctx,
                                float object_depth) {
 
   DirectionalLightShader::instance()->use(ctx);
-  DirectionalLightShader::instance()->projection.Set(math::mat3());
-  DirectionalLightShader::instance()->transform.Set(math::mat3());
   DirectionalLightShader::instance()->screen_size.Set(ctx.size);
-  DirectionalLightShader::instance()->depth.Set(1.f);
-  DirectionalLightShader::instance()->parallax.Set(1.f);
   DirectionalLightShader::instance()->g_buffer_diffuse.Set(1);
   DirectionalLightShader::instance()->g_buffer_normal.Set(2);
   DirectionalLightShader::instance()->g_buffer_aux_1.Set(3);

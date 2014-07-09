@@ -32,7 +32,10 @@ void PointLightMaterial::draw_quad(RenderContext const& ctx,
   PointLightShader::instance()->use(ctx);
   PointLightShader::instance()->projection.Set(ctx.projection_matrix);
   PointLightShader::instance()->transform.Set(transform);
+  PointLightShader::instance()->depth.Set(object_depth);
+  PointLightShader::instance()->parallax.Set(ctx.projection_parallax);
   PointLightShader::instance()->screen_size.Set(ctx.size);
+  PointLightShader::instance()->g_buffer_diffuse.Set(1);
   PointLightShader::instance()->g_buffer_normal.Set(2);
   PointLightShader::instance()->g_buffer_aux_1.Set(3);
   PointLightShader::instance()->light_tex.Set(0);

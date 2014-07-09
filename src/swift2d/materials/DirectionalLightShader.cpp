@@ -17,14 +17,11 @@ DirectionalLightShader::DirectionalLightShader()
   : Shader(
     R"(
       // vertex shader ---------------------------------------------------------
-      @include "quad_vertext_shader"
+      @include "fullscreen_quad_vertext_shader"
     )",
     R"(
       // fragment shader -------------------------------------------------------
       @include "version"
-
-      // varyings
-      in vec2 tex_coords;
 
       // uniforms
       uniform vec3 light_dir;
@@ -43,15 +40,11 @@ DirectionalLightShader::DirectionalLightShader()
         float specular_light = get_specular_light(light_dir, surface_dir);
         float diffuse_light  = get_diffuse_light(light_dir, surface_dir);
 
-        write_lbuffer(emit * diffuse + (1 - emit) * (diffuse_light + specular_light)*light_color*diffuse);
+        write_lbuffer((1 - emit) * (diffuse_light*diffuse + specular_light) * light_color.rgb);
       }
     )"
   )
-  , projection(get_uniform<math::mat3>("projection"))
-  , transform(get_uniform<math::mat3>("transform"))
   , screen_size(get_uniform<math::vec2i>("screen_size"))
-  , depth(get_uniform<float>("depth"))
-  , parallax(get_uniform<float>("parallax"))
   , g_buffer_diffuse(get_uniform<int>("g_buffer_diffuse"))
   , g_buffer_normal(get_uniform<int>("g_buffer_normal"))
   , g_buffer_aux_1(get_uniform<int>("g_buffer_aux_1"))

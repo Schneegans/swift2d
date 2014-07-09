@@ -40,10 +40,11 @@ class Compositor {
   int shading_quality_;
 
   Shader*               shader_;
+
   oglplus::Framebuffer  fbo_;
-  oglplus::Texture      offscreen_color_;
-  oglplus::Texture      offscreen_normal_;
-  oglplus::Texture      offscreen_light_;
+  oglplus::Texture      g_buffer_diffuse_;
+  oglplus::Texture      g_buffer_normal_;
+  oglplus::Texture      final_buffer_;
   oglplus::Texture      offscreen_aux_1_;
   oglplus::Texture      offscreen_aux_2_;
 

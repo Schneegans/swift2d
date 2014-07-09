@@ -84,11 +84,7 @@ ShaderIncludes::ShaderIncludes() {
     layout (location = 0) out vec4 fragColor;
 
     void write_lbuffer(vec3 color) {
-      fragColor = vec4(color, 0.0);
-    }
-
-    void write_lbuffer(vec3 color, float diffuse, float specular) {
-      fragColor = vec4(color * diffuse, specular);
+      fragColor = vec4(color, 1.0);
     }
   )");
 
@@ -123,19 +119,6 @@ ShaderIncludes::ShaderIncludes() {
       return texture2D(g_buffer_aux_2, gl_FragCoord.xy/screen_size).r;
     }
 
-  )");
-
-  add_include("lbuffer_input", R"(
-    uniform sampler2D g_buffer_light;
-
-    vec3 get_diffuse_light() {
-      return texture2D(g_buffer_light, gl_FragCoord.xy/screen_size).rgb;
-    }
-
-    vec3 get_specular_light() {
-      vec4 light = texture2D(g_buffer_light, gl_FragCoord.xy/screen_size);
-      return vec3(light.a);
-    }
   )");
 
   add_include("light_helpers", R"(

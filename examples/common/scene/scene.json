@@ -23,6 +23,18 @@
             "Material":
             {
                 "Type": "DirectionalLightMaterial",
+                "Direction": "(0.5 -1 0)",
+                "Color": "(0.6 1 0.6)"
+            }
+        },
+        {
+            "Type": "LightComponent",
+            "Enabled": "1",
+            "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
+            "Depth": "5",
+            "Material":
+            {
+                "Type": "DirectionalLightMaterial",
                 "Direction": "(-1 -1 0)",
                 "Color": "(0.4 0.8 1)"
             }

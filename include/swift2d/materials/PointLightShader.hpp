@@ -29,7 +29,10 @@ class PointLightShader : public Shader,
   // ------------------------------------------------------------------ uniforms
   oglplus::Lazy<oglplus::Uniform<math::mat3>>   projection;
   oglplus::Lazy<oglplus::Uniform<math::mat3>>   transform;
+  oglplus::Lazy<oglplus::Uniform<float>>        depth;
+  oglplus::Lazy<oglplus::Uniform<float>>        parallax;
   oglplus::Lazy<oglplus::Uniform<math::vec2i>>  screen_size;
+  oglplus::Lazy<oglplus::Uniform<int>>          g_buffer_diffuse;
   oglplus::Lazy<oglplus::Uniform<int>>          g_buffer_normal;
   oglplus::Lazy<oglplus::Uniform<int>>          g_buffer_aux_1;
   oglplus::Lazy<oglplus::Uniform<int>>          light_tex;

@@ -35,22 +35,27 @@ PointLightShader::PointLightShader()
       @include "light_helpers"
 
       void main(void){
+        vec3 diffuse      = get_diffuse();
+        float emit        = get_emit();
         vec3 normal       = get_normal();
         vec4 light        = texture2D(light_tex, tex_coords);
 
         vec3 light_dir    = normalize(light.rgb - 0.5);
         vec3 surface_dir  = normalize(normal - 0.5);
 
-        float specular    = get_specular_light(light_dir, surface_dir) * light.a;
-        float diffuse     = get_diffuse_light(light_dir, surface_dir) * light.a;
+        float specular_light = get_specular_light(light_dir, surface_dir) * light.a;
+        float diffuse_light  = get_diffuse_light(light_dir, surface_dir) * light.a;
 
-        write_lbuffer(light_color, diffuse, specular * get_reflectivity());
+        write_lbuffer((1 - emit) * (diffuse_light*diffuse + specular_light) * light_color.rgb);
       }
     )"
   )
   , projection(get_uniform<math::mat3>("projection"))
   , transform(get_uniform<math::mat3>("transform"))
+  , depth(get_uniform<float>("depth"))
+  , parallax(get_uniform<float>("parallax"))
   , screen_size(get_uniform<math::vec2i>("screen_size"))
+  , g_buffer_diffuse(get_uniform<int>("g_buffer_diffuse"))
   , g_buffer_normal(get_uniform<int>("g_buffer_normal"))
   , g_buffer_aux_1(get_uniform<int>("g_buffer_aux_1"))
   , light_tex(get_uniform<int>("light_tex"))

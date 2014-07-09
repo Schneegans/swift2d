@@ -48,6 +48,7 @@ void LightParticleEmitter::draw(RenderContext const& ctx, math::mat3 const& tran
   shader->end_opacity.Set(EndOpacity());
 
   shader->screen_size.Set(ctx.size);
+  shader->g_buffer_diffuse.Set(1);
   shader->g_buffer_normal.Set(2);
   shader->g_buffer_aux_1.Set(3);
 

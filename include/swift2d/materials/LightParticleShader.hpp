@@ -37,6 +37,7 @@ class LightParticleShader : public Shader,
   oglplus::Lazy<oglplus::Uniform<math::vec3>>  end_color;
   oglplus::Lazy<oglplus::Uniform<float>>       start_opacity;
   oglplus::Lazy<oglplus::Uniform<float>>       end_opacity;
+  oglplus::Lazy<oglplus::Uniform<int>>         g_buffer_diffuse;
   oglplus::Lazy<oglplus::Uniform<int>>         g_buffer_normal;
   oglplus::Lazy<oglplus::Uniform<int>>         g_buffer_aux_1;
 

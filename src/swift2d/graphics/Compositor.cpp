@@ -20,11 +20,11 @@ namespace swift {
 
 Compositor::Compositor(RenderContext const& ctx, int shading_quality)
   : shading_quality_  (shading_quality)
-  , shader_           (nullptr)
+  , shader_(nullptr)
   , fbo_              ()
-  , offscreen_color_  ()
-  , offscreen_normal_ ()
-  , offscreen_light_  ()
+  , g_buffer_diffuse_  ()
+  , g_buffer_normal_ ()
+  , final_buffer_  ()
   , offscreen_aux_1_  ()
   , offscreen_aux_2_  ()
   , post_processor_   (nullptr) {
@@ -48,12 +48,12 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality)
     };
 
     create_texture(
-      offscreen_color_, ctx.size.x(), ctx.size.y(),
+      g_buffer_diffuse_, ctx.size.x(), ctx.size.y(),
       oglplus::PixelDataInternalFormat::RGB,
       oglplus::PixelDataFormat::RGB
     );
     create_texture(
-      offscreen_normal_, ctx.size.x(), ctx.size.y(),
+      g_buffer_normal_, ctx.size.x(), ctx.size.y(),
       oglplus::PixelDataInternalFormat::RGB,
       oglplus::PixelDataFormat::RGB
     );
@@ -68,7 +68,7 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality)
       oglplus::PixelDataFormat::Red
     );
     create_texture(
-      offscreen_light_, ctx.size.x(), ctx.size.y(),
+      final_buffer_, ctx.size.x(), ctx.size.y(),
       oglplus::PixelDataInternalFormat::RGB,
       oglplus::PixelDataFormat::RGB
     );
@@ -77,10 +77,10 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality)
     fbo_.Bind(oglplus::Framebuffer::Target::Draw);
 
     oglplus::Framebuffer::AttachColorTexture(
-      oglplus::Framebuffer::Target::Draw, 0, offscreen_color_, 0
+      oglplus::Framebuffer::Target::Draw, 0, g_buffer_diffuse_, 0
     );
     oglplus::Framebuffer::AttachColorTexture(
-      oglplus::Framebuffer::Target::Draw, 1, offscreen_normal_, 0
+      oglplus::Framebuffer::Target::Draw, 1, g_buffer_normal_, 0
     );
     oglplus::Framebuffer::AttachColorTexture(
       oglplus::Framebuffer::Target::Draw, 2, offscreen_aux_1_, 0
@@ -89,36 +89,24 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality)
       oglplus::Framebuffer::Target::Draw, 3, offscreen_aux_2_, 0
     );
     oglplus::Framebuffer::AttachColorTexture(
-      oglplus::Framebuffer::Target::Draw, 4, offscreen_light_, 0
+      oglplus::Framebuffer::Target::Draw, 4, final_buffer_, 0
     );
 
-    // create shaders ----------------------------------------------------------
-    shader_ = new Shader(R"(
-      // vertex shader ---------------------------------------------------------
-      @include "fullscreen_quad_vertext_shader"
-    )", R"(
-      // fragment shader -------------------------------------------------------
-      @include "version"
+    shader_ = new Shader(
+      R"(
+        // vertex shader -------------------------------------------------------
+        @include "fullscreen_quad_vertext_shader"
+      )",
+      R"(
+        // fragment shader -----------------------------------------------------
+        @include "version"
 
-      @include "gbuffer_input"
-      @include "lbuffer_input"
+        @include "gbuffer_input"
+        @include "write_lbuffer"
 
-      uniform bool debug;
-
-      layout (location = 0) out vec4 fragColor;
-
-      void main(void) {
-        vec3  diffuse  = get_diffuse();
-        vec3  light    = get_diffuse_light();
-        vec3  specular = get_specular_light();
-        float emit     = min(1.0, get_emit());
-
-        fragColor      = vec4(emit * diffuse + (1 - emit) * (light*diffuse + specular), 1.0);
-
-        if (debug) {
-          fragColor = vec4(texture2D(g_buffer_light, gl_FragCoord.xy/screen_size).rgb , 1.0);
+        void main(void){
+          write_lbuffer(get_emit() * get_diffuse());
         }
-      }
     )");
 
     if (shading_quality_ > 1) {
@@ -130,8 +118,8 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality)
 ////////////////////////////////////////////////////////////////////////////////
 
 Compositor::~Compositor() {
-  if(shader_)         delete shader_;
   if(post_processor_) delete post_processor_;
+  if(shader_) delete shader_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -200,13 +188,20 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
     ctx.gl.ClearColorBuffer(0, clear);
 
     oglplus::Texture::Active(1);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_color_);
+    g_buffer_diffuse_.Bind(oglplus::Texture::Target::_2D);
 
     oglplus::Texture::Active(2);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_normal_);
+    g_buffer_normal_.Bind(oglplus::Texture::Target::_2D);
 
     oglplus::Texture::Active(3);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_aux_1_);
+    offscreen_aux_1_.Bind(oglplus::Texture::Target::_2D);
+
+    shader_->use(ctx);
+    shader_->set_uniform("screen_size", ctx.size);
+    shader_->set_uniform("g_buffer_diffuse", 1);
+    shader_->set_uniform("g_buffer_aux_1", 3);
+
+    Quad::instance()->draw(ctx);
 
     for (auto& light: scene->lights) {
       light.second->draw(ctx);
@@ -217,13 +212,13 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
 ////////////////////////////////////////////////////////////////////////////////
 
 void Compositor::post_process(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
-  if (shading_quality_ > 1) {
 
+  if (shading_quality_ > 1) {
     oglplus::Texture::Active(0);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_light_);
+    final_buffer_.Bind(oglplus::Texture::Target::_2D);
 
     oglplus::Texture::Active(2);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), offscreen_aux_2_);
+    offscreen_aux_2_.Bind(oglplus::Texture::Target::_2D);
 
     post_processor_->process(ctx);
   }

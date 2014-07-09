@@ -57,20 +57,21 @@ LightParticleShader::LightParticleShader()
           age
         );
 
+        vec3 diffuse      = get_diffuse();
+        float emit        = get_emit();
         vec3 normal       = get_normal();
         vec4 light        = texture2D(light_tex, tex_coords);
 
         vec3 light_dir    = normalize(light.rgb - 0.5);
-        vec3 surface_dir  = normal - 0.5;
+        vec3 surface_dir  = normalize(normal - 0.5);
         float attenuation = light.a * color.a;
 
-        float specular    = get_specular_light(light_dir, surface_dir) * attenuation;
-        float diffuse     = get_diffuse_light(light_dir, surface_dir) * attenuation;
+        float specular_light = get_specular_light(light_dir, surface_dir) * attenuation;
+        float diffuse_light  = get_diffuse_light(light_dir, surface_dir) * attenuation;
 
-        write_lbuffer(color.rgb, diffuse, specular * get_reflectivity());
+        write_lbuffer((1 - emit) * (diffuse_light*diffuse + specular_light) * color.rgb);
       }
     )",
-
 
     R"(
       // geometry shader -------------------------------------------------------
@@ -127,6 +128,7 @@ LightParticleShader::LightParticleShader()
   , end_color(get_uniform<math::vec3>("end_color"))
   , start_opacity(get_uniform<float>("start_opacity"))
   , end_opacity(get_uniform<float>("end_opacity"))
+  , g_buffer_diffuse(get_uniform<int>("g_buffer_diffuse"))
   , g_buffer_normal(get_uniform<int>("g_buffer_normal"))
   , g_buffer_aux_1(get_uniform<int>("g_buffer_aux_1")) {}
 
