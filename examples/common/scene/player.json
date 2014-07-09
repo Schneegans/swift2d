@@ -161,8 +161,8 @@
                 "Type": "LightParticleEmitter",
                 "WorldSpacePosition": "1",
                 "WorldSpaceDirection": "0",
-                "Life": "1",
-                "LifeVariance": "0.5",
+                "Life": "0.8",
+                "LifeVariance": "0.2",
                 "Position": "(0 0)",
                 "Direction": "(-2 0)",
                 "DirectionVariance": "0.6",
@@ -173,7 +173,7 @@
                 "StartColor": "(1 0.8 0.3)",
                 "EndColor": "(1 0 0)",
                 "Density": "5",
-                "StartScale": "1",
+                "StartScale": "2",
                 "EndScale": "15",
                 "Texture":
                 {

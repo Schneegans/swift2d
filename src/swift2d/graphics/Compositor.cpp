@@ -19,15 +19,15 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Compositor::Compositor(RenderContext const& ctx, int shading_quality)
-  : shading_quality_  (shading_quality)
+  : shading_quality_ (shading_quality)
   , shader_(nullptr)
-  , fbo_              ()
-  , g_buffer_diffuse_  ()
+  , fbo_()
+  , g_buffer_diffuse_ ()
   , g_buffer_normal_ ()
   , final_buffer_  ()
-  , offscreen_aux_1_  ()
-  , offscreen_aux_2_  ()
-  , post_processor_   (nullptr) {
+  , offscreen_aux_1_()
+  , offscreen_aux_2_()
+  , post_processor_(nullptr) {
 
   if (shading_quality_ > 0) {
 
@@ -102,10 +102,11 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality)
         @include "version"
 
         @include "gbuffer_input"
-        @include "write_lbuffer"
+
+        layout (location = 0) out vec3 fragColor;
 
         void main(void){
-          write_lbuffer(get_emit() * get_diffuse());
+          fragColor = get_emit() * get_diffuse();
         }
     )");
 

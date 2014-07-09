@@ -31,22 +31,16 @@ PointLightShader::PointLightShader()
       uniform vec3      light_color;
 
       @include "gbuffer_input"
-      @include "write_lbuffer"
-      @include "light_helpers"
+      @include "get_lit_surface_color"
+
+      layout (location = 0) out vec3 fragColor;
 
       void main(void){
-        vec3 diffuse      = get_diffuse();
-        float emit        = get_emit();
-        vec3 normal       = get_normal();
         vec4 light        = texture2D(light_tex, tex_coords);
-
         vec3 light_dir    = normalize(light.rgb - 0.5);
-        vec3 surface_dir  = normalize(normal - 0.5);
+        float attenuation = light.a;
 
-        float specular_light = get_specular_light(light_dir, surface_dir) * light.a;
-        float diffuse_light  = get_diffuse_light(light_dir, surface_dir) * light.a;
-
-        write_lbuffer((1 - emit) * (diffuse_light*diffuse + specular_light) * light_color.rgb);
+        fragColor = get_lit_surface_color(light_dir, light_color, attenuation);
       }
     )"
   )

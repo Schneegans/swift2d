@@ -47,29 +47,22 @@ LightParticleShader::LightParticleShader()
       uniform sampler2D light_tex;
 
       @include "gbuffer_input"
-      @include "write_lbuffer"
-      @include "light_helpers"
+      @include "get_lit_surface_color"
+
+      layout (location = 0) out vec3 fragColor;
 
       void main(void) {
-        vec4 color = mix(
+        vec4 light_color = mix(
           vec4(start_color, start_opacity),
           vec4(end_color, end_opacity),
           age
         );
 
-        vec3 diffuse      = get_diffuse();
-        float emit        = get_emit();
-        vec3 normal       = get_normal();
         vec4 light        = texture2D(light_tex, tex_coords);
-
         vec3 light_dir    = normalize(light.rgb - 0.5);
-        vec3 surface_dir  = normalize(normal - 0.5);
-        float attenuation = light.a * color.a;
+        float attenuation = light.a * light_color.a;
 
-        float specular_light = get_specular_light(light_dir, surface_dir) * attenuation;
-        float diffuse_light  = get_diffuse_light(light_dir, surface_dir) * attenuation;
-
-        write_lbuffer((1 - emit) * (diffuse_light*diffuse + specular_light) * color.rgb);
+        fragColor = get_lit_surface_color(light_dir, light_color.rgb, attenuation);
       }
     )",
 

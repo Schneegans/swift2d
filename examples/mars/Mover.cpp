@@ -30,7 +30,7 @@ Mover::Mover() {
         LinearSpeed.set( 10);
         get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 100.0;
         get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 100.0;
-        get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 25.0;
+        get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 50.0;
         get_user()->get_components<ParticleSystemComponent>()[3]->Emitter()->Density = 15.0;
       }
       if (key == Key::S) LinearSpeed.set(-10);

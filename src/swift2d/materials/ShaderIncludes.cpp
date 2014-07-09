@@ -80,14 +80,6 @@ ShaderIncludes::ShaderIncludes() {
     }
   )");
 
-  add_include("write_lbuffer", R"(
-    layout (location = 0) out vec4 fragColor;
-
-    void write_lbuffer(vec3 color) {
-      fragColor = vec4(color, 1.0);
-    }
-  )");
-
   add_include("gbuffer_input", R"(
     uniform ivec2     screen_size;
     uniform sampler2D g_buffer_diffuse;
@@ -121,13 +113,13 @@ ShaderIncludes::ShaderIncludes() {
 
   )");
 
-  add_include("light_helpers", R"(
-    float get_specular_light(vec3 light_dir, vec3 surface_dir) {
-      return pow(max(0, dot(vec3(0, 0, 1), reflect(light_dir, surface_dir))), get_shinyness()*100);
-    }
-
-    float get_diffuse_light(vec3 light_dir, vec3 surface_dir) {
-      return max(0, dot(light_dir, surface_dir));
+  add_include("get_lit_surface_color", R"(
+    vec3 get_lit_surface_color(vec3 dir, vec3 color, float attenuation) {
+      vec3  normal   = normalize(get_normal() - 0.5);
+      float specular = pow(max(0, reflect(dir, normal).z), get_shinyness()*100);
+      float diffuse  = max(0, dot(dir, normal));
+      vec3  light    = (diffuse*get_diffuse() + specular) * color.rgb;
+      return (1.0-get_emit()) * attenuation * light;
     }
   )");
 }
