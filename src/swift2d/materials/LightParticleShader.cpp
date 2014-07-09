@@ -123,7 +123,7 @@ LightParticleShader::LightParticleShader()
   , end_opacity(get_uniform<float>("end_opacity"))
   , g_buffer_diffuse(get_uniform<int>("g_buffer_diffuse"))
   , g_buffer_normal(get_uniform<int>("g_buffer_normal"))
-  , g_buffer_aux_1(get_uniform<int>("g_buffer_aux_1")) {}
+  , g_buffer_light(get_uniform<int>("g_buffer_light")) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 

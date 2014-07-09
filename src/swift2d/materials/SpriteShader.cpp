@@ -29,9 +29,7 @@ SpriteShader::SpriteShader(int capabilities, std::string const& v_source,
   , glow_tex(get_uniform<int>("glow_tex"))
   , glow(get_uniform<float>("glow"))
   , shinyness_tex(get_uniform<int>("shinyness_tex"))
-  , shinyness(get_uniform<float>("shinyness"))
-  , reflectivity_tex(get_uniform<int>("reflectivity_tex"))
-  , reflectivity(get_uniform<float>("reflectivity")) {}
+  , shinyness(get_uniform<float>("shinyness")) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 

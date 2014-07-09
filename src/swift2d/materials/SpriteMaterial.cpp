@@ -21,7 +21,7 @@ SpriteMaterial::SpriteMaterial()
   , Emit(1.0)
   , Glow(0.0)
   , Shinyness(1.0)
-  , Reflectivity(1.0)
+  , BlendAdditive(false)
   , current_shader_dirty_(true)
   , current_shader_(nullptr) {
 
@@ -42,10 +42,6 @@ SpriteMaterial::SpriteMaterial()
   });
 
   ShinynessTexture.on_change().connect([&](TexturePtr const& val){
-    current_shader_dirty_ = true;
-  });
-
-  ReflectivityTexture.on_change().connect([&](TexturePtr const& val){
     current_shader_dirty_ = true;
   });
 }
@@ -78,10 +74,6 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
 
     if (ShinynessTexture()) {
       capabilities |= SpriteShaderFactory::SHINYNESS_TEX;
-    }
-
-    if (ReflectivityTexture()) {
-      capabilities |= SpriteShaderFactory::REFLECTIVITY_TEX;
     }
 
     current_shader_ = SpriteShaderFactory::instance()->get_shader(capabilities);
@@ -124,12 +116,6 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
   }
   current_shader_->shinyness.Set(Shinyness());
 
-  if (ReflectivityTexture()) {
-    ReflectivityTexture()->bind(ctx, 5);
-    current_shader_->reflectivity_tex.Set(5);
-  }
-  current_shader_->reflectivity.Set(Reflectivity());
-
   if (BlendAdditive()) {
     ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::One);
     Quad::instance()->draw(ctx);
@@ -152,8 +138,6 @@ void SpriteMaterial::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Glow", Glow);
   visitor.add_object("ShinynessTexture", ShinynessTexture);
   visitor.add_member("Shinyness", Shinyness);
-  visitor.add_object("ReflectivityTexture", ReflectivityTexture);
-  visitor.add_member("Reflectivity", Reflectivity);
   visitor.add_member("BlendAdditive", BlendAdditive);
 }
 

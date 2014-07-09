@@ -92,17 +92,11 @@ SpriteShaderPtr SpriteShaderFactory::get_shader(int capabilities) {
   append_float_parameter("emit", EMIT_TEX);
   append_float_parameter("glow", GLOW_TEX);
   append_float_parameter("shinyness", SHINYNESS_TEX);
-  append_float_parameter("reflectivity", REFLECTIVITY_TEX);
 
   f_shader << R"(
     void main(void) {
       write_gbuffer(
-        get_diffuse(),
-        get_normal(),
-        get_emit(),
-        get_glow(),
-        get_shinyness(),
-        get_reflectivity()
+        get_diffuse(), get_normal(), get_emit(), get_glow(), get_shinyness()
       );
     }
   )";

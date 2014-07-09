@@ -39,7 +39,7 @@ class LightParticleShader : public Shader,
   oglplus::Lazy<oglplus::Uniform<float>>       end_opacity;
   oglplus::Lazy<oglplus::Uniform<int>>         g_buffer_diffuse;
   oglplus::Lazy<oglplus::Uniform<int>>         g_buffer_normal;
-  oglplus::Lazy<oglplus::Uniform<int>>         g_buffer_aux_1;
+  oglplus::Lazy<oglplus::Uniform<int>>         g_buffer_light;
 
   friend class Singleton<LightParticleShader>;
 

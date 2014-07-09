@@ -48,9 +48,6 @@ class SpriteMaterial : public Material {
   TextureProperty ShinynessTexture;
   Float           Shinyness;
 
-  TextureProperty ReflectivityTexture;
-  Float           Reflectivity;
-
   Bool            BlendAdditive;
 
   // ----------------------------------------------------- contruction interface

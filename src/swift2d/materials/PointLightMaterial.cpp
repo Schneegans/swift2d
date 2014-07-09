@@ -37,7 +37,7 @@ void PointLightMaterial::draw_quad(RenderContext const& ctx,
   PointLightShader::instance()->screen_size.Set(ctx.size);
   PointLightShader::instance()->g_buffer_diffuse.Set(1);
   PointLightShader::instance()->g_buffer_normal.Set(2);
-  PointLightShader::instance()->g_buffer_aux_1.Set(3);
+  PointLightShader::instance()->g_buffer_light.Set(3);
   PointLightShader::instance()->light_tex.Set(0);
   PointLightShader::instance()->light_color.Set(Color().vec3());
 

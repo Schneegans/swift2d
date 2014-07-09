@@ -29,25 +29,23 @@ class Compositor {
   ~Compositor();
 
   // ------------------------------------------------------------ public methods
-  void draw_objects(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
-  void draw_lights(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
-  void post_process(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
-  void draw_gui(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
+  void draw_objects (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
+  void draw_lights  (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
+  void post_process (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
+  void draw_gui     (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   int shading_quality_;
 
-  Shader*               shader_;
-
   oglplus::Framebuffer  fbo_;
   oglplus::Texture      g_buffer_diffuse_;
   oglplus::Texture      g_buffer_normal_;
+  oglplus::Texture      g_buffer_light_;
   oglplus::Texture      final_buffer_;
-  oglplus::Texture      offscreen_aux_1_;
-  oglplus::Texture      offscreen_aux_2_;
 
+  Shader*        shader_;
   PostProcessor* post_processor_;
 };
 

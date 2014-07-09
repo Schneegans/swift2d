@@ -58,8 +58,6 @@ class SpriteShader : public Shader {
   oglplus::Lazy<oglplus::Uniform<float>>       glow;
   oglplus::Lazy<oglplus::Uniform<int>>         shinyness_tex;
   oglplus::Lazy<oglplus::Uniform<float>>       shinyness;
-  oglplus::Lazy<oglplus::Uniform<int>>         reflectivity_tex;
-  oglplus::Lazy<oglplus::Uniform<float>>       reflectivity;
 };
 
 // -----------------------------------------------------------------------------

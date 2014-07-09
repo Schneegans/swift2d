@@ -175,7 +175,7 @@ void PostProcessor::process(RenderContext const& ctx) {
 
   glow_threshold_shader_.use(ctx);
   // glow_threshold_shader_.set_uniform("g_buffer_diffuse", 0);
-  glow_threshold_shader_.set_uniform("g_buffer_aux_2", 2);
+  glow_threshold_shader_.set_uniform("g_buffer_light", 2);
   glow_threshold_shader_.set_uniform("screen_size", ctx.size/2);
 
   Quad::instance()->draw(ctx);

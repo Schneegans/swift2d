@@ -203,8 +203,7 @@
                             "FileName": "images\/planet_normal3.png"
                         },
                         "Emit": "0.1",
-                        "Shinyness": "0.2",
-                        "Reflectivity": "0.3"
+                        "Shinyness": "0.2"
                     }
                 },
                 {
@@ -268,8 +267,7 @@
                             "FileName": "images\/planet_normal.png"
                         },
                         "Emit": "0.1",
-                        "Shinyness": "0.5",
-                        "Reflectivity": "0.8"
+                        "Shinyness": "0.5"
                     }
                 },
                 {

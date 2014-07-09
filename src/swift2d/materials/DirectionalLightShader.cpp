@@ -40,7 +40,7 @@ DirectionalLightShader::DirectionalLightShader()
   , screen_size(get_uniform<math::vec2i>("screen_size"))
   , g_buffer_diffuse(get_uniform<int>("g_buffer_diffuse"))
   , g_buffer_normal(get_uniform<int>("g_buffer_normal"))
-  , g_buffer_aux_1(get_uniform<int>("g_buffer_aux_1"))
+  , g_buffer_light(get_uniform<int>("g_buffer_light"))
   , light_dir(get_uniform<math::vec3>("light_dir"))
   , light_color(get_uniform<math::vec3>("light_color")) {}
 
