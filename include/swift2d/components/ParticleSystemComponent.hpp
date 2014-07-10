@@ -14,6 +14,7 @@
 #include <swift2d/geometries/ParticleSystem.hpp>
 #include <swift2d/geometries/TextureParticleEmitter.hpp>
 #include <swift2d/geometries/LightParticleEmitter.hpp>
+#include <swift2d/geometries/HeatParticleEmitter.hpp>
 
 namespace swift {
 
@@ -71,10 +72,16 @@ class ParticleSystemComponent : public DrawableComponent {
   }
 
   void serialize(SerializedScenePtr& scene) const {
-    if (Emitter()->serialize_as_light()) {
-      scene->lights.insert(std::make_pair(Depth.get(), create_copy()));
-    } else {
-      scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
+    switch (Emitter()->target()) {
+      case SerializedScene::OBJECTS:
+        scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
+        break;
+      case SerializedScene::LIGHTS:
+        scene->lights.insert(std::make_pair(Depth.get(), create_copy()));
+        break;
+      case SerializedScene::HEAT_OBJECTS:
+        scene->heat_objects.insert(std::make_pair(Depth.get(), create_copy()));
+        break;
     }
   }
 

@@ -12,7 +12,6 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/PostProcessor.hpp>
 #include <swift2d/materials/Shader.hpp>
-#include <swift2d/scene/SerializedScene.hpp>
 #include <swift2d/properties.hpp>
 
 namespace swift {
@@ -29,10 +28,11 @@ class Compositor {
   ~Compositor();
 
   // ------------------------------------------------------------ public methods
-  void draw_objects (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
-  void draw_lights  (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
-  void post_process (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
-  void draw_gui     (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
+  void draw_objects       (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
+  void draw_lights        (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
+  void draw_heat_objects  (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
+  void post_process       (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
+  void draw_gui           (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

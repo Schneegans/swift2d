@@ -168,8 +168,6 @@
                 "DirectionVariance": "0.6",
                 "StartOpacity": "1",
                 "EndOpacity": "0.2",
-                "RotationSpeed": "0",
-                "RotationSpeedVariance": "0",
                 "StartColor": "(1 0.8 0.3)",
                 "EndColor": "(1 0 0)",
                 "Density": "5",
@@ -179,6 +177,33 @@
                 {
                     "Type": "Texture",
                     "FileName": "images\/light.png"
+                }
+            }
+        },
+        {
+            "Type": "ParticleSystemComponent",
+            "Enabled": "1",
+            "Transform": "(2 0 -1.5\n 0 2 0\n 0 0 1)",
+            "Depth": "0.4",
+            "Emitter":
+            {
+                "Type": "HeatParticleEmitter",
+                "WorldSpacePosition": "1",
+                "WorldSpaceDirection": "0",
+                "Life": "1",
+                "LifeVariance": "0.2",
+                "Position": "(0 0)",
+                "Direction": "(-4 0)",
+                "DirectionVariance": "0.5",
+                "StartOpacity": "0.4",
+                "EndOpacity": "0",
+                "Density": "5",
+                "StartScale": "0.01",
+                "EndScale": "1",
+                "Texture":
+                {
+                    "Type": "Texture",
+                    "FileName": "images\/heat.png"
                 }
             }
         }

@@ -64,7 +64,7 @@ class TextureParticleEmitter : public ParticleEmitter {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "TextureParticleEmitter"; }
 
-  bool serialize_as_light() const { return false; }
+  virtual SerializedScene::Target target() const { return SerializedScene::OBJECTS; }
 
   void draw(RenderContext const& ctx, math::mat3 const& transform, int count) const;
 

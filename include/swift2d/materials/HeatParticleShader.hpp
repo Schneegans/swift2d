@@ -6,52 +6,47 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_POST_PROCESSOR_HPP
-#define SWIFT2D_POST_PROCESSOR_HPP
+#ifndef SWIFT2D_HEAT_PARTICLE_SHADER_HPP
+#define SWIFT2D_HEAT_PARTICLE_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Shader.hpp>
-#include <swift2d/scene/SerializedScene.hpp>
+#include <swift2d/utils/Singleton.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class PostProcessor {
+class HeatParticleShader : public Shader,
+                           public Singleton<HeatParticleShader> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ----------------------------------------------------- contruction interface
-  PostProcessor(RenderContext const& ctx, int shading_quality);
+  // ------------------------------------------------------------------ uniforms
+  oglplus::Lazy<oglplus::Uniform<math::mat3>>  projection;
+  oglplus::Lazy<oglplus::Uniform<math::mat3>>  transform;
+  oglplus::Lazy<oglplus::Uniform<int>>         heat_tex;
+  oglplus::Lazy<oglplus::Uniform<float>>       start_scale;
+  oglplus::Lazy<oglplus::Uniform<float>>       end_scale;
+  oglplus::Lazy<oglplus::Uniform<float>>       start_opacity;
+  oglplus::Lazy<oglplus::Uniform<float>>       end_opacity;
 
-  // ------------------------------------------------------------ public methods
-  void draw_heat_objects(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
-  void process(RenderContext const& ctx);
+  friend class Singleton<HeatParticleShader>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  int shading_quality_;
-
-  Shader               post_fx_shader_;
-  Shader               glow_threshold_shader_;
-  Shader               glow_shader_;
-
-  oglplus::Framebuffer glow_fbo_;
-  oglplus::Texture     glow_ping_;
-  oglplus::Texture     glow_pong_;
-
-  oglplus::Framebuffer heat_fbo_;
-  oglplus::Texture     heat_buffer_;
+  // this class is a Singleton --- private c'tor and d'tor
+  HeatParticleShader();
+  ~HeatParticleShader() {};
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_POST_PROCESSOR_HPP
+#endif // SWIFT2D_HEAT_PARTICLE_SHADER_HPP

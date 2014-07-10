@@ -10,6 +10,7 @@
 #define SWIFT2D_PARTICLE_EMITTER_HPP
 
 // includes  -------------------------------------------------------------------
+#include <swift2d/scene/SerializedScene.hpp>
 #include <swift2d/objects/SavableObjectVisitor.hpp>
 #include <swift2d/properties.hpp>
 #include <swift2d/utils/Color.hpp>
@@ -50,9 +51,6 @@ class ParticleEmitter : public SavableObject {
   Float           StartOpacity;
   Float           EndOpacity;
 
-  Float           RotationSpeed;
-  Float           RotationSpeedVariance;
-
   ColorProperty   StartColor;
   ColorProperty   EndColor;
 
@@ -66,7 +64,7 @@ class ParticleEmitter : public SavableObject {
   ParticleEmitter();
 
   // ------------------------------------------------------------ public methods
-  virtual bool serialize_as_light() const = 0;
+  virtual SerializedScene::Target target() const = 0;
 
   virtual void draw(RenderContext const& ctx, math::mat3 const& transform, int count) const = 0;
 
@@ -83,8 +81,6 @@ class ParticleEmitter : public SavableObject {
     visitor.add_member("DirectionVariance", DirectionVariance);
     visitor.add_member("StartOpacity", StartOpacity);
     visitor.add_member("EndOpacity", EndOpacity);
-    visitor.add_member("RotationSpeed", RotationSpeed);
-    visitor.add_member("RotationSpeedVariance", RotationSpeedVariance);
     visitor.add_member("StartColor", StartColor);
     visitor.add_member("EndColor", EndColor);
     visitor.add_member("Density", Density);

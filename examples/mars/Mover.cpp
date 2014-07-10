@@ -21,6 +21,7 @@ Mover::Mover() {
         get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 0.0;
         get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 0.0;
         get_user()->get_components<ParticleSystemComponent>()[3]->Emitter()->Density = 0.0;
+        get_user()->get_components<ParticleSystemComponent>()[4]->Emitter()->Density = 0.0;
       }
       if (key == Key::S) LinearSpeed.set(0);
       if (key == Key::A) AngularSpeed.set(0);
@@ -32,6 +33,7 @@ Mover::Mover() {
         get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 100.0;
         get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 50.0;
         get_user()->get_components<ParticleSystemComponent>()[3]->Emitter()->Density = 15.0;
+        get_user()->get_components<ParticleSystemComponent>()[4]->Emitter()->Density = 100.0;
       }
       if (key == Key::S) LinearSpeed.set(-10);
       if (key == Key::A) AngularSpeed.set(-2 );

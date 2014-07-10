@@ -51,7 +51,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
       compositor_ = nullptr;
     }
 
-    compositor_ = new Compositor(window_->get_context(), 2);
+    compositor_ = new Compositor(window_->get_context(), 3);
   }
 
   window_->get_context().gl.Viewport(old_size_.x(), old_size_.y());
@@ -70,6 +70,9 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   // draw user interface
   compositor_->draw_gui(scene, window_->get_context());
+
+  // draw heat objects
+  compositor_->draw_heat_objects(scene, window_->get_context());
 
   // perform post processing
   compositor_->post_process(scene, window_->get_context());

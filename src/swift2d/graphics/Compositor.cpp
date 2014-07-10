@@ -102,7 +102,7 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality)
     )");
 
     if (shading_quality_ > 1) {
-      post_processor_ = new PostProcessor(ctx);
+      post_processor_ = new PostProcessor(ctx, shading_quality_);
     }
   }
 }
@@ -193,6 +193,15 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
     for (auto& light: scene->lights) {
       light.second->draw(ctx);
     }
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Compositor::draw_heat_objects(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
+
+  if (shading_quality_ > 2 && scene->heat_objects.size() > 0) {
+    post_processor_->draw_heat_objects(scene, ctx);
   }
 }
 

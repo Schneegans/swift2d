@@ -36,6 +36,7 @@ namespace {
         Object::init<GuiComponent>();
         Object::init<LightComponent>();
         Object::init<LightParticleEmitter>();
+        Object::init<HeatParticleEmitter>();
         Object::init<ListenerComponent>();
         Object::init<MoveBehavior>();
         Object::init<OffsetBehavior>();

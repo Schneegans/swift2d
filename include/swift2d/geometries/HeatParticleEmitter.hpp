@@ -6,11 +6,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_LIGHT_PARTICLE_EMITTER_HPP
-#define SWIFT2D_LIGHT_PARTICLE_EMITTER_HPP
+#ifndef SWIFT2D_HEAT_PARTICLE_EMITTER_HPP
+#define SWIFT2D_HEAT_PARTICLE_EMITTER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/geometries/ParticleEmitter.hpp>
+#include <swift2d/geometries/LightParticleEmitter.hpp>
 
 #include <stack>
 
@@ -20,51 +20,42 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class LightParticleEmitter;
-typedef std::shared_ptr<LightParticleEmitter>       LightParticleEmitterPtr;
-typedef std::shared_ptr<const LightParticleEmitter> ConstLightParticleEmitterPtr;
-typedef Property<LightParticleEmitterPtr>           LightParticleEmitterProperty;
+class HeatParticleEmitter;
+typedef std::shared_ptr<HeatParticleEmitter>       HeatParticleEmitterPtr;
+typedef std::shared_ptr<const HeatParticleEmitter> ConstHeatParticleEmitterPtr;
+typedef Property<HeatParticleEmitterPtr>           HeatParticleEmitterProperty;
 
 // -----------------------------------------------------------------------------
-class LightParticleEmitter : public ParticleEmitter {
+class HeatParticleEmitter : public LightParticleEmitter {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ---------------------------------------------------------------- properties
-  TextureProperty Texture;
-
   // ----------------------------------------------------- contruction interface
-  LightParticleEmitter();
-
   // Creates a new component and returns a shared pointer.
-  static LightParticleEmitterPtr create() {
-    return std::make_shared<LightParticleEmitter>();
+  static HeatParticleEmitterPtr create() {
+    return std::make_shared<HeatParticleEmitter>();
   }
 
   // creates a copy from this
-  LightParticleEmitterPtr create_copy() const {
-    return std::make_shared<LightParticleEmitter>(*this);
+  HeatParticleEmitterPtr create_copy() const {
+    return std::make_shared<HeatParticleEmitter>(*this);
   }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "LightParticleEmitter"; }
+  static  std::string get_type_name_static() { return "HeatParticleEmitter"; }
 
-  virtual SerializedScene::Target target() const { return SerializedScene::LIGHTS; }
+  virtual SerializedScene::Target target() const { return SerializedScene::HEAT_OBJECTS; }
 
   virtual void draw(RenderContext const& ctx, math::mat3 const& transform, int count) const;
 
-  void spawn(math::mat3 transform, math::vec2& position, float& max_age,
-             math::vec2& direction, float& rotation, float& rotation_speed) const;
-
   virtual void accept(SavableObjectVisitor& visitor) {
-    ParticleEmitter::accept(visitor);
-    visitor.add_object("Texture", Texture);
+    LightParticleEmitter::accept(visitor);
   }
 };
 
 }
 
-#endif // SWIFT2D_LIGHT_PARTICLE_EMITTER_HPP
+#endif // SWIFT2D_HEAT_PARTICLE_EMITTER_HPP

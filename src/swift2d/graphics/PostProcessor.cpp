@@ -10,13 +10,15 @@
 #include <swift2d/graphics/PostProcessor.hpp>
 
 #include <swift2d/geometries/Quad.hpp>
+#include <swift2d/components/DrawableComponent.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-PostProcessor::PostProcessor(RenderContext const& ctx)
-  : post_fx_shader_(R"(
+PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
+  : shading_quality_(shading_quality)
+  , post_fx_shader_(R"(
       // vertex shader -------------------------------------------------------
       @include "fullscreen_quad_vertext_shader"
     )", R"(
@@ -24,15 +26,23 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       @include "version"
 
       uniform sampler2D g_buffer_shaded;
-      uniform sampler2D g_glow;
+      uniform sampler2D glow_buffer;
+      uniform sampler2D heat_buffer;
+      uniform bool      use_heat;
       uniform ivec2     screen_size;
 
       layout (location = 0) out vec4 fragColor;
 
       void main(void) {
-        vec3  diffuse  = texture2D(g_buffer_shaded, gl_FragCoord.xy/screen_size).rgb;
-        float glow     = texture2D(g_glow, gl_FragCoord.xy/screen_size).r;
+        vec2 texcoords = gl_FragCoord.xy/screen_size;
+        float glow     = texture2D(glow_buffer, texcoords).r;
 
+        if (use_heat) {
+          vec2 offset = (texture2D(heat_buffer, texcoords).rg - 0.5) * 0.2;
+          texcoords   += offset;
+        }
+
+        vec3  diffuse  = texture2D(g_buffer_shaded, texcoords).rgb;
         fragColor      = vec4(diffuse + vec3(0, 0, glow), 1.0);
       }
     )")
@@ -87,7 +97,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       // fragment shader -----------------------------------------------------
       @include "version"
 
-      uniform sampler2D g_glow;
+      uniform sampler2D glow_buffer;
       uniform ivec2     screen_size;
       uniform float     flare_length;
 
@@ -101,28 +111,25 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
         float col = 0.0;
 
-        col += texture2D(g_glow, blur_texcoords[ 0]).r*0.0044299121055113265;
-        col += texture2D(g_glow, blur_texcoords[ 1]).r*0.00895781211794;
-        col += texture2D(g_glow, blur_texcoords[ 2]).r*0.0215963866053;
-        col += texture2D(g_glow, blur_texcoords[ 3]).r*0.0443683338718;
-        col += texture2D(g_glow, blur_texcoords[ 4]).r*0.0776744219933;
-        col += texture2D(g_glow, blur_texcoords[ 5]).r*0.115876621105;
-        col += texture2D(g_glow, blur_texcoords[ 6]).r*0.147308056121;
-        col += texture2D(g_glow, texcoords         ).r*0.159576912161;
-        col += texture2D(g_glow, blur_texcoords[ 7]).r*0.147308056121;
-        col += texture2D(g_glow, blur_texcoords[ 8]).r*0.115876621105;
-        col += texture2D(g_glow, blur_texcoords[ 9]).r*0.0776744219933;
-        col += texture2D(g_glow, blur_texcoords[10]).r*0.0443683338718;
-        col += texture2D(g_glow, blur_texcoords[11]).r*0.0215963866053;
-        col += texture2D(g_glow, blur_texcoords[12]).r*0.00895781211794;
-        col += texture2D(g_glow, blur_texcoords[13]).r*0.0044299121055113265;
+        col += texture2D(glow_buffer, blur_texcoords[ 0]).r*0.0044299121055113265;
+        col += texture2D(glow_buffer, blur_texcoords[ 1]).r*0.00895781211794;
+        col += texture2D(glow_buffer, blur_texcoords[ 2]).r*0.0215963866053;
+        col += texture2D(glow_buffer, blur_texcoords[ 3]).r*0.0443683338718;
+        col += texture2D(glow_buffer, blur_texcoords[ 4]).r*0.0776744219933;
+        col += texture2D(glow_buffer, blur_texcoords[ 5]).r*0.115876621105;
+        col += texture2D(glow_buffer, blur_texcoords[ 6]).r*0.147308056121;
+        col += texture2D(glow_buffer, texcoords         ).r*0.159576912161;
+        col += texture2D(glow_buffer, blur_texcoords[ 7]).r*0.147308056121;
+        col += texture2D(glow_buffer, blur_texcoords[ 8]).r*0.115876621105;
+        col += texture2D(glow_buffer, blur_texcoords[ 9]).r*0.0776744219933;
+        col += texture2D(glow_buffer, blur_texcoords[10]).r*0.0443683338718;
+        col += texture2D(glow_buffer, blur_texcoords[11]).r*0.0215963866053;
+        col += texture2D(glow_buffer, blur_texcoords[12]).r*0.00895781211794;
+        col += texture2D(glow_buffer, blur_texcoords[13]).r*0.0044299121055113265;
 
         fragColor = vec4(col, 0.0, 0.0, 1.0);
       }
-    )")
-  , glow_fbo_()
-  , glow_ping_()
-  , glow_pong_() {
+    )") {
 
   auto create_texture = [&](
     oglplus::Texture& tex, int width, int height,
@@ -159,6 +166,47 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   oglplus::Framebuffer::AttachColorTexture(
     oglplus::Framebuffer::Target::Draw, 1, glow_pong_, 0
   );
+
+  if (shading_quality_ > 2) {
+
+    create_texture(
+      heat_buffer_, ctx.size.x()/8, ctx.size.y()/8,
+      oglplus::PixelDataInternalFormat::RG,
+      oglplus::PixelDataFormat::RG
+    );
+
+    // create framebuffer object ---------------------------------------------
+    heat_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
+    oglplus::Framebuffer::AttachColorTexture(
+      oglplus::Framebuffer::Target::Draw, 0, heat_buffer_, 0
+    );
+
+    GLfloat clear[2] = {0.5f, 0.5f};
+    ctx.gl.ClearColorBuffer(0, clear);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void PostProcessor::draw_heat_objects(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
+  if (shading_quality_ > 2) {
+    ctx.gl.BlendFunc(
+      oglplus::BlendFunction::SrcAlpha,
+      oglplus::BlendFunction::OneMinusSrcAlpha
+    );
+
+    ctx.gl.Viewport(ctx.size.x()/8, ctx.size.y()/8);
+
+    heat_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
+    ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
+
+    GLfloat clear[2] = {0.5f, 0.5f};
+    ctx.gl.ClearColorBuffer(0, clear);
+
+    for (auto& object: scene->heat_objects) {
+      object.second->draw(ctx);
+    }
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -184,7 +232,7 @@ void PostProcessor::process(RenderContext const& ctx) {
   glow_shader_.use(ctx);
   glow_shader_.set_uniform("screen_size", ctx.size/2);
   oglplus::Texture::Active(1);
-  glow_shader_.set_uniform("g_glow", 1);
+  glow_shader_.set_uniform("glow_buffer", 1);
 
   // pass 1
   ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_1);
@@ -219,8 +267,18 @@ void PostProcessor::process(RenderContext const& ctx) {
   ctx.gl.Bind(oglplus::smart_enums::_2D(), glow_pong_);
 
   post_fx_shader_.use(ctx);
+
+  if (shading_quality_ > 2) {
+    oglplus::Texture::Active(2);
+    ctx.gl.Bind(oglplus::smart_enums::_2D(), heat_buffer_);
+    post_fx_shader_.set_uniform("heat_buffer", 2);
+    post_fx_shader_.set_uniform("use_heat", 1);
+  } else {
+    post_fx_shader_.set_uniform("use_heat", 0);
+  }
+
   post_fx_shader_.set_uniform("g_buffer_shaded", 0);
-  post_fx_shader_.set_uniform("g_glow", 1);
+  post_fx_shader_.set_uniform("glow_buffer", 1);
   post_fx_shader_.set_uniform("screen_size", ctx.size);
 
   Quad::instance()->draw(ctx);
