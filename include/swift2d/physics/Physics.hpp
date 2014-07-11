@@ -6,60 +6,47 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_POST_PROCESSOR_HPP
-#define SWIFT2D_POST_PROCESSOR_HPP
+#ifndef SWIFT2D_PHYSICS_HPP
+#define SWIFT2D_PHYSICS_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/Shader.hpp>
-#include <swift2d/scene/SerializedScene.hpp>
-#include <swift2d/graphics/StreakEffect.hpp>
-#include <swift2d/graphics/GhostEffect.hpp>
-#include <swift2d/graphics/HeatEffect.hpp>
-#include <swift2d/textures/Texture.hpp>
+#include <swift2d/physics/RigidbodyComponent.hpp>
+#include <swift2d/utils/Singleton.hpp>
+
+#include <unordered_set>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class PostProcessor {
+class Physics : public Singleton<Physics> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ----------------------------------------------------- contruction interface
-  PostProcessor(RenderContext const& ctx, int shading_quality);
+  void update(double time);
 
-  // ------------------------------------------------------------ public methods
-  void process(ConstSerializedScenePtr const& scene, RenderContext const& ctx,
-               oglplus::Texture const& final_buffer,
-               oglplus::Texture const& g_buffer_light);
+
+  void add_rigidbody(RigidbodyComponentPtr const& body);
+  void remove_rigidbody(RigidbodyComponentPtr const& body);
+
+  friend class Singleton<Physics>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void generate_threshold_buffer(RenderContext const& ctx);
+  // this class is a Singleton --- private c'tor and d'tor
+  Physics() {};
+  ~Physics() {};
 
-  int shading_quality_;
-
-  Shader               post_fx_shader_;
-
-  Shader               threshold_shader_;
-  oglplus::Framebuffer threshold_fbo_;
-  oglplus::Texture     threshold_buffer_;
-
-  StreakEffect         streak_effect_;
-  GhostEffect          ghost_effect_;
-  HeatEffect           heat_effect_;
-
-  Texture dirt_;
+  std::unordered_set<RigidbodyComponent*> rigid_bodies_;
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_POST_PROCESSOR_HPP
+#endif // SWIFT2D_PHYSICS_HPP

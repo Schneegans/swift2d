@@ -76,7 +76,7 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
       .WrapT(oglplus::TextureWrap::ClampToBorder);
   };
 
-  auto size(ctx.size/8);
+  auto size(ctx.size/6);
 
   create_texture(
     streak_buffer_tmp_, size.x(), size.y(),
@@ -177,7 +177,7 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
 
 void StreakEffect::process(RenderContext const& ctx, oglplus::Texture const& threshold_buffer_) {
 
-  ctx.gl.Viewport(ctx.size.x()/8, ctx.size.y()/8);
+  ctx.gl.Viewport(ctx.size.x()/6, ctx.size.y()/6);
 
   streak_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
   const float DEC = 0.96;

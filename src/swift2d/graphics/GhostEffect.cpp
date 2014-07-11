@@ -129,7 +129,7 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
       .WrapT(oglplus::TextureWrap::ClampToBorder);
   };
 
-  auto size(ctx.size/8);
+  auto size(ctx.size/6);
 
   create_texture(
     buffer_tmp_, size.x(), size.y(),
@@ -176,7 +176,7 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
 
 void GhostEffect::process(RenderContext const& ctx, oglplus::Texture const& threshold_buffer_) {
 
-  ctx.gl.Viewport(ctx.size.x()/8, ctx.size.y()/8);
+  ctx.gl.Viewport(ctx.size.x()/6, ctx.size.y()/6);
 
   fbo_.Bind(oglplus::Framebuffer::Target::Draw);
 
@@ -194,7 +194,7 @@ void GhostEffect::process(RenderContext const& ctx, oglplus::Texture const& thre
     Quad::instance()->draw(ctx);
   };
 
-  math::vec2 radius(2.0/(ctx.size.x()/8), 2.0/(ctx.size.y()/8));
+  math::vec2 radius(2.0/(ctx.size.x()/6), 2.0/(ctx.size.y()/6));
 
   blur_pass(math::vec2(radius.x()/2, 0), threshold_buffer_, oglplus::FramebufferColorAttachment::_0);
   blur_pass(math::vec2(radius.x(), 0),   buffer_tmp_,       oglplus::FramebufferColorAttachment::_1);
@@ -249,7 +249,6 @@ void GhostEffect::process(RenderContext const& ctx, oglplus::Texture const& thre
   ghost_shader_.set_uniform("color4", math::vec3(0.06, 0.00, 0.55));
 
   Quad::instance()->draw(ctx);
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////

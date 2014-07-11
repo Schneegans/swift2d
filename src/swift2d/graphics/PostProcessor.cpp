@@ -10,6 +10,7 @@
 #include <swift2d/graphics/PostProcessor.hpp>
 
 #include <swift2d/geometries/Quad.hpp>
+#include <swift2d/application/Application.hpp>
 
 namespace swift {
 
@@ -34,6 +35,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
       uniform sampler2D glow_buffer_7;
       uniform sampler2D glow_buffer_8;
       uniform sampler2D heat_buffer;
+      uniform sampler2D dirt_tex;
       uniform bool      use_heat;
       uniform ivec2     screen_size;
 
@@ -50,13 +52,15 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
                        + texture2D(glow_buffer_7, texcoords).rgb
                        + texture2D(glow_buffer_8, texcoords).rgb;
 
+        vec3 dirt = texture2D(dirt_tex, texcoords).rgb;
+
         if (use_heat) {
           vec2 offset = (texture2D(heat_buffer, texcoords).rg - 0.5) * 0.2;
           texcoords   += offset;
         }
 
         fragColor = texture2D(g_buffer_shaded, texcoords).rgb;
-        fragColor = fragColor + glow * 0.5;
+        fragColor = fragColor + (glow + 0.05) * dirt;
       }
     )")
   , threshold_shader_(R"(
@@ -108,7 +112,8 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
     )")
   , streak_effect_(ctx)
   , ghost_effect_(ctx)
-  , heat_effect_(ctx, shading_quality_) {
+  , heat_effect_(ctx, shading_quality_)
+  , dirt_(Application::instance()->get_resource("images", "dirt.jpg")) {
 
   auto create_texture = [&](
     oglplus::Texture& tex, int width, int height,
@@ -126,7 +131,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
   };
 
   // threshold members ---------------------------------------------------------
-  auto size(ctx.size/8);
+  auto size(ctx.size/6);
 
   create_texture(
     threshold_buffer_, size.x(), size.y(),
@@ -190,6 +195,9 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     post_fx_shader_.set_uniform("use_heat", 0);
   }
 
+  dirt_.bind(ctx, start);
+  post_fx_shader_.set_uniform("dirt_tex", start);
+
   post_fx_shader_.set_uniform("screen_size", ctx.size);
 
   Quad::instance()->draw(ctx);
@@ -201,7 +209,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
 void PostProcessor::generate_threshold_buffer(RenderContext const& ctx) {
 
-  ctx.gl.Viewport(ctx.size.x()/8, ctx.size.y()/8);
+  ctx.gl.Viewport(ctx.size.x()/6, ctx.size.y()/6);
 
   threshold_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
   ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
@@ -209,7 +217,7 @@ void PostProcessor::generate_threshold_buffer(RenderContext const& ctx) {
   threshold_shader_.use(ctx);
   threshold_shader_.set_uniform("g_buffer_diffuse", 0);
   threshold_shader_.set_uniform("g_buffer_light", 1);
-  threshold_shader_.set_uniform("screen_size", ctx.size/8);
+  threshold_shader_.set_uniform("screen_size", ctx.size/6);
 
   Quad::instance()->draw(ctx);
 }

@@ -6,60 +6,64 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_POST_PROCESSOR_HPP
-#define SWIFT2D_POST_PROCESSOR_HPP
+#ifndef SWIFT2D_RIGIDBODY_COMPONENT_HPP
+#define SWIFT2D_RIGIDBODY_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/Shader.hpp>
-#include <swift2d/scene/SerializedScene.hpp>
-#include <swift2d/graphics/StreakEffect.hpp>
-#include <swift2d/graphics/GhostEffect.hpp>
-#include <swift2d/graphics/HeatEffect.hpp>
-#include <swift2d/textures/Texture.hpp>
+#include <swift2d/components/TransformableComponent.hpp>
+#include <iostream>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
+// shared pointer type definition ----------------------------------------------
+class RigidbodyComponent;
+typedef std::shared_ptr<RigidbodyComponent>       RigidbodyComponentPtr;
+typedef std::shared_ptr<const RigidbodyComponent> ConstRigidbodyComponentPtr;
+
 // -----------------------------------------------------------------------------
-class PostProcessor {
+class RigidbodyComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  // ---------------------------------------------------------------- properties
 
-  // ----------------------------------------------------- contruction interface
-  PostProcessor(RenderContext const& ctx, int shading_quality);
+  // ---------------------------------------------------- construction interface
+  RigidbodyComponent();
+  ~RigidbodyComponent();
+
+  // Creates a new component and returns a shared pointer.
+  template <typename... Args>
+  static RigidbodyComponentPtr create(Args&& ... a) {
+    return std::make_shared<RigidbodyComponent>(a...);
+  }
+
+  // creates a copy from this
+  RigidbodyComponentPtr create_copy() const {
+    return std::make_shared<RigidbodyComponent>(*this);
+  }
 
   // ------------------------------------------------------------ public methods
-  void process(ConstSerializedScenePtr const& scene, RenderContext const& ctx,
-               oglplus::Texture const& final_buffer,
-               oglplus::Texture const& g_buffer_light);
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "RigidbodyComponent"; }
+
+  virtual void update(double time);
+
+  virtual void accept(SavableObjectVisitor& visitor) {
+    TransformableComponent::accept(visitor);
+  }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void generate_threshold_buffer(RenderContext const& ctx);
 
-  int shading_quality_;
-
-  Shader               post_fx_shader_;
-
-  Shader               threshold_shader_;
-  oglplus::Framebuffer threshold_fbo_;
-  oglplus::Texture     threshold_buffer_;
-
-  StreakEffect         streak_effect_;
-  GhostEffect          ghost_effect_;
-  HeatEffect           heat_effect_;
-
-  Texture dirt_;
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_POST_PROCESSOR_HPP
+#endif  // SWIFT2D_RIGIDBODY_COMPONENT_HPP

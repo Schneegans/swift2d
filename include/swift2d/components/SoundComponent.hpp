@@ -18,8 +18,6 @@
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-// A screen core represents a rectangular, virtual screen. Combined with a    //
-// view core it defines the viewing frustum.                                  //
 ////////////////////////////////////////////////////////////////////////////////
 
 // forward declares ------------------------------------------------------------
