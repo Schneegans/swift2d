@@ -45,10 +45,10 @@ int main(int argc, char** argv) {
   // example scene setup -------------------------------------------------------
   auto scene = SceneManager::instance()->get_default();
 
-  // auto music = scene->add<SoundComponent>();
-  //      music->Sound = Sound::create_from_file(Application::instance()->get_resource("audio", "music.ogg"));
-  //      music->Volume = 0.5f;
-  //      music->play();
+  auto music = scene->add<SoundComponent>();
+       music->Sound = Sound::create_from_file(Application::instance()->get_resource("audio", "music.ogg"));
+       music->Volume = 0.5f;
+       music->play();
 
   auto field = scene->add<CircularShape>();
        field->Transform = math::make_scale(4);

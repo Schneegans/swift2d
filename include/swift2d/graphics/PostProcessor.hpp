@@ -36,15 +36,38 @@ class PostProcessor {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+
+
+  void generate_threshold_buffer(RenderContext const& ctx);
+  void generate_streak_buffers(RenderContext const& ctx);
+
   int shading_quality_;
 
   Shader               post_fx_shader_;
-  Shader               glow_threshold_shader_;
-  Shader               glow_shader_;
 
-  oglplus::Framebuffer glow_fbo_;
-  oglplus::Texture     glow_ping_;
-  oglplus::Texture     glow_pong_;
+  Shader               threshold_shader_;
+  oglplus::Framebuffer threshold_fbo_;
+  oglplus::Texture     threshold_buffer_;
+
+  Shader               streak_shader_;
+  oglplus::Framebuffer streak_fbo_;
+  oglplus::Texture     streak_buffer_tmp_;
+  oglplus::Texture     streak_buffer_1_;
+  oglplus::Texture     streak_buffer_2_;
+  oglplus::Texture     streak_buffer_3_;
+  oglplus::Texture     streak_buffer_4_;
+  oglplus::Texture     streak_buffer_5_;
+  oglplus::Texture     streak_buffer_6_;
+
+  std::vector<math::vec3> streak_colors_1_;
+  std::vector<math::vec3> streak_colors_2_;
+  std::vector<math::vec3> streak_colors_3_;
+  std::vector<math::vec3> streak_colors_4_;
+
+  // Shader               glow_shader_;
+  // oglplus::Framebuffer glow_fbo_;
+  // oglplus::Texture     glow_ping_;
+  // oglplus::Texture     glow_pong_;
 
   oglplus::Framebuffer heat_fbo_;
   oglplus::Texture     heat_buffer_;
