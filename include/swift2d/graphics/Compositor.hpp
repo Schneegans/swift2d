@@ -30,7 +30,6 @@ class Compositor {
   // ------------------------------------------------------------ public methods
   void draw_objects       (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
   void draw_lights        (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
-  void draw_heat_objects  (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
   void post_process       (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
   void draw_gui           (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
 

@@ -68,9 +68,6 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   // draw lights
   compositor_->draw_lights(scene, window_->get_context());
 
-  // draw heat objects
-  compositor_->draw_heat_objects(scene, window_->get_context());
-
   // perform post processing
   compositor_->post_process(scene, window_->get_context());
 

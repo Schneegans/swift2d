@@ -6,13 +6,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_POST_PROCESSOR_HPP
-#define SWIFT2D_POST_PROCESSOR_HPP
+#ifndef SWIFT2D_STREAK_EFFECT_HPP
+#define SWIFT2D_STREAK_EFFECT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Shader.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
-#include <swift2d/graphics/StreakEffect.hpp>
 
 namespace swift {
 
@@ -21,40 +20,40 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class PostProcessor {
+class StreakEffect {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ----------------------------------------------------- contruction interface
-  PostProcessor(RenderContext const& ctx, int shading_quality);
+  StreakEffect(RenderContext const& ctx);
 
-  // ------------------------------------------------------------ public methods
-  void draw_heat_objects(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
-  void process(RenderContext const& ctx);
-
+  void process(RenderContext const& ctx, oglplus::Texture const& threshold_buffer_);
+  void bind_buffers(RenderContext const& ctx);
+  
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void generate_threshold_buffer(RenderContext const& ctx);
 
-  int shading_quality_;
+  Shader               streak_shader_;
+  oglplus::Framebuffer streak_fbo_;
+  oglplus::Texture     streak_buffer_tmp_;
+  oglplus::Texture     streak_buffer_1_;
+  oglplus::Texture     streak_buffer_2_;
+  oglplus::Texture     streak_buffer_3_;
+  oglplus::Texture     streak_buffer_4_;
+  oglplus::Texture     streak_buffer_5_;
+  oglplus::Texture     streak_buffer_6_;
 
-  Shader               post_fx_shader_;
-
-  Shader               threshold_shader_;
-  oglplus::Framebuffer threshold_fbo_;
-  oglplus::Texture     threshold_buffer_;
-
-  StreakEffect         streak_effect_;
-
-  oglplus::Framebuffer heat_fbo_;
-  oglplus::Texture     heat_buffer_;
+  std::vector<math::vec3> streak_colors_1_;
+  std::vector<math::vec3> streak_colors_2_;
+  std::vector<math::vec3> streak_colors_3_;
+  std::vector<math::vec3> streak_colors_4_;
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_POST_PROCESSOR_HPP
+#endif  // SWIFT2D_STREAK_EFFECT_HPP

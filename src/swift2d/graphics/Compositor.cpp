@@ -198,16 +198,11 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Compositor::draw_heat_objects(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
+void Compositor::post_process(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
 
   if (shading_quality_ > 2 && scene->heat_objects.size() > 0) {
     post_processor_->draw_heat_objects(scene, ctx);
   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Compositor::post_process(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
 
   if (shading_quality_ > 1) {
     oglplus::Texture::Active(0);
