@@ -32,6 +32,8 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
       uniform sampler2D glow_buffer_4;
       uniform sampler2D glow_buffer_5;
       uniform sampler2D glow_buffer_6;
+      uniform sampler2D glow_buffer_7;
+      uniform sampler2D glow_buffer_8;
       uniform sampler2D heat_buffer;
       uniform bool      use_heat;
       uniform ivec2     screen_size;
@@ -45,7 +47,18 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
                        + texture2D(glow_buffer_3, texcoords).rgb
                        + texture2D(glow_buffer_4, texcoords).rgb
                        + texture2D(glow_buffer_5, texcoords).rgb
-                       + texture2D(glow_buffer_6, texcoords).rgb;
+                       + texture2D(glow_buffer_6, texcoords).rgb
+                       + texture2D(glow_buffer_7, texcoords).rgb
+                       + texture2D(glow_buffer_8, texcoords).rgb;
+
+        // vec3 glow1      = max(texture2D(glow_buffer_1, texcoords).rgb, texture2D(glow_buffer_2, texcoords).rgb);
+        // vec3 glow2      = max(texture2D(glow_buffer_3, texcoords).rgb, texture2D(glow_buffer_4, texcoords).rgb);
+        // vec3 glow3      = max(texture2D(glow_buffer_5, texcoords).rgb, texture2D(glow_buffer_6, texcoords).rgb);
+
+        // glow1 = max(glow1, glow2);
+        // glow2 = max(glow2, glow3);
+
+        // vec3 glow = max(glow1, glow2);
 
         if (use_heat) {
           vec2 offset = (texture2D(heat_buffer, texcoords).rg - 0.5) * 0.2;
@@ -53,9 +66,8 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
         }
 
         fragColor    = texture2D(g_buffer_shaded, texcoords).rgb;
-        // fragColor.b += glow;
 
-        fragColor = fragColor + glow*0.75;
+        fragColor = fragColor + glow;
       }
     )")
   , threshold_shader_(R"(
@@ -105,7 +117,8 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
         fragColor = glow * color / 16.0;
       }
     )")
-  , streak_effect_(ctx) {
+  , streak_effect_(ctx)
+  , ghost_effect_(ctx) {
 
   auto create_texture = [&](
     oglplus::Texture& tex, int width, int height,
@@ -189,14 +202,17 @@ void PostProcessor::process(RenderContext const& ctx) {
 
   // streaks
   streak_effect_.process(ctx, threshold_buffer_);
-  streak_effect_.bind_buffers(ctx);
+  ghost_effect_.process(ctx, threshold_buffer_);
 
   ctx.gl.Viewport(ctx.size.x(), ctx.size.y());
-
   oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
   ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
 
   post_fx_shader_.use(ctx);
+
+  int start = 2;
+  start = streak_effect_.bind_buffers(start, ctx);
+  start = ghost_effect_.bind_buffers(start, ctx);
 
   if (shading_quality_ > 2) {
     oglplus::Texture::Active(1);
@@ -208,12 +224,11 @@ void PostProcessor::process(RenderContext const& ctx) {
   }
 
   post_fx_shader_.set_uniform("g_buffer_shaded", 0);
-  post_fx_shader_.set_uniform("glow_buffer_1", 2);
-  post_fx_shader_.set_uniform("glow_buffer_2", 3);
-  post_fx_shader_.set_uniform("glow_buffer_3", 4);
-  post_fx_shader_.set_uniform("glow_buffer_4", 5);
-  post_fx_shader_.set_uniform("glow_buffer_5", 6);
-  post_fx_shader_.set_uniform("glow_buffer_6", 7);
+
+  for (int i(2); i<start; ++i) {
+    post_fx_shader_.set_uniform("glow_buffer_" + std::to_string(i-1), i);
+  }
+
   post_fx_shader_.set_uniform("screen_size", ctx.size);
 
   Quad::instance()->draw(ctx);

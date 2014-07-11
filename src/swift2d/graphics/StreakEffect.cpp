@@ -72,8 +72,8 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
         0, p_format, oglplus::PixelDataType::Float, nullptr)
       .MinFilter(oglplus::TextureMinFilter::Linear)
       .MagFilter(oglplus::TextureMagFilter::Linear)
-      .WrapS(oglplus::TextureWrap::MirroredRepeat)
-      .WrapT(oglplus::TextureWrap::MirroredRepeat);
+      .WrapS(oglplus::TextureWrap::ClampToBorder)
+      .WrapT(oglplus::TextureWrap::ClampToBorder);
   };
 
   auto size(ctx.size/8);
@@ -149,8 +149,8 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
   math::vec3 c4(0.0, 0.0, 1.0);
 
   math::vec3 c5(1.0, 0.8, 0.9);
-  math::vec3 c6(1.0, 0.4, 0.7);
-  math::vec3 c7(1.0, 0.2, 0.6);
+  math::vec3 c6(0.5, 0.4, 0.7);
+  math::vec3 c7(0.2, 0.2, 0.6);
 
   streak_colors_1_.push_back(c1*0.9);
   streak_colors_1_.push_back(c2*0.7);
@@ -176,6 +176,9 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
 ////////////////////////////////////////////////////////////////////////////////
 
 void StreakEffect::process(RenderContext const& ctx, oglplus::Texture const& threshold_buffer_) {
+
+  ctx.gl.Viewport(ctx.size.x()/8, ctx.size.y()/8);
+
   streak_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
   const float DEC = 0.96;
   streak_shader_.use(ctx);
@@ -229,24 +232,26 @@ void StreakEffect::process(RenderContext const& ctx, oglplus::Texture const& thr
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void StreakEffect::bind_buffers(RenderContext const& ctx) {
-  oglplus::Texture::Active(2);
+int StreakEffect::bind_buffers(int start, RenderContext const& ctx) {
+  oglplus::Texture::Active(start + 0);
   ctx.gl.Bind(oglplus::smart_enums::_2D(), streak_buffer_1_);
 
-  oglplus::Texture::Active(3);
+  oglplus::Texture::Active(start + 1);
   ctx.gl.Bind(oglplus::smart_enums::_2D(), streak_buffer_2_);
 
-  oglplus::Texture::Active(4);
+  oglplus::Texture::Active(start + 2);
   ctx.gl.Bind(oglplus::smart_enums::_2D(), streak_buffer_3_);
 
-  oglplus::Texture::Active(5);
+  oglplus::Texture::Active(start + 3);
   ctx.gl.Bind(oglplus::smart_enums::_2D(), streak_buffer_4_);
 
-  oglplus::Texture::Active(6);
+  oglplus::Texture::Active(start + 4);
   ctx.gl.Bind(oglplus::smart_enums::_2D(), streak_buffer_5_);
 
-  oglplus::Texture::Active(7);
+  oglplus::Texture::Active(start + 5);
   ctx.gl.Bind(oglplus::smart_enums::_2D(), streak_buffer_6_);
+
+  return start + 6;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

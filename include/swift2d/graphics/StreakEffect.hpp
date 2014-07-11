@@ -30,8 +30,8 @@ class StreakEffect {
   StreakEffect(RenderContext const& ctx);
 
   void process(RenderContext const& ctx, oglplus::Texture const& threshold_buffer_);
-  void bind_buffers(RenderContext const& ctx);
-  
+  int bind_buffers(int start, RenderContext const& ctx);
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
