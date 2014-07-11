@@ -49,7 +49,6 @@
                 "Type": "SpriteMaterial",
                 "BlendAdditive": "1",
                 "Emit": "1",
-                "Glow": "0.1",
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
