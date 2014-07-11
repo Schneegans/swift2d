@@ -10,7 +10,6 @@
 #include <swift2d/graphics/PostProcessor.hpp>
 
 #include <swift2d/geometries/Quad.hpp>
-#include <swift2d/components/DrawableComponent.hpp>
 
 namespace swift {
 
@@ -51,23 +50,13 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
                        + texture2D(glow_buffer_7, texcoords).rgb
                        + texture2D(glow_buffer_8, texcoords).rgb;
 
-        // vec3 glow1      = max(texture2D(glow_buffer_1, texcoords).rgb, texture2D(glow_buffer_2, texcoords).rgb);
-        // vec3 glow2      = max(texture2D(glow_buffer_3, texcoords).rgb, texture2D(glow_buffer_4, texcoords).rgb);
-        // vec3 glow3      = max(texture2D(glow_buffer_5, texcoords).rgb, texture2D(glow_buffer_6, texcoords).rgb);
-
-        // glow1 = max(glow1, glow2);
-        // glow2 = max(glow2, glow3);
-
-        // vec3 glow = max(glow1, glow2);
-
         if (use_heat) {
           vec2 offset = (texture2D(heat_buffer, texcoords).rg - 0.5) * 0.2;
           texcoords   += offset;
         }
 
-        fragColor    = texture2D(g_buffer_shaded, texcoords).rgb;
-
-        fragColor = fragColor + glow;
+        fragColor = texture2D(g_buffer_shaded, texcoords).rgb;
+        fragColor = fragColor + glow * 0.5;
       }
     )")
   , threshold_shader_(R"(
@@ -114,11 +103,12 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
                    + texture2D(g_buffer_light, texcoord3).b
                    + texture2D(g_buffer_light, texcoord4).b;
 
-        fragColor = glow * color / 16.0;
+        fragColor = pow(glow * color / 16.0, vec3(2));
       }
     )")
   , streak_effect_(ctx)
-  , ghost_effect_(ctx) {
+  , ghost_effect_(ctx)
+  , heat_effect_(ctx, shading_quality_) {
 
   auto create_texture = [&](
     oglplus::Texture& tex, int width, int height,
@@ -135,7 +125,6 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
       .WrapT(oglplus::TextureWrap::MirroredRepeat);
   };
 
-
   // threshold members ---------------------------------------------------------
   auto size(ctx.size/8);
 
@@ -149,59 +138,33 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
   oglplus::Framebuffer::AttachColorTexture(
     oglplus::Framebuffer::Target::Draw, 0, threshold_buffer_, 0
   );
-
-  if (shading_quality_ > 2) {
-
-    // heat members ------------------------------------------------------------
-    create_texture(
-      heat_buffer_, ctx.size.x()/8, ctx.size.y()/8,
-      oglplus::PixelDataInternalFormat::RG,
-      oglplus::PixelDataFormat::RG
-    );
-
-    heat_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
-    oglplus::Framebuffer::AttachColorTexture(
-      oglplus::Framebuffer::Target::Draw, 0, heat_buffer_, 0
-    );
-
-    GLfloat clear[2] = {0.5f, 0.5f};
-    ctx.gl.ClearColorBuffer(0, clear);
-  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void PostProcessor::draw_heat_objects(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
-  if (shading_quality_ > 2) {
-    ctx.gl.BlendFunc(
-      oglplus::BlendFunction::SrcAlpha,
-      oglplus::BlendFunction::OneMinusSrcAlpha
-    );
+void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext const& ctx,
+                            oglplus::Texture const& final_buffer,
+                            oglplus::Texture const& g_buffer_light) {
 
-    ctx.gl.Viewport(ctx.size.x()/8, ctx.size.y()/8);
-
-    heat_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
-    ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
-
-    GLfloat clear[2] = {0.5f, 0.5f};
-    ctx.gl.ClearColorBuffer(0, clear);
-
-    for (auto& object: scene->heat_objects) {
-      object.second->draw(ctx);
-    }
+  if (shading_quality_ > 2 && scene->heat_objects.size() > 0) {
+    heat_effect_.process(scene, ctx);
   }
-}
 
-////////////////////////////////////////////////////////////////////////////////
-
-void PostProcessor::process(RenderContext const& ctx) {
   ctx.gl.Disable(oglplus::Capability::Blend);
+
+  oglplus::Texture::Active(0);
+  final_buffer.Bind(oglplus::Texture::Target::_2D);
+
+  oglplus::Texture::Active(1);
+  g_buffer_light.Bind(oglplus::Texture::Target::_2D);
 
   // thresholding
   generate_threshold_buffer(ctx);
 
   // streaks
   streak_effect_.process(ctx, threshold_buffer_);
+
+  // ghosts
   ghost_effect_.process(ctx, threshold_buffer_);
 
   ctx.gl.Viewport(ctx.size.x(), ctx.size.y());
@@ -209,24 +172,22 @@ void PostProcessor::process(RenderContext const& ctx) {
   ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
 
   post_fx_shader_.use(ctx);
+  post_fx_shader_.set_uniform("g_buffer_shaded", 0);
 
-  int start = 2;
+  int start(1);
   start = streak_effect_.bind_buffers(start, ctx);
   start = ghost_effect_.bind_buffers(start, ctx);
 
+  for (int i(1); i<start; ++i) {
+    post_fx_shader_.set_uniform("glow_buffer_" + std::to_string(i), i);
+  }
+
   if (shading_quality_ > 2) {
-    oglplus::Texture::Active(1);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), heat_buffer_);
-    post_fx_shader_.set_uniform("heat_buffer", 1);
+    post_fx_shader_.set_uniform("heat_buffer", start);
+    start = heat_effect_.bind_buffers(start, ctx);
     post_fx_shader_.set_uniform("use_heat", 1);
   } else {
     post_fx_shader_.set_uniform("use_heat", 0);
-  }
-
-  post_fx_shader_.set_uniform("g_buffer_shaded", 0);
-
-  for (int i(2); i<start; ++i) {
-    post_fx_shader_.set_uniform("glow_buffer_" + std::to_string(i-1), i);
   }
 
   post_fx_shader_.set_uniform("screen_size", ctx.size);
@@ -247,7 +208,7 @@ void PostProcessor::generate_threshold_buffer(RenderContext const& ctx) {
 
   threshold_shader_.use(ctx);
   threshold_shader_.set_uniform("g_buffer_diffuse", 0);
-  threshold_shader_.set_uniform("g_buffer_light", 2);
+  threshold_shader_.set_uniform("g_buffer_light", 1);
   threshold_shader_.set_uniform("screen_size", ctx.size/8);
 
   Quad::instance()->draw(ctx);

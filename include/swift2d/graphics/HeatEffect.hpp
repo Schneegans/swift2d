@@ -6,15 +6,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_POST_PROCESSOR_HPP
-#define SWIFT2D_POST_PROCESSOR_HPP
+#ifndef SWIFT2D_HEAT_EFFECT_HPP
+#define SWIFT2D_HEAT_EFFECT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Shader.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
-#include <swift2d/graphics/StreakEffect.hpp>
-#include <swift2d/graphics/GhostEffect.hpp>
-#include <swift2d/graphics/HeatEffect.hpp>
 
 namespace swift {
 
@@ -23,40 +20,27 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class PostProcessor {
+class HeatEffect {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ----------------------------------------------------- contruction interface
-  PostProcessor(RenderContext const& ctx, int shading_quality);
+  HeatEffect(RenderContext const& ctx, int shading_quality);
 
-  // ------------------------------------------------------------ public methods
-  void process(ConstSerializedScenePtr const& scene, RenderContext const& ctx,
-               oglplus::Texture const& final_buffer,
-               oglplus::Texture const& g_buffer_light);
+  void process(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
+  int bind_buffers(int start, RenderContext const& ctx);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void generate_threshold_buffer(RenderContext const& ctx);
-
-  int shading_quality_;
-
-  Shader               post_fx_shader_;
-
-  Shader               threshold_shader_;
-  oglplus::Framebuffer threshold_fbo_;
-  oglplus::Texture     threshold_buffer_;
-
-  StreakEffect         streak_effect_;
-  GhostEffect          ghost_effect_;
-  HeatEffect           heat_effect_;
+  oglplus::Framebuffer heat_fbo_;
+  oglplus::Texture     heat_buffer_;
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_POST_PROCESSOR_HPP
+#endif  // SWIFT2D_HEAT_EFFECT_HPP
