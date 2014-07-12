@@ -209,6 +209,10 @@
                     }
                 },
                 {
+                    "Type": "StaticBodyComponent",
+                    "Radius": "0.58"
+                },
+                {
                     "Type": "MoveBehavior",
                     "Enabled": "1",
                     "LinearSpeed": "0",
@@ -246,6 +250,10 @@
                         },
                         "Shinyness": "0.2"
                     }
+                },
+                {
+                    "Type": "StaticBodyComponent",
+                    "Radius": "0.58"
                 },
                 {
                     "Type": "MoveBehavior",
@@ -287,6 +295,10 @@
                     }
                 },
                 {
+                    "Type": "StaticBodyComponent",
+                    "Radius": "0.58"
+                },
+                {
                     "Type": "MoveBehavior",
                     "Enabled": "1",
                     "LinearSpeed": "0",
@@ -324,6 +336,10 @@
                         },
                         "Shinyness": "0"
                     }
+                },
+                {
+                    "Type": "StaticBodyComponent",
+                    "Radius": "0.58"
                 },
                 {
                     "Type": "MoveBehavior",
@@ -365,6 +381,10 @@
                     }
                 },
                 {
+                    "Type": "StaticBodyComponent",
+                    "Radius": "0.58"
+                },
+                {
                     "Type": "MoveBehavior",
                     "Enabled": "1",
                     "LinearSpeed": "0",
@@ -403,7 +423,7 @@
         },
         {
             "Type": "SceneObject",
-            "Transform": "(1.2 0 -0.9\n 0 1.2 0.5\n 0 0 1)",
+            "Transform": "(1 0 -0.9\n 0 1 0.5\n 0 0 1)",
             "Components":
             [
                 {
@@ -431,6 +451,10 @@
                         },
                         "Shinyness": "1"
                     }
+                },
+                {
+                    "Type": "StaticBodyComponent",
+                    "Radius": "0.58"
                 },
                 {
                     "Type": "MoveBehavior",

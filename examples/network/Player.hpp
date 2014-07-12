@@ -89,7 +89,7 @@ class Player : public NetworkObject<Player> {
     if (is_local) {
       update_ticker_->start();
       update_ticker_->on_tick.connect([&](){
-        position_update_.set(math::get_translate(player_->Transform.get()));
+        position_update_.set(math::get_translation(player_->Transform.get()));
         rotation_update_.set(math::get_rotation(player_->Transform.get()));
       });
     } else {
@@ -98,7 +98,7 @@ class Player : public NetworkObject<Player> {
         // player_->get_component<OffsetBehavior>()->set_transform_offset(val - pos);
 
         auto transform(player_->Transform.get());
-        math::set_translate(transform, val);
+        math::set_translation(transform, val);
         player_->Transform.set(transform);
       });
       rotation_update_.on_change().connect([&](float val) {

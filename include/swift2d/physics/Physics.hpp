@@ -10,10 +10,15 @@
 #define SWIFT2D_PHYSICS_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/physics/RigidbodyComponent.hpp>
+#include <swift2d/physics/DynamicBodyComponent.hpp>
+#include <swift2d/physics/StaticBodyComponent.hpp>
 #include <swift2d/utils/Singleton.hpp>
 
 #include <unordered_set>
+
+// forward declares ------------------------------------------------------------
+class b2World;
+class b2Body;
 
 namespace swift {
 
@@ -30,8 +35,9 @@ class Physics : public Singleton<Physics> {
   void update(double time);
 
 
-  void add_rigidbody(RigidbodyComponentPtr const& body);
-  void remove_rigidbody(RigidbodyComponentPtr const& body);
+  b2Body* add(DynamicBodyComponent const* body);
+  b2Body* add(StaticBodyComponent const* body);
+  // void remove_rigidbody(RigidbodyComponentPtr const& body);
 
   friend class Singleton<Physics>;
 
@@ -39,10 +45,13 @@ class Physics : public Singleton<Physics> {
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  Physics() {};
-  ~Physics() {};
+  Physics();
+  ~Physics();
 
-  std::unordered_set<RigidbodyComponent*> rigid_bodies_;
+  // std::unordered_set<RigidbodyComponent*> rigid_bodies_;
+  b2World* world_;
+
+
 };
 
 // -----------------------------------------------------------------------------

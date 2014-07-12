@@ -6,12 +6,15 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_RIGIDBODY_COMPONENT_HPP
-#define SWIFT2D_RIGIDBODY_COMPONENT_HPP
+#ifndef SWIFT2D_STATIC_BODY_COMPONENT_HPP
+#define SWIFT2D_STATIC_BODY_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/TransformableComponent.hpp>
+#include <swift2d/components/Component.hpp>
 #include <iostream>
+
+// forward declares ------------------------------------------------------------
+class b2Body;
 
 namespace swift {
 
@@ -19,51 +22,54 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class RigidbodyComponent;
-typedef std::shared_ptr<RigidbodyComponent>       RigidbodyComponentPtr;
-typedef std::shared_ptr<const RigidbodyComponent> ConstRigidbodyComponentPtr;
+class StaticBodyComponent;
+typedef std::shared_ptr<StaticBodyComponent>       StaticBodyComponentPtr;
+typedef std::shared_ptr<const StaticBodyComponent> ConstStaticBodyComponentPtr;
 
 // -----------------------------------------------------------------------------
-class RigidbodyComponent : public TransformableComponent {
+class StaticBodyComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
   // ---------------------------------------------------------------- properties
+  Float Radius;
 
   // ---------------------------------------------------- construction interface
-  RigidbodyComponent();
-  ~RigidbodyComponent();
+  StaticBodyComponent();
+  ~StaticBodyComponent();
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static RigidbodyComponentPtr create(Args&& ... a) {
-    return std::make_shared<RigidbodyComponent>(a...);
+  static StaticBodyComponentPtr create(Args&& ... a) {
+    return std::make_shared<StaticBodyComponent>(a...);
   }
 
   // creates a copy from this
-  RigidbodyComponentPtr create_copy() const {
-    return std::make_shared<RigidbodyComponent>(*this);
+  StaticBodyComponentPtr create_copy() const {
+    return std::make_shared<StaticBodyComponent>(*this);
   }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "RigidbodyComponent"; }
+  static  std::string get_type_name_static() { return "StaticBodyComponent"; }
 
   virtual void update(double time);
 
   virtual void accept(SavableObjectVisitor& visitor) {
-    TransformableComponent::accept(visitor);
+    Component::accept(visitor);
+    visitor.add_member("Radius", Radius);
   }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-
+  b2Body* body_;
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_RIGIDBODY_COMPONENT_HPP
+#endif  // SWIFT2D_STATIC_BODY_COMPONENT_HPP

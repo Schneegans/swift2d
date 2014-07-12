@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/physics/Physics.hpp>
-#include <swift2d/physics/RigidbodyComponent.hpp>
+#include <swift2d/physics/DynamicBodyComponent.hpp>
+#include <swift2d/physics/StaticBodyComponent.hpp>
 
 #endif // SWIFT2D_INCLUDE_PHYSICS_HPP

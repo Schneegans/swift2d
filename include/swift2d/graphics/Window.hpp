@@ -64,6 +64,8 @@ class Window {
   void set_active(bool active);
   void display();
 
+  bool key_pressed(Key key) const;
+
   RenderContext const& get_context() const { return render_context_; };
   RenderContext& get_context() { return render_context_; };
 

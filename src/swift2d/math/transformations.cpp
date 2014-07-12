@@ -38,9 +38,9 @@ mat3 make_scale (float x, float y) {
 ////////////////////////////////////////////////////////////////////////////////
 
 mat3 make_rotate (float angle) {
-  return mat3( std::cos(angle), std::sin(angle), 0,
-              -std::sin(angle), std::cos(angle), 0,
-               0,               0,               1);
+  return mat3( std::cos(-angle), std::sin(-angle), 0,
+              -std::sin(-angle), std::cos(-angle), 0,
+                0,               0,                1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -176,21 +176,21 @@ mat3 transposed (mat3 const& mat) {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-vec2 get_translate(mat3 const& mat) {
+vec2 get_translation(mat3 const& mat) {
   return vec2(mat.At(0, 2), mat.At(1, 2));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-vec2 get_scale (mat3 const& mat) {
+vec2 get_scale(mat3 const& mat) {
   return vec2((vec2(mat.At(0, 0), mat.At(0, 1))).Length(),
               (vec2(mat.At(1, 0), mat.At(1, 1))).Length());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-float get_rotation (mat3 const& mat) {
-  float tmp(-std::atan2(mat.At(0, 0), mat.At(0, 1)) + M_PI/2);
+float get_rotation(mat3 const& mat) {
+  float tmp(std::atan2(mat.At(0, 0), mat.At(0, 1)) - M_PI/2);
   return tmp >= 0 ? tmp : tmp + 2*M_PI;
 }
 
@@ -204,20 +204,26 @@ vec2 get_direction(mat3 const& mat) {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-void set_translate (mat3& mat, vec2 const& val) {
-  mat.Set(0, 2, val.x());
-  mat.Set(1, 2, val.y());
+void set_translation(mat3& mat, vec2 const& val) {
+  set_translation(mat, val.x(), val.y());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void set_scale (mat3& mat, vec2 const& val) {
+void set_translation(mat3& mat, float x, float y) {
+  mat.Set(0, 2, x);
+  mat.Set(1, 2, y);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void set_scale(mat3& mat, vec2 const& val) {
   scale(mat, val-get_scale(mat));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void set_rotation (mat3& mat, float val) {
+void set_rotation(mat3& mat, float val) {
   rotate(mat, val-get_rotation(mat));
 }
 

@@ -5,9 +5,7 @@
     [
         {
             "Type": "Mover",
-            "Enabled": "1",
-            "LinearSpeed": "0",
-            "AngularSpeed": "0"
+            "Enabled": "1"
         },
         {
             "Type": "ListenerComponent",

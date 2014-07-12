@@ -38,6 +38,14 @@ class TransformableComponent : public Component {
   // ------------------------------------------------------------ public methods
   virtual void update(double time);
 
+  // -------------------------------------------------- transformation interface
+  virtual void scale     (math::vec2 const& scale);
+  virtual void scale     (float scale);
+  virtual void scale     (float x, float y);
+  virtual void rotate    (float angle);
+  virtual void translate (math::vec2 const& delta);
+  virtual void translate (float x, float y);
+
   virtual math::vec2 get_position() const;
   virtual math::vec2 get_world_position() const;
 

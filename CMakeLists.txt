@@ -33,6 +33,7 @@ pkg_check_modules(OPENAL        REQUIRED openal)
 pkg_check_modules(SNDFILE       REQUIRED sndfile)
 pkg_check_modules(ALUT          REQUIRED freealut)
 pkg_check_modules(OPENGL        REQUIRED gl)
+pkg_check_modules(BOX2D         REQUIRED box2d)
 
 set(BOOST_ROOT "/opt/boost/boost_1_55_0")
 set(Boost_USE_STATIC_LIBS OFF)
@@ -49,6 +50,7 @@ set(LIBS
     ${SNDFILE_LIBRARIES}
     ${ALUT_LIBRARIES}
     ${OPENGL_LIBRARIES}
+    ${BOX2D_LIBRARIES}
     miniupnpc
     awesomium-1-7
     Xxf86vm
@@ -64,6 +66,7 @@ set(LIB_PATHS
     ${SNDFILE_LIBRARY_DIRS}
     ${ALUT_LIBRARY_DIRS}
     ${OPENGL_LIBRARY_DIRS}
+    ${BOX2D_LIBRARY_DIRS}
 )
 link_directories(${LIB_PATHS})
 
@@ -84,6 +87,7 @@ set(INCLUDE_PATHS
     ${SNDFILE_INCLUDE_DIRS}
     ${ALUT_INCLUDE_DIRS}
     ${OPENGL_INCLUDE_DIRS}
+    ${BOX2D_INCLUDE_DIRS}
 )
 include_directories(SYSTEM ${INCLUDE_PATHS})
 
@@ -150,4 +154,8 @@ message( "" )
 message( " opengl:" )
 message( "   library: ${OPENGL_LIBRARIES}" )
 message( "   include: ${OPENGL_INCLUDE_DIRS}" )
+message( "" )
+message( " box2d:" )
+message( "   library: ${BOX2D_LIBRARIES}" )
+message( "   include: ${BOX2D_INCLUDE_DIRS}" )
 message( "" )

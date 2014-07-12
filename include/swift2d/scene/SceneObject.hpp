@@ -138,6 +138,13 @@ class SceneObject : public SavableObject {
     return get_component<T>() != nullptr;
   }
 
+  // -------------------------------------------------- transformation interface
+  void scale     (math::vec2 const& scale);
+  void scale     (float scale);
+  void scale     (float x, float y);
+  void rotate    (float angle);
+  void translate (math::vec2 const& delta);
+  void translate (float x, float y);
 
   // --------------------------------------------------- serialization interface
 

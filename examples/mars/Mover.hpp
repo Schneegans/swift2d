@@ -14,7 +14,7 @@
 
 using namespace swift;
 
-class Mover: public MoveBehavior {
+class Mover: public Component {
  public:
   Mover();
 
@@ -22,7 +22,7 @@ class Mover: public MoveBehavior {
   static  std::string get_type_name_static() { return "Mover"; }
 
   virtual void accept(SavableObjectVisitor& visitor) {
-    MoveBehavior::accept(visitor);
+    Component::accept(visitor);
   }
 
   virtual void update(double time);

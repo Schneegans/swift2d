@@ -108,6 +108,39 @@ void SceneObject::remove(ComponentPtr const& component, bool force) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void SceneObject::scale(math::vec2 const& scale) {
+  math::mat3 t(Transform());
+  math::scale(t, scale);
+  Transform = t;
+}
+void SceneObject::scale(float scale) {
+  math::mat3 t(Transform());
+  math::scale(t, scale);
+  Transform = t;
+}
+void SceneObject::scale(float x, float y) {
+  math::mat3 t(Transform());
+  math::scale(t, x, y);
+  Transform = t;
+}
+void SceneObject::rotate(float angle) {
+  math::mat3 t(Transform());
+  math::rotate(t, angle);
+  Transform = t;
+}
+void SceneObject::translate(math::vec2 const& delta) {
+  math::mat3 t(Transform());
+  math::translate(t, delta);
+  Transform = t;
+}
+void SceneObject::translate(float x, float y) {
+  math::mat3 t(Transform());
+  math::translate(t, x, y);
+  Transform = t;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 SerializedScenePtr SceneObject::serialize(CameraComponentPtr const& camera) const {
 
   auto scene(SerializedScene::create());

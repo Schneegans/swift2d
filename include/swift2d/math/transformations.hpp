@@ -43,14 +43,15 @@ mat3 translated (mat3 const& mat, float x, float y);
 mat3 inversed   (mat3 const& mat);
 mat3 transposed (mat3 const& mat);
 
-vec2  get_translate (mat3 const& mat);
-vec2  get_scale     (mat3 const& mat);
-float get_rotation  (mat3 const& mat);
-vec2  get_direction (mat3 const& mat);
+vec2  get_translation(mat3 const& mat);
+vec2  get_scale      (mat3 const& mat);
+float get_rotation   (mat3 const& mat);
+vec2  get_direction  (mat3 const& mat);
 
-void set_translate (mat3& mat, vec2 const& val);
-void set_scale     (mat3& mat, vec2 const& val);
-void set_rotation  (mat3& mat, float val);
+void set_translation (mat3& mat, vec2 const& val);
+void set_translation (mat3& mat, float x, float y);
+void set_scale       (mat3& mat, vec2 const& val);
+void set_rotation    (mat3& mat, float val);
 
 vec3 normalized(vec3 const& vec);
 vec2 normalized(vec2 const& vec);

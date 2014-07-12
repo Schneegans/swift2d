@@ -48,7 +48,8 @@ namespace {
         Object::init<SpriteComponent>();
         Object::init<TextureParticleEmitter>();
         Object::init<TimedDeleteBehavior>();
-        Object::init<RigidbodyComponent>();
+        Object::init<DynamicBodyComponent>();
+        Object::init<StaticBodyComponent>();
         Object::init<Sound>();
         Object::init<Texture>();
 

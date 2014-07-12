@@ -66,6 +66,16 @@ void Window::display() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+bool Window::key_pressed(Key key) const {
+  if (!window_) {
+    return false;
+  }
+
+  return glfwGetKey(window_, (int)key) == GLFW_PRESS;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Window::open_() {
 
   if (!window_) {

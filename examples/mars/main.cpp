@@ -45,10 +45,10 @@ int main(int argc, char** argv) {
   // example scene setup -------------------------------------------------------
   auto scene = SceneManager::instance()->get_default();
 
-  auto music = scene->add<SoundComponent>();
-       music->Sound = Sound::create_from_file(Application::instance()->get_resource("audio", "music.ogg"));
-       music->Volume = 0.5f;
-       music->play();
+  // auto music = scene->add<SoundComponent>();
+  //      music->Sound = Sound::create_from_file(Application::instance()->get_resource("audio", "music.ogg"));
+  //      music->Volume = 0.5f;
+  //      music->play();
 
   auto field = scene->add<CircularShape>();
        field->Transform = math::make_scale(4);
@@ -91,6 +91,10 @@ int main(int argc, char** argv) {
   auto player = scene->add_object(SceneObject::create_from_file(
     Application::instance()->get_resource("scene", "player.json")
   ));
+  player->translate(-5, 25);
+  player->rotate(1);
+  auto body = player->add<DynamicBodyComponent>();
+  body->Radius = 1.0f;
 
   player->get_component<Mover>()->set_camera(camera);
 
