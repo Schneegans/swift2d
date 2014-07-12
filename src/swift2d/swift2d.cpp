@@ -32,26 +32,27 @@ namespace {
         Object::init<CircularShape>();
         Object::init<DeleteOnLeaveBehavior>();
         Object::init<DirectionalLightMaterial>();
+        Object::init<DynamicBodyComponent>();
+        Object::init<GravitySourceComponent>();
         Object::init<GuiComponent>();
         Object::init<GuiComponent>();
+        Object::init<HeatParticleEmitter>();
         Object::init<LightComponent>();
         Object::init<LightParticleEmitter>();
-        Object::init<HeatParticleEmitter>();
         Object::init<ListenerComponent>();
         Object::init<MoveBehavior>();
         Object::init<OffsetBehavior>();
         Object::init<ParticleSystemComponent>();
         Object::init<PointLightMaterial>();
         Object::init<SceneObject>();
-        Object::init<SpriteMaterial>();
+        Object::init<Sound>();
         Object::init<SoundComponent>();
         Object::init<SpriteComponent>();
+        Object::init<SpriteMaterial>();
+        Object::init<StaticBodyComponent>();
+        Object::init<Texture>();
         Object::init<TextureParticleEmitter>();
         Object::init<TimedDeleteBehavior>();
-        Object::init<DynamicBodyComponent>();
-        Object::init<StaticBodyComponent>();
-        Object::init<Sound>();
-        Object::init<Texture>();
 
         // init glfw -----------------------------------------------------------
         if (!glfwInit()) {

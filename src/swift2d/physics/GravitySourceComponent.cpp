@@ -6,13 +6,34 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_INCLUDE_PHYSICS_HPP
-#define SWIFT2D_INCLUDE_PHYSICS_HPP
-
 // includes  -------------------------------------------------------------------
-#include <swift2d/physics/Physics.hpp>
 #include <swift2d/physics/GravitySourceComponent.hpp>
-#include <swift2d/physics/DynamicBodyComponent.hpp>
-#include <swift2d/physics/StaticBodyComponent.hpp>
 
-#endif // SWIFT2D_INCLUDE_PHYSICS_HPP
+#include <swift2d/physics/Physics.hpp>
+
+namespace swift {
+
+////////////////////////////////////////////////////////////////////////////////
+
+GravitySourceComponent::GravitySourceComponent()
+  : Density(10.f)
+  , dirty_(true) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void GravitySourceComponent::update(double time) {
+  init();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void GravitySourceComponent::init() const {
+  if (dirty_) {
+    dirty_ = false;
+    Physics::instance()->add(this);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+}

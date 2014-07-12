@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/physics/DynamicBodyComponent.hpp>
 #include <swift2d/physics/StaticBodyComponent.hpp>
+#include <swift2d/physics/GravitySourceComponent.hpp>
 #include <swift2d/utils/Singleton.hpp>
 
 #include <unordered_set>
@@ -37,7 +38,7 @@ class Physics : public Singleton<Physics> {
 
   b2Body* add(DynamicBodyComponent const* body);
   b2Body* add(StaticBodyComponent const* body);
-  // void remove_rigidbody(RigidbodyComponentPtr const& body);
+  void    add(GravitySourceComponent const* source);
 
   friend class Singleton<Physics>;
 
@@ -48,7 +49,7 @@ class Physics : public Singleton<Physics> {
   Physics();
   ~Physics();
 
-  // std::unordered_set<RigidbodyComponent*> rigid_bodies_;
+  std::unordered_set<GravitySourceComponent const*> gravity_sources_;
   b2World* world_;
 
 

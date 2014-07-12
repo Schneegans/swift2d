@@ -30,6 +30,25 @@ Physics::~Physics() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Physics::update(double time) {
+
+  auto body(world_->GetBodyList());
+
+  while (body) {
+    auto body_pos = body->GetWorldCenter();
+
+    for (auto source: gravity_sources_) {
+      auto transform(source->get_user()->WorldTransform());
+      auto pos(math::get_translation(transform));
+      auto scale(math::get_scale(transform));
+      float mass(source->Density() * scale.x() * scale.y());
+      b2Vec2 dist(b2Vec2(pos.x(), pos.y()) - body_pos);
+      dist *= ((mass * body->GetMass()) / dist.LengthSquared());
+      body->ApplyForceToCenter(dist, true);
+    }
+
+    body = body->GetNext();
+  }
+
   world_->Step(time, 6, 2);
 }
 
@@ -52,7 +71,8 @@ b2Body* Physics::add(DynamicBodyComponent const* body) {
   b2FixtureDef fixtureDef;
   fixtureDef.shape = &shape;
   fixtureDef.density = 1.0f;
-  fixtureDef.friction = 0.2f;
+  fixtureDef.friction = 0.4f;
+  fixtureDef.restitution = 0.4f;
   result->CreateFixture(&fixtureDef);
 
   result->SetLinearDamping(0.5);
@@ -79,11 +99,17 @@ b2Body* Physics::add(StaticBodyComponent const* body) {
   shape.m_radius = body->Radius()*scale;
   b2FixtureDef fixtureDef;
   fixtureDef.shape = &shape;
-  fixtureDef.friction = 0.2f;
-  fixtureDef.restitution = 0.3f;
+  fixtureDef.friction = 0.4f;
+  fixtureDef.restitution = 0.4f;
   result->CreateFixture(&fixtureDef);
 
   return result;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Physics::add(GravitySourceComponent const* source) {
+  gravity_sources_.insert(source);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
