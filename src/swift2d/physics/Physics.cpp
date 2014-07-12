@@ -36,14 +36,16 @@ void Physics::update(double time) {
   while (body) {
     auto body_pos = body->GetWorldCenter();
 
-    for (auto source: gravity_sources_) {
-      auto transform(source->get_user()->WorldTransform());
-      auto pos(math::get_translation(transform));
-      auto scale(math::get_scale(transform));
-      float mass(source->Density() * scale.x() * scale.y());
-      b2Vec2 dist(b2Vec2(pos.x(), pos.y()) - body_pos);
-      dist *= ((mass * body->GetMass()) / dist.LengthSquared());
-      body->ApplyForceToCenter(dist, true);
+    if (body->IsAwake()) {
+      for (auto source: gravity_sources_) {
+        auto transform(source->get_user()->WorldTransform());
+        auto pos(math::get_translation(transform));
+        auto scale(math::get_scale(transform));
+        float mass(source->Density() * scale.x() * scale.y());
+        b2Vec2 dist(b2Vec2(pos.x(), pos.y()) - body_pos);
+        dist *= ((mass * body->GetMass()) / dist.LengthSquared());
+        body->ApplyForceToCenter(dist, true);
+      }
     }
 
     body = body->GetNext();
@@ -75,7 +77,7 @@ b2Body* Physics::add(DynamicBodyComponent const* body) {
   fixtureDef.restitution = 0.4f;
   result->CreateFixture(&fixtureDef);
 
-  result->SetLinearDamping(0.5);
+  result->SetLinearDamping(0.3);
   result->SetAngularDamping(5);
 
   return result;

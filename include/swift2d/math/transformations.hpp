@@ -20,8 +20,8 @@ mat3 make_scale     (vec2 const& scale);
 mat3 make_scale     (float scale);
 mat3 make_scale     (float x, float y);
 mat3 make_rotate    (float angle);
-mat3 make_translate (vec2 const& delta);
-mat3 make_translate (float x, float y);
+mat3 make_translation (vec2 const& delta);
+mat3 make_translation (float x, float y);
 mat3 make_inversed  (mat3 const& mat);
 mat3 make_transposed(mat3 const& mat);
 

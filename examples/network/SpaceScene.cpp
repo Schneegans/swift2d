@@ -55,7 +55,7 @@ swift::SceneObjectPtr SpaceScene::create() {
        field->Transform = math::make_scale(4);
 
   auto sun = scene->add<LightComponent>();
-       sun->Transform = math::make_scale(15) * math::make_translate(-0.2, 0.2);
+       sun->Transform = math::make_scale(15) * math::make_translation(-0.2, 0.2);
        sun->Material = MaterialDatabase::instance()->get("sun");
 
   auto bg = scene->add<SpriteComponent>();
@@ -65,13 +65,13 @@ swift::SceneObjectPtr SpaceScene::create() {
 
   // planet
   auto planet1 = scene->add_object();
-       planet1->Transform = math::make_translate(-0.9, -0.5);
+       planet1->Transform = math::make_translation(-0.9, -0.5);
   auto sprite2 = planet1->add<SpriteComponent>();
        sprite2->Depth = 0.0f;
        sprite2->Material = MaterialDatabase::instance()->get("planet1");
 
   auto planet2 = scene->add_object();
-       planet2->Transform = math::make_translate(-1.2, 1.0);
+       planet2->Transform = math::make_translation(-1.2, 1.0);
   auto sprite3 = planet2->add<SpriteComponent>();
        sprite3->Depth = 0.0f;
        sprite3->Material = MaterialDatabase::instance()->get("planet2");

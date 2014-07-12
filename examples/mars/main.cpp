@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Mover.hpp"
+#include "Bullet.hpp"
 
 #include <iostream>
 
@@ -18,13 +19,20 @@ int main(int argc, char** argv) {
   Application::instance()->init(argc, argv);
 
   Object::init<Mover>();
+  Object::init<Bullet>();
 
   // load resources ------------------------------------------------------------
   TextureDatabase::instance()->add("point_light", Texture::create(Application::instance()->get_resource("images", "light.png")));
+  TextureDatabase::instance()->add("bullet", Texture::create(Application::instance()->get_resource("images", "bullet.png")));
 
-  auto mat = PointLightMaterial::create_from_database("point_light");
-  mat->Color = Color(0.4, 0.3, 1.0);
-  MaterialDatabase::instance()->add("light", mat);
+  auto mat1 = SpriteMaterial::create();
+  mat1->DiffuseTexture = TextureDatabase::instance()->get("bullet");
+  mat1->Emit = 1.0;
+  MaterialDatabase::instance()->add("bullet", mat1);
+
+  auto mat2 = PointLightMaterial::create_from_database("point_light");
+  mat2->Color = Color(0.4, 0.3, 1.0);
+  MaterialDatabase::instance()->add("light", mat2);
 
   MaterialDatabase::instance()->add("sun1",  DirectionalLightMaterial::create(math::vec3(0.1, 1, 0), Color(1, 0.5, 1.0)));
   MaterialDatabase::instance()->add("sun2",  DirectionalLightMaterial::create(math::vec3(-1, -1, 0), Color(0.4, 0.8, 1.0)));
@@ -145,6 +153,9 @@ int main(int argc, char** argv) {
     } else if (key == swift::Key::F5 && action != 1) {
       // menu->reload();
       // fps->reload();
+    } else if (key == swift::Key::SPACE && action != 1) {
+      auto bullet = std::make_shared<Bullet>(math::get_translation(player->WorldTransform()));
+      scene->add_object(bullet);
     }
   });
 

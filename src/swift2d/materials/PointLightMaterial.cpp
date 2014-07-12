@@ -25,7 +25,7 @@ void PointLightMaterial::draw_quad(RenderContext const& ctx,
                                float object_depth) {
 
   // disable rotation
-  auto transform(math::make_translate(math::get_translation(object_transform)));
+  auto transform(math::make_translation(math::get_translation(object_transform)));
   transform = transform * math::make_scale(math::get_scale(object_transform));
 
   Texture()->bind(ctx, 0);

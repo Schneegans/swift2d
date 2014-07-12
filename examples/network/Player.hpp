@@ -63,7 +63,7 @@ class Player : public NetworkObject<Player> {
 
     auto smoke = player_->add<ParticleSystemComponent>();
     smoke->Depth = 0.5f;
-    smoke->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
+    smoke->Transform = math::make_scale(2) * math::make_translation(-0.5, 0);
     smoke->Emitter = smoke_particles;
 
     auto fire_particles = TextureParticleEmitter::create();
@@ -72,7 +72,7 @@ class Player : public NetworkObject<Player> {
 
     auto fire = player_->add<ParticleSystemComponent>();
     fire->Depth = 0.6f;
-    fire->Transform = math::make_scale(2) * math::make_translate(-0.5, 0);
+    fire->Transform = math::make_scale(2) * math::make_translation(-0.5, 0);
     fire->Emitter = fire_particles;
 
     mover->LinearSpeed.on_change().connect([&](float val){

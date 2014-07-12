@@ -88,7 +88,7 @@ class OffsetBehavior : public Component {
     y -= TranslationOffsetY.get();
     r -= RotationOffset.get();
 
-    auto mat = math::make_translate(x, y);
+    auto mat = math::make_translation(x, y);
     math::rotate(mat, r);
 
     auto user_transform(get_user()->Transform.get());

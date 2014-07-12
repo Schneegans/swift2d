@@ -45,13 +45,13 @@ mat3 make_rotate (float angle) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-mat3 make_translate (vec2 const& delta) {
-  return make_translate(delta.x(), delta.y());
+mat3 make_translation (vec2 const& delta) {
+  return make_translation(delta.x(), delta.y());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-mat3 make_translate (float x, float y) {
+mat3 make_translation (float x, float y) {
   return mat3(1, 0, x,
               0, 1, y,
               0, 0, 1);
@@ -101,13 +101,13 @@ void rotate (mat3& mat, float angle) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void translate (mat3& mat, vec2 const& delta) {
-  mat = mat * make_translate(delta);
+  mat = mat * make_translation(delta);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void translate (mat3& mat, float x, float y) {
-  mat = mat * make_translate(x, y);
+  mat = mat * make_translation(x, y);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -151,13 +151,13 @@ mat3 rotated (mat3 const& mat, float angle) {
 ////////////////////////////////////////////////////////////////////////////////
 
 mat3 translated (mat3 const& mat, vec2 const& delta) {
-  return mat * make_translate(delta);
+  return mat * make_translation(delta);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 mat3 translated (mat3 const& mat, float x, float y) {
-  return mat * make_translate(x, y);
+  return mat * make_translation(x, y);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
