@@ -11,7 +11,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Mover::Mover() {
+Mover::Mover()
+ : camera_zoom_(1.f)
+ , camera_offset_(0.f, 0.f) {
+
   auto w = WindowManager::instance()->get_default();
   w->on_key_press.connect([&](Key key, int scancode, int action, int mods){
     if (action == 0) {
@@ -37,14 +40,23 @@ Mover::Mover() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Mover::update(double time) {
+
+  auto c = get_user()->get_component<DynamicBodyComponent>();
+
   if (camera_) {
-    auto mat = camera_->Transform();
-    math::set_translation(mat, math::get_translation(get_user()->WorldTransform()));
+
+    float target_zoom(c->get_linear_velocity().Length()*0.05 + 0.9);
+    camera_zoom_ += (target_zoom - camera_zoom_) * time;
+
+    math::vec2 target_offset(c->get_linear_velocity() * 0.5);
+    camera_offset_ += (target_offset - camera_offset_) * time;
+
+    auto mat(math::make_translation(camera_offset_ + math::get_translation(get_user()->WorldTransform())));
+    mat = mat*math::make_scale(camera_zoom_);
     camera_->Transform = mat;
   }
 
   auto w = WindowManager::instance()->get_default();
-  auto c = get_user()->get_component<DynamicBodyComponent>();
 
   if(w->key_pressed(Key::W)) {
     if (c->get_linear_velocity().Length() < 3.f) {

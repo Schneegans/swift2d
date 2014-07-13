@@ -18,6 +18,8 @@ class b2Body;
 
 namespace swift {
 
+class StaticBodyComponent;
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -41,6 +43,9 @@ class DynamicBodyComponent : public Component {
   Float LinearDamping;
   Float AngularDamping;
 
+  // ------------------------------------------------------------------- signals
+  Signal<StaticBodyComponent*> on_collision;
+
   // ---------------------------------------------------- construction interface
   DynamicBodyComponent();
   ~DynamicBodyComponent();
@@ -63,11 +68,14 @@ class DynamicBodyComponent : public Component {
   void       apply_global_force(math::vec2 const& val);
   void       apply_local_force(math::vec2 const& val);
   void       apply_torque(float val);
+  void       apply_local_linear_impulse(math::vec2 const& val);
+  void       apply_global_linear_impulse(math::vec2 const& val);
+  void       apply_angular_impulse(float val);
 
   void       set_linear_velocity(math::vec2 const& val);
-  math::vec2 get_linear_velocity() const;
+  math::vec2 get_linear_velocity();
   void       set_angular_velocity(float val);
-  float      get_angular_velocity() const;
+  float      get_angular_velocity();
 
   virtual void update(double time);
 
@@ -84,7 +92,7 @@ class DynamicBodyComponent : public Component {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void init() const;
+  void init();
 
   mutable b2Body* body_;
 };

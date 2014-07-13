@@ -28,6 +28,7 @@ int main(int argc, char** argv) {
   auto mat1 = SpriteMaterial::create();
   mat1->DiffuseTexture = TextureDatabase::instance()->get("bullet");
   mat1->Emit = 1.0;
+  mat1->Glow = 1.0;
   MaterialDatabase::instance()->add("bullet", mat1);
 
   auto mat2 = PointLightMaterial::create_from_database("point_light");
@@ -102,8 +103,11 @@ int main(int argc, char** argv) {
   player->translate(-5, 25);
   player->rotate(1);
   auto body = player->add<DynamicBodyComponent>();
-  body->Radius = 1.0f;
-  body->AngularDamping = 5.f;
+       body->Radius = 1.0f;
+       body->AngularDamping = 5.f;
+       body->on_collision.connect([&](StaticBodyComponent* other){
+         std::cout << "col" << std::endl;
+       });
 
   player->get_component<Mover>()->set_camera(camera);
 
@@ -155,8 +159,9 @@ int main(int argc, char** argv) {
       // menu->reload();
       // fps->reload();
     } else if (key == swift::Key::SPACE && action != 1) {
-      auto bullet = std::make_shared<Bullet>(math::get_translation(player->WorldTransform()));
+      auto bullet = std::make_shared<Bullet>(player->WorldTransform());
       scene->add_object(bullet);
+      bullet->shoot(player);
     }
   });
 

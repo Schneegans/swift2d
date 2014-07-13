@@ -23,6 +23,8 @@ class b2Body;
 
 namespace swift {
 
+class SwiftContactListener;
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -36,9 +38,9 @@ class Physics : public Singleton<Physics> {
   void update(double time);
 
 
-  b2Body* add(DynamicBodyComponent const* body);
-  b2Body* add(StaticBodyComponent const* body);
-  void    add(GravitySourceComponent const* source);
+  b2Body* add(DynamicBodyComponent* body);
+  b2Body* add(StaticBodyComponent* body);
+  void    add(GravitySourceComponent* source);
 
   void    remove(b2Body* body);
   void    remove(GravitySourceComponent* source);
@@ -54,7 +56,7 @@ class Physics : public Singleton<Physics> {
 
   std::unordered_set<GravitySourceComponent const*> gravity_sources_;
   b2World* world_;
-
+  SwiftContactListener* contact_listener_;
 
 };
 

@@ -214,19 +214,19 @@ void StreakEffect::process(RenderContext const& ctx, oglplus::Texture const& thr
   pass(step*2,  streak_buffer_tmp_, oglplus::FramebufferColorAttachment::_2, streak_colors_3_);
 
   step = math::vec2(-0.7*4.0/ctx.size.x(), -0.9*4.0/ctx.size.y());
-  pass(step*10, threshold_buffer_,  oglplus::FramebufferColorAttachment::_0, streak_colors_4_);
+  pass(step*5, threshold_buffer_,  oglplus::FramebufferColorAttachment::_0, streak_colors_4_);
   pass(step*2,  streak_buffer_tmp_, oglplus::FramebufferColorAttachment::_3, streak_colors_3_);
 
   step = math::vec2(0.7*4.0/ctx.size.x(), -0.9*4.0/ctx.size.y());
-  pass(step*10, threshold_buffer_,  oglplus::FramebufferColorAttachment::_0, streak_colors_4_);
+  pass(step*5, threshold_buffer_,  oglplus::FramebufferColorAttachment::_0, streak_colors_4_);
   pass(step*2,  streak_buffer_tmp_, oglplus::FramebufferColorAttachment::_4, streak_colors_3_);
 
   step = math::vec2(-0.7*4.0/ctx.size.x(), 0.9*4.0/ctx.size.y());
-  pass(step*10, threshold_buffer_,  oglplus::FramebufferColorAttachment::_0, streak_colors_4_);
+  pass(step*5, threshold_buffer_,  oglplus::FramebufferColorAttachment::_0, streak_colors_4_);
   pass(step*2,  streak_buffer_tmp_, oglplus::FramebufferColorAttachment::_5, streak_colors_3_);
 
   step = math::vec2(0.7*4.0/ctx.size.x(), 0.9*4.0/ctx.size.y());
-  pass(step*10, threshold_buffer_,  oglplus::FramebufferColorAttachment::_0, streak_colors_4_);
+  pass(step*5, threshold_buffer_,  oglplus::FramebufferColorAttachment::_0, streak_colors_4_);
   pass(step*2,  streak_buffer_tmp_, oglplus::FramebufferColorAttachment::_6, streak_colors_3_);
 }
 

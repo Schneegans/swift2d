@@ -38,16 +38,16 @@ DynamicBodyComponent::~DynamicBodyComponent() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DynamicBodyComponent::apply_global_force(math::vec2 const& direction) {
+void DynamicBodyComponent::apply_global_force(math::vec2 const& val) {
   init();
-  body_->ApplyForceToCenter(b2Vec2(direction.x(), direction.y()), true);
+  body_->ApplyForceToCenter(b2Vec2(val.x(), val.y()), true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DynamicBodyComponent::apply_local_force(math::vec2 const& direction) {
+void DynamicBodyComponent::apply_local_force(math::vec2 const& val) {
   init();
-  body_->ApplyForceToCenter(body_->GetWorldVector(b2Vec2(direction.x(), direction.y())), true);
+  body_->ApplyForceToCenter(body_->GetWorldVector(b2Vec2(val.x(), val.y())), true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -59,6 +59,27 @@ void DynamicBodyComponent::apply_torque(float val) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void DynamicBodyComponent::apply_local_linear_impulse(math::vec2 const& val) {
+  init();
+  body_->ApplyLinearImpulse(body_->GetWorldVector(b2Vec2(val.x(), val.y())), body_->GetWorldCenter(), true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void DynamicBodyComponent::apply_global_linear_impulse(math::vec2 const& val) {
+  init();
+  body_->ApplyLinearImpulse(b2Vec2(val.x(), val.y()), body_->GetWorldCenter(), true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void DynamicBodyComponent::apply_angular_impulse(float val) {
+  init();
+  body_->ApplyAngularImpulse(val, true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void DynamicBodyComponent::set_linear_velocity(math::vec2 const& val) {
   init();
   body_->SetLinearVelocity(b2Vec2(val.x(), val.y()));
@@ -66,7 +87,7 @@ void DynamicBodyComponent::set_linear_velocity(math::vec2 const& val) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-math::vec2 DynamicBodyComponent::get_linear_velocity() const {
+math::vec2 DynamicBodyComponent::get_linear_velocity() {
   init();
   auto v = body_->GetLinearVelocity();
   return math::vec2(v.x, v.y);
@@ -81,7 +102,7 @@ void DynamicBodyComponent::set_angular_velocity(float val) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-float DynamicBodyComponent::get_angular_velocity() const {
+float DynamicBodyComponent::get_angular_velocity() {
   init();
   return body_->GetAngularVelocity();
 }
@@ -105,7 +126,7 @@ void DynamicBodyComponent::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DynamicBodyComponent::init() const {
+void DynamicBodyComponent::init() {
   if (!body_) {
     body_ = Physics::instance()->add(this);
 

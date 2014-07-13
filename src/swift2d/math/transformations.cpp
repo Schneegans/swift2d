@@ -37,10 +37,10 @@ mat3 make_scale (float x, float y) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-mat3 make_rotate (float angle) {
-  return mat3( std::cos(-angle), std::sin(-angle), 0,
-              -std::sin(-angle), std::cos(-angle), 0,
-                0,               0,                1);
+mat3 make_rotation (float angle) {
+  return mat3(std::cos(angle), -std::sin(angle), 0,
+              std::sin(angle),  std::cos(angle), 0,
+              0,                0,               1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@ void scale (mat3& mat, float x, float y) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void rotate (mat3& mat, float angle) {
-  mat = mat * make_rotate(angle);
+  mat = mat * make_rotation(angle);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -145,7 +145,7 @@ mat3 scaled (mat3 const& mat, float x, float y) {
 ////////////////////////////////////////////////////////////////////////////////
 
 mat3 rotated (mat3 const& mat, float angle) {
-  return mat * make_rotate(angle);
+  return mat * make_rotation(angle);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

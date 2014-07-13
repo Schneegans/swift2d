@@ -59,13 +59,6 @@ class GravitySourceComponent : public Component {
     Component::accept(visitor);
     visitor.add_member("Density", Density);
   }
-
- ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
- private:
-  void init() const;
-
-  mutable bool dirty_;
 };
 
 // -----------------------------------------------------------------------------

@@ -17,11 +17,16 @@ using namespace swift;
 class Bullet: public SceneObject {
  public:
   Bullet() {}
-  Bullet(math::vec2 const& position) {
+  Bullet(math::mat3 const& transform) {
 
-    Transform = math::make_translation(position) * math::make_scale(0.05);
+    math::vec3 position(1, 0, 1);
+    position = transform * position;
+    float rot = math::get_rotation(transform);
+
+    Transform = math::make_translation(position.x(), position.y()) * math::make_scale(0.05) * math::make_rotation(rot);
 
     auto body = add<DynamicBodyComponent>();
+         body->Density = 0.5;
 
     auto tex = add<SpriteComponent>();
          tex->Depth = 0.0f;
@@ -29,7 +34,13 @@ class Bullet: public SceneObject {
          tex->Transform = math::make_scale(1.0f);
 
     auto deleter = add<TimedDeleteBehavior>();
-         deleter->Life = 20.f;
+         deleter->Life = 60.f;
+  }
+
+  void shoot(SceneObjectPtr const& owner) {
+    update(0);
+    get_component<DynamicBodyComponent>()->apply_local_linear_impulse(math::vec2(0.01f, 0.0f));
+    owner->get_component<DynamicBodyComponent>()->apply_local_linear_impulse(math::vec2(-0.005f, 0.0f));
   }
 
   virtual std::string get_type_name() const {  return get_type_name_static(); }

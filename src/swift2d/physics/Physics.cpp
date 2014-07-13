@@ -18,13 +18,42 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+class SwiftContactListener : public b2ContactListener {
+ public:
+  void BeginContact(b2Contact* contact) {
+    auto body_a(contact->GetFixtureA()->GetBody());
+    auto body_b(contact->GetFixtureB()->GetBody());
+
+    if (body_b->GetType() == b2_staticBody && body_a->GetType() == b2_dynamicBody) {
+      auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
+      auto b = static_cast<StaticBodyComponent*>(body_b->GetUserData());
+
+      a->on_collision.emit(b);
+      b->on_collision.emit(a);
+    }
+  }
+
+  void EndContact(b2Contact* contact) {}
+  void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) {}
+  void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {}
+};
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 Physics::Physics()
-  : world_(new b2World(b2Vec2(0.f, 0.f))) {}
+  : world_(new b2World(b2Vec2(0.f, 0.f)))
+  , contact_listener_(new SwiftContactListener()) {
+
+  world_->SetContactListener(contact_listener_);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 Physics::~Physics() {
   delete world_;
+  delete contact_listener_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +85,7 @@ void Physics::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-b2Body* Physics::add(DynamicBodyComponent const* body) {
+b2Body* Physics::add(DynamicBodyComponent* body) {
   auto transform(body->get_user()->WorldTransform());
   math::vec2 pos(math::get_translation(transform));
   float rot(math::get_rotation(transform));
@@ -67,6 +96,8 @@ b2Body* Physics::add(DynamicBodyComponent const* body) {
   bodyDef.position.Set(pos.x(), pos.y());
   bodyDef.angle = rot;
   b2Body* result = world_->CreateBody(&bodyDef);
+
+  result->SetUserData(body);
 
   b2FixtureDef fixtureDef;
   fixtureDef.density = body->Density();
@@ -93,7 +124,7 @@ b2Body* Physics::add(DynamicBodyComponent const* body) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-b2Body* Physics::add(StaticBodyComponent const* body) {
+b2Body* Physics::add(StaticBodyComponent* body) {
   auto transform(body->get_user()->WorldTransform());
   math::vec2 pos(math::get_translation(transform));
   float rot(math::get_rotation(transform));
@@ -104,6 +135,8 @@ b2Body* Physics::add(StaticBodyComponent const* body) {
   bodyDef.position.Set(pos.x(), pos.y());
   bodyDef.angle = rot;
   b2Body* result = world_->CreateBody(&bodyDef);
+
+  result->SetUserData(body);
 
   b2CircleShape shape;
   shape.m_radius = body->Radius()*scale;
@@ -118,7 +151,7 @@ b2Body* Physics::add(StaticBodyComponent const* body) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Physics::add(GravitySourceComponent const* source) {
+void Physics::add(GravitySourceComponent* source) {
   gravity_sources_.insert(source);
 }
 

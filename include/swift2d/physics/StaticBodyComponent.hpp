@@ -18,6 +18,8 @@ class b2Body;
 
 namespace swift {
 
+class DynamicBodyComponent;
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +40,9 @@ class StaticBodyComponent : public Component {
   Float Density;
   Float Friction;
   Float Restitution;
+
+  // ------------------------------------------------------------------- signals
+  Signal<DynamicBodyComponent*> on_collision;
 
   // ---------------------------------------------------- construction interface
   StaticBodyComponent();

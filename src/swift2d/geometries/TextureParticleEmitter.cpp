@@ -103,7 +103,7 @@ void TextureParticleEmitter::spawn(math::mat3 transform, math::vec2& position,
 
   // influence of direction variance
   float var(DirectionVariance());
-  auto dir_rot = math::make_rotate(math::random::get(-var, var));
+  auto dir_rot = math::make_rotation(math::random::get(-var, var));
   direction = (dir_rot * math::vec3(direction[0], direction[1], 0.0f)).xy();
 
   // generate rotation

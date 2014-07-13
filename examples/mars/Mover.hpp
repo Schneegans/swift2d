@@ -33,6 +33,8 @@ class Mover: public Component {
 
  private:
   CameraComponentPtr camera_;
+  float              camera_zoom_;
+  math::vec2         camera_offset_;
 
 };
 
