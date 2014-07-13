@@ -100,7 +100,7 @@ IF(CMAKE_BUILD_TYPE MATCHES "release")
     set(CMAKE_CXX_FLAGS "-s -Ofast --std=c++0x")
 ELSE(CMAKE_BUILD_TYPE MATCHES "release")
     set(CMAKE_CXX_FLAGS "-g -Wall --std=c++0x")
-        ENDIF(CMAKE_BUILD_TYPE MATCHES "release")
+ENDIF(CMAKE_BUILD_TYPE MATCHES "release")
 
 ################################################################
 # Create libraries

@@ -57,7 +57,7 @@ GuiElement::GuiElement(GuiComponent* parent)
       (size.y() - parent_->Size().y() - parent_->Anchor().y() * (size.y() - parent_->Size().y()))*0.5 + parent_->Offset().y()
     );
 
-    view_->InjectMouseMove(pos.x() - corner.x(), pos.y() - corner.y());
+    view_->InjectMouseMove(pos.x() - corner.x(), size.y() - pos.y() + corner.y());
   });
 
   callbacks_[1] = window->on_scroll.connect([&](math::vec2 const& dir) {

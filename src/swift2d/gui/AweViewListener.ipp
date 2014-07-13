@@ -31,7 +31,10 @@ class AweViewListener : public Awesomium::WebViewListener::View {
 
   void OnChangeCursor(
     Awesomium::WebView* caller,
-    Awesomium::Cursor cursor) {}
+    Awesomium::Cursor cursor) {
+
+    Interface::instance()->on_cursor_change.emit(static_cast<Cursor>(cursor));
+  }
 
   void OnChangeFocus(
     Awesomium::WebView* caller,

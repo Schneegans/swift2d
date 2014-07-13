@@ -124,7 +124,9 @@ void Window::open_() {
     });
 
     glfwSetCursorPosCallback(window_, [](GLFWwindow* w, double x, double y) {
-      WindowManager::instance()->glfw_windows[w]->on_mouse_move.emit(math::vec2(x, y));
+      auto window(WindowManager::instance()->glfw_windows[w]);
+      int height(window->get_context().size.y());
+      window->on_mouse_move.emit(math::vec2(x, height - y));
     });
 
     glfwSetMouseButtonCallback(window_, [](GLFWwindow* w, int button, int action, int mods) {
@@ -145,6 +147,13 @@ void Window::open_() {
     };
     on_vsync_change(VSync.get());
     VSync.on_change().connect(on_vsync_change);
+
+    // hide cursor -------------------------------------------------------------
+    auto on_hide_cursor_change = [&](bool val) {
+      glfwSetInputMode(window_, GLFW_CURSOR, val ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
+    };
+    on_hide_cursor_change(HideCursor.get());
+    HideCursor.on_change().connect(on_hide_cursor_change);
   }
 }
 

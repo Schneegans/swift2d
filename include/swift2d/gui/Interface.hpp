@@ -33,6 +33,8 @@ class Interface : public Singleton<Interface> {
  // ----------------------------------------------------------- public interface
  public:
 
+  Signal<Cursor> on_cursor_change;
+
   void update() const;
 
   friend class GuiElement;

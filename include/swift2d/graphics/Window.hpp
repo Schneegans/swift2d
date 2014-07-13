@@ -41,6 +41,7 @@ class Window {
   Bool Open;
   Bool VSync;
   Bool Fullscreen;
+  Bool HideCursor;
 
   // ------------------------------------------------------------------- signals
   Signal<>                    on_close;

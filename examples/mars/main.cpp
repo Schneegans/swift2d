@@ -41,8 +41,9 @@ int main(int argc, char** argv) {
 
   // window setup --------------------------------------------------------------
   auto window = WindowManager::instance()->get_default();
-  window->Fullscreen = false;
+  window->Fullscreen = true;
   window->VSync = true;
+  window->HideCursor = true;
 
   // rendering pipeline --------------------------------------------------------
   auto pipeline = Pipeline::create();
@@ -66,30 +67,35 @@ int main(int argc, char** argv) {
        camera->Size = math::vec2(2.f, 2.f);
        camera->Parallax = 1.05;
 
-  // auto menu = scene->add<GuiComponent>();
-  //      menu->Resource = Application::instance()->get_resource("gui", "window.html");
-  //      menu->Size = math::vec2i(1000, 1000);
-  //      menu->Anchor = math::vec2i(0, 1);
-  //      menu->on_loaded.connect([&](){
-  //        menu->add_javascript_callback("start");
-  //        menu->add_javascript_callback("quit");
-  //        menu->add_javascript_callback("pause");
-  //      });
-  //      menu->on_javascript_callback.connect([&](std::string const& method) {
-  //        if (method == "quit") {
-  //          renderer.stop();
-  //          Application::instance()->stop();
-  //        } else if (method == "pause") {
-  //           // music->pause();
-  //        } else {
-  //         std::cout << "Start!!!" << std::endl;
-  //        }
-  //      });
+  auto menu = scene->add<GuiComponent>();
+       menu->Resource = Application::instance()->get_resource("gui", "window.html");
+       menu->Size = math::vec2i(1000, 1000);
+       menu->Anchor = math::vec2i(0, 1);
+       menu->on_loaded.connect([&](){
+         menu->add_javascript_callback("start");
+         menu->add_javascript_callback("quit");
+         menu->add_javascript_callback("pause");
+       });
+       menu->on_javascript_callback.connect([&](std::string const& method) {
+         if (method == "quit") {
+           renderer.stop();
+           Application::instance()->stop();
+         } else if (method == "pause") {
+            // music->pause();
+         } else {
+          std::cout << "Start!!!" << std::endl;
+         }
+       });
 
   auto fps = scene->add<GuiComponent>();
        fps->Resource = Application::instance()->get_resource("gui", "fps.html");
        fps->Size = math::vec2i(240, 35);
        fps->Anchor = math::vec2i(-1, -1);
+
+  auto mouse = scene->add<GuiComponent>();
+       mouse->Resource = Application::instance()->get_resource("gui", "mouse.html");
+       mouse->Size = math::vec2i(50, 50);
+       mouse->Anchor = math::vec2i(-1, -1);
 
   // scene
   scene->add_object(SceneObject::create_from_file(
@@ -104,6 +110,7 @@ int main(int argc, char** argv) {
   player->rotate(1);
   auto body = player->add<DynamicBodyComponent>();
        body->Radius = 1.0f;
+       body->Friction = 0.2f;
        body->AngularDamping = 5.f;
        body->on_collision.connect([&](StaticBodyComponent* other){
          std::cout << "col" << std::endl;
@@ -151,6 +158,10 @@ int main(int argc, char** argv) {
     camera->Size = camera_size;
   });
 
+  window->on_mouse_move.connect([&](math::vec2 const& pos){
+    mouse->Offset = pos + math::vec2(-5.f, -45.f);
+  });
+
   window->on_key_press.connect([&](swift::Key key, int scancode, int action, int mods) {
     if (key == swift::Key::ESCAPE) {
       renderer.stop();
@@ -163,6 +174,10 @@ int main(int argc, char** argv) {
       scene->add_object(bullet);
       bullet->shoot(player);
     }
+  });
+
+  Interface::instance()->on_cursor_change.connect([&](Cursor pointer){
+    mouse->call_javascript("set_active", std::to_string(pointer == Cursor::HAND));
   });
 
   Application::instance()->start();
