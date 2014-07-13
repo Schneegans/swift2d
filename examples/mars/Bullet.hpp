@@ -29,7 +29,7 @@ class Bullet: public SceneObject {
          tex->Transform = math::make_scale(1.0f);
 
     auto deleter = add<TimedDeleteBehavior>();
-         deleter->Life = 1000.f;
+         deleter->Life = 20.f;
   }
 
   virtual std::string get_type_name() const {  return get_type_name_static(); }

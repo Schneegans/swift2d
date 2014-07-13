@@ -35,6 +35,9 @@ class StaticBodyComponent : public Component {
 
   // ---------------------------------------------------------------- properties
   Float Radius;
+  Float Density;
+  Float Friction;
+  Float Restitution;
 
   // ---------------------------------------------------- construction interface
   StaticBodyComponent();
@@ -60,6 +63,9 @@ class StaticBodyComponent : public Component {
   virtual void accept(SavableObjectVisitor& visitor) {
     Component::accept(visitor);
     visitor.add_member("Radius", Radius);
+    visitor.add_member("Density", Density);
+    visitor.add_member("Friction", Friction);
+    visitor.add_member("Restitution", Restitution);
   }
 
  ///////////////////////////////////////////////////////////////////////////////

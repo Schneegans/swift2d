@@ -103,6 +103,7 @@ int main(int argc, char** argv) {
   player->rotate(1);
   auto body = player->add<DynamicBodyComponent>();
   body->Radius = 1.0f;
+  body->AngularDamping = 5.f;
 
   player->get_component<Mover>()->set_camera(camera);
 

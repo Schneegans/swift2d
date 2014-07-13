@@ -21,11 +21,19 @@ namespace swift {
 
 DynamicBodyComponent::DynamicBodyComponent()
   : Radius(1.f)
+  , Density(1.f)
+  , Friction(0.5f)
+  , Restitution(0.5f)
+  , LinearDamping(0.5f)
+  , AngularDamping(0.5f)
   , body_(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 DynamicBodyComponent::~DynamicBodyComponent() {
+  if (body_) {
+    Physics::instance()->remove(body_);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,6 +89,7 @@ float DynamicBodyComponent::get_angular_velocity() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 void DynamicBodyComponent::update(double time) {
+
   init();
 
   b2Vec2 position = body_->GetPosition();
@@ -99,6 +108,27 @@ void DynamicBodyComponent::update(double time) {
 void DynamicBodyComponent::init() const {
   if (!body_) {
     body_ = Physics::instance()->add(this);
+
+    Radius.on_change().connect([&](float val){
+      body_->GetFixtureList()->GetShape()->m_radius = val;
+      body_->ResetMassData();
+    });
+    Density.on_change().connect([&](float val){
+      body_->GetFixtureList()->SetDensity(val);
+      body_->ResetMassData();
+    });
+    Friction.on_change().connect([&](float val){
+      body_->GetFixtureList()->SetFriction(val);
+    });
+    Restitution.on_change().connect([&](float val){
+      body_->GetFixtureList()->SetRestitution(val);
+    });
+    LinearDamping.on_change().connect([&](float val){
+      body_->SetLinearDamping(val);
+    });
+    AngularDamping.on_change().connect([&](float val){
+      body_->SetAngularDamping(val);
+    });
   }
 }
 

@@ -68,17 +68,25 @@ b2Body* Physics::add(DynamicBodyComponent const* body) {
   bodyDef.angle = rot;
   b2Body* result = world_->CreateBody(&bodyDef);
 
-  b2CircleShape shape;
-  shape.m_radius = body->Radius()*scale;
   b2FixtureDef fixtureDef;
-  fixtureDef.shape = &shape;
-  fixtureDef.density = 1.0f;
-  fixtureDef.friction = 0.4f;
-  fixtureDef.restitution = 0.4f;
-  result->CreateFixture(&fixtureDef);
+  fixtureDef.density = body->Density();
+  fixtureDef.friction = body->Friction();
+  fixtureDef.restitution = body->Restitution();
 
-  result->SetLinearDamping(0.3);
-  result->SetAngularDamping(5);
+  // if (body->IsBox()) {
+  //   b2PolygonShape shape;
+  //   shape.SetAsBox(1, 1);
+  //   shape.m_radius = body->Radius()*scale;
+  //   fixtureDef.shape = &shape;
+  // } else {
+    b2CircleShape shape;
+    shape.m_radius = body->Radius()*scale;
+    fixtureDef.shape = &shape;
+  // }
+
+  result->CreateFixture(&fixtureDef);
+  result->SetLinearDamping(body->LinearDamping());
+  result->SetAngularDamping(body->AngularDamping());
 
   return result;
 }
@@ -101,8 +109,8 @@ b2Body* Physics::add(StaticBodyComponent const* body) {
   shape.m_radius = body->Radius()*scale;
   b2FixtureDef fixtureDef;
   fixtureDef.shape = &shape;
-  fixtureDef.friction = 0.4f;
-  fixtureDef.restitution = 0.4f;
+  fixtureDef.friction = body->Friction();
+  fixtureDef.restitution = body->Restitution();
   result->CreateFixture(&fixtureDef);
 
   return result;
@@ -112,6 +120,18 @@ b2Body* Physics::add(StaticBodyComponent const* body) {
 
 void Physics::add(GravitySourceComponent const* source) {
   gravity_sources_.insert(source);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Physics::remove(b2Body* body) {
+  world_->DestroyBody(body);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Physics::remove(GravitySourceComponent* source) {
+  gravity_sources_.erase(source);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

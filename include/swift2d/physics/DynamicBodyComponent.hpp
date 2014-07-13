@@ -35,6 +35,11 @@ class DynamicBodyComponent : public Component {
 
   // ---------------------------------------------------------------- properties
   Float Radius;
+  Float Density;
+  Float Friction;
+  Float Restitution;
+  Float LinearDamping;
+  Float AngularDamping;
 
   // ---------------------------------------------------- construction interface
   DynamicBodyComponent();
@@ -69,6 +74,11 @@ class DynamicBodyComponent : public Component {
   virtual void accept(SavableObjectVisitor& visitor) {
     Component::accept(visitor);
     visitor.add_member("Radius", Radius);
+    visitor.add_member("Density", Density);
+    visitor.add_member("Friction", Friction);
+    visitor.add_member("Restitution", Restitution);
+    visitor.add_member("LinearDamping", LinearDamping);
+    visitor.add_member("AngularDamping", AngularDamping);
   }
 
  ///////////////////////////////////////////////////////////////////////////////

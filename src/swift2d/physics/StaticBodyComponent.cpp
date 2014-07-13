@@ -25,6 +25,9 @@ StaticBodyComponent::StaticBodyComponent()
 ////////////////////////////////////////////////////////////////////////////////
 
 StaticBodyComponent::~StaticBodyComponent() {
+  if (body_) {
+    Physics::instance()->remove(body_);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,6 +35,21 @@ StaticBodyComponent::~StaticBodyComponent() {
 void StaticBodyComponent::update(double time) {
   if (!body_) {
     body_ = Physics::instance()->add(this);
+
+    Radius.on_change().connect([&](float val){
+      body_->GetFixtureList()->GetShape()->m_radius = val;
+      body_->ResetMassData();
+    });
+    Density.on_change().connect([&](float val){
+      body_->GetFixtureList()->SetDensity(val);
+      body_->ResetMassData();
+    });
+    Friction.on_change().connect([&](float val){
+      body_->GetFixtureList()->SetFriction(val);
+    });
+    Restitution.on_change().connect([&](float val){
+      body_->GetFixtureList()->SetRestitution(val);
+    });
   }
 }
 

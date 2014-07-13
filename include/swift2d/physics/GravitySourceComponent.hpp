@@ -38,6 +38,7 @@ class GravitySourceComponent : public Component {
 
   // ---------------------------------------------------- construction interface
   GravitySourceComponent();
+  ~GravitySourceComponent();
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
@@ -53,8 +54,6 @@ class GravitySourceComponent : public Component {
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "GravitySourceComponent"; }
-
-  virtual void update(double time);
 
   virtual void accept(SavableObjectVisitor& visitor) {
     Component::accept(visitor);

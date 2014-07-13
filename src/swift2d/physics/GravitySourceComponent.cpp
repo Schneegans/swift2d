@@ -16,22 +16,15 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 GravitySourceComponent::GravitySourceComponent()
-  : Density(10.f)
-  , dirty_(true) {}
+  : Density(10.f) {
 
-////////////////////////////////////////////////////////////////////////////////
-
-void GravitySourceComponent::update(double time) {
-  init();
+  Physics::instance()->add(this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GravitySourceComponent::init() const {
-  if (dirty_) {
-    dirty_ = false;
-    Physics::instance()->add(this);
-  }
+GravitySourceComponent::~GravitySourceComponent() {
+  Physics::instance()->remove(this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

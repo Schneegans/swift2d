@@ -40,6 +40,9 @@ class Physics : public Singleton<Physics> {
   b2Body* add(StaticBodyComponent const* body);
   void    add(GravitySourceComponent const* source);
 
+  void    remove(b2Body* body);
+  void    remove(GravitySourceComponent* source);
+
   friend class Singleton<Physics>;
 
  ///////////////////////////////////////////////////////////////////////////////
