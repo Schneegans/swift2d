@@ -65,13 +65,7 @@ class StaticBodyComponent : public Component {
 
   virtual void update(double time);
 
-  virtual void accept(SavableObjectVisitor& visitor) {
-    Component::accept(visitor);
-    visitor.add_member("Radius", Radius);
-    visitor.add_member("Density", Density);
-    visitor.add_member("Friction", Friction);
-    visitor.add_member("Restitution", Restitution);
-  }
+  virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

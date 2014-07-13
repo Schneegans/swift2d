@@ -55,10 +55,7 @@ class GravitySourceComponent : public Component {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "GravitySourceComponent"; }
 
-  virtual void accept(SavableObjectVisitor& visitor) {
-    Component::accept(visitor);
-    visitor.add_member("Density", Density);
-  }
+  virtual void accept(SavableObjectVisitor& visitor);
 };
 
 // -----------------------------------------------------------------------------

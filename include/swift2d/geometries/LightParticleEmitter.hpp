@@ -59,10 +59,7 @@ class LightParticleEmitter : public ParticleEmitter {
   void spawn(math::mat3 transform, math::vec2& position, float& max_age,
              math::vec2& direction, float& rotation, float& rotation_speed) const;
 
-  virtual void accept(SavableObjectVisitor& visitor) {
-    ParticleEmitter::accept(visitor);
-    visitor.add_object("Texture", Texture);
-  }
+  virtual void accept(SavableObjectVisitor& visitor);
 };
 
 }

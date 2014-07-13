@@ -34,19 +34,13 @@ class FPSCounter {
  // ----------------------------------------------------------- public interface
  public:
 
-  FPSCounter(unsigned t) : fps(0.0f), frame_count(0), timer(), delay(t) {}
+  FPSCounter(unsigned t);
 
   // Call this after creation of this counter.
-  void start() { timer.start(); }
+  void start();
 
   // Call this once a frame.
-  void step() {
-    if (++frame_count == delay) {
-      fps = 1.f * delay / float(timer.get_elapsed());
-      timer.reset();
-      frame_count = 0;
-    }
-  }
+  void step();
 
   // This property contains the current frames per seconds.
   Float fps;

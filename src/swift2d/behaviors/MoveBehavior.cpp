@@ -6,32 +6,37 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-// includes  -------------------------------------------------------------------
-#include <swift2d/physics/GravitySourceComponent.hpp>
+#include <swift2d/behaviors/MoveBehavior.hpp>
 
-#include <swift2d/physics/Physics.hpp>
+#include <swift2d/scene/SceneObject.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GravitySourceComponent::GravitySourceComponent()
-  : Density(10.f) {
+MoveBehavior::MoveBehavior()
+  : LinearSpeed()
+  , AngularSpeed() {
 
-  Physics::instance()->add(this);
+  LinearSpeed.set(0);
+  AngularSpeed.set(0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GravitySourceComponent::~GravitySourceComponent() {
-  Physics::instance()->remove(this);
+void MoveBehavior::update(double time) {
+  auto user_transform(get_user()->Transform.get());
+  math::rotate(user_transform, AngularSpeed.get() * time);
+  math::translate(user_transform, LinearSpeed.get() * time, 0);
+  get_user()->Transform.set(user_transform);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GravitySourceComponent::accept(SavableObjectVisitor& visitor) {
+void MoveBehavior::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
-  visitor.add_member("Density", Density);
+  visitor.add_member("LinearSpeed", LinearSpeed);
+  visitor.add_member("AngularSpeed", AngularSpeed);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

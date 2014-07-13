@@ -126,6 +126,18 @@ void DynamicBodyComponent::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void DynamicBodyComponent::accept(SavableObjectVisitor& visitor) {
+  Component::accept(visitor);
+  visitor.add_member("Radius", Radius);
+  visitor.add_member("Density", Density);
+  visitor.add_member("Friction", Friction);
+  visitor.add_member("Restitution", Restitution);
+  visitor.add_member("LinearDamping", LinearDamping);
+  visitor.add_member("AngularDamping", AngularDamping);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void DynamicBodyComponent::init() {
   if (!body_) {
     body_ = Physics::instance()->add(this);

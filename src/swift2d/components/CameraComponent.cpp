@@ -7,31 +7,22 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/physics/GravitySourceComponent.hpp>
-
-#include <swift2d/physics/Physics.hpp>
+#include <swift2d/components/CameraComponent.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GravitySourceComponent::GravitySourceComponent()
-  : Density(10.f) {
-
-  Physics::instance()->add(this);
-}
+CameraComponent::CameraComponent()
+  : Size(math::vec2(1.f, 1.f))
+  , Parallax(1.0) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GravitySourceComponent::~GravitySourceComponent() {
-  Physics::instance()->remove(this);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void GravitySourceComponent::accept(SavableObjectVisitor& visitor) {
-  Component::accept(visitor);
-  visitor.add_member("Density", Density);
+void CameraComponent::accept(SavableObjectVisitor& visitor) {
+  TransformableComponent::accept(visitor);
+  visitor.add_member("Size", Size);
+  visitor.add_member("Parallax", Parallax);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

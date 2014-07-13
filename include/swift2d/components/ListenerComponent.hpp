@@ -55,10 +55,7 @@ class ListenerComponent : public TransformableComponent {
 
   virtual void update(double time);
 
-  virtual void accept(SavableObjectVisitor& visitor) {
-    TransformableComponent::accept(visitor);
-    visitor.add_member("Volume", Volume);
-  }
+  virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

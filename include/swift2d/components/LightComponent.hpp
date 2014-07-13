@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/DrawableComponent.hpp>
+#include <swift2d/materials/Material.hpp>
 #include <swift2d/geometries/Quad.hpp>
 #include <swift2d/textures/Texture.hpp>
 
@@ -39,6 +40,7 @@ class LightComponent : public DrawableComponent {
   MaterialProperty Material;
 
   // ----------------------------------------------------- contruction interface
+  LightComponent();
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
@@ -55,19 +57,11 @@ class LightComponent : public DrawableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "LightComponent"; }
 
-  void draw(RenderContext const& ctx) {
-    Material()->draw_quad(ctx, WorldTransform(), Depth());
-  }
+  void draw(RenderContext const& ctx);
 
-  void serialize(SerializedScenePtr& scene) const {
-    scene->lights.insert(std::make_pair(Depth.get(), create_copy()));
-  }
+  void serialize(SerializedScenePtr& scene) const;
 
-  virtual void accept(SavableObjectVisitor& visitor) {
-    DrawableComponent::accept(visitor);
-    visitor.add_member("Depth", Depth);
-    visitor.add_object("Material", Material);
-  }
+  virtual void accept(SavableObjectVisitor& visitor);
 };
 
 // -----------------------------------------------------------------------------

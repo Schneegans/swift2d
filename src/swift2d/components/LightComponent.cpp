@@ -7,31 +7,33 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/physics/GravitySourceComponent.hpp>
-
-#include <swift2d/physics/Physics.hpp>
+#include <swift2d/components/LightComponent.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GravitySourceComponent::GravitySourceComponent()
-  : Density(10.f) {
+LightComponent::LightComponent()
+  : Depth(0.f) {}
 
-  Physics::instance()->add(this);
+////////////////////////////////////////////////////////////////////////////////
+
+void LightComponent::draw(RenderContext const& ctx) {
+  Material()->draw_quad(ctx, WorldTransform(), Depth());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GravitySourceComponent::~GravitySourceComponent() {
-  Physics::instance()->remove(this);
+void LightComponent::serialize(SerializedScenePtr& scene) const {
+  scene->lights.insert(std::make_pair(Depth.get(), create_copy()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GravitySourceComponent::accept(SavableObjectVisitor& visitor) {
-  Component::accept(visitor);
-  visitor.add_member("Density", Density);
+void LightComponent::accept(SavableObjectVisitor& visitor) {
+  DrawableComponent::accept(visitor);
+  visitor.add_member("Depth", Depth);
+  visitor.add_object("Material", Material);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

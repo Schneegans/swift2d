@@ -57,9 +57,7 @@ class Texture : public SavableObject {
   // Binds the texture on the given context to the given location.
   void bind(RenderContext const& context, unsigned location) const;
 
-  virtual void accept(SavableObjectVisitor& visitor) {
-    visitor.add_member("FileName", FileName);
-  }
+  virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

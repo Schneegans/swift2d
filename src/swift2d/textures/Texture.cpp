@@ -61,6 +61,12 @@ void Texture::bind(RenderContext const& context, unsigned location) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Texture::accept(SavableObjectVisitor& visitor) {
+  visitor.add_member("FileName", FileName);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Texture::upload_to(RenderContext const& context) const {
 
   needs_update_ = false;

@@ -101,4 +101,11 @@ void LightParticleEmitter::spawn(math::mat3 transform, math::vec2& position,
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void LightParticleEmitter::accept(SavableObjectVisitor& visitor) {
+  ParticleEmitter::accept(visitor);
+  visitor.add_object("Texture", Texture);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 }

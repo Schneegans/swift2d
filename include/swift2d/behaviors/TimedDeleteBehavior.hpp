@@ -35,7 +35,7 @@ class TimedDeleteBehavior : public Component {
   Signal<> on_delete;
 
   // ----------------------------------------------------- constrution interface
-  TimedDeleteBehavior() : Life(1.0f) {}
+  TimedDeleteBehavior();
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
@@ -52,19 +52,9 @@ class TimedDeleteBehavior : public Component {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "TimedDeleteBehavior"; }
 
-  /*virtual*/ void update(double time) {
-    Life.set(Life.get()-time);
-    if (Life.get() <= 0) {
-      on_delete.emit();
-      get_user()->detach();
-    }
-  }
+  virtual void update(double time);
 
-  virtual void accept(SavableObjectVisitor& visitor) {
-    Component::accept(visitor);
-    visitor.add_member("Life", Life);
-  }
-
+  virtual void accept(SavableObjectVisitor& visitor);
 };
 
 }

@@ -92,11 +92,15 @@ set(INCLUDE_PATHS
 include_directories(SYSTEM ${INCLUDE_PATHS})
 
 if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release")
+    set(CMAKE_BUILD_TYPE "release")
 endif()
 
-set(CMAKE_CXX_FLAGS_RELEASE "-s -O4 --std=c++0x -fPIC")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall --std=c++0x -fPIC")
+IF(CMAKE_BUILD_TYPE MATCHES "release")
+    add_definitions(-DOGLPLUS_LOW_PROFILE)
+    set(CMAKE_CXX_FLAGS "-s -Ofast --std=c++0x")
+ELSE(CMAKE_BUILD_TYPE MATCHES "release")
+    set(CMAKE_CXX_FLAGS "-g -Wall --std=c++0x")
+        ENDIF(CMAKE_BUILD_TYPE MATCHES "release")
 
 ################################################################
 # Create libraries

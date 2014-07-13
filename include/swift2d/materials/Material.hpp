@@ -36,11 +36,6 @@ class Material : public SavableObject {
   virtual void draw_quad(RenderContext const& context,
                          math::mat3 const& object_transform,
                          float object_depth) = 0;
-
-  template<typename T>
-  void set_uniform(std::string name, T const& val) {
-
-  }
 };
 
 // -----------------------------------------------------------------------------

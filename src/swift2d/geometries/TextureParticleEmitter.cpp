@@ -120,4 +120,18 @@ void TextureParticleEmitter::spawn(math::mat3 transform, math::vec2& position,
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void TextureParticleEmitter::accept(SavableObjectVisitor& visitor) {
+  ParticleEmitter::accept(visitor);
+  visitor.add_member("BlendAdditive", BlendAdditive);
+  visitor.add_member("RotationSpeed", RotationSpeed);
+  visitor.add_member("RotationSpeedVariance", RotationSpeedVariance);
+  visitor.add_member("Rotation", Rotation);
+  visitor.add_member("RotationVariance", RotationVariance);
+  visitor.add_member("StartGlow", StartGlow);
+  visitor.add_member("EndGlow", EndGlow);
+  visitor.add_object("Texture", Texture);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 }

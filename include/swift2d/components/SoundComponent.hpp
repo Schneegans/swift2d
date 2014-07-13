@@ -39,24 +39,8 @@ class SoundComponent : public TransformableComponent {
   Float         Volume;
 
   // ---------------------------------------------------- construction interface
-  SoundComponent()
-    : source_(new oalplus::Source()) {
-
-    Sound.on_change().connect([&](SoundPtr const& val) {
-      stop();
-      source_->Buffer(val->get_buffer());
-    });
-
-    Volume.on_change().connect([&](float val) {
-      source_->Gain(val);
-    });
-  }
-
-  ~SoundComponent() {
-    stop();
-    source_->DetachBuffers();
-    delete source_;
-  }
+  SoundComponent();
+  ~SoundComponent();
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
@@ -73,30 +57,13 @@ class SoundComponent : public TransformableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "SoundComponent"; }
 
-  virtual void update(double time) {
-    TransformableComponent::update(time);
-    auto pos(get_world_position());
-    source_->Position(pos.x(), pos.y(), 0);
-  }
+  virtual void update(double time);
 
-  virtual void play() {
-    source_->Play();
-  }
+  virtual void play();
+  virtual void pause();
+  virtual void stop();
 
-  virtual void pause() {
-    source_->Pause();
-  }
-
-
-  virtual void stop() {
-    source_->Stop();
-  }
-
-  virtual void accept(SavableObjectVisitor& visitor) {
-    TransformableComponent::accept(visitor);
-    visitor.add_member("Volume", Volume);
-    visitor.add_object("Sound", Sound);
-  }
+  virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

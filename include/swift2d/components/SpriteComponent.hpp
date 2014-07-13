@@ -37,7 +37,7 @@ class SpriteComponent : public DrawableComponent {
   MaterialProperty Material;
 
   // ----------------------------------------------------- contruction interface
-  SpriteComponent() : Depth(0.f), Material(nullptr) {}
+  SpriteComponent();
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
@@ -54,19 +54,11 @@ class SpriteComponent : public DrawableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "SpriteComponent"; }
 
-  void draw(RenderContext const& ctx) {
-    Material()->draw_quad(ctx, WorldTransform(), Depth());
-  }
+  void draw(RenderContext const& ctx);
 
-  void serialize(SerializedScenePtr& scene) const {
-    scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
-  }
+  void serialize(SerializedScenePtr& scene) const;
 
-  virtual void accept(SavableObjectVisitor& visitor) {
-    DrawableComponent::accept(visitor);
-    visitor.add_member("Depth", Depth);
-    visitor.add_object("Material", Material);
-  }
+  virtual void accept(SavableObjectVisitor& visitor);
 
 };
 

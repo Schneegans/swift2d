@@ -43,11 +43,7 @@ class GuiComponent : public DrawableComponent {
   Signal<>            on_loaded;
 
   // ---------------------------------------------------- construction interface
-  GuiComponent()
-    : Resource()
-    , Size(math::vec2i(10,10))
-    , Anchor(math::vec2i(0,0))
-    , gui_element_(GuiElement::create(this)) {}
+  GuiComponent();
 
   static GuiComponentPtr create() {
     return std::make_shared<GuiComponent>();
@@ -62,34 +58,16 @@ class GuiComponent : public DrawableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "GuiComponent"; }
 
-  void reload() {
-    gui_element_->reload();
-  }
+  void reload();
 
-  void call_javascript(std::string const& method, std::string const& arg) {
-    gui_element_->call_javascript(method, arg);
-  }
+  void call_javascript(std::string const& method, std::string const& arg);
+  void add_javascript_callback(std::string const& callback);
 
-  void add_javascript_callback(std::string const& callback) {
-    gui_element_->add_javascript_callback(callback);
-  }
+  void draw(RenderContext const& ctx);
 
-  void draw(RenderContext const& ctx) {
-    gui_element_->draw(ctx);
-  }
+  void serialize(SerializedScenePtr& scene) const;
 
-  void serialize(SerializedScenePtr& scene) const {
-    scene->gui_elements.insert(std::make_pair(Depth.get(), create_copy()));
-  }
-
-  virtual void accept(SavableObjectVisitor& visitor) {
-    DrawableComponent::accept(visitor);
-    visitor.add_member("Depth", Depth);
-    visitor.add_member("Resource", Resource);
-    visitor.add_member("Size", Size);
-    visitor.add_member("Anchor", Anchor);
-    visitor.add_member("Offset", Offset);
-  }
+  virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

@@ -59,4 +59,14 @@ void StaticBodyComponent::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void StaticBodyComponent::accept(SavableObjectVisitor& visitor) {
+  Component::accept(visitor);
+  visitor.add_member("Radius", Radius);
+  visitor.add_member("Density", Density);
+  visitor.add_member("Friction", Friction);
+  visitor.add_member("Restitution", Restitution);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 }

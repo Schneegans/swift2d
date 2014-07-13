@@ -7,31 +7,32 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/physics/GravitySourceComponent.hpp>
-
-#include <swift2d/physics/Physics.hpp>
+#include <swift2d/utils/FPSCounter.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GravitySourceComponent::GravitySourceComponent()
-  : Density(10.f) {
+FPSCounter::FPSCounter(unsigned t)
+  : fps(0.0f)
+  , frame_count(0)
+  , timer()
+  , delay(t) {}
 
-  Physics::instance()->add(this);
+////////////////////////////////////////////////////////////////////////////////
+
+void FPSCounter::start() {
+  timer.start();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GravitySourceComponent::~GravitySourceComponent() {
-  Physics::instance()->remove(this);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void GravitySourceComponent::accept(SavableObjectVisitor& visitor) {
-  Component::accept(visitor);
-  visitor.add_member("Density", Density);
+void FPSCounter::step() {
+  if (++frame_count == delay) {
+    fps = 1.f * delay / float(timer.get_elapsed());
+    timer.reset();
+    frame_count = 0;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

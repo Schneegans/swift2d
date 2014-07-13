@@ -35,9 +35,7 @@ class CameraComponent : public TransformableComponent {
   Float Parallax;
 
   // ----------------------------------------------------- contruction interface
-  CameraComponent()
-    : Size(math::vec2(1.f, 1.f))
-    , Parallax(1.0) {}
+  CameraComponent();
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
@@ -54,11 +52,7 @@ class CameraComponent : public TransformableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "CameraComponent"; }
 
-  virtual void accept(SavableObjectVisitor& visitor) {
-    TransformableComponent::accept(visitor);
-    visitor.add_member("Size", Size);
-    visitor.add_member("Parallax", Parallax);
-  }
+  virtual void accept(SavableObjectVisitor& visitor);
 };
 
 // -----------------------------------------------------------------------------

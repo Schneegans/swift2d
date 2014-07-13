@@ -6,32 +6,32 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-// includes  -------------------------------------------------------------------
-#include <swift2d/physics/GravitySourceComponent.hpp>
+#include <swift2d/behaviors/TimedDeleteBehavior.hpp>
 
-#include <swift2d/physics/Physics.hpp>
+#include <swift2d/scene/SceneObject.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GravitySourceComponent::GravitySourceComponent()
-  : Density(10.f) {
+TimedDeleteBehavior::TimedDeleteBehavior()
+  : Life(1.0f) {}
 
-  Physics::instance()->add(this);
+////////////////////////////////////////////////////////////////////////////////
+
+void TimedDeleteBehavior::update(double time) {
+  Life.set(Life.get()-time);
+  if (Life.get() <= 0) {
+    on_delete.emit();
+    get_user()->detach();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GravitySourceComponent::~GravitySourceComponent() {
-  Physics::instance()->remove(this);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void GravitySourceComponent::accept(SavableObjectVisitor& visitor) {
+void TimedDeleteBehavior::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
-  visitor.add_member("Density", Density);
+  visitor.add_member("Life", Life);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
