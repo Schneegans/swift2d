@@ -14,6 +14,13 @@
             "Volume": "1"
         },
         {
+            "Type": "DynamicBodyComponent",
+            "Enabled": "1",
+            "Radius": "1",
+            "Friction": "0.2",
+            "AngularDamping": "15"
+        },
+        {
             "Type": "LightComponent",
             "Enabled": "1",
             "Transform": "(6 0 0\n 0 6 0\n 0 0 1)",

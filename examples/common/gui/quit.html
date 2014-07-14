@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" type="text/css" href="third_party/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="third_party/css/bootstrap-theme.css">
+<link rel="stylesheet" type="text/css" href="bootstrap_overrides.css">
+<link rel="stylesheet" type="text/css" href="window.css">
+
+<script type="text/javascript" src="third_party/js/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="third_party/js/jquery-ui-1.10.4.min.js"></script>
+<script type="text/javascript" src="third_party/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="flicker.js"></script>
+
+<script type="text/javascript">
+  $(document).ready( function() {
+    $("#mars-window").flicker();
+  });
+</script>
+
+</head>
+<body>
+<div id="mars-window" class="mars-dialog">
+  <div class="mars-dialog-inner">
+    <h1>Spiel beenden</h1>
+    <p>
+      Willst du das Spiel wirklich beenden?
+    </p>
+
+    <div class="row">
+      <div class="col-xs-6">
+        <button onclick="Swift2D.hide_quit()" class="btn btn-block">Weiterspielen</button>
+      </div>
+      <div class="col-xs-6">
+        <button onclick="Swift2D.quit()" class="btn btn-block">Spiel beenden</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

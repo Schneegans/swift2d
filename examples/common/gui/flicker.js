@@ -31,7 +31,6 @@ function flicker(elem, on, flicCount) {
     return this.each(function() {
       var on = true;
       var flicCount = 1;
-      console.log("huh");
       flicker($(this), on, flicCount);
     });
   };

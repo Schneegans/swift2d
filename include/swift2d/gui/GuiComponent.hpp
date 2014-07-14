@@ -35,7 +35,7 @@ class GuiComponent : public DrawableComponent {
   Float  Depth;
   String Resource;
   Vec2i  Size;
-  Vec2i  Anchor;
+  Vec2   Anchor;
   Vec2i  Offset;
 
   // ------------------------------------------------------------------- signals

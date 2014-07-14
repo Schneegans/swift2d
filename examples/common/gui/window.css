@@ -73,6 +73,52 @@ body {
   box-shadow: 0 0 10px rgb(255, 171, 235) inset;
 }
 
+/* ####################### Dialog Stuff ##################################### */
+.mars-dialog {
+  position: absolute;
+  margin: 320px 200px 90px 190px;
+}
+
+.mars-dialog:after {
+  content:"";
+  position:absolute;
+  top:0; bottom:0; left:0; right:0;
+
+  border-image-source: url("img/dialog_off.png");
+  border-image-slice: 500 320 140 320;
+  border-width: 500px 320px 140px 320px;
+  margin: -320px -200px -100px -185px;
+  pointer-events:none;
+}
+
+.mars-dialog.light-on:after {
+  border-image-source: url("img/dialog_on.png");
+}
+
+
+.mars-dialog-inner {
+  position:relative;
+  padding: 30px 30px 60px 30px;
+
+  width: 315px;
+
+  color: rgb(255, 171, 235);
+  background-color: rgba(0, 0, 0, 0.8);
+  background-image: url("img/gloss.png");
+  background-repeat: no-repeat;
+  background-size: 100% 80px;
+
+  border-radius: 3px;
+  border: 1px rgba(255, 171, 235, 0.5) solid;
+  box-shadow: 0 0 5px rgba(255, 171, 235, 0.5) inset;
+}
+
+.mars-dialog.light-on
+.mars-dialog-inner {
+  border: 1px rgb(255, 171, 235) solid;
+  box-shadow: 0 0 10px rgb(255, 171, 235) inset;
+}
+
 /* ######################### Scrollbars ##################################### */
 ::-webkit-scrollbar {
     width: 12px;
