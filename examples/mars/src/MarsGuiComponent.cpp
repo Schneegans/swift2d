@@ -20,6 +20,7 @@ MarsGuiComponent::MarsGuiComponent(
 
   if (hidable) {
     Enabled = false;
+    Active = false;
   }
 
   on_loaded.connect([&](){
@@ -68,17 +69,18 @@ void MarsGuiComponent::hide() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void MarsGuiComponent::toggle() {
-  if (visible_) hide();
-  else          show();
+bool MarsGuiComponent::is_visible() const {
+  return visible_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void MarsGuiComponent::update(double time) {
-  swift::GuiComponent::update(time);
+  if (Enabled() && visible_ && Active()) {
+    swift::GuiComponent::update(time);
+  }
 
-  if (Enabled() && hidable_) {
+  if (hidable_) {
     top_.update(time);
     Offset = swift::math::vec2(Offset().x(), top_());
   }

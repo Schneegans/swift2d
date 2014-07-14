@@ -25,7 +25,8 @@ class MarsGuiComponent : public swift::GuiComponent {
 
   void show();
   void hide();
-  void toggle();
+
+  bool is_visible() const;
 
   virtual void update(double time);
 

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="third_party/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="third_party/css/bootstrap-theme.css">
+<link rel="stylesheet" type="text/css" href="bootstrap_overrides.css">
+<link rel="stylesheet" type="text/css" href="window.css">
+<link rel="stylesheet" type="text/css" href="third_party/css/jquery.marquee.min.css">
+
+<script type="text/javascript" src="third_party/js/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="third_party/js/jquery.marquee.min.js"></script>
+<script type="text/javascript" src="third_party/js/jquery.jplayer.min.js"></script>
+<script type="text/javascript" src="third_party/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="flicker.js"></script>
+
+<script type="text/javascript">
+  $(document).ready( function() {
+    $(".flicker").flicker();
+    $("#music-info").marquee({
+      yScroll: "bottom",
+      pauseSpeed: 1000,
+      scrollSpeed: 5
+    });
+
+    $.ajax({
+      type: 'GET',
+      url: "http://api.jamendo.com/get2/stream/track/xspf/?album_id=87694&order=numalbum_asc&n=all&streamencoding=ogg2",
+      complete: function(data) {
+        xml = $.parseXML(data.responseText);
+        track = $(xml).find("track")[1];
+
+        title = $(track).find("title")[0].innerHTML;
+        album = $(track).find("album")[0].innerHTML;
+        artist = $(track).find("creator")[0].innerHTML;
+        image = $(track).find("image")[0].innerHTML;
+        url = $(track).find("location")[0].innerHTML;
+
+        $("#music-title").html(title);
+        $("#music-album").html(album);
+        $("#music-artist").html(artist);
+
+        url = url.replace(/&amp;/g, "&");
+        console.log(url);
+
+
+        $("#music").jPlayer({
+          ready: function() {
+            $(this).jPlayer("setMedia", {
+              oga: url
+            }).jPlayer("play");
+          },
+          loop: true
+        });
+      }
+    });
+
+  });
+</script>
+
+</head>
+<body>
+
+<div id="music"></div>
+
+<div id="music-menu">
+<div id="music-menu-deco" class="flicker"></div>
+  <ul id="music-info" class="">
+    <li id="music-title">Now playing Wishmaster</li>
+    <li id="music-artist">By Nightwish</li>
+    <li id="music-album">From Album</li>
+  </ul>
+  <div class="text-center">
+    <span class="btn" onclick="Swift2D.toggle_options()"><i class="glyphicon glyphicon-step-backward"></i></span>
+    <span class="btn" onclick="Swift2D.toggle_options()"><i class="glyphicon glyphicon-pause"></i></span>
+    <span class="btn" onclick="Swift2D.toggle_quit()"><i class="glyphicon glyphicon-step-forward"></i></span>
+  </div>
+</div>
+</body>
+</html>

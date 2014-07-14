@@ -14,10 +14,17 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 GuiComponent::GuiComponent()
-  : Resource()
+  : Depth(0.f)
+  , Resource()
   , Size(math::vec2i(10,10))
   , Anchor(math::vec2i(0,0))
-  , gui_element_(GuiElement::create(this)) {}
+  , gui_element_(GuiElement::create(this))
+  , Active(true) {
+
+  Active.on_change().connect([&](bool val){
+    gui_element_->set_active(val);
+  });
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -58,6 +65,7 @@ void GuiComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Size", Size);
   visitor.add_member("Anchor", Anchor);
   visitor.add_member("Offset", Offset);
+  visitor.add_member("Active", Active);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

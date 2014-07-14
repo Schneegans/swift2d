@@ -49,6 +49,9 @@ class GuiElement {
   // ------------------------------------------------------------ public methods
   void reload();
 
+  void focus();
+  void set_active(bool active);
+
   void call_javascript(std::string const& method, std::string const& arg);
   void add_javascript_callback(std::string const& callback);
 
@@ -60,6 +63,7 @@ class GuiElement {
   Awesomium::WebView* view_;
   std::vector<int>    callbacks_;
   GuiComponent*       parent_;
+  bool                active_;
 };
 
 // -----------------------------------------------------------------------------

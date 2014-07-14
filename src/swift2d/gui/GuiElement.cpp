@@ -37,7 +37,8 @@ namespace {
 GuiElement::GuiElement(GuiComponent* parent)
   : view_(nullptr)
   , callbacks_(5)
-  , parent_(parent) {
+  , parent_(parent)
+  , active_(true) {
 
   view_ = Interface::instance()->create_webview(parent_->Size().x(), parent_->Size().y());
   view_->SetTransparent(true);
@@ -50,34 +51,44 @@ GuiElement::GuiElement(GuiComponent* parent)
   auto window = WindowManager::instance()->get_default();
 
   callbacks_[0] = window->on_mouse_move.connect([&](math::vec2 const& pos) {
-    auto size(WindowManager::instance()->get_default()->get_context().size);
+    if (active_) {
+      auto size(WindowManager::instance()->get_default()->get_context().size);
 
-    math::vec2 corner(
-      (size.x() - parent_->Size().x() + parent_->Anchor().x() * (size.x() - parent_->Size().x()))*0.5 + parent_->Offset().x(),
-      (size.y() - parent_->Size().y() - parent_->Anchor().y() * (size.y() - parent_->Size().y()))*0.5 + parent_->Offset().y()
-    );
+      math::vec2 corner(
+        (size.x() - parent_->Size().x() + parent_->Anchor().x() * (size.x() - parent_->Size().x()))*0.5 + parent_->Offset().x(),
+        (size.y() - parent_->Size().y() - parent_->Anchor().y() * (size.y() - parent_->Size().y()))*0.5 + parent_->Offset().y()
+      );
 
-    view_->InjectMouseMove(pos.x() - corner.x(), size.y() - pos.y() + corner.y());
+      view_->InjectMouseMove(pos.x() - corner.x(), size.y() - pos.y() + corner.y());
+    }
   });
 
   callbacks_[1] = window->on_scroll.connect([&](math::vec2 const& dir) {
-    view_->InjectMouseWheel(dir.y()*10, dir.x()*10);
+    if (active_) {
+      view_->InjectMouseWheel(dir.y()*10, dir.x()*10);
+    }
   });
 
   callbacks_[2] = window->on_button_press.connect([&](Button button, int action, int mods) {
-    if (action == 0) {
-      view_->InjectMouseUp(static_cast<Awesomium::MouseButton>(button));
-    } else {
-      view_->InjectMouseDown(static_cast<Awesomium::MouseButton>(button));
+    if (active_) {
+      if (action == 0) {
+        view_->InjectMouseUp(static_cast<Awesomium::MouseButton>(button));
+      } else {
+        view_->InjectMouseDown(static_cast<Awesomium::MouseButton>(button));
+      }
     }
   });
 
   callbacks_[3] = window->on_char.connect([&](unsigned c) {
-    view_->InjectKeyboardEvent(AweKeyEvent(c));
+    if (active_) {
+      view_->InjectKeyboardEvent(AweKeyEvent(c));
+    }
   });
 
   callbacks_[4] = window->on_key_press.connect([&](Key key, int scancode, int action, int mods) {
-    view_->InjectKeyboardEvent(AweKeyEvent(key, scancode, action, mods));
+    if (active_) {
+      view_->InjectKeyboardEvent(AweKeyEvent(key, scancode, action, mods));
+    }
   });
 
   parent_->Resource.on_change().connect([&](std::string const& val) {
@@ -111,6 +122,18 @@ GuiElement::~GuiElement() {
 
 void GuiElement::reload() {
   view_->Reload(true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void GuiElement::focus() {
+  view_->Focus();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void GuiElement::set_active(bool active) {
+  active_ = active;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

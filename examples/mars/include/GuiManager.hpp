@@ -22,13 +22,20 @@ class GuiManager {
   void update(float app_fps, float render_fps);
 
  private:
+
+  void show_window(MarsGuiComponentPtr& window);
+  void hide_window(MarsGuiComponentPtr& window);
+  void toggle_window(MarsGuiComponentPtr& window);
+
   MarsGuiComponentPtr menu_;
+  MarsGuiComponentPtr music_;
   MarsGuiComponentPtr options_;
   MarsGuiComponentPtr quit_;
   MarsGuiComponentPtr fps_;
   MarsGuiComponentPtr mouse_;
 
   std::unordered_map<std::string, std::function<void()>> callbacks_;
+  std::vector<MarsGuiComponentPtr> open_windows_;
 
 };
 

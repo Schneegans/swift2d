@@ -20,23 +20,30 @@ GuiManager::GuiManager() {
   };
 
   callbacks_["hide_quit"] = [&](){
-    quit_->hide();
+    hide_window(quit_);
   };
   callbacks_["show_quit"] = [&](){
-    quit_->show();
+    show_window(quit_);
   };
   callbacks_["toggle_quit"] = [&](){
-    quit_->toggle();
+    toggle_window(quit_);
   };
 
   callbacks_["show_options"] = [&](){
-    options_->show();
+    show_window(options_);
   };
   callbacks_["hide_options"] = [&](){
-    options_->hide();
+    hide_window(options_);
   };
   callbacks_["toggle_options"] = [&](){
-    options_->toggle();
+    toggle_window(options_);
+  };
+
+  callbacks_["audio_next"] = [&](){
+
+  };
+  callbacks_["audio_prev"] = [&](){
+
   };
 
   auto scene = SceneManager::instance()->get_default();
@@ -45,6 +52,13 @@ GuiManager::GuiManager() {
   menu_->Resource = Application::instance()->get_resource("gui", "main_menu.html");
   menu_->Size = math::vec2i(525, 180);
   menu_->Anchor = math::vec2i(-1, 1);
+  menu_->Depth = 0;
+
+  music_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, false));
+  music_->Resource = Application::instance()->get_resource("gui", "music_menu.html");
+  music_->Size = math::vec2i(520, 175);
+  music_->Anchor = math::vec2i(1, 1);
+  music_->Depth = 0;
 
   options_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, true));
   options_->Resource = Application::instance()->get_resource("gui", "options.html");
@@ -60,11 +74,13 @@ GuiManager::GuiManager() {
   fps_->Resource = Application::instance()->get_resource("gui", "fps.html");
   fps_->Size = math::vec2i(240, 35);
   fps_->Anchor = math::vec2i(-1, -1);
+  fps_->Depth = 0;
 
   mouse_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, false));
   mouse_->Resource = Application::instance()->get_resource("gui", "mouse.html");
   mouse_->Size = math::vec2i(50, 50);
   mouse_->Anchor = math::vec2i(-1, -1);
+  mouse_->Depth = 100;
 
   Interface::instance()->on_cursor_change.connect([&](Cursor pointer){
     mouse_->call_javascript("set_active", std::to_string(pointer == Cursor::HAND));
@@ -77,7 +93,7 @@ GuiManager::GuiManager() {
 
   window->on_key_press.connect([&](swift::Key key, int scancode, int action, int mods) {
     if (key == swift::Key::ESCAPE && action != 1) {
-      quit_->toggle();
+      toggle_window(quit_);
     } else if (key == swift::Key::F5 && action != 1) {
       menu_->reload();
       options_->reload();
@@ -100,5 +116,42 @@ void GuiManager::update(float app_fps, float render_fps) {
 
   Interface::instance()->update();
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+void GuiManager::show_window(MarsGuiComponentPtr& window) {
+  window->show();
+  if (open_windows_.size() > 0) {
+    open_windows_.back()->Active = false;
+    window->Depth = open_windows_.back()->Depth() + 1;
+  } else {
+    window->Depth = 1;
+  }
+  window->Active = true;
+  open_windows_.push_back(window);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void GuiManager::hide_window(MarsGuiComponentPtr& window) {
+  window->hide();
+  for (auto it(open_windows_.begin()); it != open_windows_.end(); ++it) {
+    if (*it == window) {
+      open_windows_.erase(it);
+      break;
+    }
+  }
+  if (open_windows_.size() > 0) {
+    open_windows_.back()->Active = true;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void GuiManager::toggle_window(MarsGuiComponentPtr& window) {
+  if (window->is_visible()) hide_window(window);
+  else                      show_window(window);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////

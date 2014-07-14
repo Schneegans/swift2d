@@ -37,6 +37,7 @@ class GuiComponent : public DrawableComponent {
   Vec2i  Size;
   Vec2   Anchor;
   Vec2i  Offset;
+  Bool   Active;
 
   // ------------------------------------------------------------------- signals
   Signal<std::string> on_javascript_callback;
