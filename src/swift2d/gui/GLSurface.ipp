@@ -42,7 +42,6 @@ class GLSurface : public Awesomium::Surface {
 
   void bind(RenderContext const& ctx, unsigned location) {
 
-    std::unique_lock<std::mutex> lock(mutex_);
 
     if (!tex_) {
       init(ctx);
@@ -53,6 +52,8 @@ class GLSurface : public Awesomium::Surface {
 
 
     if (needs_update_) {
+      std::unique_lock<std::mutex> lock(mutex_);
+
       tex_->SubImage2D(
         oglplus::Texture::Target::_2D, 0, 0, 0, width_, height_,
         oglplus::PixelDataFormat::BGRA, oglplus::PixelDataType::UnsignedByte,
@@ -69,22 +70,24 @@ class GLSurface : public Awesomium::Surface {
 
     std::unique_lock<std::mutex> lock(mutex_);
 
-    for (int row = 0; row < dest_rect.height; row++)
+    for (int row = 0; row < dest_rect.height; row++) {
       memcpy(buffer_ + (row + dest_rect.y) * width_*4 + (dest_rect.x * 4),
              src_buffer + (row + src_rect.y) * src_row_span + (src_rect.x * 4),
              dest_rect.width * 4);
+    }
 
     needs_update_ = true;
   }
 
   void Scroll(int dx, int dy, Awesomium::Rect const& clip_rect) {
 
+    if (abs(dx) >= clip_rect.width || abs(dy) >= clip_rect.height) {
+      return;
+    }
+
     std::unique_lock<std::mutex> lock(mutex_);
 
-    if (abs(dx) >= clip_rect.width || abs(dy) >= clip_rect.height)
-      return;
-
-      if (dx < 0 && dy == 0) {
+    if (dx < 0 && dy == 0) {
       // Area shifted left by dx
       unsigned char* tempBuffer = new unsigned char[(clip_rect.width + dx) * 4];
 
@@ -96,6 +99,7 @@ class GLSurface : public Awesomium::Surface {
       }
 
       delete[] tempBuffer;
+
     } else if (dx > 0 && dy == 0) {
       // Area shifted right by dx
       unsigned char* tempBuffer = new unsigned char[(clip_rect.width - dx) * 4];
@@ -108,6 +112,7 @@ class GLSurface : public Awesomium::Surface {
       }
 
       delete[] tempBuffer;
+
     } else if (dy < 0 && dx == 0) {
       // Area shifted down by dy
       for (int i = 0; i < clip_rect.height + dy ; i++)

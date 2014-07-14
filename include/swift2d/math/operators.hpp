@@ -21,6 +21,34 @@ namespace oglplus {
 ////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, std::size_t C>
+Vector<T, C> operator*(Vector<T, C> const& a, Vector<T, C> const& b) {
+
+  Vector<T, C> result;
+
+  for (unsigned c = 0; c < C; ++c) {
+    result[c] = a[c] * b[c];
+  }
+
+  return result;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, std::size_t C>
+Vector<T, C> operator/(Vector<T, C> const& a, Vector<T, C> const& b) {
+
+  Vector<T, C> result;
+
+  for (unsigned c = 0; c < C; ++c) {
+    result[c] = a[c] / b[c];
+  }
+
+  return result;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, std::size_t C>
 std::ostream& operator<<(std::ostream& out_stream, Vector<T, C> const& vec) {
 
   out_stream << "(";

@@ -43,7 +43,6 @@ Window::~Window() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Window::process_input() {
-
   glfwPollEvents();
 }
 
@@ -72,6 +71,18 @@ bool Window::key_pressed(Key key) const {
   }
 
   return glfwGetKey(window_, (int)key) == GLFW_PRESS;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+math::vec2 Window::get_cursor_pos() const {
+  if (!window_) {
+    return math::vec2(0.f, 0.f);
+  }
+  double x, y;
+  glfwGetCursorPos(window_, &x, &y);
+  int height(render_context_.size.y());
+  return math::vec2(x, height-y);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -20,42 +20,12 @@
 <script type="text/javascript" src="third_party/js/bootstrap-slider.js"></script>
 <script type="text/javascript" src="third_party/js/bootstrap.colorpickersliders.js"></script>
 <script type="text/javascript" src="third_party/js/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="flicker.js"></script>
 
 <script type="text/javascript">
 
   $(document).ready( function() {
-    var on = true;
-    var flicCount = 1;
-
-    function flicker() {
-      on = !on;
-
-      if (flicCount == 0) {
-        flicCount =  Math.floor(Math.random()*10)*2+1;
-      }
-      flicCount --;
-
-      var time;
-      if (on) {
-        document.getElementById("mars-window").className = "mars-window light-on";
-        if (flicCount > 0) {
-          time = Math.floor((Math.random()*50) + 1);
-        } else {
-          time = Math.floor((Math.random()*10000) + 1);
-        }
-      } else {
-        document.getElementById("mars-window").className = "mars-window";
-        if (flicCount > 0) {
-          time = Math.floor((Math.random()*10) + 1);
-        } else {
-          time = Math.floor((Math.random()*2000) + 1);
-        }
-      }
-      setTimeout(function() { flicker(); }, time);
-    }
-
-
-
+    $("#mars-window").flicker();
 
     var html5_audiotypes = {
       "mp3": "audio/mpeg",
@@ -121,9 +91,6 @@
         hsllightness: ''
       }
     });
-
-    flicker();
-
   });
 </script>
 

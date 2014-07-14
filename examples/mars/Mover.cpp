@@ -53,6 +53,7 @@ void Mover::update(double time) {
 
     auto mat(math::make_translation(camera_offset_ + math::get_translation(get_user()->WorldTransform())));
     mat = mat*math::make_scale(camera_zoom_);
+    // mat = mat*math::make_rotation(math::get_rotation(get_user()->WorldTransform()) - M_PI*0.5);
     camera_->Transform = mat;
   }
 
@@ -63,6 +64,19 @@ void Mover::update(double time) {
       c->apply_local_force(math::vec2(0.075f, 0.f));
     }
   }
+
+  auto cam(SceneManager::instance()->get_default()->get_component<CameraComponent>());
+  auto world_pos(cam->gui_to_world(w->get_cursor_pos()));
+
+  auto user_pos(math::get_translation(get_user()->WorldTransform()));
+  auto dir_to_mouse(oglplus::Normalized(world_pos - user_pos));
+  // float user_dir(math::get_rotation(get_user()->WorldTransform()));
+
+  // float torque(oglplus::Cross(math::vec3(dir_to_mouse.x(), dir_to_mouse.y(), 0.f), math::vec3(cos(user_dir), sin(user_dir), 0.f)).z());
+  // c->apply_torque(torque*-0.03);
+
+  // std::cout << dir_to_mouse << std::endl;
+
   if(w->key_pressed(Key::D)) {
     if (c->get_angular_velocity() > -5.f) {
       c->apply_torque(-0.01f);

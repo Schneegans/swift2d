@@ -67,25 +67,30 @@ int main(int argc, char** argv) {
        camera->Size = math::vec2(2.f, 2.f);
        camera->Parallax = 1.05;
 
+  // auto options = scene->add<GuiComponent>();
+  //      options->Resource = Application::instance()->get_resource("gui", "window.html");
+  //      options->Size = math::vec2i(1000, 1000);
+  //      options->Anchor = math::vec2i(0, 1);
+  //      options->on_loaded.connect([&](){
+  //        options->add_javascript_callback("start");
+  //        options->add_javascript_callback("quit");
+  //        options->add_javascript_callback("pause");
+  //      });
+  //      options->on_javascript_callback.connect([&](std::string const& method) {
+  //        if (method == "quit") {
+  //          renderer.stop();
+  //          Application::instance()->stop();
+  //        } else if (method == "pause") {
+  //           // music->pause();
+  //        } else {
+  //         std::cout << "Start!!!" << std::endl;
+  //        }
+  //      });
+
   auto menu = scene->add<GuiComponent>();
-       menu->Resource = Application::instance()->get_resource("gui", "window.html");
-       menu->Size = math::vec2i(1000, 1000);
-       menu->Anchor = math::vec2i(0, 1);
-       menu->on_loaded.connect([&](){
-         menu->add_javascript_callback("start");
-         menu->add_javascript_callback("quit");
-         menu->add_javascript_callback("pause");
-       });
-       menu->on_javascript_callback.connect([&](std::string const& method) {
-         if (method == "quit") {
-           renderer.stop();
-           Application::instance()->stop();
-         } else if (method == "pause") {
-            // music->pause();
-         } else {
-          std::cout << "Start!!!" << std::endl;
-         }
-       });
+       menu->Resource = Application::instance()->get_resource("gui", "main_menu.html");
+       menu->Size = math::vec2i(525, 180);
+       menu->Anchor = math::vec2i(-1, 1);
 
   auto fps = scene->add<GuiComponent>();
        fps->Resource = Application::instance()->get_resource("gui", "fps.html");
@@ -111,7 +116,7 @@ int main(int argc, char** argv) {
   auto body = player->add<DynamicBodyComponent>();
        body->Radius = 1.0f;
        body->Friction = 0.2f;
-       body->AngularDamping = 5.f;
+       body->AngularDamping = 15.f;
        body->on_collision.connect([&](StaticBodyComponent* other){
          std::cout << "col" << std::endl;
        });
@@ -167,7 +172,7 @@ int main(int argc, char** argv) {
       renderer.stop();
       Application::instance()->stop();
     } else if (key == swift::Key::F5 && action != 1) {
-      // menu->reload();
+      // options->reload();
       // fps->reload();
     } else if (key == swift::Key::SPACE && action != 1) {
       auto bullet = std::make_shared<Bullet>(player->WorldTransform());

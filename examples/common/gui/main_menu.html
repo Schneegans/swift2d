@@ -1,10 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="skin.css">
+<link rel="stylesheet" type="text/css" href="window.css">
+<script type="text/javascript" src="third_party/js/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="flicker.js"></script>
+
+<script type="text/javascript">
+  $(document).ready( function() {
+    $(".flicker").flicker();
+  });
+</script>
+
 </head>
 <body>
-<div onclick="Swift2D.start()" class="button orange">Starten!</div>
-<div onclick="Swift2D.quit()" class="button orange">Beenden!</div>
+<div id="main-menu" class="flicker">
+  <div id="main-menu-entries">
+    <span>Optionen</span>
+    <span>Beenden</span>
+  </div>
+</div>
 </body>
 </html>

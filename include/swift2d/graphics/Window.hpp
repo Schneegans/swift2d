@@ -66,6 +66,7 @@ class Window {
   void display();
 
   bool key_pressed(Key key) const;
+  math::vec2 get_cursor_pos() const;
 
   RenderContext const& get_context() const { return render_context_; };
   RenderContext& get_context() { return render_context_; };
