@@ -29,27 +29,31 @@
         xml = $.parseXML(data.responseText);
         track = $(xml).find("track")[1];
 
-        title = $(track).find("title")[0].innerHTML;
-        album = $(track).find("album")[0].innerHTML;
-        artist = $(track).find("creator")[0].innerHTML;
-        image = $(track).find("image")[0].innerHTML;
-        url = $(track).find("location")[0].innerHTML;
+        title = $(track).find("title")[0].textContent;
+        album = $(track).find("album")[0].textContent;
+        artist = $(track).find("creator")[0].textContent;
+        image = $(track).find("image")[0].textContent;
+        url = $(track).find("location")[0].textContent;
 
         $("#music-title").html(title);
         $("#music-album").html(album);
         $("#music-artist").html(artist);
 
         url = url.replace(/&amp;/g, "&");
-        console.log(url);
 
 
         $("#music").jPlayer({
           ready: function() {
-            $(this).jPlayer("setMedia", {
-              oga: url
-            }).jPlayer("play");
+            console.log(url);
+            // $(this).jPlayer("setMedia", {
+            //   oga: url
+            // }).jPlayer("play");
           },
-          loop: true
+          errorAlerts: true,
+          nativeSupport: true,
+          oggSupport: true,
+          swfPath: "third_party/swf",
+          supplied: "oga"
         });
       }
     });
