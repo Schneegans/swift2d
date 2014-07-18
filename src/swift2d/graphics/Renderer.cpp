@@ -29,25 +29,35 @@ Renderer::Renderer(PipelinePtr const& pipeline)
   , updated_scene_()
   , AppFPS(20)
   , RenderFPS(20)
-  , running_(true) {
+  , running_(true)
+  , started_rendering_(true) {
 
   AppFPS.start();
   RenderFPS.start();
 
+  ticker_ = Ticker::create(1.0 / 1000.0);
+  ticker_->on_tick.connect([&]() {
+    if (started_rendering_) {
+      started_rendering_ = false;
+      on_frame.emit();
+    }
+  });
+  ticker_->start();
+
   forever_ = boost::thread([&]() {
 
     while (running_) {
-      {
-        std::unique_lock<std::mutex> lock(mutex_);
-        rendered_scene_ = updated_scene_;
-      }
+      if (updated_scene_ && rendered_scene_ != updated_scene_) {
+        {
+          std::unique_lock<std::mutex> lock(mutex_);
+          rendered_scene_ = updated_scene_;
+          started_rendering_ = true;
+        }
 
-      RenderFPS.step();
-
-      if (rendered_scene_) {
+        RenderFPS.step();
         pipeline->draw(rendered_scene_);
       } else {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
       }
     }
   });

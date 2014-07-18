@@ -11,7 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/FPSCounter.hpp>
-// #include <swift2d/graphics/RenderClient.hpp>
+#include <swift2d/events/Ticker.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
 #include <boost/thread.hpp>
 #include <vector>
@@ -40,6 +40,8 @@ class Renderer {
  // ----------------------------------------------------------- public interface
  public:
 
+  Signal<> on_frame;
+
   Renderer(PipelinePtr const& pipeline);
   virtual ~Renderer();
 
@@ -59,9 +61,11 @@ class Renderer {
   ConstSerializedScenePtr updating_scene_;
   ConstSerializedScenePtr updated_scene_;
 
+  TickerPtr ticker_;
+
   boost::thread forever_;
   std::mutex mutex_;
-  bool running_;
+  bool running_, started_rendering_;
 };
 
 }

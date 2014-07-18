@@ -71,8 +71,9 @@ int main(int argc, char** argv) {
   Timer timer;
   timer.start();
 
-  auto ticker(Ticker::create(1.0 / 60.0));
-  ticker->on_tick.connect([&]() {
+  renderer.on_frame.connect([&]() {
+
+    renderer.process(scene, camera);
 
     double time(timer.get_elapsed());
     timer.reset();
@@ -80,12 +81,9 @@ int main(int argc, char** argv) {
 
     window->process_input();
     scene->update(time);
-    renderer.process(scene, camera);
 
     GuiManager::instance()->update(renderer.RenderFPS.fps(), renderer.AppFPS.fps());
   });
-
-  ticker->start();
 
   window->on_close.connect([&](){
     renderer.stop();
