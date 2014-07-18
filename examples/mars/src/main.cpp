@@ -10,6 +10,7 @@
 #include "../include/Bullet.hpp"
 #include "../include/GuiManager.hpp"
 #include "../include/AssetManager.hpp"
+#include "../include/MusicManager.hpp"
 
 #include <iostream>
 
@@ -36,16 +37,10 @@ int main(int argc, char** argv) {
   auto pipeline = Pipeline::create();
   pipeline->set_output_window(window);
 
-  Renderer renderer;
-  renderer.set_pipeline(pipeline);
+  Renderer renderer(pipeline);
 
   // example scene setup -------------------------------------------------------
   auto scene = SceneManager::instance()->get_default();
-
-  // auto music = scene->add<SoundComponent>();
-  //      music->Sound = Sound::create_from_file(Application::instance()->get_resource("audio", "music.ogg"));
-  //      music->Volume = 0.5f;
-  //      music->play();
 
   auto camera = scene->add<CameraComponent>();
        camera->Size = math::vec2(2.f, 2.f);
@@ -64,11 +59,13 @@ int main(int argc, char** argv) {
   player->get_component<Mover>()->set_camera(camera);
 
   // gui
-  GuiManager gui;
-  gui.on_quit.connect([&](){
+  GuiManager::instance()->on_quit.connect([&](){
     renderer.stop();
     Application::instance()->stop();
   });
+
+  // play music ----------------------------------------------------------------
+  MusicManager::instance()->play_next();
 
   // main loop -----------------------------------------------------------------
   Timer timer;
@@ -76,7 +73,6 @@ int main(int argc, char** argv) {
 
   auto ticker(Ticker::create(1.0 / 60.0));
   ticker->on_tick.connect([&]() {
-    renderer.process(scene, camera);
 
     double time(timer.get_elapsed());
     timer.reset();
@@ -84,8 +80,9 @@ int main(int argc, char** argv) {
 
     window->process_input();
     scene->update(time);
+    renderer.process(scene, camera);
 
-    gui.update(pipeline->rendering_fps(), pipeline->application_fps());
+    GuiManager::instance()->update(renderer.RenderFPS.fps(), renderer.AppFPS.fps());
   });
 
   ticker->start();

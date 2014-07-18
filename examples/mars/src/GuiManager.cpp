@@ -8,6 +8,7 @@
 
 // includes  -------------------------------------------------------------------
 #include "../include/GuiManager.hpp"
+#include "../include/MusicManager.hpp"
 
 using namespace swift;
 
@@ -40,10 +41,13 @@ GuiManager::GuiManager() {
   };
 
   callbacks_["audio_next"] = [&](){
-
+    MusicManager::instance()->play_next();
   };
   callbacks_["audio_prev"] = [&](){
-
+    MusicManager::instance()->play_prev();
+  };
+  callbacks_["audio_pause"] = [&](){
+    MusicManager::instance()->pause();
   };
 
   auto scene = SceneManager::instance()->get_default();
@@ -72,7 +76,7 @@ GuiManager::GuiManager() {
 
   fps_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, false));
   fps_->Resource = Application::instance()->get_resource("gui", "fps.html");
-  fps_->Size = math::vec2i(240, 35);
+  fps_->Size = math::vec2i(200, 55);
   fps_->Anchor = math::vec2i(-1, -1);
   fps_->Depth = 0;
 
@@ -83,7 +87,7 @@ GuiManager::GuiManager() {
   mouse_->Depth = 100;
 
   Interface::instance()->on_cursor_change.connect([&](Cursor pointer){
-    mouse_->call_javascript("set_active", std::to_string(pointer == Cursor::HAND));
+    mouse_->call_javascript("set_active", std::to_wstring(pointer == Cursor::HAND));
   });
 
   auto window = WindowManager::instance()->get_default();
@@ -108,13 +112,19 @@ GuiManager::GuiManager() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void GuiManager::update(float app_fps, float render_fps) {
-  std::stringstream sstr;
+  std::wstringstream sstr;
   sstr.precision(1);
   sstr.setf(std::ios::fixed, std::ios::floatfield);
   sstr << "FPS: " << app_fps << " / " << render_fps;
   fps_->call_javascript("set_fps_text", sstr.str());
 
   Interface::instance()->update();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void GuiManager::show_track_info(std::wstring const& title, std::wstring const& artist, std::wstring const& album) {
+  music_->call_javascript("set_music_info", {title, artist, album});
 }
 
 ////////////////////////////////////////////////////////////////////////////////

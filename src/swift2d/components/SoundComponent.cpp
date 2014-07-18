@@ -51,7 +51,8 @@ void SoundComponent::play() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void SoundComponent::pause() {
-  source_->Pause();
+  if (source_->State() == oalplus::SourceState::Playing) source_->Pause();
+  else                                                   source_->Play();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -69,8 +69,7 @@ int main(int argc, char** argv) {
   auto pipeline = Pipeline::create();
   pipeline->set_output_window(window);
 
-  Renderer renderer;
-  renderer.set_pipeline(pipeline);
+  Renderer renderer(pipeline);
 
   // example scene setup -------------------------------------------------------
   auto scene = SceneManager::instance()->get_default();

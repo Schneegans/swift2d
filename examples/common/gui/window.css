@@ -403,3 +403,25 @@ input[type="checkbox"]:checked + span:before {
   white-space: nowrap;
   /*padding: 3px 5px;*/
 }
+
+/*Fps Menu*/
+
+#fps {
+  position: absolute;
+  padding: 10px;
+  margin: 5px;
+
+  color: rgb(255, 171, 235);
+  background-color: rgba(0, 0, 0, 0.8);
+  background-image: url("img/gloss.png");
+  background-repeat: no-repeat;
+  background-size: 100% 20px;
+
+  border-radius: 3px;
+  border: 1px rgba(255, 171, 235, 0.5) solid;
+  box-shadow: 0 0 5px rgba(255, 171, 235, 0.5) inset;
+
+  left: 0;
+  bottom: 0;
+  width: 180px;
+}

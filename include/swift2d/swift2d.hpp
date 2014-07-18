@@ -26,6 +26,7 @@
 #include <swift2d/triggers/ShapeTrigger.hpp>
 #include <swift2d/application/Application.hpp>
 #include <swift2d/network.hpp>
+#include <swift2d/audio.hpp>
 #include <swift2d/gui.hpp>
 
 namespace swift {

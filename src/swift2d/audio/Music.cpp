@@ -7,33 +7,41 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/audio/Sound.hpp>
-#include <sndfile.h>
-#include <vector>
-#include <array>
+#include <swift2d/audio/Music.hpp>
+
+#include <taglib/taglib.h>
+#include <taglib/fileref.h>
+#include <taglib/tag.h>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Sound::load_from_file(std::string const& file_name) {
-  SF_INFO info;
-  SNDFILE* file = sf_open(file_name.c_str(), SFM_READ, &info);
+std::wstring const& Music::get_title() {
+  return title_;
+}
+std::wstring const& Music::get_artist() {
+  return artist_;
+}
+std::wstring const& Music::get_album() {
+  return album_;
+}
+std::wstring const& Music::get_year() {
+  return year_;
+}
 
-  std::vector<uint16_t> data;
+////////////////////////////////////////////////////////////////////////////////
 
-  std::array<int16_t, 4096> read_buf;
-  size_t read_size = 0;
-  while((read_size = sf_read_short(file, read_buf.data(), read_buf.size())) != 0) {
-    data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
-  }
+void Music::load_from_file(std::string const& file_name) {
+  Sound::load_from_file(file_name);
 
-  buffer_.Data(info.channels == 1 ? oalplus::DataFormat::Mono16 :
-                                    oalplus::DataFormat::Stereo16,
-               &data.front(), data.size() * sizeof(uint16_t),
-               info.samplerate);
+  TagLib::FileRef ref(file_name.c_str());
+  TagLib::Tag *tag(ref.tag());
 
-  sf_close(file);
+  title_  = std::wstring(tag->title().toWString());
+  artist_ = std::wstring(tag->artist().toWString());
+  album_  = std::wstring(tag->album().toWString());
+  year_   = std::to_wstring(tag->year());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -6,13 +6,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SOUND_HPP
-#define SWIFT2D_SOUND_HPP
+#ifndef SWIFT2D_MUSIC_HPP
+#define SWIFT2D_MUSIC_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/objects/SavableObjectVisitor.hpp>
-#include <swift2d/openal.hpp>
-#include <swift2d/properties.hpp>
+#include <swift2d/audio/Sound.hpp>
 
 #include <memory>
 
@@ -22,33 +20,36 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class Sound;
-typedef std::shared_ptr<Sound>       SoundPtr;
-typedef std::shared_ptr<const Sound> ConstSoundPtr;
-typedef Property<SoundPtr>           SoundProperty;
+class Music;
+typedef std::shared_ptr<Music>       MusicPtr;
+typedef std::shared_ptr<const Music> ConstMusicPtr;
+typedef Property<MusicPtr>           MusicProperty;
 
 // -----------------------------------------------------------------------------
-class Sound : public SavableObject {
+class Music : public Sound {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  static SoundPtr create() {
-    return std::make_shared<Sound>();
+  static MusicPtr create() {
+    return std::make_shared<Music>();
   }
 
-  static SoundPtr create_from_file(std::string const& file_name) {
-    auto sound(std::make_shared<Sound>());
-    sound->load_from_file(file_name);
-    return sound;
+  static MusicPtr create_from_file(std::string const& file_name) {
+    auto Music(std::make_shared<Music>());
+    Music->load_from_file(file_name);
+    return Music;
   }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "Sound"; }
+  static  std::string get_type_name_static() { return "Music"; }
 
-  oalplus::Buffer const& get_buffer() const { return buffer_; }
+  std::wstring const& get_title();
+  std::wstring const& get_artist();
+  std::wstring const& get_album();
+  std::wstring const& get_year();
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
@@ -56,10 +57,12 @@ class Sound : public SavableObject {
   void load_from_file(std::string const& file_name);
 
  private:
-  oalplus::Buffer buffer_;
-
+  std::wstring title_;
+  std::wstring artist_;
+  std::wstring album_;
+  std::wstring year_;
 };
 
 }
 
-#endif // SWIFT2D_SOUND_HPP
+#endif // SWIFT2D_MUSIC_HPP

@@ -45,9 +45,6 @@ class Pipeline {
     return std::make_shared<Pipeline>();
   }
 
-  Float application_fps;
-  Float rendering_fps;
-
   void set_output_window(WindowPtr const& window);
 
   void draw(ConstSerializedScenePtr const& scene);

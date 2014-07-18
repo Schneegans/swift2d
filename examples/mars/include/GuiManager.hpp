@@ -12,16 +12,23 @@
 // includes  -------------------------------------------------------------------
 #include "../include/MarsGuiComponent.hpp"
 
-class GuiManager {
+class GuiManager : public swift::Singleton<GuiManager> {
  public:
 
   swift::Signal<> on_quit;
 
-  GuiManager();
-
   void update(float app_fps, float render_fps);
 
+  void show_track_info(std::wstring const& title,
+                       std::wstring const& artist,
+                       std::wstring const& album);
+
+  friend class swift::Singleton<GuiManager>;
+
  private:
+
+  GuiManager();
+  ~GuiManager() {};
 
   void show_window(MarsGuiComponentPtr& window);
   void hide_window(MarsGuiComponentPtr& window);

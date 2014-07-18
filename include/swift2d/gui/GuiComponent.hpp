@@ -61,7 +61,8 @@ class GuiComponent : public DrawableComponent {
 
   void reload();
 
-  void call_javascript(std::string const& method, std::string const& arg);
+  void call_javascript(std::string const& method, std::wstring const& arg);
+  void call_javascript(std::string const& method, std::vector<std::wstring> const& args);
   void add_javascript_callback(std::string const& callback);
 
   void draw(RenderContext const& ctx);

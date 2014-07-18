@@ -14,49 +14,66 @@
 <script type="text/javascript" src="flicker.js"></script>
 
 <script type="text/javascript">
+
+  function set_music_info(title, artist, album) {
+    $("#music-title").html(title);
+    $("#music-artist").html("by " + artist);
+    $("#music-album").html("from " + album);
+
+    $("#music-info").marquee("update");
+  }
+
   $(document).ready( function() {
     $(".flicker").flicker();
     $("#music-info").marquee({
       yScroll: "bottom",
       pauseSpeed: 1000,
-      scrollSpeed: 5
+      scrollSpeed: 5,
+      fxEasingScroll: "swing"
     });
 
-    $.ajax({
-      type: 'GET',
-      url: "http://api.jamendo.com/get2/stream/track/xspf/?album_id=87694&order=numalbum_asc&n=all&streamencoding=ogg2",
-      complete: function(data) {
-        xml = $.parseXML(data.responseText);
-        track = $(xml).find("track")[1];
 
-        title = $(track).find("title")[0].textContent;
-        album = $(track).find("album")[0].textContent;
-        artist = $(track).find("creator")[0].textContent;
-        image = $(track).find("image")[0].textContent;
-        url = $(track).find("location")[0].textContent;
+    // $.ajax({
+    //   type: 'GET',
+    //   url: "http://api.jamendo.com/get2/stream/track/xspf/?album_id=87694&order=numalbum_asc&n=all&streamencoding=ogg2",
+    //   complete: function(data) {
+    //     xml = $.parseXML(data.responseText);
+    //     track = $(xml).find("track")[1];
 
-        $("#music-title").html(title);
-        $("#music-album").html(album);
-        $("#music-artist").html(artist);
+    //     title = $(track).find("title")[0].textContent;
+    //     album = $(track).find("album")[0].textContent;
+    //     artist = $(track).find("creator")[0].textContent;
+    //     image = $(track).find("image")[0].textContent;
+    //     url = $(track).find("location")[0].textContent;
 
-        url = url.replace(/&amp;/g, "&");
+    //     $("#music-title").html(title);
+    //     $("#music-album").html(album);
+    //     $("#music-artist").html(artist);
 
+    //     url = url.replace(/&amp;/g, "&");
 
-        $("#music").jPlayer({
-          ready: function() {
-            console.log(url);
-            // $(this).jPlayer("setMedia", {
-            //   oga: url
-            // }).jPlayer("play");
-          },
-          errorAlerts: true,
-          nativeSupport: true,
-          oggSupport: true,
-          swfPath: "third_party/swf",
-          supplied: "oga"
-        });
-      }
-    });
+    //     $("#music").jPlayer({
+    //       ready: function() {
+    //         console.log(url);
+    //         $(this).jPlayer("setMedia", {
+    //           oga: url
+    //         })
+    //       },
+    //       errorAlerts: true,
+    //       // warningAlerts: true,
+    //       nativeSupport: false,
+    //       oggSupport: true,
+    //       solution: 'html',
+    //       // swfPath: "third_party/swf/Jplayer.swf",
+    //       supplied: "oga",
+    //       cssSelectorAncestor: '#music-menu',
+    //       cssSelector: {
+    //         play: "#prev",
+    //         stop: "#pause"
+    //       }
+    //     });
+    //   }
+    // });
 
   });
 </script>
@@ -67,16 +84,16 @@
 <div id="music"></div>
 
 <div id="music-menu">
-<div id="music-menu-deco" class="flicker"></div>
-  <ul id="music-info" class="">
-    <li id="music-title">Now playing Wishmaster</li>
-    <li id="music-artist">By Nightwish</li>
-    <li id="music-album">From Album</li>
+  <div id="music-menu-deco" class="flicker"></div>
+  <ul id="music-info">
+    <li id="music-title"></li>
+    <li id="music-artist"></li>
+    <li id="music-album"></li>
   </ul>
   <div class="text-center">
-    <span class="btn" onclick="Swift2D.toggle_options()"><i class="glyphicon glyphicon-step-backward"></i></span>
-    <span class="btn" onclick="Swift2D.toggle_options()"><i class="glyphicon glyphicon-pause"></i></span>
-    <span class="btn" onclick="Swift2D.toggle_quit()"><i class="glyphicon glyphicon-step-forward"></i></span>
+    <span id="prev"  class="btn" onclick="Swift2D.audio_prev()"><i class="glyphicon glyphicon-step-backward"></i></span>
+    <span id="pause" class="btn" onclick="Swift2D.audio_pause()"><i class="glyphicon glyphicon-pause"></i></span>
+    <span id="next"  class="btn" onclick="Swift2D.audio_next()"><i class="glyphicon glyphicon-step-forward"></i></span>
   </div>
 </div>
 </body>
