@@ -33,47 +33,48 @@
     });
 
 
-    // $.ajax({
-    //   type: 'GET',
-    //   url: "http://api.jamendo.com/get2/stream/track/xspf/?album_id=87694&order=numalbum_asc&n=all&streamencoding=ogg2",
-    //   complete: function(data) {
-    //     xml = $.parseXML(data.responseText);
-    //     track = $(xml).find("track")[1];
+    $.ajax({
+      type: 'GET',
+      url: "http://api.jamendo.com/get2/stream/track/xspf/?album_id=87694&order=numalbum_asc&n=all&streamencoding=ogg2",
+      complete: function(data) {
+        xml = $.parseXML(data.responseText);
+        track = $(xml).find("track")[1];
 
-    //     title = $(track).find("title")[0].textContent;
-    //     album = $(track).find("album")[0].textContent;
-    //     artist = $(track).find("creator")[0].textContent;
-    //     image = $(track).find("image")[0].textContent;
-    //     url = $(track).find("location")[0].textContent;
+        title = $(track).find("title")[0].textContent;
+        album = $(track).find("album")[0].textContent;
+        artist = $(track).find("creator")[0].textContent;
+        image = $(track).find("image")[0].textContent;
+        url = $(track).find("location")[0].textContent;
 
-    //     $("#music-title").html(title);
-    //     $("#music-album").html(album);
-    //     $("#music-artist").html(artist);
+        $("#music-title").html(title);
+        $("#music-album").html(album);
+        $("#music-artist").html(artist);
 
-    //     url = url.replace(/&amp;/g, "&");
+        url = url.replace(/&amp;/g, "&");
+        // console.log(url);
 
-    //     $("#music").jPlayer({
-    //       ready: function() {
-    //         console.log(url);
-    //         $(this).jPlayer("setMedia", {
-    //           oga: url
-    //         })
-    //       },
-    //       errorAlerts: true,
-    //       // warningAlerts: true,
-    //       nativeSupport: false,
-    //       oggSupport: true,
-    //       solution: 'html',
-    //       // swfPath: "third_party/swf/Jplayer.swf",
-    //       supplied: "oga",
-    //       cssSelectorAncestor: '#music-menu',
-    //       cssSelector: {
-    //         play: "#prev",
-    //         stop: "#pause"
-    //       }
-    //     });
-    //   }
-    // });
+        // $("#music").jPlayer({
+        //   ready: function() {
+        //     console.log(url);
+        //     $(this).jPlayer("setMedia", {
+        //       oga: url
+        //     })
+        //   },
+        //   errorAlerts: true,
+        //   // warningAlerts: true,
+        //   nativeSupport: false,
+        //   oggSupport: true,
+        //   solution: 'html',
+        //   // swfPath: "third_party/swf/Jplayer.swf",
+        //   supplied: "oga",
+        //   cssSelectorAncestor: '#music-menu',
+        //   cssSelector: {
+        //     play: "#prev",
+        //     stop: "#pause"
+        //   }
+        // });
+      }
+    });
 
   });
 </script>

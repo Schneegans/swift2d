@@ -30,7 +30,7 @@ GravitySourceComponent::~GravitySourceComponent() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void GravitySourceComponent::accept(SavableObjectVisitor& visitor) {
-  Component::accept(visitor);
+  TransformableComponent::accept(visitor);
   visitor.add_member("Density", Density);
 }
 

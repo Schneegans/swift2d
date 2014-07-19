@@ -10,7 +10,7 @@
 #define SWIFT2D_GRAVITY_SOURCE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/Component.hpp>
+#include <swift2d/components/TransformableComponent.hpp>
 #include <iostream>
 
 // forward declares ------------------------------------------------------------
@@ -27,7 +27,7 @@ typedef std::shared_ptr<GravitySourceComponent>       GravitySourceComponentPtr;
 typedef std::shared_ptr<const GravitySourceComponent> ConstGravitySourceComponentPtr;
 
 // -----------------------------------------------------------------------------
-class GravitySourceComponent : public Component {
+class GravitySourceComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
