@@ -28,7 +28,7 @@ class MusicManager : public swift::Singleton<MusicManager> {
   void play_track(int which);
 
   swift::SoundComponentPtr     music_;
-  std::vector<swift::MusicPtr> tracks_;
+  std::vector<swift::SoundPtr> tracks_;
   int                          current_track_;
 };
 

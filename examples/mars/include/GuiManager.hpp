@@ -19,9 +19,9 @@ class GuiManager : public swift::Singleton<GuiManager> {
 
   void update(float app_fps, float render_fps);
 
-  void show_track_info(std::wstring const& title,
-                       std::wstring const& artist,
-                       std::wstring const& album);
+  void show_track_info(std::string const& title,
+                       std::string const& artist,
+                       std::string const& album);
 
   friend class swift::Singleton<GuiManager>;
 

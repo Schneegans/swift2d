@@ -138,7 +138,7 @@ void GuiElement::set_active(bool active) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GuiElement::call_javascript(std::string const& method, std::vector<std::wstring> const& args) {
+void GuiElement::call_javascript(std::string const& method, std::vector<std::string> const& args) {
   Awesomium::JSValue window = view_->ExecuteJavascriptWithResult(
     Awesomium::WSLit("window"), Awesomium::WSLit("")
   );
@@ -146,7 +146,7 @@ void GuiElement::call_javascript(std::string const& method, std::vector<std::wst
   if (window.IsObject()) {
     Awesomium::JSArray j_args;
     for (auto const& arg: args) {
-      j_args.Push(Awesomium::JSValue(Awesomium::WebString((wchar16*)arg.data(), arg.length()*2)));
+      j_args.Push(Awesomium::JSValue(Awesomium::ToWebString(arg)));
     }
 
     window.ToObject().Invoke(Awesomium::ToWebString(method), j_args);

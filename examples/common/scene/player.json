@@ -11,7 +11,7 @@
             "Type": "ListenerComponent",
             "Enabled": "1",
             "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
-            "Volume": "1"
+            "Volume": "0.5"
         },
         {
             "Type": "DynamicBodyComponent",

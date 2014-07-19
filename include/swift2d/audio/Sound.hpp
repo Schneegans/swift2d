@@ -50,12 +50,22 @@ class Sound : public SavableObject {
 
   oalplus::Buffer const& get_buffer() const { return buffer_; }
 
+  std::string const& get_title();
+  std::string const& get_artist();
+  std::string const& get_album();
+  std::string const& get_year();
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  protected:
   void load_from_file(std::string const& file_name);
 
  private:
+  std::string title_;
+  std::string artist_;
+  std::string album_;
+  std::string year_;
+
   oalplus::Buffer buffer_;
 
 };

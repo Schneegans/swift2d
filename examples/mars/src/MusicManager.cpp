@@ -22,8 +22,8 @@ MusicManager::MusicManager()
   music_ = scene->add<SoundComponent>();
   music_->Volume = 0.5f;
 
-  tracks_.push_back(Music::create_from_file(Application::instance()->get_resource("audio", "music.ogg")));
-  tracks_.push_back(Music::create_from_file(Application::instance()->get_resource("audio", "explorers.ogg")));
+  tracks_.push_back(Sound::create_from_file(Application::instance()->get_resource("audio", "music.ogg")));
+  tracks_.push_back(Sound::create_from_file(Application::instance()->get_resource("audio", "explorers_2.ogg")));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

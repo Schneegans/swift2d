@@ -87,7 +87,7 @@ GuiManager::GuiManager() {
   mouse_->Depth = 100;
 
   Interface::instance()->on_cursor_change.connect([&](Cursor pointer){
-    mouse_->call_javascript("set_active", std::to_wstring(pointer == Cursor::HAND));
+    mouse_->call_javascript("set_active", std::to_string(pointer == Cursor::HAND));
   });
 
   auto window = WindowManager::instance()->get_default();
@@ -112,7 +112,7 @@ GuiManager::GuiManager() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void GuiManager::update(float app_fps, float render_fps) {
-  std::wstringstream sstr;
+  std::stringstream sstr;
   sstr.precision(1);
   sstr.setf(std::ios::fixed, std::ios::floatfield);
   sstr << "FPS: " << app_fps << " / " << render_fps;
@@ -123,7 +123,7 @@ void GuiManager::update(float app_fps, float render_fps) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GuiManager::show_track_info(std::wstring const& title, std::wstring const& artist, std::wstring const& album) {
+void GuiManager::show_track_info(std::string const& title, std::string const& artist, std::string const& album) {
   music_->call_javascript("set_music_info", {title, artist, album});
 }
 

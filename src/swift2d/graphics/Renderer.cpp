@@ -47,7 +47,7 @@ Renderer::Renderer(PipelinePtr const& pipeline)
   forever_ = boost::thread([&]() {
 
     while (running_) {
-      if (updated_scene_ && rendered_scene_ != updated_scene_) {
+      if (updated_scene_) {
         {
           std::unique_lock<std::mutex> lock(mutex_);
           rendered_scene_ = updated_scene_;

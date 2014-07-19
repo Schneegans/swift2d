@@ -20,20 +20,45 @@ void Sound::load_from_file(std::string const& file_name) {
   SF_INFO info;
   SNDFILE* file = sf_open(file_name.c_str(), SFM_READ, &info);
 
-  std::vector<uint16_t> data;
-
-  std::array<int16_t, 4096> read_buf;
-  size_t read_size = 0;
-  while((read_size = sf_read_short(file, read_buf.data(), read_buf.size())) != 0) {
-    data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
+  int error(sf_error(file));
+  if (error) {
+    Logger::LOG_WARNING << "Error loading audio file \"" << file_name << "\": "
+                        << sf_error_number(error) << std::endl;
   }
+
+  std::vector<short> data(info.channels * info.frames);
+  sf_readf_short(file, data.data(), info.frames);
 
   buffer_.Data(info.channels == 1 ? oalplus::DataFormat::Mono16 :
                                     oalplus::DataFormat::Stereo16,
-               &data.front(), data.size() * sizeof(uint16_t),
+               &data.front(), data.size() * sizeof(short),
                info.samplerate);
 
+  auto tmp(sf_get_string(file, SF_STR_TITLE));
+  if (tmp) title_  = std::string(tmp);
+  tmp = sf_get_string(file, SF_STR_ARTIST);
+  if (tmp) artist_ = std::string(tmp);
+  tmp = sf_get_string(file, SF_STR_ALBUM);
+  if (tmp) album_  = std::string(tmp);
+  tmp = sf_get_string(file, SF_STR_DATE);
+  if (tmp) year_   = std::string(tmp);
+
   sf_close(file);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::string const& Sound::get_title() {
+  return title_;
+}
+std::string const& Sound::get_artist() {
+  return artist_;
+}
+std::string const& Sound::get_album() {
+  return album_;
+}
+std::string const& Sound::get_year() {
+  return year_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
