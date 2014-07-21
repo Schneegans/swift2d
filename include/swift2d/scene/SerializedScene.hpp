@@ -10,6 +10,7 @@
 #define SWIFT2D_SERIALIZED_SCENE_HPP
 
 #include <memory>
+#include <vector>
 #include <map>
 
 namespace swift {
@@ -17,6 +18,9 @@ namespace swift {
 // forward declares ------------------------------------------------------------
 class DrawableComponent;
 typedef std::shared_ptr<DrawableComponent> DrawableComponentPtr;
+
+class GravitySourceComponent;
+typedef std::shared_ptr<GravitySourceComponent> GravitySourceComponentPtr;
 
 class CameraComponent;
 typedef std::shared_ptr<CameraComponent> CameraComponentPtr;
@@ -48,6 +52,8 @@ class SerializedScene {
   std::multimap<float, DrawableComponentPtr> lights;
   std::multimap<float, DrawableComponentPtr> heat_objects;
   std::multimap<float, DrawableComponentPtr> gui_elements;
+
+  std::vector<GravitySourceComponentPtr> gravity_sources;
 
 };
 

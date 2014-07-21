@@ -77,8 +77,14 @@ GuiManager::GuiManager() {
   fps_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, false));
   fps_->Resource = Application::instance()->get_resource("gui", "fps.html");
   fps_->Size = math::vec2i(200, 55);
-  fps_->Anchor = math::vec2i(-1, -1);
+  fps_->Anchor = math::vec2i(0, -1);
   fps_->Depth = 0;
+
+  player_left_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, false));
+  player_left_->Resource = Application::instance()->get_resource("gui", "player_left.html");
+  player_left_->Size = math::vec2i(470, 230);
+  player_left_->Anchor = math::vec2i(-1, -1);
+  player_left_->Depth = 0;
 
   mouse_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, false));
   mouse_->Resource = Application::instance()->get_resource("gui", "mouse.html");

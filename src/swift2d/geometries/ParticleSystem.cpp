@@ -129,7 +129,6 @@ void ParticleSystem::draw(RenderContext const& ctx) const {
 
 void ParticleSystem::spawn() {
 
-
   // index of newly spawned particle
   int index(0);
 

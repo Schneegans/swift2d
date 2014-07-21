@@ -40,6 +40,7 @@ class GuiManager : public swift::Singleton<GuiManager> {
   MarsGuiComponentPtr quit_;
   MarsGuiComponentPtr fps_;
   MarsGuiComponentPtr mouse_;
+  MarsGuiComponentPtr player_left_;
 
   std::unordered_map<std::string, std::function<void()>> callbacks_;
   std::vector<MarsGuiComponentPtr> open_windows_;

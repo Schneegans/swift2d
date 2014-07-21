@@ -425,3 +425,14 @@ input[type="checkbox"]:checked + span:before {
   bottom: 0;
   width: 180px;
 }
+
+/*PLayer Left*/
+
+#player-left {
+  position: absolute;
+  background: url("img/player_left.png");
+  height: 230px;
+  width: 470px;
+  left: 0px;
+  bottom: 0px;
+}

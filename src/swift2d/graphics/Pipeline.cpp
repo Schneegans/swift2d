@@ -13,6 +13,8 @@
 #include <swift2d/components/CameraComponent.hpp>
 #include <swift2d/graphics/Window.hpp>
 #include <swift2d/utils/Logger.hpp>
+#include <swift2d/physics.hpp>
+
 #include <thread>
 
 #include <oglplus/bound/texture.hpp>
@@ -26,6 +28,13 @@ namespace swift {
 Pipeline::Pipeline()
   : old_size_(-1, -1)
   , compositor_(nullptr) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Pipeline::~Pipeline() {
+  if (compositor_) delete compositor_;
+  Physics::instance()->clear_gravity_map(window_->get_context());
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -46,6 +55,8 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   if (old_size_ != window_->get_context().size) {
     old_size_ = window_->get_context().size;
 
+    Physics::instance()->create_gravity_map(window_->get_context());
+
     if (compositor_) {
       delete compositor_;
       compositor_ = nullptr;
@@ -61,6 +72,9 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   math::scale(view_matrix, scene->camera->Size.get());
   window_->get_context().projection_matrix = math::inversed(view_matrix);
   window_->get_context().projection_parallax = scene->camera->Parallax();
+
+  // compute gravity
+  Physics::instance()->update_gravity_map(scene, window_->get_context());
 
   // draw opaque objects
   compositor_->draw_objects(scene, window_->get_context());

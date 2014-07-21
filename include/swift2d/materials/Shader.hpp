@@ -56,6 +56,11 @@ class Shader {
   }
 
   template<typename T>
+  void set_uniform_array(std::string name, std::vector<T> const& val) {
+    oglplus::ProgramUniform<T>(program_, name).Set(val.size(), val.data());
+  }
+
+  template<typename T>
   oglplus::Lazy<oglplus::Uniform<T>> get_uniform(std::string const& name) {
     return oglplus::Lazy<oglplus::Uniform<T>>(program_, name.c_str());
   }

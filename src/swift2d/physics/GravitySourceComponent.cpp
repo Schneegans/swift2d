@@ -29,6 +29,12 @@ GravitySourceComponent::~GravitySourceComponent() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void GravitySourceComponent::serialize(SerializedScenePtr& scene) const {
+  scene->gravity_sources.push_back(create_copy());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void GravitySourceComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
   visitor.add_member("Density", Density);

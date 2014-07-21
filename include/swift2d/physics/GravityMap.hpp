@@ -6,59 +6,37 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_PIPELINE_HPP
-#define SWIFT2D_PIPELINE_HPP
+#ifndef SWIFT2D_GRAVITY_MAP_HPP
+#define SWIFT2D_GRAVITY_MAP_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/events.hpp>
+#include <swift2d/materials/Shader.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
-#include <swift2d/graphics/Compositor.hpp>
-
-#include <memory>
-#include <vector>
 
 namespace swift {
 
-// forward declares ------------------------------------------------------------
-class Window;
-typedef std::shared_ptr<Window> WindowPtr;
-
-////////////////////////////////////////////////////////////////////////////////
-//                                                                            //
-////////////////////////////////////////////////////////////////////////////////
-
-// shared pointer type definition ----------------------------------------------
-class Pipeline;
-typedef std::shared_ptr<Pipeline>       PipelinePtr;
-typedef std::shared_ptr<const Pipeline> ConstPipelinePtr;
-
 // -----------------------------------------------------------------------------
-class Pipeline {
+class GravityMap {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Pipeline();
-  ~Pipeline();
+  // ---------------------------------------------------- construction interface
+  GravityMap(RenderContext const& ctx);
 
-  static PipelinePtr create() {
-    return std::make_shared<Pipeline>();
-  }
-
-  void set_output_window(WindowPtr const& window);
-
-  void draw(ConstSerializedScenePtr const& scene);
+  // ------------------------------------------------------------ public methods
+  void process(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
+  void bind(RenderContext const& ctx, int location);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-    WindowPtr window_;
-    math::vec2i old_size_;
-
-    Compositor* compositor_;
+  oglplus::Framebuffer  gravity_fbo_;
+  oglplus::Texture      gravity_map_;
+  Shader                gravity_shader_;
 };
 
 }
 
-#endif  // SWIFT2D_PIPELINE_HPP
+#endif // SWIFT2D_GRAVITY_MAP_HPP

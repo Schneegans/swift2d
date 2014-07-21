@@ -56,7 +56,7 @@ class SpriteComponent : public DrawableComponent {
 
   void draw(RenderContext const& ctx);
 
-  void serialize(SerializedScenePtr& scene) const;
+  virtual void serialize(SerializedScenePtr& scene) const;
 
   virtual void accept(SavableObjectVisitor& visitor);
 

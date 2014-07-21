@@ -13,6 +13,7 @@
 #include <swift2d/physics/DynamicBodyComponent.hpp>
 #include <swift2d/physics/StaticBodyComponent.hpp>
 #include <swift2d/physics/GravitySourceComponent.hpp>
+#include <swift2d/physics/GravityMap.hpp>
 #include <swift2d/utils/Singleton.hpp>
 
 #include <unordered_set>
@@ -45,6 +46,11 @@ class Physics : public Singleton<Physics> {
   void    remove(b2Body* body);
   void    remove(GravitySourceComponent* source);
 
+  void create_gravity_map(RenderContext const& ctx);
+  void clear_gravity_map (RenderContext const& ctx);
+  void update_gravity_map(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
+  void bind_gravity_map  (RenderContext const& ctx, int location);
+
   friend class Singleton<Physics>;
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -58,6 +64,7 @@ class Physics : public Singleton<Physics> {
   b2World* world_;
   SwiftContactListener* contact_listener_;
 
+  GravityMap* gravity_map_;
 };
 
 // -----------------------------------------------------------------------------

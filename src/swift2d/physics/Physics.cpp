@@ -44,7 +44,8 @@ class SwiftContactListener : public b2ContactListener {
 
 Physics::Physics()
   : world_(new b2World(b2Vec2(0.f, 0.f)))
-  , contact_listener_(new SwiftContactListener()) {
+  , contact_listener_(new SwiftContactListener())
+  , gravity_map_(nullptr) {
 
   world_->SetContactListener(contact_listener_);
 }
@@ -165,6 +166,32 @@ void Physics::remove(b2Body* body) {
 
 void Physics::remove(GravitySourceComponent* source) {
   gravity_sources_.erase(source);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Physics::create_gravity_map(RenderContext const& ctx) {
+  if (gravity_map_) delete gravity_map_;
+  gravity_map_ = new GravityMap(ctx);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Physics::clear_gravity_map(RenderContext const& ctx) {
+  if (gravity_map_) delete gravity_map_;
+  gravity_map_ = nullptr;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Physics::bind_gravity_map(RenderContext const& ctx, int location) {
+  gravity_map_->bind(ctx, location);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Physics::update_gravity_map(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
+  gravity_map_->process(scene, ctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
