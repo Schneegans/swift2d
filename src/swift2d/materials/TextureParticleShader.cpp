@@ -19,7 +19,6 @@ TextureParticleShader::TextureParticleShader()
       // vertex shader ---------------------------------------------------------
       @include "version"
 
-      layout(location=0) in float  t;
       layout(location=1) in vec2  position;
 
       void main(void) {
@@ -58,7 +57,7 @@ TextureParticleShader::TextureParticleShader()
         //   age
         // );
 
-        write_gbuffer(vec4(1, 0, 0, 1), 1);
+        write_gbuffer(vec4(1, 0, 0, 1), 0);
         // write_gbuffer(texture2D(diffuse, tex_coords) * color, glow);
       }
     )",
@@ -72,7 +71,7 @@ TextureParticleShader::TextureParticleShader()
       layout(triangle_strip, max_vertices = 4) out;
 
       // uniform mat3  transform;
-      // uniform mat3  projection;
+      uniform mat3  projection;
       // uniform float start_scale;
       // uniform float end_scale;
       // uniform bool  enable_rotation;
@@ -86,7 +85,7 @@ TextureParticleShader::TextureParticleShader()
           float yo[2] = float[2](0.5, -0.5);
           float xo[2] = float[2](0.5, -0.5);
 
-          float scale = 1.0;
+          float scale = 0.05;
           // float scale = mix(start_scale, end_scale, varying_age[0]);
 
           for(int j=0; j!=2; ++j) {
@@ -103,6 +102,7 @@ TextureParticleShader::TextureParticleShader()
               // }
 
               pos = gl_in[0].gl_Position.xy - pos;
+              pos = (projection * vec3(pos, 1.0)).xy;
               // pos = (projection * transform * vec3(pos, 1.0)).xy;
 
               gl_Position = vec4(pos, 0.0, 1.0);

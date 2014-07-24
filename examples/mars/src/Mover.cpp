@@ -20,18 +20,18 @@ Mover::Mover()
     if (action == 0) {
       if (key == Key::W) {
         get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 0.0;
-        get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 0.0;
-        get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 0.0;
-        get_user()->get_components<ParticleSystemComponent>()[3]->Emitter()->Density = 0.0;
-        get_user()->get_components<ParticleSystemComponent>()[4]->Emitter()->Density = 0.0;
+        // get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 0.0;
+        // get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 0.0;
+        // get_user()->get_components<ParticleSystemComponent>()[3]->Emitter()->Density = 0.0;
+        // get_user()->get_components<ParticleSystemComponent>()[4]->Emitter()->Density = 0.0;
       }
     } else if (action == 1) {
       if (key == Key::W) {
         get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 100.0;
-        get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 100.0;
-        get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 50.0;
-        get_user()->get_components<ParticleSystemComponent>()[3]->Emitter()->Density = 15.0;
-        get_user()->get_components<ParticleSystemComponent>()[4]->Emitter()->Density = 100.0;
+        // get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 100.0;
+        // get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 50.0;
+        // get_user()->get_components<ParticleSystemComponent>()[3]->Emitter()->Density = 15.0;
+        // get_user()->get_components<ParticleSystemComponent>()[4]->Emitter()->Density = 100.0;
       }
     }
   });

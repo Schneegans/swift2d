@@ -83,11 +83,6 @@ class ParticleSystem {
   oglplus::DefaultTransformFeedback default_transform_feedback_;
 
   mutable bool ping_;
-
-  // mutable oglplus::VertexArray*      particles_;
-  // mutable oglplus::Buffer*           pos_buf_;
-  // mutable oglplus::Buffer*           age_buf_;
-  // mutable oglplus::Buffer*           rot_buf_;
 };
 
 }

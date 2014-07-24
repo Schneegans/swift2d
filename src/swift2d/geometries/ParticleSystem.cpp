@@ -9,6 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/geometries/ParticleSystem.hpp>
 
+#include <swift2d/physics/Physics.hpp>
 #include <swift2d/components/ParticleSystemComponent.hpp>
 #include <swift2d/materials/ParticleUpdateShader.hpp>
 #include <swift2d/materials/TextureParticleShader.hpp>
@@ -89,31 +90,25 @@ void ParticleSystem::upload_to(RenderContext const& ctx) const {
 
   // allocate GPU resources
   for (int i(0); i<2; ++i) {
-    // transform_feedbacks_.push_back(oglplus::TransformFeedback());
+    transform_feedbacks_.push_back(oglplus::TransformFeedback());
     particle_buffers_.push_back(oglplus::Buffer());
     particle_vaos_.push_back(oglplus::VertexArray());
 
     particle_vaos_[i].Bind();
     particle_buffers_[i].Bind(oglplus::smart_enums::Array());
 
+    std::vector<Particle> data(1000);
+    data.front().type = 1;
+    data.front().pos = math::vec2(0.f, 0.f);
+    data.front().vel = math::vec2(0.0f, 0.0f);
+    data.front().life = 1.f;
+    oglplus::Buffer::Data(oglplus::smart_enums::Array(), data,
+                          oglplus::smart_enums::DynamicDraw());
+
     oglplus::VertexArrayAttrib(0).Pointer(1, oglplus::DataType::Float, false, sizeof(Particle), (void const*)0);
     oglplus::VertexArrayAttrib(1).Pointer(2, oglplus::DataType::Float, false, sizeof(Particle), (void const*)4);
     oglplus::VertexArrayAttrib(2).Pointer(2, oglplus::DataType::Float, false, sizeof(Particle), (void const*)12);
     oglplus::VertexArrayAttrib(3).Pointer(1, oglplus::DataType::Float, false, sizeof(Particle), (void const*)20);
-
-    std::vector<Particle> data(1);
-    data.back().type = 1.f;
-    data.back().pos = math::vec2(0.f, 0.f);
-    data.back().vel = math::vec2(0.01f, 0.f);
-    data.back().life = 10.f;
-    oglplus::Buffer::Data(oglplus::smart_enums::Array(), data);
-
-    oglplus::NoVertexArray().Bind();
-
-    // transform_feedbacks_[i].Bind();
-    // particle_buffers_[i].Bind(oglplus::smart_enums::TransformFeedback());
-    // particle_buffers_[i].BindBase(oglplus::smart_enums::TransformFeedback(), 0);
-    // default_transform_feedback_.Bind();
   }
 }
 
@@ -133,55 +128,57 @@ void ParticleSystem::draw(RenderContext const& ctx) const {
 
   // update particles ----------------------------------------------------------
   {
-    // ctx.gl.Enable(oglplus::Capability::RasterizerDiscard);
-    // auto shader(ParticleUpdateShader::instance());
-    auto shader(TextureParticleShader::instance());
+    ctx.gl.Enable(oglplus::Capability::RasterizerDiscard);
+    auto shader(ParticleUpdateShader::instance());
     shader->use(ctx);
 
     particle_vaos_[current_vb()].Bind();
-    // transform_feedbacks_[current_tf()].Bind();
+    transform_feedbacks_[current_tf()].Bind();
+    particle_buffers_[current_tf()].BindBase(oglplus::smart_enums::TransformFeedback(), 0);
 
     oglplus::VertexArrayAttrib(0).Enable();
     oglplus::VertexArrayAttrib(1).Enable();
     oglplus::VertexArrayAttrib(2).Enable();
     oglplus::VertexArrayAttrib(3).Enable();
 
-  //   transform_feedbacks_[current_tf()].BeginPoints();
+    transform_feedbacks_[current_tf()].BeginPoints();
 
-  //   // if (first_draw) {
+    Physics::instance()->bind_gravity_map(ctx, 0);
+    shader->set_uniform("gravity_map", 0);
+    shader->set_uniform("projection", ctx.projection_matrix);
+    shader->set_uniform("transform", parent_->WorldTransform());
+
+    if (first_draw) {
       ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, 1);
-  //   // } else {
-  //   //   ctx.gl.DrawTransformFeedback(oglplus::PrimitiveType::Points,
-  //   //                                transform_feedbacks_[current_vb()]);
-  //   // }
+    } else {
+      ctx.gl.DrawTransformFeedback(oglplus::PrimitiveType::Points,
+                                   transform_feedbacks_[current_vb()]);
+    }
 
-  //   transform_feedbacks_[current_tf()].End();
+    transform_feedbacks_[current_tf()].End();
 
     oglplus::VertexArrayAttrib(0).Disable();
     oglplus::VertexArrayAttrib(1).Disable();
     oglplus::VertexArrayAttrib(2).Disable();
     oglplus::VertexArrayAttrib(3).Disable();
-
-    // default_transform_feedback_.Bind();
   }
-
 
   // draw particles ------------------------------------------------------------
   {
-    // ctx.gl.Disable(oglplus::Capability::RasterizerDiscard);
-    // auto shader(TextureParticleShader::instance());
-    // shader->use(ctx);
+    ctx.gl.Disable(oglplus::Capability::RasterizerDiscard);
+    auto shader(TextureParticleShader::instance());
+    shader->use(ctx);
+    shader->set_uniform("projection", ctx.projection_matrix);
 
-  //   oglplus::VertexArrayAttrib(0).Pointer(2, oglplus::DataType::Float, false, sizeof(Particle), (void const*)4).Enable();
+    particle_vaos_[current_tf()].Bind();
+    oglplus::VertexArrayAttrib(1).Enable();
 
-  //   // particle_buffers_[current_tf()].Bind(oglplus::Buffer::Target::Array);
-  //   // ctx.gl.DrawTransformFeedback(oglplus::PrimitiveType::Points,
-  //   //                                transform_feedbacks_[current_tf()]);
+    ctx.gl.DrawTransformFeedback(oglplus::PrimitiveType::Points,
+                                   transform_feedbacks_[current_tf()]);
 
-  //   oglplus::VertexArrayAttrib(0).Disable();
+    oglplus::VertexArrayAttrib(1).Disable();
 
   }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
