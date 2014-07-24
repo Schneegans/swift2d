@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TEXTURE_PARTICLE_SHADER_HPP
-#define SWIFT2D_TEXTURE_PARTICLE_SHADER_HPP
+#ifndef SWIFT2D_PARTICLE_UPDATE_SHADER_HPP
+#define SWIFT2D_PARTICLE_UPDATE_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Shader.hpp>
@@ -19,39 +19,26 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class TextureParticleShader : public Shader,
-                              public Singleton<TextureParticleShader> {
+class ParticleUpdateShader : public Shader,
+                             public Singleton<ParticleUpdateShader> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ------------------------------------------------------------------ uniforms
-  // oglplus::Lazy<oglplus::Uniform<math::mat3>>  projection;
-  // oglplus::Lazy<oglplus::Uniform<math::mat3>>  transform;
-  // oglplus::Lazy<oglplus::Uniform<int>>         diffuse;
-  // oglplus::Lazy<oglplus::Uniform<float>>       start_scale;
-  // oglplus::Lazy<oglplus::Uniform<float>>       end_scale;
-  // oglplus::Lazy<oglplus::Uniform<math::vec3>>  start_color;
-  // oglplus::Lazy<oglplus::Uniform<math::vec3>>  end_color;
-  // oglplus::Lazy<oglplus::Uniform<float>>       start_opacity;
-  // oglplus::Lazy<oglplus::Uniform<float>>       end_opacity;
-  // oglplus::Lazy<oglplus::Uniform<float>>       start_glow;
-  // oglplus::Lazy<oglplus::Uniform<float>>       end_glow;
-  // oglplus::Lazy<oglplus::Uniform<int>>         enable_rotation;
-
-  friend class Singleton<TextureParticleShader>;
+  friend class Singleton<ParticleUpdateShader>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  TextureParticleShader();
-  ~TextureParticleShader() {};
+  ParticleUpdateShader();
+  ~ParticleUpdateShader() {};
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_TEXTURE_PARTICLE_SHADER_HPP
+#endif // SWIFT2D_PARTICLE_UPDATE_SHADER_HPP

@@ -66,7 +66,7 @@ class ParticleEmitter : public SavableObject {
   // ------------------------------------------------------------ public methods
   virtual SerializedScene::Target target() const = 0;
 
-  virtual void draw(RenderContext const& ctx, math::mat3 const& transform, int count) const = 0;
+  virtual void draw(RenderContext const& ctx, math::mat3 const& transform) const = 0;
 
   virtual void spawn(math::mat3 transform, math::vec2& position, float& max_age,
              math::vec2& direction, float& rotation, float& rotation_speed) const = 0;

@@ -15,32 +15,32 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void HeatParticleEmitter::draw(RenderContext const& ctx, math::mat3 const& transform, int count) const {
+void HeatParticleEmitter::draw(RenderContext const& ctx, math::mat3 const& transform) const {
 
-  auto shader(HeatParticleShader::instance());
+  // auto shader(HeatParticleShader::instance());
 
-  HeatParticleShader::instance()->use(ctx);
-  Texture()->bind(ctx, 0);
+  // HeatParticleShader::instance()->use(ctx);
+  // Texture()->bind(ctx, 0);
 
-  // set uniforms
-  if (WorldSpacePosition()) {
-    auto scale(math::make_scale(math::get_scale(transform)));
-    shader->transform.Set(scale);
-  } else {
-    shader->transform.Set(transform);
-  }
+  // // set uniforms
+  // if (WorldSpacePosition()) {
+  //   auto scale(math::make_scale(math::get_scale(transform)));
+  //   shader->transform.Set(scale);
+  // } else {
+  //   shader->transform.Set(transform);
+  // }
 
-  shader->heat_tex.Set(0);
-  shader->projection.Set(ctx.projection_matrix);
+  // shader->heat_tex.Set(0);
+  // shader->projection.Set(ctx.projection_matrix);
 
-  shader->start_scale.Set(StartScale());
-  shader->end_scale.Set(EndScale());
+  // shader->start_scale.Set(StartScale());
+  // shader->end_scale.Set(EndScale());
 
-  shader->start_opacity.Set(StartOpacity());
-  shader->end_opacity.Set(EndOpacity());
+  // shader->start_opacity.Set(StartOpacity());
+  // shader->end_opacity.Set(EndOpacity());
 
-  // draw
-  ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, count);
+  // // draw
+  // ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, count);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

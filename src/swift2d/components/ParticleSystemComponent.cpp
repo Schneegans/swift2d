@@ -33,7 +33,8 @@ void ParticleSystemComponent::draw(RenderContext const& ctx) {
 ////////////////////////////////////////////////////////////////////////////////
 
 int ParticleSystemComponent::get_particle_count() const {
-  return particle_system_->get_particle_count();
+  return 0;
+  // return particle_system_->get_particle_count();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

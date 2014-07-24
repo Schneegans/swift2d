@@ -41,7 +41,8 @@ class Shader {
 
   Shader(std::string const& v_source,
          std::string const& f_source,
-         std::string const& g_source = "");
+         std::string const& g_source = "",
+         std::vector<std::string> const& transform_feedback_varyings = {});
 
   ~Shader();
 
@@ -80,6 +81,7 @@ class Shader {
   std::string v_source_;
   std::string f_source_;
   std::string g_source_;
+  std::vector<std::string> transform_feedback_varyings_;
 };
 
 // -----------------------------------------------------------------------------

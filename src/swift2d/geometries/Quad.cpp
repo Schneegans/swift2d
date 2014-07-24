@@ -11,6 +11,8 @@
 #include <swift2d/math.hpp>
 #include <swift2d/utils/Logger.hpp>
 
+#include <oglplus/vertex_array.hpp>
+
 #include <sstream>
 
 namespace swift {
@@ -34,7 +36,7 @@ void Quad::upload_to(RenderContext const& ctx) const {
 
   // bind the VAO for the rectangle_
   rectangle_ = new oglplus::VertexArray();
-  rectangle_->Bind(); {
+  rectangle_->Bind();
 
     std::vector<float> rect = {
       -1.0f, -1.0f,
@@ -49,11 +51,10 @@ void Quad::upload_to(RenderContext const& ctx) const {
 
     // upload the data
     oglplus::Buffer::Data(oglplus::Buffer::Target::Array, rect);
+    oglplus::VertexArrayAttrib(0).Pointer(2, oglplus::DataType::Float, false, sizeof(math::vec2), (void const*)0);
+    // oglplus::VertexArrayAttrib(0).Setup<oglplus::Vec2f>();
 
-    // setup the vertex attribs array for the vertices
-    oglplus::VertexArrayAttrib(0).Setup<oglplus::Vec2f>().Enable();
-
-  }
+    oglplus::NoVertexArray().Bind();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,6 +67,7 @@ void Quad::draw(RenderContext const& ctx) const {
   }
 
   rectangle_->Bind();
+  oglplus::VertexArrayAttrib(0).Enable();
   ctx.gl.DrawArrays(oglplus::PrimitiveType::TriangleStrip, 0, 4);
 }
 

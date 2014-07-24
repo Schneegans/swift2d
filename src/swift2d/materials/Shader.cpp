@@ -17,11 +17,13 @@ namespace swift {
 
 Shader::Shader(std::string const& v_source,
                std::string const& f_source,
-               std::string const& g_source)
+               std::string const& g_source,
+               std::vector<std::string> const& transform_feedback_varyings)
   : dirty_(true)
   , v_source_(v_source)
   , f_source_(f_source)
-  , g_source_(g_source) {
+  , g_source_(g_source)
+  , transform_feedback_varyings_(transform_feedback_varyings) {
 
   ShaderIncludes::instance()->process(v_source_);
   ShaderIncludes::instance()->process(f_source_);
@@ -48,19 +50,22 @@ void Shader::upload_to(RenderContext const& ctx) const {
     LOG_ERROR << e.Log() << std::endl;
   }
 
+  program_.AttachShader(v_shader_);
+
   // set the fragment shader source
-  f_shader_.Source(f_source_);
-  try {
-    f_shader_.Compile();
-  } catch (oglplus::CompileError& e) {
-    LOG_ERROR << "Failed to compile Fragment Shader!" << std::endl;
-    LOG_ERROR << e.Log() << std::endl;
+  if (f_source_ != "") {
+    f_shader_.Source(f_source_);
+    try {
+      f_shader_.Compile();
+    } catch (oglplus::CompileError& e) {
+      LOG_ERROR << "Failed to compile Fragment Shader!" << std::endl;
+      LOG_ERROR << e.Log() << std::endl;
+    }
+
+    program_.AttachShader(f_shader_);
   }
 
-  // attach the shaders to the program
-  program_.AttachShader(v_shader_);
-  program_.AttachShader(f_shader_);
-
+  // set the geometry shader source
   if (g_source_ != "") {
     g_shader_.Source(g_source_);
     try {
@@ -71,6 +76,14 @@ void Shader::upload_to(RenderContext const& ctx) const {
     }
 
     program_.AttachShader(g_shader_);
+  }
+
+  // add transform feedback varyings
+  if (transform_feedback_varyings_.size() > 0) {
+    program_.TransformFeedbackVaryings(
+      transform_feedback_varyings_,
+      oglplus::TransformFeedbackMode::InterleavedAttribs
+    );
   }
 
   // link and use it

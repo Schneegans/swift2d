@@ -27,49 +27,52 @@ TextureParticleEmitter::TextureParticleEmitter()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TextureParticleEmitter::draw(RenderContext const& ctx, math::mat3 const& transform, int count) const {
+void TextureParticleEmitter::draw(RenderContext const& ctx,
+                                  math::mat3 const& transform) const {
 
-  auto shader(TextureParticleShader::instance());
+  // update particles ----------------------------------------------------------
 
-  TextureParticleShader::instance()->use(ctx);
-  Texture()->bind(ctx, 0);
 
-  // set uniforms
-  if (WorldSpacePosition()) {
-    auto scale(math::make_scale(math::get_scale(transform)));
-    shader->transform.Set(scale);
-  } else {
-    shader->transform.Set(transform);
-  }
 
-  shader->diffuse.Set(0);
-  shader->projection.Set(ctx.projection_matrix);
 
-  shader->start_scale.Set(StartScale());
-  shader->end_scale.Set(EndScale());
+  // draw particles ------------------------------------------------------------
 
-  shader->start_color.Set(StartColor().vec3());
-  shader->end_color.Set(EndColor().vec3());
+  // // set uniforms
+  // if (WorldSpacePosition()) {
+  //   auto scale(math::make_scale(math::get_scale(transform)));
+  //   shader->transform.Set(scale);
+  // } else {
+  //   shader->transform.Set(transform);
+  // }
 
-  shader->start_opacity.Set(StartOpacity());
-  shader->end_opacity.Set(EndOpacity());
+  // shader->diffuse.Set(0);
+  // shader->projection.Set(ctx.projection_matrix);
 
-  shader->start_glow.Set(StartGlow());
-  shader->end_glow.Set(EndGlow());
+  // shader->start_scale.Set(StartScale());
+  // shader->end_scale.Set(EndScale());
 
-  shader->enable_rotation.Set((int)(
-    RotationSpeed() + RotationSpeedVariance() +
-    Rotation() + RotationVariance()
-  ));
+  // shader->start_color.Set(StartColor().vec3());
+  // shader->end_color.Set(EndColor().vec3());
 
-  // draw
-  if (BlendAdditive()) {
-    ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::One);
-    ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, count);
-    ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::OneMinusSrcAlpha);
-  } else {
-    ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, count);
-  }
+  // shader->start_opacity.Set(StartOpacity());
+  // shader->end_opacity.Set(EndOpacity());
+
+  // shader->start_glow.Set(StartGlow());
+  // shader->end_glow.Set(EndGlow());
+
+  // shader->enable_rotation.Set((int)(
+  //   RotationSpeed() + RotationSpeedVariance() +
+  //   Rotation() + RotationVariance()
+  // ));
+
+  // // draw
+  // if (BlendAdditive()) {
+  //   ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::One);
+  //   ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, count);
+  //   ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::OneMinusSrcAlpha);
+  // } else {
+  //   ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, count);
+  // }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

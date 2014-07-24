@@ -66,7 +66,7 @@ class TextureParticleEmitter : public ParticleEmitter {
 
   virtual SerializedScene::Target target() const { return SerializedScene::OBJECTS; }
 
-  void draw(RenderContext const& ctx, math::mat3 const& transform, int count) const;
+  void draw(RenderContext const& ctx, math::mat3 const& transform) const;
 
   void spawn(math::mat3 transform, math::vec2& position, float& max_age,
              math::vec2& direction, float& rotation, float& rotation_speed) const;

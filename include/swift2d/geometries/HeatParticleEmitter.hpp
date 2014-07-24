@@ -49,7 +49,7 @@ class HeatParticleEmitter : public LightParticleEmitter {
 
   virtual SerializedScene::Target target() const { return SerializedScene::HEAT_OBJECTS; }
 
-  virtual void draw(RenderContext const& ctx, math::mat3 const& transform, int count) const;
+  virtual void draw(RenderContext const& ctx, math::mat3 const& transform) const;
 };
 
 }
