@@ -53,6 +53,7 @@ ParticleUpdateShader::ParticleUpdateShader()
       uniform sampler2D gravity_map;
       uniform mat3      projection;
       uniform mat3      transform;
+      uniform vec2      time;
 
       out float out_type;
       out vec2  out_position;
@@ -64,12 +65,12 @@ ParticleUpdateShader::ParticleUpdateShader()
         if (varying_type[0] == 1) {
 
           // launch new particle -----------------------------------------------
-          if (varying_life[0] > 0.01) {
+          if (varying_life[0] > 0) {
 
             // copy launcher
             out_type = 1;
             out_position = vec2(0, 0);
-            out_life = varying_life[0] - 0.1;
+            out_life = varying_life[0] - time.x;
             out_velocity = vec2(0, 0);
             EmitVertex();
             EndPrimitive();
@@ -87,7 +88,7 @@ ParticleUpdateShader::ParticleUpdateShader()
             // launch particle
             out_type = 2;
             out_position = (transform * vec3(0, 0, 1)).xy;
-            out_life = 150;
+            out_life = 150000;
             out_velocity = vec2(0, 0);
             EmitVertex();
             EndPrimitive();
@@ -96,14 +97,14 @@ ParticleUpdateShader::ParticleUpdateShader()
         } else {
 
           // update existing particles -----------------------------------------
-          if (varying_life[0] > 0.01) {
+          if (varying_life[0] > 0) {
 
             vec2 texcoords = ((projection * vec3(varying_position[0], 1)).xy + 1.0) * 0.5;
-            vec2 gravity = (texture2D(gravity_map, texcoords).rg - 0.5) * 0.01;
+            vec2 gravity = (texture2D(gravity_map, texcoords).rg - 0.5);
 
             out_type = 2;
-            out_position = varying_position[0] + varying_velocity[0];
-            out_life = varying_life[0] - 0.1;
+            out_position = varying_position[0] + varying_velocity[0] * time.x / 1000;
+            out_life = varying_life[0] - time.x;
             out_velocity = (varying_velocity[0] + gravity)*0.9;
             EmitVertex();
             EndPrimitive();

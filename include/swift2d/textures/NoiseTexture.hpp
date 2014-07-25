@@ -6,68 +6,43 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TEXTURE_HPP
-#define SWIFT2D_TEXTURE_HPP
+#ifndef SWIFT2D_NOISE_TEXTURE_HPP
+#define SWIFT2D_NOISE_TEXTURE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/objects/SavableObjectVisitor.hpp>
+#include <swift2d/utils/Singleton.hpp>
 #include <swift2d/graphics/RenderContext.hpp>
-#include <swift2d/properties.hpp>
-
-#include <memory>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-
-// shared pointer type definition ----------------------------------------------
-class Texture;
-typedef std::shared_ptr<Texture>       TexturePtr;
-typedef std::shared_ptr<const Texture> ConstTexturePtr;
-typedef Property<TexturePtr>           TextureProperty;
-
 // -----------------------------------------------------------------------------
-class Texture : public SavableObject {
+class NoiseTexture : public Singleton<NoiseTexture> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ---------------------------------------------------------------- properties
-  String FileName;
-
-  // ---------------------------------------------------- construction interface
-  template <typename... Args>
-  static TexturePtr create(Args&& ... a) {
-    return std::make_shared<Texture>(a...);
-  }
-
-  Texture();
-  Texture(std::string const& file_name);
-  ~Texture();
-
-  // ------------------------------------------------------------ public methods
-  virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "Texture"; }
-
   // Binds the texture on the given context to the given location.
   void bind(RenderContext const& context, unsigned location) const;
 
-  virtual void accept(SavableObjectVisitor& visitor);
+  friend class Singleton<NoiseTexture>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+
+  // ---------------------------------------------------- construction interface
+  NoiseTexture();
+  ~NoiseTexture();
+
   void upload_to(RenderContext const& context) const;
 
   mutable oglplus::Texture* texture_;
-
-  mutable bool needs_update_;
-
 };
 
 }
 
-#endif // SWIFT2D_TEXTURE_HPP
+#endif // SWIFT2D_NOISE_TEXTURE_HPP
