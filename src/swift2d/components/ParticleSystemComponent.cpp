@@ -32,13 +32,6 @@ void ParticleSystemComponent::draw(RenderContext const& ctx) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-int ParticleSystemComponent::get_particle_count() const {
-  return 0;
-  // return particle_system_->get_particle_count();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void ParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
   switch (Emitter()->target()) {
     case SerializedScene::OBJECTS:
