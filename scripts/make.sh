@@ -6,7 +6,7 @@ cd $DIR/..
 
 # run initial cmake if neccessary
 if [ ! -d "build" ]; then
-    mkdir build
+  mkdir build
 fi
 
 cd build
@@ -16,6 +16,12 @@ cd ..
 # buil it!
 cd build
 
+JOBS=8
+
+if [ -n "$1" ]
+  then JOBS=$1
+fi
+
 export LANG=en_US.utf8
 export LANGUAGE=en
-make -j8
+make -j$JOBS
