@@ -22,10 +22,12 @@ CameraComponent::CameraComponent()
 
 math::vec2 CameraComponent::gui_to_world(math::vec2 const& gui_pos) const {
   auto w = WindowManager::instance()->get_default();
-  math::vec2 scaled = (gui_pos / math::vec2(w->get_context().size));
-  // std::cout << WorldTransform() * math::vec3(scaled.x(), scaled.y(), 0.f) << std::endl;
-  math::vec3 tmp = WorldTransform() * math::vec3(scaled.x(), scaled.y(), 1.f);
-  return math::vec2(tmp.x(), tmp.y());
+  if (w->get_context().ready) {
+    math::vec2 scaled = (gui_pos / math::vec2(w->get_context().size));
+    math::vec3 tmp = WorldTransform() * math::vec3(scaled.x(), scaled.y(), 1.f);
+    return math::vec2(tmp.x(), tmp.y());
+  }
+  return math::vec2(0.f, 0.f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
