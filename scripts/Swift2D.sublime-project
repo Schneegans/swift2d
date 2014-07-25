@@ -9,6 +9,16 @@
 			"file_regex": "^(..[^:]*):(.*)$",
 			"name": "swift2d-project",
 			"working_dir": "${project_path}/.."
+		},
+		{
+			"cmd":
+			[
+				"./scripts/make.sh",
+				"2"
+			],
+			"file_regex": "^(..[^:]*):(.*)$",
+			"name": "swift2d-project-low-build",
+			"working_dir": "${project_path}/.."
 		}
 	],
 	"folders":
