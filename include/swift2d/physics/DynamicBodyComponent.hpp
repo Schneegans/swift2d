@@ -44,7 +44,10 @@ class DynamicBodyComponent : public Component {
   Float AngularDamping;
 
   // ------------------------------------------------------------------- signals
-  Signal<StaticBodyComponent*> on_collision;
+  Signal<StaticBodyComponent*> start_contact_with_static;
+  Signal<StaticBodyComponent*> end_contact_with_static;
+  Signal<DynamicBodyComponent*> start_contact_with_dynamic;
+  Signal<DynamicBodyComponent*> end_contact_with_dynamic;
 
   // ---------------------------------------------------- construction interface
   DynamicBodyComponent();

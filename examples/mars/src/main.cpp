@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 
   // window setup --------------------------------------------------------------
   auto window = WindowManager::instance()->get_default();
-  window->Fullscreen = true;
+  // window->Fullscreen = true;
   window->VSync = true;
   window->HideCursor = true;
 

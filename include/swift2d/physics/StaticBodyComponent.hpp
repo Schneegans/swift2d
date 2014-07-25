@@ -42,7 +42,8 @@ class StaticBodyComponent : public Component {
   Float Restitution;
 
   // ------------------------------------------------------------------- signals
-  Signal<DynamicBodyComponent*> on_collision;
+  Signal<DynamicBodyComponent*> start_contact_with_dynamic;
+  Signal<DynamicBodyComponent*> end_contact_with_dynamic;
 
   // ---------------------------------------------------- construction interface
   StaticBodyComponent();
