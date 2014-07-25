@@ -27,6 +27,7 @@ struct RenderContext {
   math::vec2i size;
   math::mat3  projection_matrix;
   float       projection_parallax;
+  bool        ready;
 };
 
 }
