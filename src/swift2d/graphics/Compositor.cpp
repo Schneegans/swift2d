@@ -95,13 +95,10 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality)
 
         @include "gbuffer_input"
 
-        uniform sampler2D gravity_map;
-
         layout (location = 0) out vec3 fragColor;
 
         void main(void){
-          vec2 g =  texture2D(gravity_map, gl_FragCoord.xy/screen_size).rg;
-          fragColor = (get_light_info().r * get_diffuse() + vec3(g, 0))*0.5;
+          fragColor = get_light_info().r * get_diffuse();
         }
     )");
 
@@ -190,13 +187,10 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
     oglplus::Texture::Active(3);
     g_buffer_light_.Bind(oglplus::Texture::Target::_2D);
 
-    Physics::instance()->bind_gravity_map(ctx, 4);
-
     shader_->use(ctx);
     shader_->set_uniform("screen_size", ctx.size);
     shader_->set_uniform("g_buffer_diffuse", 1);
     shader_->set_uniform("g_buffer_light", 3);
-    shader_->set_uniform("gravity_map", 4);
     Quad::instance()->draw(ctx);
 
     for (auto& light: scene->lights) {

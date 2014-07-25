@@ -98,7 +98,7 @@ ParticleUpdateShader::ParticleUpdateShader()
           // update existing particles -----------------------------------------
           if (varying_life[0] > 0.01) {
 
-            vec2 texcoords = (projection * vec3(varying_position[0], 1)).xy;
+            vec2 texcoords = ((projection * vec3(varying_position[0], 1)).xy + 1.0) * 0.5;
             vec2 gravity = (texture2D(gravity_map, texcoords).rg - 0.5) * 0.01;
 
             out_type = 2;

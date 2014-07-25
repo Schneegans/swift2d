@@ -11,7 +11,7 @@
             "Type": "ListenerComponent",
             "Enabled": "1",
             "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
-            "Volume": "0.5"
+            "Volume": "0.0"
         },
         {
             "Type": "DynamicBodyComponent",
@@ -56,7 +56,7 @@
             "Type": "ParticleSystemComponent",
             "Enabled": "1",
             "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
-            "Depth": "0.01",
+            "Depth": "-0.05",
             "Emitter":
             {
                 "Type": "TextureParticleEmitter",
