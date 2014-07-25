@@ -22,69 +22,43 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ParticleSystem::ParticleSystem(ParticleSystemComponent* parent)
-  : parent_(parent)
-  , particles_to_spawn_(0.f)
-  , transform_feedbacks_()
-  , particle_buffers_()
-  , ping_(true) {}
-  // , particles_(nullptr)
-  // , pos_buf_(nullptr)
-  // , age_buf_(nullptr)
-  // , rot_buf_(nullptr) {}
-
-////////////////////////////////////////////////////////////////////////////////
-
-ParticleSystem::~ParticleSystem() {
-  // if (particles_) delete particles_;
-  // if (pos_buf_)   delete pos_buf_;
-  // if (age_buf_)   delete age_buf_;
-  // if (rot_buf_)   delete rot_buf_;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void ParticleSystem::update(double time) {
-
-  if (parent_->Emitter()->Life() <= 0) {
-
-    // free memory
-    // clear_all();
-
-  } else {
-
-    // // update active particles
-    // for (int i(0); i<positions_.size(); ++i) {
-    //   if (ages_[i] > 1.0f) {
-    //     // dead - overwrite with new particles
-    //     ages_[i] = -1.f;
-    //     empty_positions_.push(i);
-    //   } else if (ages_[i] >= 0.f) {
-    //     // update movement
-    //     positions_[i] += directions_[i] * time;
-    //     ages_[i] += time / max_ages_[i];
-    //     rots_[i] += time * rot_speeds_[i];
-    //   }
-    // }
-
-    // spawn new particles
-    particles_to_spawn_ += parent_->Emitter()->Density() * time;
-
-    // while (particles_to_spawn_ > 1.f) {
-    //   particles_to_spawn_ -= 1.f;
-    //   spawn();
-    // }
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 struct Particle {
   float type;
   math::vec2 pos;
   math::vec2 vel;
   float life;
 };
+
+////////////////////////////////////////////////////////////////////////////////
+
+ParticleSystem::ParticleSystem(ParticleSystemComponent* parent)
+  : parent_(parent)
+  , particles_to_spawn_(0.f)
+  , transform_feedbacks_()
+  , particle_buffers_()
+  , ping_(true)
+  , frame_time_(0.0)
+  , total_time_(0.0) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ParticleSystem::update(double time) {
+
+  frame_time_ = time;
+  total_time_ += time;
+
+  if (parent_->Emitter()->Life() <= 0) {
+
+    // free memory
+
+  } else {
+
+    // spawn new particles
+    particles_to_spawn_ += parent_->Emitter()->Density() * time;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 void ParticleSystem::upload_to(RenderContext const& ctx) const {
 
@@ -147,6 +121,7 @@ void ParticleSystem::draw(RenderContext const& ctx) const {
     shader->set_uniform("gravity_map", 0);
     shader->set_uniform("projection", ctx.projection_matrix);
     shader->set_uniform("transform", parent_->WorldTransform());
+    shader->set_uniform("time", math::vec2(frame_time_ * 1000.0, total_time_ * 1000.0));
 
     if (first_draw) {
       ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, 1);
