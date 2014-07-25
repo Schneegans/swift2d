@@ -18,4 +18,4 @@ cd build
 
 export LANG=en_US.utf8
 export LANGUAGE=en
-make -j16
+make -j8
