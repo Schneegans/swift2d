@@ -60,8 +60,6 @@ class ParticleSystemComponent : public DrawableComponent {
 
   void draw(RenderContext const& ctx);
 
-  int get_particle_count() const;
-
   void serialize(SerializedScenePtr& scene) const;
 
   virtual void accept(SavableObjectVisitor& visitor);

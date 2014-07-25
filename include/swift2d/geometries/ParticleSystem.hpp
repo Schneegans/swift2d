@@ -61,7 +61,7 @@ class ParticleSystem {
 
   ParticleSystemComponent* parent_;
 
-  float particles_to_spawn_;
+  mutable float particles_to_spawn_;
   mutable std::vector<oglplus::TransformFeedback> transform_feedbacks_;
   mutable std::vector<oglplus::Buffer>            particle_buffers_;
   mutable std::vector<oglplus::VertexArray>       particle_vaos_;
