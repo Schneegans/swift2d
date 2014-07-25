@@ -7,19 +7,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/TextureParticleShader.hpp>
+#include <swift2d/particles/SpriteParticleShader.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TextureParticleShader::TextureParticleShader()
+SpriteParticleShader::SpriteParticleShader()
   : Shader(
     R"(
       // vertex shader ---------------------------------------------------------
       @include "version"
 
-      layout(location=1) in vec2  position;
+      layout(location=0) in vec2 position;
 
       void main(void) {
         gl_Position = vec4(position, 0.0, 1.0);
@@ -34,7 +34,7 @@ TextureParticleShader::TextureParticleShader()
       // in float age;
       in vec2  tex_coords;
 
-      // uniform sampler2D diffuse;
+      uniform sampler2D diffuse;
       // uniform vec3      start_color;
       // uniform vec3      end_color;
       // uniform float     start_opacity;
@@ -57,8 +57,9 @@ TextureParticleShader::TextureParticleShader()
         //   age
         // );
 
-        write_gbuffer(vec4(1, 0, 0, 1), 0);
+        // write_gbuffer(vec4(1, 0, 0, 0.5), 0);
         // write_gbuffer(texture2D(diffuse, tex_coords) * color, glow);
+        write_gbuffer(texture2D(diffuse, tex_coords), 0);
       }
     )",
 
@@ -77,7 +78,7 @@ TextureParticleShader::TextureParticleShader()
       // uniform bool  enable_rotation;
 
       // out float age;
-      // out vec2  tex_coords;
+      out vec2  tex_coords;
 
       void main(void) {
 
@@ -85,7 +86,7 @@ TextureParticleShader::TextureParticleShader()
           float yo[2] = float[2](0.5, -0.5);
           float xo[2] = float[2](0.5, -0.5);
 
-          float scale = 0.05;
+          float scale = 0.2;
           // float scale = mix(start_scale, end_scale, varying_age[0]);
 
           for(int j=0; j!=2; ++j) {
@@ -107,7 +108,7 @@ TextureParticleShader::TextureParticleShader()
 
               gl_Position = vec4(pos, 0.0, 1.0);
               // age         = varying_age[0];
-              // tex_coords  = vec2(xo[i], yo[j]) + 0.5;
+              tex_coords  = vec2(xo[i], yo[j]) + 0.5;
               EmitVertex();
             }
           }

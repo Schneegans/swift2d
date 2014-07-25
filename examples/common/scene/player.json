@@ -53,38 +53,26 @@
             }
         },
         {
-            "Type": "ParticleSystemComponent",
+            "Type": "SpriteParticleSystemComponent",
+            "Enabled": "1",
+            "Depth": "-0.1",
+            "Texture":
+            {
+                "Type": "Texture",
+                "FileName": "images\/smoke.png"
+            }
+        },
+        {
+            "Type": "ParticleEmitterComponent",
             "Enabled": "1",
             "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
-            "Depth": "-0.05",
-            "Emitter":
-            {
-                "Type": "TextureParticleEmitter",
-                "WorldSpacePosition": "1",
-                "WorldSpaceDirection": "0",
-                "Life": "3",
-                "LifeVariance": "2",
-                "Position": "(0 0)",
-                "Direction": "(-2 0)",
-                "DirectionVariance": "0.3",
-                "StartOpacity": "1",
-                "EndOpacity": "0",
-                "RotationSpeed": "0",
-                "RotationSpeedVariance": "2",
-                "StartColor": "(0 0 0)",
-                "EndColor": "(1 1 1)",
-                "Density": "5",
-                "StartScale": "0.1",
-                "EndScale": "5",
-                "BlendAdditive": "0",
-                "Rotation": "0",
-                "RotationVariance": "0",
-                "Texture":
-                {
-                    "Type": "Texture",
-                    "FileName": "images\/smoke.png"
-                }
-            }
+            "WorldSpacePosition": "1",
+            "WorldSpaceDirection": "0",
+            "Life": "3",
+            "LifeVariance": "2",
+            "Direction": "(-2 0)",
+            "DirectionVariance": "0.3",
+            "Density": "5"
         }
     ]
 }

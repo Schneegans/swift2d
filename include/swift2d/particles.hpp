@@ -6,14 +6,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_INCLUDE_COMPONENTS_HPP
-#define SWIFT2D_INCLUDE_COMPONENTS_HPP
+#ifndef SWIFT2D_INCLUDE_PARTICLES_HPP
+#define SWIFT2D_INCLUDE_PARTICLES_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/SpriteComponent.hpp>
-#include <swift2d/components/LightComponent.hpp>
-#include <swift2d/components/ListenerComponent.hpp>
-#include <swift2d/components/SoundComponent.hpp>
-#include <swift2d/components/CameraComponent.hpp>
+#include <swift2d/particles/SpriteParticleSystemComponent.hpp>
+#include <swift2d/particles/ParticleEmitterComponent.hpp>
 
-#endif  // SWIFT2D_INCLUDE_COMPONENTS_HPP
+#endif  // SWIFT2D_INCLUDE_PARTICLES_HPP

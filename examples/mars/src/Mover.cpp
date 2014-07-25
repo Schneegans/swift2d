@@ -19,19 +19,19 @@ Mover::Mover()
   w->on_key_press.connect([&](Key key, int scancode, int action, int mods){
     if (action == 0) {
       if (key == Key::W) {
-        get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 0.0;
-        // get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 0.0;
-        // get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 0.0;
-        // get_user()->get_components<ParticleSystemComponent>()[3]->Emitter()->Density = 0.0;
-        // get_user()->get_components<ParticleSystemComponent>()[4]->Emitter()->Density = 0.0;
+        get_user()->get_components<ParticleEmitterComponent>()[0]->Density = 0.0;
+        // get_user()->get_components<ParticleEmitterComponent>()[1]->Density = 0.0;
+        // get_user()->get_components<ParticleEmitterComponent>()[2]->Density = 0.0;
+        // get_user()->get_components<ParticleEmitterComponent>()[3]->Density = 0.0;
+        // get_user()->get_components<ParticleEmitterComponent>()[4]->Density = 0.0;
       }
     } else if (action == 1) {
       if (key == Key::W) {
-        get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 100.0;
-        // get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 100.0;
-        // get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 50.0;
-        // get_user()->get_components<ParticleSystemComponent>()[3]->Emitter()->Density = 15.0;
-        // get_user()->get_components<ParticleSystemComponent>()[4]->Emitter()->Density = 100.0;
+        get_user()->get_components<ParticleEmitterComponent>()[0]->Density = 100.0;
+        // get_user()->get_components<ParticleEmitterComponent>()[1]->Density = 100.0;
+        // get_user()->get_components<ParticleEmitterComponent>()[2]->Density = 50.0;
+        // get_user()->get_components<ParticleEmitterComponent>()[3]->Density = 15.0;
+        // get_user()->get_components<ParticleEmitterComponent>()[4]->Density = 100.0;
       }
     }
   });

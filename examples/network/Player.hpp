@@ -56,32 +56,14 @@ class Player : public NetworkObject<Player> {
     light->Transform = math::make_scale(20);
     light->Material = MaterialDatabase::instance()->get("light");
 
-    // exhaust
-    auto smoke_particles = TextureParticleEmitter::create();
-    smoke_particles->Life = 10.0f;
-    smoke_particles->Texture = TextureDatabase::instance()->get("smoke");
-
-    auto smoke = player_->add<ParticleSystemComponent>();
-    smoke->Depth = 0.5f;
-    smoke->Transform = math::make_scale(2) * math::make_translation(-0.5, 0);
-    smoke->Emitter = smoke_particles;
-
-    auto fire_particles = TextureParticleEmitter::create();
-    fire_particles->Life = 1.0f;
-    fire_particles->Texture = TextureDatabase::instance()->get("fire");
-
-    auto fire = player_->add<ParticleSystemComponent>();
-    fire->Depth = 0.6f;
-    fire->Transform = math::make_scale(2) * math::make_translation(-0.5, 0);
-    fire->Emitter = fire_particles;
 
     mover->LinearSpeed.on_change().connect([&](float val){
       if (val > 0) {
-        player_->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = val;
-        player_->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = val;
+        // player_->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = val;
+        // player_->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = val;
       } else {
-        player_->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 0.0;
-        player_->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 0.0;
+        // player_->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 0.0;
+        // player_->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 0.0;
       }
     });
 

@@ -6,15 +6,15 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_PARTICLE_SYSTEM_COMPONENT_HPP
-#define SWIFT2D_PARTICLE_SYSTEM_COMPONENT_HPP
+#ifndef SWIFT2D_SPRITE_PARTICLE_SYSTEM_COMPONENT_HPP
+#define SWIFT2D_SPRITE_PARTICLE_SYSTEM_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/DrawableComponent.hpp>
-#include <swift2d/geometries/ParticleSystem.hpp>
-#include <swift2d/geometries/TextureParticleEmitter.hpp>
-#include <swift2d/geometries/LightParticleEmitter.hpp>
-#include <swift2d/geometries/HeatParticleEmitter.hpp>
+#include <swift2d/particles/ParticleSystem.hpp>
+#include <swift2d/textures/Texture.hpp>
+
+#include <unordered_set>
 
 namespace swift {
 
@@ -23,45 +23,45 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class ParticleSystemComponent;
-typedef std::shared_ptr<ParticleSystemComponent>       ParticleSystemComponentPtr;
-typedef std::shared_ptr<const ParticleSystemComponent> ConstParticleSystemComponentPtr;
+class SpriteParticleSystemComponent;
+typedef std::shared_ptr<SpriteParticleSystemComponent>       SpriteParticleSystemComponentPtr;
+typedef std::shared_ptr<const SpriteParticleSystemComponent> ConstSpriteParticleSystemComponentPtr;
 
 // -----------------------------------------------------------------------------
-class ParticleSystemComponent : public DrawableComponent {
+class SpriteParticleSystemComponent : public DrawableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ---------------------------------------------------------------- properties
-  Float                   Depth;
-  ParticleEmitterProperty Emitter;
+  Float           Depth;
+  TextureProperty Texture;
 
   // ----------------------------------------------------- contruction interface
-  ParticleSystemComponent();
+  SpriteParticleSystemComponent();
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static ParticleSystemComponentPtr create(Args&& ... a) {
-    return std::make_shared<ParticleSystemComponent>(a...);
+  static SpriteParticleSystemComponentPtr create(Args&& ... a) {
+    return std::make_shared<SpriteParticleSystemComponent>(a...);
   }
 
   // creates a copy from this
-  ParticleSystemComponentPtr create_copy() const {
-    return std::make_shared<ParticleSystemComponent>(*this);
+  SpriteParticleSystemComponentPtr create_copy() const {
+    return std::make_shared<SpriteParticleSystemComponent>(*this);
   }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "ParticleSystemComponent"; }
+  static  std::string get_type_name_static() { return "SpriteParticleSystemComponent"; }
+
+  void add_emitter(ParticleEmitterComponentPtr const& emitter);
+  void remove_emitter(ParticleEmitterComponentPtr const& emitter);
 
   void update(double time);
-
   void draw(RenderContext const& ctx);
-
   void serialize(SerializedScenePtr& scene) const;
-
   virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -69,10 +69,12 @@ class ParticleSystemComponent : public DrawableComponent {
  private:
   ParticleSystemPtr particle_system_;
 
+  std::unordered_set<ParticleEmitterComponentPtr> emitters_;
+
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_PARTICLE_SYSTEM_COMPONENT_HPP
+#endif  // SWIFT2D_SPRITE_PARTICLE_SYSTEM_COMPONENT_HPP

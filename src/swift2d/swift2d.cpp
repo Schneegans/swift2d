@@ -36,13 +36,12 @@ namespace {
         Object::init<GravitySourceComponent>();
         Object::init<GuiComponent>();
         Object::init<GuiComponent>();
-        Object::init<HeatParticleEmitter>();
         Object::init<LightComponent>();
-        Object::init<LightParticleEmitter>();
+        Object::init<ParticleEmitterComponent>();
         Object::init<ListenerComponent>();
         Object::init<MoveBehavior>();
         Object::init<OffsetBehavior>();
-        Object::init<ParticleSystemComponent>();
+        Object::init<SpriteParticleSystemComponent>();
         Object::init<PointLightMaterial>();
         Object::init<SceneObject>();
         Object::init<Sound>();
@@ -51,7 +50,6 @@ namespace {
         Object::init<SpriteMaterial>();
         Object::init<StaticBodyComponent>();
         Object::init<Texture>();
-        Object::init<TextureParticleEmitter>();
         Object::init<TimedDeleteBehavior>();
 
         // init glfw -----------------------------------------------------------

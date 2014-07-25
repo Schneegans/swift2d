@@ -20,9 +20,9 @@ class Mover: public MoveBehavior {
       if (action == 0) {
         if (key == Key::W) {
           LinearSpeed.set(0);
-          get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 0.0;
-          get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 0.0;
-          get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 0.0;
+          // get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 0.0;
+          // get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 0.0;
+          // get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 0.0;
         }
         if (key == Key::S) LinearSpeed.set(0);
         if (key == Key::A) AngularSpeed.set(0);
@@ -30,9 +30,9 @@ class Mover: public MoveBehavior {
       } else if (action == 1) {
         if (key == Key::W) {
           LinearSpeed.set( 10);
-          get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 100.0;
-          get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 100.0;
-          get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 15.0;
+          // get_user()->get_components<ParticleSystemComponent>()[0]->Emitter()->Density = 100.0;
+          // get_user()->get_components<ParticleSystemComponent>()[1]->Emitter()->Density = 100.0;
+          // get_user()->get_components<ParticleSystemComponent>()[2]->Emitter()->Density = 15.0;
         }
         if (key == Key::S) LinearSpeed.set(-10);
         if (key == Key::A) AngularSpeed.set(-2 );

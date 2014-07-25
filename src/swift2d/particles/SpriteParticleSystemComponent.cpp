@@ -7,51 +7,65 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/ParticleSystemComponent.hpp>
+#include <swift2d/particles/SpriteParticleSystemComponent.hpp>
+
+#include <swift2d/particles/SpriteParticleShader.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ParticleSystemComponent::ParticleSystemComponent()
+SpriteParticleSystemComponent::SpriteParticleSystemComponent()
   : Depth(0.f)
-  , particle_system_(ParticleSystem::create(this)) {}
+  , particle_system_(ParticleSystem::create()) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystemComponent::update(double time) {
+void SpriteParticleSystemComponent::add_emitter(ParticleEmitterComponentPtr const& emitter) {
+  emitters_.insert(emitter);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void SpriteParticleSystemComponent::remove_emitter(ParticleEmitterComponentPtr const& emitter) {
+  emitters_.erase(emitter);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void SpriteParticleSystemComponent::update(double time) {
   DrawableComponent::update(time);
   particle_system_->update(time);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystemComponent::draw(RenderContext const& ctx) {
-  particle_system_->draw(ctx);
+void SpriteParticleSystemComponent::draw(RenderContext const& ctx) {
+  particle_system_->update_particles(emitters_, ctx);
+
+
+  Texture()->bind(ctx, 0);
+
+  auto shader(SpriteParticleShader::instance());
+  shader->use(ctx);
+  shader->set_uniform("projection", ctx.projection_matrix);
+  shader->set_uniform("diffuse", 0);
+
+  particle_system_->draw_particles(ctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
-  switch (Emitter()->target()) {
-    case SerializedScene::OBJECTS:
-      scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
-      break;
-    case SerializedScene::LIGHTS:
-      scene->lights.insert(std::make_pair(Depth.get(), create_copy()));
-      break;
-    case SerializedScene::HEAT_OBJECTS:
-      scene->heat_objects.insert(std::make_pair(Depth.get(), create_copy()));
-      break;
-  }
+void SpriteParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
+  scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
+void SpriteParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   DrawableComponent::accept(visitor);
   visitor.add_member("Depth", Depth);
-  visitor.add_object("Emitter", Emitter);
+  visitor.add_object("Texture", Texture);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

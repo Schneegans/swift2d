@@ -57,6 +57,9 @@ int main(int argc, char** argv) {
   ));
   player->translate(2, 5);
   player->get_component<Mover>()->set_camera(camera);
+  player->get_component<SpriteParticleSystemComponent>()->add_emitter(
+    player->get_component<ParticleEmitterComponent>()
+  );
 
   // gui
   GuiManager::instance()->on_quit.connect([&](){

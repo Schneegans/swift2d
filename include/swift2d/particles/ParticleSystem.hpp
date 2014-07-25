@@ -11,18 +11,14 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
-#include <swift2d/properties.hpp>
-#include <swift2d/textures/Texture.hpp>
+#include <swift2d/particles/ParticleEmitterComponent.hpp>
 
-#include <stack>
+#include <unordered_set>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-
-// forward declares ------------------------------------------------------------
-class ParticleSystemComponent;
 
 // shared pointer type definition ----------------------------------------------
 class ParticleSystem;
@@ -38,37 +34,35 @@ class ParticleSystem {
  public:
 
   // ----------------------------------------------------- contruction interface
-  ParticleSystem(ParticleSystemComponent* parent);
+  ParticleSystem();
 
   // Creates a new component and returns a shared pointer.
-  static ParticleSystemPtr create(ParticleSystemComponent* parent) {
-    return std::make_shared<ParticleSystem>(parent);
+  static ParticleSystemPtr create() {
+    return std::make_shared<ParticleSystem>();
   }
 
   // ------------------------------------------------------------ public methods
   void update(double time);
-
-  // Draws the ParticleSystem to the given context.
-  void draw(RenderContext const& context) const;
+  void update_particles(std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
+                        RenderContext const& context);
+  void draw_particles(RenderContext const& context);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void upload_to(RenderContext const& context) const;
+  void upload_to(RenderContext const& context);
 
   inline int current_tf() const { return ping_ ? 1 : 0; }
   inline int current_vb() const { return ping_ ? 0 : 1; }
 
-  ParticleSystemComponent* parent_;
+  std::vector<oglplus::TransformFeedback> transform_feedbacks_;
+  std::vector<oglplus::Buffer>            particle_buffers_;
+  std::vector<oglplus::VertexArray>       particle_vaos_;
 
-  mutable float particles_to_spawn_;
-  mutable std::vector<oglplus::TransformFeedback> transform_feedbacks_;
-  mutable std::vector<oglplus::Buffer>            particle_buffers_;
-  mutable std::vector<oglplus::VertexArray>       particle_vaos_;
-
-  mutable bool ping_;
-  double       frame_time_;
-  double       total_time_;
+  float  particles_to_spawn_;
+  bool   ping_;
+  double frame_time_;
+  double total_time_;
 };
 
 }
