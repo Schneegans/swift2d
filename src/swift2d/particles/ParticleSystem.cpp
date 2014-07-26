@@ -29,7 +29,7 @@ struct Particle {
 ////////////////////////////////////////////////////////////////////////////////
 
 ParticleSystem::ParticleSystem()
-  : particles_to_spawn_(0.f)
+  : particles_to_spawn_()
   , transform_feedbacks_()
   , particle_buffers_()
   , ping_(true)
@@ -38,9 +38,14 @@ ParticleSystem::ParticleSystem()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystem::update(double time) {
+void ParticleSystem::update(std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
+                            double time) {
   frame_time_ = time;
   total_time_ += time;
+
+  for (auto const& emitter: emitters) {
+    particles_to_spawn_[emitter] += emitter->Density() * frame_time_;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -102,12 +107,10 @@ void ParticleSystem::update_particles(std::unordered_set<ParticleEmitterComponen
 
   // spawn new particles -------------------------------------------------------
   for (auto const& emitter: emitters) {
-    particles_to_spawn_ += emitter->Density() * frame_time_;
-    shader->set_uniform("spawn_count",  (int)particles_to_spawn_);
+    int spawn_count(particles_to_spawn_[emitter]);
+    particles_to_spawn_[emitter] -= spawn_count;
+    shader->set_uniform("spawn_count",  spawn_count);
     shader->set_uniform("transform",    emitter->WorldTransform());
-
-    particles_to_spawn_ -= (int)particles_to_spawn_;
-
     ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, 1);
   }
 

@@ -25,6 +25,7 @@ ParticleEmitterComponent::ParticleEmitterComponent()
 ////////////////////////////////////////////////////////////////////////////////
 
 void ParticleEmitterComponent::accept(SavableObjectVisitor& visitor) {
+  TransformableComponent::accept(visitor);
   visitor.add_member("WorldSpacePosition", WorldSpacePosition);
   visitor.add_member("WorldSpaceDirection", WorldSpaceDirection);
   visitor.add_member("Life", Life);

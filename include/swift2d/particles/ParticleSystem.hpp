@@ -13,6 +13,7 @@
 #include <swift2d/graphics/RenderContext.hpp>
 #include <swift2d/particles/ParticleEmitterComponent.hpp>
 
+#include <unordered_map>
 #include <unordered_set>
 
 namespace swift {
@@ -42,9 +43,14 @@ class ParticleSystem {
   }
 
   // ------------------------------------------------------------ public methods
-  void update(double time);
-  void update_particles(std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
-                        RenderContext const& context);
+  void update(
+    std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
+    double time);
+
+  void update_particles(
+    std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
+    RenderContext const& context);
+
   void draw_particles(RenderContext const& context);
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -59,7 +65,7 @@ class ParticleSystem {
   std::vector<oglplus::Buffer>            particle_buffers_;
   std::vector<oglplus::VertexArray>       particle_vaos_;
 
-  float  particles_to_spawn_;
+  std::unordered_map<ParticleEmitterComponentPtr, float>  particles_to_spawn_;
   bool   ping_;
   double frame_time_;
   double total_time_;

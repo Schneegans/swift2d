@@ -47,9 +47,14 @@ int main(int argc, char** argv) {
        camera->Parallax = 1.05;
 
   // scene
-  scene->add_object(SceneObject::create_from_file(
+  auto world = scene->add_object(SceneObject::create_from_file(
     Application::instance()->get_resource("scene", "scene.json")
   ));
+
+  auto emitters(world->get_components<ParticleEmitterComponent>());
+  for (auto emitter: emitters) {
+    world->get_component<SpriteParticleSystemComponent>()->add_emitter(emitter);
+  }
 
   // player
   auto player = scene->add_object(SceneObject::create_from_file(

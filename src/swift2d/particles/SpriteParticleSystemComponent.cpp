@@ -35,7 +35,7 @@ void SpriteParticleSystemComponent::remove_emitter(ParticleEmitterComponentPtr c
 
 void SpriteParticleSystemComponent::update(double time) {
   DrawableComponent::update(time);
-  particle_system_->update(time);
+  particle_system_->update(emitters_, time);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
