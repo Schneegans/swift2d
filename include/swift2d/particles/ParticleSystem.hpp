@@ -47,7 +47,7 @@ class ParticleSystem {
   void set_max_count(int max_count);
 
   void update_particles(
-    std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
+    std::vector<SerializedEmitter> const& emitters,
     float mass, float linear_damping, float angular_damping,
     RenderContext const& context);
 
@@ -65,7 +65,7 @@ class ParticleSystem {
   std::vector<oglplus::Buffer>            particle_buffers_;
   std::vector<oglplus::VertexArray>       particle_vaos_;
 
-  std::unordered_map<ParticleEmitterComponentPtr, float>  particles_to_spawn_;
+  std::unordered_map<ParticleEmitterComponent const*, float>  particles_to_spawn_;
   bool   ping_;
   double total_time_;
   int    update_max_count_;

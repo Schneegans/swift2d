@@ -49,6 +49,7 @@ void PointParticleSystemComponent::draw(RenderContext const& ctx) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PointParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
+  ParticleSystemComponent::serialize(scene);
   scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
 }
 

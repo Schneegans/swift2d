@@ -3,6 +3,18 @@
     "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
     "Components":
     [
+
+        {
+            "Type": "PointParticleSystemComponent",
+            "Enabled": "1",
+            "Depth": "-0.02",
+            "Scale": "10",
+            "LinearDamping": "0.1",
+            "StartColor": "(1 1 1 1)",
+            "EndColor": "(1 0.5 0.8 0)",
+            "MaxCount": "100000",
+            "Mass": "-0.5"
+        },
         {
             "Type": "LightComponent",
             "Enabled": "1",

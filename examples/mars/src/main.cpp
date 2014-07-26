@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 
   // window setup --------------------------------------------------------------
   auto window = WindowManager::instance()->get_default();
-  window->Fullscreen = false;
+  window->Fullscreen = true;
   window->VSync = true;
   window->HideCursor = true;
 
@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
 
   for (auto emitter: player->get_objects()) {
     emitter->get_component<ParticleSystemComponent>()->add_emitter(
-      emitter->get_component<ParticleEmitterComponent>()
+      emitter->get_component<ParticleEmitterComponent>().get()
     );
   }
 
@@ -105,7 +105,7 @@ int main(int argc, char** argv) {
 
   window->on_key_press.connect([&](swift::Key key, int scancode, int action, int mods) {
     if (key == swift::Key::SPACE && action != 1) {
-      auto bullet = std::make_shared<Bullet>(player->WorldTransform());
+      auto bullet = std::make_shared<Bullet>(player->WorldTransform(), world);
       scene->add_object(bullet);
       bullet->shoot(player);
     }

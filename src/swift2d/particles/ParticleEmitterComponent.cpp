@@ -37,4 +37,22 @@ void ParticleEmitterComponent::accept(SavableObjectVisitor& visitor) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+SerializedEmitter ParticleEmitterComponent::make_serialized_emitter() const {
+  SerializedEmitter result;
+
+  result.Life = Life();
+  result.LifeVariance = LifeVariance();
+  result.Direction = Direction();
+  result.DirectionVariance = DirectionVariance();
+  result.Velocity = Velocity();
+  result.VelocityVariance = VelocityVariance();
+  result.Density = Density();
+  result.WorldTransform = WorldTransform();
+  result.Self = this;
+
+  return result;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 }

@@ -28,13 +28,13 @@ ParticleSystemComponent::ParticleSystemComponent()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystemComponent::add_emitter(ParticleEmitterComponentPtr const& emitter) {
+void ParticleSystemComponent::add_emitter(ParticleEmitterComponent const* emitter) {
   emitters_.insert(emitter);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystemComponent::remove_emitter(ParticleEmitterComponentPtr const& emitter) {
+void ParticleSystemComponent::remove_emitter(ParticleEmitterComponent const* emitter) {
   emitters_.erase(emitter);
 }
 
@@ -42,13 +42,22 @@ void ParticleSystemComponent::remove_emitter(ParticleEmitterComponentPtr const& 
 
 void ParticleSystemComponent::update_particles(RenderContext const& ctx) {
   particle_system_->update_particles(
-    emitters_, Mass(), LinearDamping(), AngularDamping(), ctx);
+    serialized_emitters_, Mass(), LinearDamping(), AngularDamping(), ctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void ParticleSystemComponent::draw_particles(RenderContext const& ctx) {
   particle_system_->draw_particles(ctx);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
+  serialized_emitters_.clear();
+  for (auto const& emitter: emitters_) {
+    serialized_emitters_.push_back(emitter->make_serialized_emitter());
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

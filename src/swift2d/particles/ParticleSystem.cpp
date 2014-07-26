@@ -68,7 +68,7 @@ void ParticleSystem::upload_to(RenderContext const& ctx) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void ParticleSystem::update_particles(
-  std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
+  std::vector<SerializedEmitter> const& emitters,
   float mass, float linear_damping, float angular_damping, RenderContext const& ctx) {
 
   bool first_draw(false);
@@ -121,19 +121,19 @@ void ParticleSystem::update_particles(
     for (auto const& emitter: emitters) {
 
       // calculate spawn count
-      particles_to_spawn_[emitter] += emitter->Density() * frame_time;
-      int spawn_count(particles_to_spawn_[emitter]);
-      particles_to_spawn_[emitter] -= spawn_count;
+      particles_to_spawn_[emitter.Self] += emitter.Density * frame_time;
+      int spawn_count(particles_to_spawn_[emitter.Self]);
+      particles_to_spawn_[emitter.Self] -= spawn_count;
 
       if (spawn_count > 0) {
-        math::vec2 life(emitter->Life(), emitter->LifeVariance());
+        math::vec2 life(emitter.Life, emitter.LifeVariance);
         math::vec2 time(frame_time * 1000.0, total_time_ * 1000.0);
-        math::vec2 direction(emitter->Direction(), emitter->DirectionVariance());
-        math::vec2 velocity(emitter->Velocity(), emitter->VelocityVariance());
+        math::vec2 direction(emitter.Direction, emitter.DirectionVariance);
+        math::vec2 velocity(emitter.Velocity, emitter.VelocityVariance);
         NoiseTexture::instance()->bind(ctx, 0);
         shader->noise_tex.  Set(0);
         shader->spawn_count.Set(spawn_count);
-        shader->transform.  Set(emitter->WorldTransform());
+        shader->transform.  Set(emitter.WorldTransform);
         shader->life.       Set(life);
         shader->time.       Set(time);
         shader->direction.  Set(direction);

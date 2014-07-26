@@ -25,6 +25,15 @@ typedef std::shared_ptr<ParticleEmitterComponent>       ParticleEmitterComponent
 typedef std::shared_ptr<const ParticleEmitterComponent> ConstParticleEmitterComponentPtr;
 typedef Property<ParticleEmitterComponentPtr>           ParticleEmitterComponentProperty;
 
+struct SerializedEmitter {
+  float Life,       LifeVariance;
+  float Direction,  DirectionVariance;
+  float Velocity,   VelocityVariance;
+  float Density;
+  math::mat3 WorldTransform;
+  ParticleEmitterComponent const* Self;
+};
+
 // -----------------------------------------------------------------------------
 class ParticleEmitterComponent : public TransformableComponent {
 
@@ -52,6 +61,8 @@ class ParticleEmitterComponent : public TransformableComponent {
   static  std::string get_type_name_static() { return "ParticleEmitterComponent"; }
 
   virtual void accept(SavableObjectVisitor& visitor);
+
+  SerializedEmitter make_serialized_emitter() const;
 };
 
 }

@@ -51,6 +51,7 @@ void SpriteParticleSystemComponent::draw(RenderContext const& ctx) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void SpriteParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
+  ParticleSystemComponent::serialize(scene);
   scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
 }
 

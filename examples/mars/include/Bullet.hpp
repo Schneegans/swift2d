@@ -17,7 +17,7 @@ using namespace swift;
 class Bullet: public SceneObject {
  public:
   Bullet() {}
-  Bullet(math::mat3 const& transform) {
+  Bullet(math::mat3 const& transform, SceneObjectPtr& scene) {
 
     math::vec3 position(1, 0, 1);
     position = transform * position;
@@ -33,8 +33,18 @@ class Bullet: public SceneObject {
          tex->Material = MaterialDatabase::instance()->get("bullet");
          tex->Transform = math::make_scale(1.0f);
 
+    auto emitter = add<ParticleEmitterComponent>();
+         emitter->Density = 50;
+         emitter->Life = 1;
+         emitter->LifeVariance = 0.7;
+    scene->get_component<ParticleSystemComponent>()->add_emitter(emitter.get());
+
     auto deleter = add<TimedDeleteBehavior>();
          deleter->Life = 60.f;
+
+    deleter->on_delete.connect([=](){
+      scene->get_component<ParticleSystemComponent>()->remove_emitter(emitter.get());
+    });
   }
 
   void shoot(SceneObjectPtr const& owner) {

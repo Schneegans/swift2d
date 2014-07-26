@@ -45,12 +45,13 @@ class ParticleSystemComponent : public DrawableComponent {
   ParticleSystemComponent();
 
   // ------------------------------------------------------------ public methods
-  void add_emitter(ParticleEmitterComponentPtr const& emitter);
-  void remove_emitter(ParticleEmitterComponentPtr const& emitter);
+  void add_emitter(ParticleEmitterComponent const* emitter);
+  void remove_emitter(ParticleEmitterComponent const* emitter);
 
   void update_particles(RenderContext const& ctx);
   void draw_particles(RenderContext const& ctx);
 
+  virtual void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -58,7 +59,8 @@ class ParticleSystemComponent : public DrawableComponent {
  private:
   ParticleSystemPtr particle_system_;
 
-  std::unordered_set<ParticleEmitterComponentPtr> emitters_;
+  std::unordered_set<ParticleEmitterComponent const*> emitters_;
+  mutable std::vector<SerializedEmitter>              serialized_emitters_;
 
 };
 
