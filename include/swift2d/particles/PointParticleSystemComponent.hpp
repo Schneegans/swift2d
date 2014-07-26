@@ -36,6 +36,7 @@ class PointParticleSystemComponent : public ParticleSystemComponent {
   Float         Scale;
   Float         StartGlow,  EndGlow;
   ColorProperty StartColor, EndColor;
+  Bool          BlendAdd;
 
   // ----------------------------------------------------- contruction interface
   PointParticleSystemComponent();

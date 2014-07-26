@@ -18,7 +18,8 @@ namespace swift {
 PointParticleSystemComponent::PointParticleSystemComponent()
   : Scale(1.f)
   , StartGlow(0.f),                EndGlow(0.f)
-  , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 0)) {}
+  , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 0))
+  , BlendAdd(false) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -26,6 +27,10 @@ void PointParticleSystemComponent::draw(RenderContext const& ctx) {
   ParticleSystemComponent::update_particles(ctx);
 
   ctx.gl.Rasterization::PointSize(Scale());
+
+  if (BlendAdd()) {
+    ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
+  }
 
   auto shader(PointParticleShader::instance());
   shader->use(ctx);
@@ -35,6 +40,10 @@ void PointParticleSystemComponent::draw(RenderContext const& ctx) {
   shader->glow.       Set(math::vec2(StartGlow(), EndGlow()));
 
   ParticleSystemComponent::draw_particles(ctx);
+
+  if (BlendAdd()) {
+    ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,6 +61,7 @@ void PointParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("EndGlow",     EndGlow);
   visitor.add_member("StartColor",  StartColor);
   visitor.add_member("EndColor",    EndColor);
+  visitor.add_member("BlendAdd",    BlendAdd);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

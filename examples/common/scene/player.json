@@ -101,8 +101,9 @@
                     "Depth": "0.002",
                     "Scale": "3",
                     "LinearDamping": "0",
-                    "StartColor": "(1 1 0 1)",
-                    "EndColor": "(0.7 0 0 0.2)"
+                    "StartColor": "(1 1 0.1 1)",
+                    "EndColor": "(0.7 0 0 0.2)",
+                    "BlendAdd": "1"
                 },
                 {
                     "Type": "ParticleEmitterComponent",
@@ -128,10 +129,13 @@
                     "Enabled": "1",
                     "Depth": "0.003",
                     "StartScale": "0.05",
-                    "EndScale": "0.2",
+                    "EndScale": "0.3",
                     "LinearDamping": "0",
-                    "StartColor": "(1 1 1 0.8)",
+                    "StartGlow": "1",
+                    "EndGlow": "0",
+                    "StartColor": "(1 1 1 1)",
                     "EndColor": "(1 0 0 0)",
+                    "BlendAdd": "1",
                     "Texture":
                     {
                         "Type": "Texture",
@@ -142,7 +146,7 @@
                     "Type": "ParticleEmitterComponent",
                     "Enabled": "1",
                     "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
-                    "Life": "0.5",
+                    "Life": "0.8",
                     "LifeVariance": "0.4",
                     "Direction": "0",
                     "DirectionVariance": "0.4",

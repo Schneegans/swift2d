@@ -18,12 +18,17 @@ namespace swift {
 SpriteParticleSystemComponent::SpriteParticleSystemComponent()
   : StartScale(1.f),               EndScale(1.f)
   , StartGlow(0.f),                EndGlow(0.f)
-  , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 0)) {}
+  , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 0))
+  , BlendAdd(false) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void SpriteParticleSystemComponent::draw(RenderContext const& ctx) {
   ParticleSystemComponent::update_particles(ctx);
+
+  if (BlendAdd()) {
+    ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
+  }
 
   Texture()->bind(ctx, 0);
 
@@ -37,6 +42,10 @@ void SpriteParticleSystemComponent::draw(RenderContext const& ctx) {
   shader->end_color.  Set(EndColor().vec4());
 
   ParticleSystemComponent::draw_particles(ctx);
+
+  if (BlendAdd()) {
+    ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -55,6 +64,7 @@ void SpriteParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("EndGlow",     EndGlow);
   visitor.add_member("StartColor",  StartColor);
   visitor.add_member("EndColor",    EndColor);
+  visitor.add_member("BlendAdd",    BlendAdd);
   visitor.add_object("Texture",     Texture);
 }
 

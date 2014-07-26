@@ -36,6 +36,7 @@ class SpriteParticleSystemComponent : public ParticleSystemComponent {
   Float           StartScale, EndScale;
   Float           StartGlow,  EndGlow;
   ColorProperty   StartColor, EndColor;
+  Bool            BlendAdd;
   TextureProperty Texture;
 
   // ----------------------------------------------------- contruction interface
