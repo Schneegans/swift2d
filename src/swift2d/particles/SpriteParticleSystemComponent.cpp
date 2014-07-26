@@ -16,33 +16,12 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 SpriteParticleSystemComponent::SpriteParticleSystemComponent()
-  : Depth(0.f)
-  , particle_system_(ParticleSystem::create()) {}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void SpriteParticleSystemComponent::add_emitter(ParticleEmitterComponentPtr const& emitter) {
-  emitters_.insert(emitter);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void SpriteParticleSystemComponent::remove_emitter(ParticleEmitterComponentPtr const& emitter) {
-  emitters_.erase(emitter);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void SpriteParticleSystemComponent::update(double time) {
-  DrawableComponent::update(time);
-  particle_system_->update(emitters_, time);
-}
+  : StartScale(1.f), EndScale(1.f) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void SpriteParticleSystemComponent::draw(RenderContext const& ctx) {
-  particle_system_->update_particles(emitters_, ctx);
-
+  ParticleSystemComponent::update_particles(ctx);
 
   Texture()->bind(ctx, 0);
 
@@ -50,8 +29,9 @@ void SpriteParticleSystemComponent::draw(RenderContext const& ctx) {
   shader->use(ctx);
   shader->set_uniform("projection", ctx.projection_matrix);
   shader->set_uniform("diffuse", 0);
+  shader->set_uniform("scale", math::vec2(StartScale(), EndScale()));
 
-  particle_system_->draw_particles(ctx);
+  ParticleSystemComponent::draw_particles(ctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,8 +43,9 @@ void SpriteParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
 ////////////////////////////////////////////////////////////////////////////////
 
 void SpriteParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
-  DrawableComponent::accept(visitor);
-  visitor.add_member("Depth", Depth);
+  ParticleSystemComponent::accept(visitor);
+  visitor.add_member("StartScale", StartScale);
+  visitor.add_member("EndScale", EndScale);
   visitor.add_object("Texture", Texture);
 }
 

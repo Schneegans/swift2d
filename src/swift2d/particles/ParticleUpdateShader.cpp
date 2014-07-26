@@ -23,9 +23,9 @@ ParticleUpdateShader::ParticleUpdateShader()
       layout(location=1) in vec2  velocity;
       layout(location=2) in vec2  life;
 
-      out vec2  varying_position;
-      out vec2  varying_velocity;
-      out vec2  varying_life;
+      out vec2 varying_position;
+      out vec2 varying_velocity;
+      out vec2 varying_life;
 
       void main(void) {
         varying_position = position;
@@ -46,30 +46,55 @@ ParticleUpdateShader::ParticleUpdateShader()
       in vec2  varying_velocity[];
       in vec2  varying_life[];
 
+      // general uniforms
+      uniform vec2      time;         // x: frame time  y: total time [millisec]
+
       // spawn uniforms
-      uniform mat3      transform;
+      uniform sampler2D noise_tex;
       uniform int       spawn_count;
+      uniform mat3      transform;
+      uniform vec2      life;         // x: life        y: life variance   [sec]
+      uniform vec2      direction;    // x: direction   y: direction variance
+      uniform vec2      velocity;     // x: velocity    y: velocity variance
 
       // update uniforms
       uniform sampler2D gravity_map;
       uniform mat3      projection;
-      uniform vec2      time;
-      uniform float     mass;
+      uniform vec3      dynamics;     // x: mass  y: linear damp z: angular damp
 
       out vec2 out_position;
       out vec2 out_velocity;
       out vec2 out_life;
+
+      float get_random_float(float seed) {
+        return (texture(noise_tex, vec2(seed*1.3, seed*2.1)).x - 0.5) * 2.0;
+      }
+
+      vec2 get_random_vec2(float seed) {
+        return (texture(noise_tex, vec2(seed*1.3, seed*2.1)).xy - 0.5) * 2.0;
+      }
+
+      vec3 get_random_vec3(float seed) {
+        return (texture(noise_tex, vec2(seed*1.3, seed*2.1)).xyz - 0.5) * 2.0;
+      }
 
       void main(void) {
 
         if (spawn_count >= 0) {
 
           // spawn new particles -----------------------------------------------
+
           for (int i=0; i<spawn_count; ++i) {
 
+            vec3 random = get_random_vec3((i+1)*time.y);
+
+            float l = life.x      + random.x * life.y;
+            float d = direction.x + random.y * direction.y;
+            float v = velocity.x  + random.z * velocity.y;
+
             out_position = (transform * vec3(0, 0, 1)).xy;
-            out_life     = vec2(0, 1000);
-            out_velocity = vec2(0, 0);
+            out_life     = vec2(0, l*1000.0);
+            out_velocity = (transform * vec3(cos(d), sin(d), 0)).xy * v;
 
             EmitVertex(); EndPrimitive();
           }
@@ -77,14 +102,15 @@ ParticleUpdateShader::ParticleUpdateShader()
         } else {
 
           // update existing particles -----------------------------------------
+
           if (varying_life[0].x < 1) {
 
             vec2 texcoords = ((projection * vec3(varying_position[0], 1)).xy + 1.0) * 0.5;
-            vec2 gravity = (texture2D(gravity_map, texcoords).rg - 0.5) * mass;
+            vec2 gravity = (texture2D(gravity_map, texcoords).rg - 0.5) * dynamics.x;
 
             out_position = varying_position[0] + varying_velocity[0] * time.x / 1000;
             out_life     = vec2(varying_life[0].x + time.x/varying_life[0].y, varying_life[0].y);
-            out_velocity = (varying_velocity[0] + gravity)*0.9;
+            out_velocity = (varying_velocity[0] + gravity)*(1.0 - dynamics.y);
 
             EmitVertex(); EndPrimitive();
           }

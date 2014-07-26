@@ -33,14 +33,14 @@ class ParticleEmitterComponent : public TransformableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Bool   WorldSpacePosition;
-  Bool   WorldSpaceDirection;
+  Float Life;
+  Float LifeVariance;
 
-  Float  Life;
-  Float  LifeVariance;
+  Float Direction;
+  Float DirectionVariance;
 
-  Vec2   Direction;
-  Float  DirectionVariance;
+  Float Velocity;
+  Float VelocityVariance;
 
   Float  Density;
 

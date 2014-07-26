@@ -20,9 +20,15 @@ SpriteParticleShader::SpriteParticleShader()
       @include "version"
 
       layout(location=0) in vec2 position;
+      layout(location=1) in vec2 velocity;
+      layout(location=2) in vec2 life;
+
+      out float varying_age;
 
       void main(void) {
         gl_Position = vec4(position, 0.0, 1.0);
+
+        varying_age = life.x;
       }
     )",
 
@@ -31,16 +37,10 @@ SpriteParticleShader::SpriteParticleShader()
       // fragment shader -------------------------------------------------------
       @include "version"
 
-      // in float age;
+      in float age;
       in vec2  tex_coords;
 
       uniform sampler2D diffuse;
-      // uniform vec3      start_color;
-      // uniform vec3      end_color;
-      // uniform float     start_opacity;
-      // uniform float     end_opacity;
-      // uniform float     start_glow;
-      // uniform float     end_glow;
 
       @include "write_gbuffer"
 
@@ -71,13 +71,15 @@ SpriteParticleShader::SpriteParticleShader()
       layout(points) in;
       layout(triangle_strip, max_vertices = 4) out;
 
+      in float varying_age[];
+
       // uniform mat3  transform;
       uniform mat3  projection;
-      // uniform float start_scale;
+      uniform vec2  scale;
       // uniform float end_scale;
       // uniform bool  enable_rotation;
 
-      // out float age;
+      out float age;
       out vec2  tex_coords;
 
       void main(void) {
@@ -86,8 +88,7 @@ SpriteParticleShader::SpriteParticleShader()
           float yo[2] = float[2](0.5, -0.5);
           float xo[2] = float[2](0.5, -0.5);
 
-          float scale = 0.2;
-          // float scale = mix(start_scale, end_scale, varying_age[0]);
+          float scale = mix(scale.x, scale.y, varying_age[0]);
 
           for(int j=0; j!=2; ++j) {
             for(int i=0; i!=2; ++i) {
@@ -107,7 +108,7 @@ SpriteParticleShader::SpriteParticleShader()
               // pos = (projection * transform * vec3(pos, 1.0)).xy;
 
               gl_Position = vec4(pos, 0.0, 1.0);
-              // age         = varying_age[0];
+              age         = varying_age[0];
               tex_coords  = vec2(xo[i], yo[j]) + 0.5;
               EmitVertex();
             }

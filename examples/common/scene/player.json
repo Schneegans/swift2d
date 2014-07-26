@@ -56,6 +56,9 @@
             "Type": "SpriteParticleSystemComponent",
             "Enabled": "1",
             "Depth": "-0.1",
+            "StartScale": "0.1",
+            "EndScale": "1",
+            "LinearDamping": "0.1",
             "Texture":
             {
                 "Type": "Texture",
@@ -66,12 +69,12 @@
             "Type": "ParticleEmitterComponent",
             "Enabled": "1",
             "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
-            "WorldSpacePosition": "1",
-            "WorldSpaceDirection": "0",
             "Life": "3",
-            "LifeVariance": "2",
-            "Direction": "(-2 0)",
-            "DirectionVariance": "0.3",
+            "LifeVariance": "1",
+            "Direction": "0",
+            "DirectionVariance": "2",
+            "Velocity": "-5",
+            "VelocityVariance": "0.5",
             "Density": "5"
         }
     ]

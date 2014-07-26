@@ -49,6 +49,7 @@ class ParticleSystem {
 
   void update_particles(
     std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
+    float mass, float linear_damping, float angular_damping,
     RenderContext const& context);
 
   void draw_particles(RenderContext const& context);

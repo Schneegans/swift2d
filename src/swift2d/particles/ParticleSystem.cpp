@@ -11,10 +11,13 @@
 
 #include <swift2d/physics/Physics.hpp>
 #include <swift2d/particles/ParticleUpdateShader.hpp>
+#include <swift2d/textures/NoiseTexture.hpp>
 #include <swift2d/math.hpp>
 #include <swift2d/utils/Logger.hpp>
 
 #include <sstream>
+
+namespace osm = ogl::smart_enums;
 
 namespace swift {
 
@@ -38,8 +41,10 @@ ParticleSystem::ParticleSystem()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystem::update(std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
-                            double time) {
+void ParticleSystem::update(
+  std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
+  double time) {
+
   frame_time_ = time;
   total_time_ += time;
 
@@ -54,30 +59,33 @@ void ParticleSystem::upload_to(RenderContext const& ctx) {
 
   // allocate GPU resources
   for (int i(0); i<2; ++i) {
-    transform_feedbacks_.push_back(oglplus::TransformFeedback());
-    particle_buffers_.push_back(oglplus::Buffer());
-    particle_vaos_.push_back(oglplus::VertexArray());
+    transform_feedbacks_.push_back(ogl::TransformFeedback());
+    particle_buffers_.push_back(ogl::Buffer());
+    particle_vaos_.push_back(ogl::VertexArray());
 
     particle_vaos_[i].Bind();
-    particle_buffers_[i].Bind(oglplus::smart_enums::Array());
+    particle_buffers_[i].Bind(osm::Array());
 
     std::vector<Particle> data(1000);
     data.front().pos =  math::vec2(0.f, 0.f);
     data.front().vel =  math::vec2(0.f, 0.f);
     data.front().life = math::vec2(0.f, 0.f);
-    oglplus::Buffer::Data(oglplus::smart_enums::Array(), data,
-                          oglplus::smart_enums::DynamicDraw());
+    ogl::Buffer::Data(osm::Array(), data, osm::DynamicDraw());
 
-    oglplus::VertexArrayAttrib(0).Pointer(2, oglplus::DataType::Float, false, sizeof(Particle), (void const*)0);
-    oglplus::VertexArrayAttrib(1).Pointer(2, oglplus::DataType::Float, false, sizeof(Particle), (void const*)8);
-    oglplus::VertexArrayAttrib(2).Pointer(2, oglplus::DataType::Float, false, sizeof(Particle), (void const*)16);
+    auto t(ogl::DataType::Float);
+    auto s(sizeof(Particle));
+
+    ogl::VertexArrayAttrib(0).Pointer(2, t, false, s, (void const*) 0);
+    ogl::VertexArrayAttrib(1).Pointer(2, t, false, s, (void const*) 8);
+    ogl::VertexArrayAttrib(2).Pointer(2, t, false, s, (void const*)16);
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystem::update_particles(std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
-                                      RenderContext const& ctx) {
+void ParticleSystem::update_particles(
+  std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
+  float mass, float linear_damping, float angular_damping, RenderContext const& ctx) {
 
   bool first_draw(false);
 
@@ -87,61 +95,86 @@ void ParticleSystem::update_particles(std::unordered_set<ParticleEmitterComponen
     first_draw = true;
   }
 
+  // swap ping pong buffers
   ping_ = !ping_;
 
-  ctx.gl.Enable(oglplus::Capability::RasterizerDiscard);
+  ctx.gl.Enable(ogl::Capability::RasterizerDiscard);
 
   particle_vaos_      [current_vb()].Bind();
   transform_feedbacks_[current_tf()].Bind();
-  particle_buffers_   [current_tf()].BindBase(oglplus::smart_enums::TransformFeedback(), 0);
-
+  particle_buffers_   [current_tf()].BindBase(osm::TransformFeedback(), 0);
 
   auto shader(ParticleUpdateShader::instance());
   shader->use(ctx);
 
-  oglplus::VertexArrayAttrib(0).Enable();
-  oglplus::VertexArrayAttrib(1).Enable();
-  oglplus::VertexArrayAttrib(2).Enable();
+  ogl::VertexArrayAttrib(0).Enable();
+  ogl::VertexArrayAttrib(1).Enable();
+  ogl::VertexArrayAttrib(2).Enable();
 
   transform_feedbacks_[current_tf()].BeginPoints();
+  {
 
-  // spawn new particles -------------------------------------------------------
-  for (auto const& emitter: emitters) {
-    int spawn_count(particles_to_spawn_[emitter]);
-    particles_to_spawn_[emitter] -= spawn_count;
-    shader->set_uniform("spawn_count",  spawn_count);
-    shader->set_uniform("transform",    emitter->WorldTransform());
-    ctx.gl.DrawArrays(oglplus::PrimitiveType::Points, 0, 1);
+    // spawn new particles -----------------------------------------------------
+    for (auto const& emitter: emitters) {
+      int spawn_count(particles_to_spawn_[emitter]);
+      particles_to_spawn_[emitter] -= spawn_count;
+      math::vec2 life(emitter->Life(), emitter->LifeVariance());
+      math::vec2 time(frame_time_ * 1000.0, total_time_ * 1000.0);
+      math::vec2 direction(emitter->Direction(), emitter->DirectionVariance());
+      math::vec2 velocity(emitter->Velocity(), emitter->VelocityVariance());
+      NoiseTexture::instance()->bind(ctx, 0);
+      shader->set_uniform("noise_tex",    0);
+      shader->set_uniform("spawn_count",  spawn_count);
+      shader->set_uniform("transform",    emitter->WorldTransform());
+      shader->set_uniform("life",         life);
+      shader->set_uniform("time",         time);
+      shader->set_uniform("direction",    direction);
+      shader->set_uniform("velocity",     velocity);
+      ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
+    }
+
+    // update existing particles -----------------------------------------------
+    if (!first_draw) {
+
+      Physics::instance()->bind_gravity_map(ctx, 1);
+      math::vec3 dynamics(mass, linear_damping, angular_damping);
+
+      shader->set_uniform("gravity_map",  1);
+      shader->set_uniform("spawn_count", -1);
+      shader->set_uniform("projection",   ctx.projection_matrix);
+      shader->set_uniform("dynamics",     dynamics);
+
+      ctx.gl.DrawTransformFeedback(
+        ogl::PrimitiveType::Points, transform_feedbacks_[current_vb()]
+      );
+    }
+
   }
-
-  // update existing particles -------------------------------------------------
-  if (!first_draw) {
-    Physics::instance()->bind_gravity_map(ctx, 0);
-    shader->set_uniform("spawn_count", -1);
-    shader->set_uniform("time",         math::vec2(frame_time_ * 1000.0, total_time_ * 1000.0));
-    shader->set_uniform("gravity_map",  0);
-    shader->set_uniform("projection",   ctx.projection_matrix);
-    shader->set_uniform("mass",         -0.5f);
-
-    ctx.gl.DrawTransformFeedback(oglplus::PrimitiveType::Points, transform_feedbacks_[current_vb()]);
-  }
-
   transform_feedbacks_[current_tf()].End();
 
-  oglplus::VertexArrayAttrib(0).Disable();
-  oglplus::VertexArrayAttrib(1).Disable();
-  oglplus::VertexArrayAttrib(2).Disable();
+  ogl::VertexArrayAttrib(0).Disable();
+  ogl::VertexArrayAttrib(1).Disable();
+  ogl::VertexArrayAttrib(2).Disable();
 
-  ctx.gl.Disable(oglplus::Capability::RasterizerDiscard);
+  ctx.gl.Disable(ogl::Capability::RasterizerDiscard);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void ParticleSystem::draw_particles(RenderContext const& ctx) {
   particle_vaos_[current_tf()].Bind();
-  oglplus::VertexArrayAttrib(0).Enable();
-  ctx.gl.DrawTransformFeedback(oglplus::PrimitiveType::Points, transform_feedbacks_[current_tf()]);
-  oglplus::VertexArrayAttrib(0).Disable();
+
+  ogl::VertexArrayAttrib(0).Enable();
+  ogl::VertexArrayAttrib(1).Enable();
+  ogl::VertexArrayAttrib(2).Enable();
+
+  ctx.gl.DrawTransformFeedback(
+    ogl::PrimitiveType::Points, transform_feedbacks_[current_tf()]
+  );
+
+  ogl::VertexArrayAttrib(0).Disable();
+  ogl::VertexArrayAttrib(1).Disable();
+  ogl::VertexArrayAttrib(2).Disable();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
