@@ -76,16 +76,19 @@ ParticleUpdateShader::ParticleUpdateShader()
         if (spawn_count >= 0) {
 
           // spawn new particles -----------------------------------------------
+          vec2 frame_step = (transform * vec3(cos(direction.x), sin(direction.x), 0)).xy;
+          frame_step *= velocity.x * time.x / 1000;
 
           for (int i=0; i<spawn_count; ++i) {
 
+            float delta = 1.0*i/spawn_count;
             vec3 random = get_random((i+1)*time.y);
 
             float l = life.x      + random.x * life.y;
             float d = direction.x + random.y * direction.y;
             float v = velocity.x  + random.z * velocity.y;
 
-            out_position = (transform * vec3(0, 0, 1)).xy;
+            out_position = (transform * vec3(0, 0, 1)).xy + delta*frame_step;
             out_life     = vec2(0, l*1000.0);
             out_velocity = (transform * vec3(cos(d), sin(d), 0)).xy * v;
 

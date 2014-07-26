@@ -57,36 +57,19 @@
     [
         {
             "Type": "SceneObject",
-            "Transform": "(1 0 -0.3\n 0 1 0\n 0 0 1)",
+            "Transform": "(1 0 -0.1\n 0 1 0\n 0 0 1)",
             "Label": "Smoke",
             "Components":
             [
-                {
-                    "Type": "SpriteComponent",
-                    "Enabled": "1",
-                    "Transform": "(0.5 0 0\n 0 0.5 0\n 0 0 1)",
-                    "Depth": "0.001",
-                    "Material":
-                    {
-                        "Type": "SpriteMaterial",
-                        "DiffuseTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/ship.png"
-                        },
-                        "Emit": "1"
-                    }
-                },
                 {
                     "Type": "SpriteParticleSystemComponent",
                     "Enabled": "1",
                     "Depth": "0.001",
                     "StartScale": "0.05",
                     "EndScale": "1",
-                    "LinearDamping": "0.0",
+                    "LinearDamping": "0",
                     "StartColor": "(0 0 0 1)",
                     "EndColor": "(1 1 1 0)",
-                    "Mass": "-0.0",
                     "Texture":
                     {
                         "Type": "Texture",
@@ -102,7 +85,69 @@
                     "Direction": "0",
                     "DirectionVariance": "0.4",
                     "VelocityVariance": "1",
-                    "Density": "5"
+                    "Density": "0"
+                }
+            ]
+        },
+        {
+            "Type": "SceneObject",
+            "Transform": "(1 0 -0.1\n 0 1 0\n 0 0 1)",
+            "Label": "Sparks",
+            "Components":
+            [
+                {
+                    "Type": "PointParticleSystemComponent",
+                    "Enabled": "1",
+                    "Depth": "0.002",
+                    "Scale": "3",
+                    "LinearDamping": "0",
+                    "StartColor": "(1 1 0 1)",
+                    "EndColor": "(0.7 0 0 0.2)"
+                },
+                {
+                    "Type": "ParticleEmitterComponent",
+                    "Enabled": "1",
+                    "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
+                    "Life": "0.5",
+                    "LifeVariance": "0.2",
+                    "Direction": "0",
+                    "DirectionVariance": "0.5",
+                    "VelocityVariance": "1",
+                    "Density": "0"
+                }
+            ]
+        },
+        {
+            "Type": "SceneObject",
+            "Transform": "(1 0 -0.1\n 0 1 0\n 0 0 1)",
+            "Label": "Fire",
+            "Components":
+            [
+                {
+                    "Type": "SpriteParticleSystemComponent",
+                    "Enabled": "1",
+                    "Depth": "0.003",
+                    "StartScale": "0.05",
+                    "EndScale": "0.2",
+                    "LinearDamping": "0",
+                    "StartColor": "(1 1 1 0.8)",
+                    "EndColor": "(1 0 0 0)",
+                    "Texture":
+                    {
+                        "Type": "Texture",
+                        "FileName": "images\/fire.png"
+                    }
+                },
+                {
+                    "Type": "ParticleEmitterComponent",
+                    "Enabled": "1",
+                    "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
+                    "Life": "0.5",
+                    "LifeVariance": "0.4",
+                    "Direction": "0",
+                    "DirectionVariance": "0.4",
+                    "VelocityVariance": "1",
+                    "Density": "0"
                 }
             ]
         }

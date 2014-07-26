@@ -21,7 +21,7 @@ Mover::Mover()
       if (key == Key::W) {
 
         for (auto emitter: get_user()->get_objects()) {
-          if (emitter->Label == "Smoke") {
+          if (emitter->Label == "Smoke" || emitter->Label == "Sparks" || emitter->Label == "Fire") {
             emitter->get_component<ParticleEmitterComponent>()->Density = 0.0;
           }
         }
@@ -32,6 +32,10 @@ Mover::Mover()
 
         for (auto emitter: get_user()->get_objects()) {
           if (emitter->Label == "Smoke") {
+            emitter->get_component<ParticleEmitterComponent>()->Density = 50.0;
+          } else if (emitter->Label == "Sparks") {
+            emitter->get_component<ParticleEmitterComponent>()->Density = 250.0;
+          } else if (emitter->Label == "Fire") {
             emitter->get_component<ParticleEmitterComponent>()->Density = 50.0;
           }
         }
@@ -49,6 +53,10 @@ void Mover::update(double time) {
 
   for (auto emitter: get_user()->get_objects()) {
     if (emitter->Label == "Smoke") {
+      emitter->get_component<ParticleEmitterComponent>()->Velocity = speed*3 - 3;
+    } else if (emitter->Label == "Sparks") {
+      emitter->get_component<ParticleEmitterComponent>()->Velocity = speed*4 - 5;
+    } else if (emitter->Label == "Fire") {
       emitter->get_component<ParticleEmitterComponent>()->Velocity = speed*3 - 3;
     }
   }
@@ -70,7 +78,7 @@ void Mover::update(double time) {
   auto w = WindowManager::instance()->get_default();
 
   if(w->key_pressed(Key::W)) {
-    if (speed < 3.f) {
+    if (speed < 2.f) {
       c->apply_local_force(math::vec2(0.075f, 0.f));
     }
   }

@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
   player->get_component<Mover>()->set_camera(camera);
 
   for (auto emitter: player->get_objects()) {
-    emitter->get_component<SpriteParticleSystemComponent>()->add_emitter(
+    emitter->get_component<ParticleSystemComponent>()->add_emitter(
       emitter->get_component<ParticleEmitterComponent>()
     );
   }
