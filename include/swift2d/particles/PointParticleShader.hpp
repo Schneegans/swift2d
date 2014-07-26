@@ -27,18 +27,10 @@ class PointParticleShader : public Shader,
  public:
 
   // ------------------------------------------------------------------ uniforms
-  // oglplus::Lazy<oglplus::Uniform<math::mat3>>  projection;
-  // oglplus::Lazy<oglplus::Uniform<math::mat3>>  transform;
-  // oglplus::Lazy<oglplus::Uniform<int>>         diffuse;
-  // oglplus::Lazy<oglplus::Uniform<float>>       start_scale;
-  // oglplus::Lazy<oglplus::Uniform<float>>       end_scale;
-  // oglplus::Lazy<oglplus::Uniform<math::vec3>>  start_color;
-  // oglplus::Lazy<oglplus::Uniform<math::vec3>>  end_color;
-  // oglplus::Lazy<oglplus::Uniform<float>>       start_opacity;
-  // oglplus::Lazy<oglplus::Uniform<float>>       end_opacity;
-  // oglplus::Lazy<oglplus::Uniform<float>>       start_glow;
-  // oglplus::Lazy<oglplus::Uniform<float>>       end_glow;
-  // oglplus::Lazy<oglplus::Uniform<int>>         enable_rotation;
+  oglplus::Lazy<oglplus::Uniform<math::mat3>>  projection;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  start_color;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  end_color;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>  glow;
 
   friend class Singleton<PointParticleShader>;
 

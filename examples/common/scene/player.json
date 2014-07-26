@@ -58,7 +58,10 @@
             "Depth": "-0.1",
             "StartScale": "0.1",
             "EndScale": "1",
-            "LinearDamping": "0.1",
+            "LinearDamping": "0.05",
+            "StartColor": "(0 0 0 1)",
+            "EndColor": "(1 1 1 0)",
+            "Mass": "-0.1",
             "Texture":
             {
                 "Type": "Texture",
@@ -72,7 +75,7 @@
             "Life": "3",
             "LifeVariance": "1",
             "Direction": "0",
-            "DirectionVariance": "2",
+            "DirectionVariance": "1",
             "Velocity": "-5",
             "VelocityVariance": "0.5",
             "Density": "5"

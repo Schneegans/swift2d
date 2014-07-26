@@ -41,25 +41,17 @@ SpriteParticleShader::SpriteParticleShader()
       in vec2  tex_coords;
 
       uniform sampler2D diffuse;
+      uniform vec4      start_color;
+      uniform vec4      end_color;
+      uniform vec2      glow;
 
       @include "write_gbuffer"
 
       void main(void) {
-        // vec4 color = mix(
-        //   vec4(start_color, start_opacity),
-        //   vec4(end_color, end_opacity),
-        //   age
-        // );
+        vec4  c = mix(start_color, end_color, age);
+        float g = mix(glow.x,      glow.y,    age);
 
-        // float glow = mix(
-        //   start_glow,
-        //   end_glow,
-        //   age
-        // );
-
-        // write_gbuffer(vec4(1, 0, 0, 0.5), 0);
-        // write_gbuffer(texture2D(diffuse, tex_coords) * color, glow);
-        write_gbuffer(texture2D(diffuse, tex_coords), 0);
+        write_gbuffer(texture2D(diffuse, tex_coords) * c, g);
       }
     )",
 
@@ -73,10 +65,8 @@ SpriteParticleShader::SpriteParticleShader()
 
       in float varying_age[];
 
-      // uniform mat3  transform;
       uniform mat3  projection;
       uniform vec2  scale;
-      // uniform float end_scale;
       // uniform bool  enable_rotation;
 
       out float age;
@@ -105,11 +95,11 @@ SpriteParticleShader::SpriteParticleShader()
 
               pos = gl_in[0].gl_Position.xy - pos;
               pos = (projection * vec3(pos, 1.0)).xy;
-              // pos = (projection * transform * vec3(pos, 1.0)).xy;
 
               gl_Position = vec4(pos, 0.0, 1.0);
               age         = varying_age[0];
               tex_coords  = vec2(xo[i], yo[j]) + 0.5;
+
               EmitVertex();
             }
           }
@@ -118,18 +108,13 @@ SpriteParticleShader::SpriteParticleShader()
       }
     )",
     {}
-  ) {}
-  // , projection(get_uniform<math::mat3>("projection"))
-  // , transform(get_uniform<math::mat3>("transform"))
-  // , diffuse(get_uniform<int>("diffuse"))
-  // , start_scale(get_uniform<float>("start_scale"))
-  // , end_scale(get_uniform<float>("end_scale"))
-  // , start_color(get_uniform<math::vec3>("start_color"))
-  // , end_color(get_uniform<math::vec3>("end_color"))
-  // , start_opacity(get_uniform<float>("start_opacity"))
-  // , end_opacity(get_uniform<float>("end_opacity"))
-  // , start_glow(get_uniform<float>("start_glow"))
-  // , end_glow(get_uniform<float>("end_glow"))
+  )
+  , projection(get_uniform<math::mat3>("projection"))
+  , diffuse(get_uniform<int>("diffuse"))
+  , scale(get_uniform<math::vec2>("scale"))
+  , start_color(get_uniform<math::vec4>("start_color"))
+  , end_color(get_uniform<math::vec4>("end_color"))
+  , glow(get_uniform<math::vec2>("glow")) {}
   // , enable_rotation(get_uniform<int>("enable_rotation")) {}
 
 ////////////////////////////////////////////////////////////////////////////////

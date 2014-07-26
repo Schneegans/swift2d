@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/particles/ParticleSystemComponent.hpp>
 #include <swift2d/textures/Texture.hpp>
+#include <swift2d/utils/Color.hpp>
 
 namespace swift {
 
@@ -33,6 +34,8 @@ class SpriteParticleSystemComponent : public ParticleSystemComponent {
 
   // ---------------------------------------------------------------- properties
   Float           StartScale, EndScale;
+  Float           StartGlow,  EndGlow;
+  ColorProperty   StartColor, EndColor;
   TextureProperty Texture;
 
   // ----------------------------------------------------- contruction interface
