@@ -16,5 +16,6 @@
 #include <oglplus/bound/texture.hpp>
 
 namespace ogl = oglplus;
+namespace ose = oglplus::smart_enums;
 
 #endif  // SWIFT2D_OPENGL_HPP

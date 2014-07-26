@@ -17,8 +17,6 @@
 
 #include <sstream>
 
-namespace osm = ogl::smart_enums;
-
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -31,26 +29,18 @@ struct Particle {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ParticleSystem::ParticleSystem()
+ParticleSystem::ParticleSystem(int max_count)
   : particles_to_spawn_()
   , transform_feedbacks_()
   , particle_buffers_()
   , ping_(true)
-  , frame_time_(0.0)
-  , total_time_(0.0) {}
+  , total_time_(0.0)
+  , update_max_count_(max_count) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystem::update(
-  std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
-  double time) {
-
-  frame_time_ = time;
-  total_time_ += time;
-
-  for (auto const& emitter: emitters) {
-    particles_to_spawn_[emitter] += emitter->Density() * frame_time_;
-  }
+void ParticleSystem::set_max_count(int max_count) {
+  update_max_count_ = max_count;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -64,13 +54,7 @@ void ParticleSystem::upload_to(RenderContext const& ctx) {
     particle_vaos_.push_back(ogl::VertexArray());
 
     particle_vaos_[i].Bind();
-    particle_buffers_[i].Bind(osm::Array());
-
-    std::vector<Particle> data(1000);
-    data.front().pos =  math::vec2(0.f, 0.f);
-    data.front().vel =  math::vec2(0.f, 0.f);
-    data.front().life = math::vec2(0.f, 0.f);
-    ogl::Buffer::Data(osm::Array(), data, osm::DynamicDraw());
+    particle_buffers_[i].Bind(ose::Array());
 
     auto t(ogl::DataType::Float);
     auto s(sizeof(Particle));
@@ -92,8 +76,27 @@ void ParticleSystem::update_particles(
   // upload to GPU if neccessary
   if (particle_buffers_.empty()) {
     upload_to(ctx);
+    timer_.start();
     first_draw = true;
   }
+
+  // update buffer size if necessary
+  if (update_max_count_ > 0) {
+    for (int i(0); i<2; ++i) {
+      particle_buffers_[i].Bind(ose::Array());
+
+      std::vector<Particle> data(update_max_count_);
+      data.front().pos  = math::vec2(0.f, 0.f);
+      data.front().vel  = math::vec2(0.f, 0.f);
+      data.front().life = math::vec2(0.f, 0.f);
+      ogl::Buffer::Data(ose::Array(), data, ose::DynamicDraw());
+    }
+
+    update_max_count_ = 0;
+  }
+
+  double frame_time(timer_.reset());
+  total_time_ += frame_time;
 
   // swap ping pong buffers
   ping_ = !ping_;
@@ -102,7 +105,7 @@ void ParticleSystem::update_particles(
 
   particle_vaos_      [current_vb()].Bind();
   transform_feedbacks_[current_tf()].Bind();
-  particle_buffers_   [current_tf()].BindBase(osm::TransformFeedback(), 0);
+  particle_buffers_   [current_tf()].BindBase(ose::TransformFeedback(), 0);
 
   auto shader(ParticleUpdateShader::instance());
   shader->use(ctx);
@@ -116,21 +119,27 @@ void ParticleSystem::update_particles(
 
     // spawn new particles -----------------------------------------------------
     for (auto const& emitter: emitters) {
+
+      // calculate spawn count
+      particles_to_spawn_[emitter] += emitter->Density() * frame_time;
       int spawn_count(particles_to_spawn_[emitter]);
       particles_to_spawn_[emitter] -= spawn_count;
-      math::vec2 life(emitter->Life(), emitter->LifeVariance());
-      math::vec2 time(frame_time_ * 1000.0, total_time_ * 1000.0);
-      math::vec2 direction(emitter->Direction(), emitter->DirectionVariance());
-      math::vec2 velocity(emitter->Velocity(), emitter->VelocityVariance());
-      NoiseTexture::instance()->bind(ctx, 0);
-      shader->set_uniform("noise_tex",    0);
-      shader->set_uniform("spawn_count",  spawn_count);
-      shader->set_uniform("transform",    emitter->WorldTransform());
-      shader->set_uniform("life",         life);
-      shader->set_uniform("time",         time);
-      shader->set_uniform("direction",    direction);
-      shader->set_uniform("velocity",     velocity);
-      ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
+
+      if (spawn_count > 0) {
+        math::vec2 life(emitter->Life(), emitter->LifeVariance());
+        math::vec2 time(frame_time * 1000.0, total_time_ * 1000.0);
+        math::vec2 direction(emitter->Direction(), emitter->DirectionVariance());
+        math::vec2 velocity(emitter->Velocity(), emitter->VelocityVariance());
+        NoiseTexture::instance()->bind(ctx, 0);
+        shader->set_uniform("noise_tex",    0);
+        shader->set_uniform("spawn_count",  spawn_count);
+        shader->set_uniform("transform",    emitter->WorldTransform());
+        shader->set_uniform("life",         life);
+        shader->set_uniform("time",         time);
+        shader->set_uniform("direction",    direction);
+        shader->set_uniform("velocity",     velocity);
+        ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
+      }
     }
 
     // update existing particles -----------------------------------------------

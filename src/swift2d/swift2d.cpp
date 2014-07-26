@@ -51,6 +51,7 @@ namespace {
         Object::init<StaticBodyComponent>();
         Object::init<Texture>();
         Object::init<TimedDeleteBehavior>();
+        Object::init<PointParticleSystemComponent>();
 
         // init glfw -----------------------------------------------------------
         if (!glfwInit()) {

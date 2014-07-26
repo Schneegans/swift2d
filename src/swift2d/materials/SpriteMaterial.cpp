@@ -89,7 +89,7 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
     DiffuseTexture()->bind(ctx, 0);
     current_shader_->diffuse_tex.Set(0);
   }
-  current_shader_->diffuse.Set(Diffuse().vec3());
+  current_shader_->diffuse.Set(Diffuse().vec4());
 
 
   if (NormalTexture()) {

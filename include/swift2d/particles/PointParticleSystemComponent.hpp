@@ -6,15 +6,13 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_PARTICLE_SYSTEM_COMPONENT_HPP
-#define SWIFT2D_PARTICLE_SYSTEM_COMPONENT_HPP
+#ifndef SWIFT2D_POINT_PARTICLE_SYSTEM_COMPONENT_HPP
+#define SWIFT2D_POINT_PARTICLE_SYSTEM_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/DrawableComponent.hpp>
-#include <swift2d/particles/ParticleSystem.hpp>
+#include <swift2d/particles/ParticleSystemComponent.hpp>
 #include <swift2d/textures/Texture.hpp>
-
-#include <unordered_set>
+#include <swift2d/utils/Color.hpp>
 
 namespace swift {
 
@@ -23,47 +21,47 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class ParticleSystemComponent;
-typedef std::shared_ptr<ParticleSystemComponent>       ParticleSystemComponentPtr;
-typedef std::shared_ptr<const ParticleSystemComponent> ConstParticleSystemComponentPtr;
+class PointParticleSystemComponent;
+typedef std::shared_ptr<PointParticleSystemComponent>       PointParticleSystemComponentPtr;
+typedef std::shared_ptr<const PointParticleSystemComponent> ConstPointParticleSystemComponentPtr;
 
 // -----------------------------------------------------------------------------
-class ParticleSystemComponent : public DrawableComponent {
+class PointParticleSystemComponent : public ParticleSystemComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ---------------------------------------------------------------- properties
-  Int   MaxCount;
-  Float Depth;
-  Float Mass;
-  Float LinearDamping;
-  Float AngularDamping;
+  Float         Scale;
+  Float         StartGlow,  EndGlow;
+  ColorProperty StartColor, EndColor;
 
   // ----------------------------------------------------- contruction interface
-  ParticleSystemComponent();
+  PointParticleSystemComponent();
+
+  // Creates a new component and returns a shared pointer.
+  template <typename... Args>
+  static PointParticleSystemComponentPtr create(Args&& ... a) {
+    return std::make_shared<PointParticleSystemComponent>(a...);
+  }
+
+  // creates a copy from this
+  PointParticleSystemComponentPtr create_copy() const {
+    return std::make_shared<PointParticleSystemComponent>(*this);
+  }
 
   // ------------------------------------------------------------ public methods
-  void add_emitter(ParticleEmitterComponentPtr const& emitter);
-  void remove_emitter(ParticleEmitterComponentPtr const& emitter);
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "PointParticleSystemComponent"; }
 
-  void update_particles(RenderContext const& ctx);
-  void draw_particles(RenderContext const& ctx);
-
+  void draw(RenderContext const& ctx);
+  void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
-
- ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
- private:
-  ParticleSystemPtr particle_system_;
-
-  std::unordered_set<ParticleEmitterComponentPtr> emitters_;
-
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_PARTICLE_SYSTEM_COMPONENT_HPP
+#endif  // SWIFT2D_POINT_PARTICLE_SYSTEM_COMPONENT_HPP

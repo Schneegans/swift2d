@@ -21,7 +21,7 @@ SpriteShader::SpriteShader(int capabilities, std::string const& v_source,
   , depth(get_uniform<float>("depth"))
   , parallax(get_uniform<float>("parallax"))
   , diffuse_tex(get_uniform<int>("diffuse_tex"))
-  , diffuse(get_uniform<math::vec3>("diffuse"))
+  , diffuse(get_uniform<math::vec4>("diffuse"))
   , normal_tex(get_uniform<int>("normal_tex"))
   , normal_transform(get_uniform<math::mat3>("normal_transform"))
   , emit_tex(get_uniform<int>("emit_tex"))

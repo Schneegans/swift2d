@@ -22,10 +22,13 @@ class Timer {
  public:
 
   // ------------------------------------------------------------ public methods
+  Timer();
+
   void start();
-  void reset();
+  double reset();
 
   double get_elapsed() const;
+  bool   is_running() const;
 
   static double get_now();
 

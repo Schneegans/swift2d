@@ -40,10 +40,10 @@ SpriteShaderPtr SpriteShaderFactory::get_shader(int capabilities) {
   if (capabilities & DIFFUSE_TEX) {
     f_shader << R"(
       uniform sampler2D diffuse_tex;
-      uniform vec3 diffuse;
+      uniform vec4 diffuse;
       vec4 get_diffuse() {
         vec4 result = texture2D(diffuse_tex, tex_coords);
-        result.rgb *= diffuse;
+        result *= diffuse;
         return result;
       }
     )";

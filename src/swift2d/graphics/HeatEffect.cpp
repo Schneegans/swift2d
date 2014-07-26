@@ -76,7 +76,7 @@ void HeatEffect::process(ConstSerializedScenePtr const& scene,
 
 int HeatEffect::bind_buffers(int start, RenderContext const& ctx) {
   oglplus::Texture::Active(start);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), heat_buffer_);
+  ctx.gl.Bind(ose::_2D(), heat_buffer_);
   return start + 1;
 }
 

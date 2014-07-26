@@ -32,7 +32,7 @@ void NoiseTexture::bind(RenderContext const& context, unsigned location) const {
   }
 
   texture_->Active(location);
-  context.gl.Bind(oglplus::smart_enums::_2D(), *texture_);
+  context.gl.Bind(ose::_2D(), *texture_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,12 +41,12 @@ void NoiseTexture::upload_to(RenderContext const& context) const {
 
   texture_ = new oglplus::Texture();
 
-  context.gl.Bound(oglplus::smart_enums::_2D(), *texture_)
+  context.gl.Bound(ose::_2D(), *texture_)
     .Image2D(oglplus::images::RandomRGBUByte(256, 256))
-    .MinFilter(oglplus::smart_enums::Linear())
-    .MagFilter(oglplus::smart_enums::Linear())
-    .WrapS(oglplus::smart_enums::Repeat())
-    .WrapT(oglplus::smart_enums::Repeat());
+    .MinFilter(ose::Linear())
+    .MagFilter(ose::Linear())
+    .WrapS(ose::Repeat())
+    .WrapT(ose::Repeat());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

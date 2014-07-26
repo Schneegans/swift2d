@@ -30,7 +30,7 @@ struct Color {
   Color();
 
   // This constructs a Color from given RGB values.
-  Color(float red, float green, float blue);
+  Color(float red, float green, float blue, float alpha = 1.f);
 
   // Returns a randomly generated Color.
   static Color random();
@@ -43,6 +43,7 @@ struct Color {
   float h() const;
   float s() const;
   inline float v() const { return std::max(std::max(r_, g_), b_); }
+  inline float a() const { return a_; }
 
   // Sets a single Color value.
   void r(float red);
@@ -51,6 +52,7 @@ struct Color {
   void h(float hue);
   void s(float saturation);
   void v(float value);
+  void a(float alpha);
 
   // Returns an inverted copy of the Color.
   Color inverted() const;
@@ -59,13 +61,14 @@ struct Color {
   Color brightened() const;
 
   math::vec3 vec3() const;
+  math::vec4 vec4() const;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   void set_hsv(float hue, float saturation, float value);
 
-  float r_, g_, b_;
+  float r_, g_, b_, a_;
 };
 
 // ------------------------------------------------------------------- operators

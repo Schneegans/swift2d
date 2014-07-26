@@ -48,7 +48,7 @@ class GLSurface : public Awesomium::Surface {
     }
 
     tex_->Active(location);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), *tex_);
+    ctx.gl.Bind(ose::_2D(), *tex_);
 
 
     if (needs_update_) {

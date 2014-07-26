@@ -13,8 +13,6 @@
 #include <swift2d/particles/ParticleSystemComponent.hpp>
 #include <swift2d/textures/Texture.hpp>
 
-#include <unordered_set>
-
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////

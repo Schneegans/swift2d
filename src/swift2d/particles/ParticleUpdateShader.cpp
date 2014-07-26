@@ -66,15 +66,8 @@ ParticleUpdateShader::ParticleUpdateShader()
       out vec2 out_velocity;
       out vec2 out_life;
 
-      float get_random_float(float seed) {
-        return (texture(noise_tex, vec2(seed*1.3, seed*2.1)).x - 0.5) * 2.0;
-      }
-
-      vec2 get_random_vec2(float seed) {
-        return (texture(noise_tex, vec2(seed*1.3, seed*2.1)).xy - 0.5) * 2.0;
-      }
-
-      vec3 get_random_vec3(float seed) {
+      vec3 get_random(float seed) {
+        seed = mod(seed, 10);
         return (texture(noise_tex, vec2(seed*1.3, seed*2.1)).xyz - 0.5) * 2.0;
       }
 
@@ -86,7 +79,7 @@ ParticleUpdateShader::ParticleUpdateShader()
 
           for (int i=0; i<spawn_count; ++i) {
 
-            vec3 random = get_random_vec3((i+1)*time.y);
+            vec3 random = get_random((i+1)*time.y);
 
             float l = life.x      + random.x * life.y;
             float d = direction.x + random.y * direction.y;

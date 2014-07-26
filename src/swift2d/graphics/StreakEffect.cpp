@@ -62,85 +62,85 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
   )") {
 
   auto create_texture = [&](
-    oglplus::Texture& tex, int width, int height,
-    oglplus::enums::PixelDataInternalFormat i_format,
-    oglplus::enums::PixelDataFormat         p_format) {
+    ogl::Texture& tex, int width, int height,
+    ogl::enums::PixelDataInternalFormat i_format,
+    ogl::enums::PixelDataFormat         p_format) {
 
-    oglplus::Texture::Active(0);
-    ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
+    ogl::Texture::Active(0);
+    ctx.gl.Bound(ogl::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
-        0, p_format, oglplus::PixelDataType::Float, nullptr)
-      .MinFilter(oglplus::TextureMinFilter::Linear)
-      .MagFilter(oglplus::TextureMagFilter::Linear)
-      .WrapS(oglplus::TextureWrap::ClampToBorder)
-      .WrapT(oglplus::TextureWrap::ClampToBorder);
+        0, p_format, ogl::PixelDataType::Float, nullptr)
+      .MinFilter(ogl::TextureMinFilter::Linear)
+      .MagFilter(ogl::TextureMagFilter::Linear)
+      .WrapS(ogl::TextureWrap::ClampToBorder)
+      .WrapT(ogl::TextureWrap::ClampToBorder);
   };
 
   auto size(ctx.size/6);
 
   create_texture(
     streak_buffer_tmp_, size.x(), size.y(),
-    oglplus::PixelDataInternalFormat::RGB,
-    oglplus::PixelDataFormat::RGB
+    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     streak_buffer_1_, size.x(), size.y(),
-    oglplus::PixelDataInternalFormat::RGB,
-    oglplus::PixelDataFormat::RGB
+    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     streak_buffer_2_, size.x(), size.y(),
-    oglplus::PixelDataInternalFormat::RGB,
-    oglplus::PixelDataFormat::RGB
+    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     streak_buffer_3_, size.x(), size.y(),
-    oglplus::PixelDataInternalFormat::RGB,
-    oglplus::PixelDataFormat::RGB
+    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     streak_buffer_4_, size.x(), size.y(),
-    oglplus::PixelDataInternalFormat::RGB,
-    oglplus::PixelDataFormat::RGB
+    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     streak_buffer_5_, size.x(), size.y(),
-    oglplus::PixelDataInternalFormat::RGB,
-    oglplus::PixelDataFormat::RGB
+    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     streak_buffer_6_, size.x(), size.y(),
-    oglplus::PixelDataInternalFormat::RGB,
-    oglplus::PixelDataFormat::RGB
+    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataFormat::RGB
   );
 
-  streak_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
-  oglplus::Framebuffer::AttachColorTexture(
-    oglplus::Framebuffer::Target::Draw, 0, streak_buffer_tmp_, 0
+  streak_fbo_.Bind(ogl::Framebuffer::Target::Draw);
+  ogl::Framebuffer::AttachColorTexture(
+    ogl::Framebuffer::Target::Draw, 0, streak_buffer_tmp_, 0
   );
-  oglplus::Framebuffer::AttachColorTexture(
-    oglplus::Framebuffer::Target::Draw, 1, streak_buffer_1_, 0
+  ogl::Framebuffer::AttachColorTexture(
+    ogl::Framebuffer::Target::Draw, 1, streak_buffer_1_, 0
   );
-  oglplus::Framebuffer::AttachColorTexture(
-    oglplus::Framebuffer::Target::Draw, 2, streak_buffer_2_, 0
+  ogl::Framebuffer::AttachColorTexture(
+    ogl::Framebuffer::Target::Draw, 2, streak_buffer_2_, 0
   );
-  oglplus::Framebuffer::AttachColorTexture(
-    oglplus::Framebuffer::Target::Draw, 3, streak_buffer_3_, 0
+  ogl::Framebuffer::AttachColorTexture(
+    ogl::Framebuffer::Target::Draw, 3, streak_buffer_3_, 0
   );
-  oglplus::Framebuffer::AttachColorTexture(
-    oglplus::Framebuffer::Target::Draw, 4, streak_buffer_4_, 0
+  ogl::Framebuffer::AttachColorTexture(
+    ogl::Framebuffer::Target::Draw, 4, streak_buffer_4_, 0
   );
-  oglplus::Framebuffer::AttachColorTexture(
-    oglplus::Framebuffer::Target::Draw, 5, streak_buffer_5_, 0
+  ogl::Framebuffer::AttachColorTexture(
+    ogl::Framebuffer::Target::Draw, 5, streak_buffer_5_, 0
   );
-  oglplus::Framebuffer::AttachColorTexture(
-    oglplus::Framebuffer::Target::Draw, 6, streak_buffer_6_, 0
+  ogl::Framebuffer::AttachColorTexture(
+    ogl::Framebuffer::Target::Draw, 6, streak_buffer_6_, 0
   );
 
   math::vec3 c1(1.0, 1.0, 1.0);
@@ -175,22 +175,22 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void StreakEffect::process(RenderContext const& ctx, oglplus::Texture const& threshold_buffer_) {
+void StreakEffect::process(RenderContext const& ctx, ogl::Texture const& threshold_buffer_) {
 
   ctx.gl.Viewport(ctx.size.x()/6, ctx.size.y()/6);
 
-  streak_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
+  streak_fbo_.Bind(ogl::Framebuffer::Target::Draw);
   const float DEC = 0.96;
   streak_shader_.use(ctx);
   streak_shader_.set_uniform("input_tex", 4);
-  oglplus::Texture::Active(4);
+  ogl::Texture::Active(4);
 
-  auto pass = [&](math::vec2 const& step, oglplus::Texture const& input,
-                  oglplus::FramebufferColorAttachment output,
+  auto pass = [&](math::vec2 const& step, ogl::Texture const& input,
+                  ogl::FramebufferColorAttachment output,
                   std::vector<math::vec3>& colors_in) {
 
     ctx.gl.DrawBuffer(output);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), input);
+    ctx.gl.Bind(ose::_2D(), input);
 
     for (int s(0); s<4; ++s) {
       streak_shader_.set_uniform("color" + std::to_string(s+1), colors_in[s]);
@@ -202,54 +202,54 @@ void StreakEffect::process(RenderContext const& ctx, oglplus::Texture const& thr
   };
 
   math::vec2 step(0.9*4.0/ctx.size.x(), 0.0);
-  pass(step*35, threshold_buffer_,  oglplus::FramebufferColorAttachment::_0, streak_colors_1_);
-  pass(step*12, streak_buffer_tmp_, oglplus::FramebufferColorAttachment::_1, streak_colors_2_);
-  pass(step*5,  streak_buffer_1_,   oglplus::FramebufferColorAttachment::_0, streak_colors_3_);
-  pass(step*2,  streak_buffer_tmp_, oglplus::FramebufferColorAttachment::_1, streak_colors_3_);
+  pass(step*35, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_1_);
+  pass(step*12, streak_buffer_tmp_, ogl::FramebufferColorAttachment::_1, streak_colors_2_);
+  pass(step*5,  streak_buffer_1_,   ogl::FramebufferColorAttachment::_0, streak_colors_3_);
+  pass(step*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_1, streak_colors_3_);
 
   step = math::vec2(-0.9*4.0/ctx.size.x(), 0.0);
-  pass(step*35, threshold_buffer_,  oglplus::FramebufferColorAttachment::_0, streak_colors_1_);
-  pass(step*12, streak_buffer_tmp_, oglplus::FramebufferColorAttachment::_2, streak_colors_2_);
-  pass(step*5,  streak_buffer_2_,   oglplus::FramebufferColorAttachment::_0, streak_colors_3_);
-  pass(step*2,  streak_buffer_tmp_, oglplus::FramebufferColorAttachment::_2, streak_colors_3_);
+  pass(step*35, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_1_);
+  pass(step*12, streak_buffer_tmp_, ogl::FramebufferColorAttachment::_2, streak_colors_2_);
+  pass(step*5,  streak_buffer_2_,   ogl::FramebufferColorAttachment::_0, streak_colors_3_);
+  pass(step*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_2, streak_colors_3_);
 
   step = math::vec2(-0.7*4.0/ctx.size.x(), -0.9*4.0/ctx.size.y());
-  pass(step*5, threshold_buffer_,  oglplus::FramebufferColorAttachment::_0, streak_colors_4_);
-  pass(step*2,  streak_buffer_tmp_, oglplus::FramebufferColorAttachment::_3, streak_colors_3_);
+  pass(step*5, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
+  pass(step*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_3, streak_colors_3_);
 
   step = math::vec2(0.7*4.0/ctx.size.x(), -0.9*4.0/ctx.size.y());
-  pass(step*5, threshold_buffer_,  oglplus::FramebufferColorAttachment::_0, streak_colors_4_);
-  pass(step*2,  streak_buffer_tmp_, oglplus::FramebufferColorAttachment::_4, streak_colors_3_);
+  pass(step*5, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
+  pass(step*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_4, streak_colors_3_);
 
   step = math::vec2(-0.7*4.0/ctx.size.x(), 0.9*4.0/ctx.size.y());
-  pass(step*5, threshold_buffer_,  oglplus::FramebufferColorAttachment::_0, streak_colors_4_);
-  pass(step*2,  streak_buffer_tmp_, oglplus::FramebufferColorAttachment::_5, streak_colors_3_);
+  pass(step*5, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
+  pass(step*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_5, streak_colors_3_);
 
   step = math::vec2(0.7*4.0/ctx.size.x(), 0.9*4.0/ctx.size.y());
-  pass(step*5, threshold_buffer_,  oglplus::FramebufferColorAttachment::_0, streak_colors_4_);
-  pass(step*2,  streak_buffer_tmp_, oglplus::FramebufferColorAttachment::_6, streak_colors_3_);
+  pass(step*5, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
+  pass(step*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_6, streak_colors_3_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 int StreakEffect::bind_buffers(int start, RenderContext const& ctx) {
-  oglplus::Texture::Active(start + 0);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), streak_buffer_1_);
+  ogl::Texture::Active(start + 0);
+  ctx.gl.Bind(ose::_2D(), streak_buffer_1_);
 
-  oglplus::Texture::Active(start + 1);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), streak_buffer_2_);
+  ogl::Texture::Active(start + 1);
+  ctx.gl.Bind(ose::_2D(), streak_buffer_2_);
 
-  oglplus::Texture::Active(start + 2);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), streak_buffer_3_);
+  ogl::Texture::Active(start + 2);
+  ctx.gl.Bind(ose::_2D(), streak_buffer_3_);
 
-  oglplus::Texture::Active(start + 3);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), streak_buffer_4_);
+  ogl::Texture::Active(start + 3);
+  ctx.gl.Bind(ose::_2D(), streak_buffer_4_);
 
-  oglplus::Texture::Active(start + 4);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), streak_buffer_5_);
+  ogl::Texture::Active(start + 4);
+  ctx.gl.Bind(ose::_2D(), streak_buffer_5_);
 
-  oglplus::Texture::Active(start + 5);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), streak_buffer_6_);
+  ogl::Texture::Active(start + 5);
+  ctx.gl.Bind(ose::_2D(), streak_buffer_6_);
 
   return start + 6;
 }

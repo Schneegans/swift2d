@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
 #include <swift2d/particles/ParticleEmitterComponent.hpp>
+#include <swift2d/events/Timer.hpp>
 
 #include <unordered_map>
 #include <unordered_set>
@@ -35,17 +36,15 @@ class ParticleSystem {
  public:
 
   // ----------------------------------------------------- contruction interface
-  ParticleSystem();
+  ParticleSystem(int max_count);
 
   // Creates a new component and returns a shared pointer.
-  static ParticleSystemPtr create() {
-    return std::make_shared<ParticleSystem>();
+  static ParticleSystemPtr create(int max_count) {
+    return std::make_shared<ParticleSystem>(max_count);
   }
 
   // ------------------------------------------------------------ public methods
-  void update(
-    std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
-    double time);
+  void set_max_count(int max_count);
 
   void update_particles(
     std::unordered_set<ParticleEmitterComponentPtr> const& emitters,
@@ -68,8 +67,10 @@ class ParticleSystem {
 
   std::unordered_map<ParticleEmitterComponentPtr, float>  particles_to_spawn_;
   bool   ping_;
-  double frame_time_;
   double total_time_;
+  int    update_max_count_;
+
+  Timer timer_;
 };
 
 }

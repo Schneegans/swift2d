@@ -115,107 +115,107 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
   )") {
 
   auto create_texture = [&](
-    oglplus::Texture& tex, int width, int height,
-    oglplus::enums::PixelDataInternalFormat i_format,
-    oglplus::enums::PixelDataFormat         p_format) {
+    ogl::Texture& tex, int width, int height,
+    ogl::enums::PixelDataInternalFormat i_format,
+    ogl::enums::PixelDataFormat         p_format) {
 
-    oglplus::Texture::Active(0);
-    ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
+    ogl::Texture::Active(0);
+    ctx.gl.Bound(ogl::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
-        0, p_format, oglplus::PixelDataType::Float, nullptr)
-      .MinFilter(oglplus::TextureMinFilter::Linear)
-      .MagFilter(oglplus::TextureMagFilter::Linear)
-      .WrapS(oglplus::TextureWrap::ClampToBorder)
-      .WrapT(oglplus::TextureWrap::ClampToBorder);
+        0, p_format, ogl::PixelDataType::Float, nullptr)
+      .MinFilter(ogl::TextureMinFilter::Linear)
+      .MagFilter(ogl::TextureMagFilter::Linear)
+      .WrapS(ogl::TextureWrap::ClampToBorder)
+      .WrapT(ogl::TextureWrap::ClampToBorder);
   };
 
   auto size(ctx.size/6);
 
   create_texture(
     buffer_tmp_, size.x(), size.y(),
-    oglplus::PixelDataInternalFormat::RGB,
-    oglplus::PixelDataFormat::RGB
+    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     blur_buffer_, size.x(), size.y(),
-    oglplus::PixelDataInternalFormat::RGB,
-    oglplus::PixelDataFormat::RGB
+    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     ghost_buffer_1_, size.x(), size.y(),
-    oglplus::PixelDataInternalFormat::RGB,
-    oglplus::PixelDataFormat::RGB
+    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     ghost_buffer_2_, size.x(), size.y(),
-    oglplus::PixelDataInternalFormat::RGB,
-    oglplus::PixelDataFormat::RGB
+    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataFormat::RGB
   );
 
 
-  fbo_.Bind(oglplus::Framebuffer::Target::Draw);
-  oglplus::Framebuffer::AttachColorTexture(
-    oglplus::Framebuffer::Target::Draw, 0, buffer_tmp_, 0
+  fbo_.Bind(ogl::Framebuffer::Target::Draw);
+  ogl::Framebuffer::AttachColorTexture(
+    ogl::Framebuffer::Target::Draw, 0, buffer_tmp_, 0
   );
-  oglplus::Framebuffer::AttachColorTexture(
-    oglplus::Framebuffer::Target::Draw, 1, blur_buffer_, 0
+  ogl::Framebuffer::AttachColorTexture(
+    ogl::Framebuffer::Target::Draw, 1, blur_buffer_, 0
   );
-  oglplus::Framebuffer::AttachColorTexture(
-    oglplus::Framebuffer::Target::Draw, 2, ghost_buffer_1_, 0
+  ogl::Framebuffer::AttachColorTexture(
+    ogl::Framebuffer::Target::Draw, 2, ghost_buffer_1_, 0
   );
-  oglplus::Framebuffer::AttachColorTexture(
-    oglplus::Framebuffer::Target::Draw, 3, ghost_buffer_2_, 0
+  ogl::Framebuffer::AttachColorTexture(
+    ogl::Framebuffer::Target::Draw, 3, ghost_buffer_2_, 0
   );
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GhostEffect::process(RenderContext const& ctx, oglplus::Texture const& threshold_buffer_) {
+void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshold_buffer_) {
 
   ctx.gl.Viewport(ctx.size.x()/6, ctx.size.y()/6);
 
-  fbo_.Bind(oglplus::Framebuffer::Target::Draw);
+  fbo_.Bind(ogl::Framebuffer::Target::Draw);
 
   // blurring ------------------------------------------------------------------
   blur_shader_.use(ctx);
   blur_shader_.set_uniform("input_tex", 4);
-  oglplus::Texture::Active(4);
+  ogl::Texture::Active(4);
 
-  auto blur_pass = [&](math::vec2 const& step, oglplus::Texture const& input,
-                  oglplus::FramebufferColorAttachment output) {
+  auto blur_pass = [&](math::vec2 const& step, ogl::Texture const& input,
+                  ogl::FramebufferColorAttachment output) {
 
     ctx.gl.DrawBuffer(output);
-    ctx.gl.Bind(oglplus::smart_enums::_2D(), input);
+    ctx.gl.Bind(ose::_2D(), input);
     blur_shader_.set_uniform("step", step);
     Quad::instance()->draw(ctx);
   };
 
   math::vec2 radius(2.0/(ctx.size.x()/6), 2.0/(ctx.size.y()/6));
 
-  blur_pass(math::vec2(radius.x()/2, 0), threshold_buffer_, oglplus::FramebufferColorAttachment::_0);
-  blur_pass(math::vec2(radius.x(), 0),   buffer_tmp_,       oglplus::FramebufferColorAttachment::_1);
-  blur_pass(math::vec2(0, radius.y()/2), blur_buffer_,      oglplus::FramebufferColorAttachment::_0);
-  blur_pass(math::vec2(0, radius.y()),   buffer_tmp_,       oglplus::FramebufferColorAttachment::_1);
+  blur_pass(math::vec2(radius.x()/2, 0), threshold_buffer_, ogl::FramebufferColorAttachment::_0);
+  blur_pass(math::vec2(radius.x(), 0),   buffer_tmp_,       ogl::FramebufferColorAttachment::_1);
+  blur_pass(math::vec2(0, radius.y()/2), blur_buffer_,      ogl::FramebufferColorAttachment::_0);
+  blur_pass(math::vec2(0, radius.y()),   buffer_tmp_,       ogl::FramebufferColorAttachment::_1);
 
   // ghosting ------------------------------------------------------------------
-  ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_2);
+  ctx.gl.DrawBuffer(ogl::FramebufferColorAttachment::_2);
 
   ghost_shader_.use(ctx);
 
-  oglplus::Texture::Active(4);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), blur_buffer_);
+  ogl::Texture::Active(4);
+  ctx.gl.Bind(ose::_2D(), blur_buffer_);
   ghost_shader_.set_uniform("input_tex1", 4);
 
-  oglplus::Texture::Active(5);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), blur_buffer_);
+  ogl::Texture::Active(5);
+  ctx.gl.Bind(ose::_2D(), blur_buffer_);
   ghost_shader_.set_uniform("input_tex2", 5);
 
-  oglplus::Texture::Active(6);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), blur_buffer_);
+  ogl::Texture::Active(6);
+  ctx.gl.Bind(ose::_2D(), blur_buffer_);
   ghost_shader_.set_uniform("input_tex3", 6);
 
   ghost_shader_.set_uniform("scalar", math::vec4(-4.0, 3.0, -2.0, 0.3));
@@ -228,18 +228,18 @@ void GhostEffect::process(RenderContext const& ctx, oglplus::Texture const& thre
 
 
 
-  ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_3);
+  ctx.gl.DrawBuffer(ogl::FramebufferColorAttachment::_3);
 
-  oglplus::Texture::Active(4);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), ghost_buffer_1_);
+  ogl::Texture::Active(4);
+  ctx.gl.Bind(ose::_2D(), ghost_buffer_1_);
   ghost_shader_.set_uniform("input_tex1", 4);
 
-  oglplus::Texture::Active(5);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), ghost_buffer_1_);
+  ogl::Texture::Active(5);
+  ctx.gl.Bind(ose::_2D(), ghost_buffer_1_);
   ghost_shader_.set_uniform("input_tex2", 5);
 
-  oglplus::Texture::Active(6);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), blur_buffer_);
+  ogl::Texture::Active(6);
+  ctx.gl.Bind(ose::_2D(), blur_buffer_);
   ghost_shader_.set_uniform("input_tex3", 6);
 
   ghost_shader_.set_uniform("scalar", math::vec4(3.6, 2.0, 0.9, -0.55));
@@ -254,11 +254,11 @@ void GhostEffect::process(RenderContext const& ctx, oglplus::Texture const& thre
 ////////////////////////////////////////////////////////////////////////////////
 
 int GhostEffect::bind_buffers(int start, RenderContext const& ctx) {
-  oglplus::Texture::Active(start + 0);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), ghost_buffer_1_);
+  ogl::Texture::Active(start + 0);
+  ctx.gl.Bind(ose::_2D(), ghost_buffer_1_);
 
-  oglplus::Texture::Active(start + 1);
-  ctx.gl.Bind(oglplus::smart_enums::_2D(), ghost_buffer_2_);
+  ogl::Texture::Active(start + 1);
+  ctx.gl.Bind(ose::_2D(), ghost_buffer_2_);
 
   return start + 2;
 }

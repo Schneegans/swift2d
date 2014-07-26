@@ -25,14 +25,16 @@ namespace swift {
 Color::Color()
   : r_(0.0f)
   , g_(0.0f)
-  , b_(0.0f) {}
+  , b_(0.0f)
+  , a_(1.0f) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Color::Color(float r, float g, float b)
+Color::Color(float r, float g, float b, float a)
   : r_(r)
   , g_(g)
-  , b_(b) {}
+  , b_(b)
+  , a_(a) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -95,6 +97,12 @@ void Color::s(float saturation) {
 
 void Color::v(float value) {
   set_hsv(h(), s(), math::clamp(value, 0.0f, 1.0f));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Color::a(float alpha) {
+  a_ = math::clamp(alpha, 0.0f, 1.0f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -177,11 +185,17 @@ math::vec3 Color::vec3() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+math::vec4 Color::vec4() const {
+  return math::vec4(r_, g_, b_, a_);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 Color Color::random() {
 
   Color result(math::random::get(0.0f, 1.0f),
-                 math::random::get(0.0f, 1.0f),
-                 math::random::get(0.0f, 1.0f));
+               math::random::get(0.0f, 1.0f),
+               math::random::get(0.0f, 1.0f), 1.f);
   result.s(result.s() + 0.5);
   result.v(result.v() + 0.5);
   return result;
@@ -190,7 +204,7 @@ Color Color::random() {
 ////////////////////////////////////////////////////////////////////////////////
 
 bool operator==(Color const& lhs, Color const& rhs) {
-  return lhs.r() == rhs.r() && lhs.g() == rhs.g() && lhs.b() == rhs.b();
+  return lhs.r() == rhs.r() && lhs.g() == rhs.g() && lhs.b() == rhs.b() && lhs.a() == rhs.a();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -202,7 +216,7 @@ bool operator!=(Color const& lhs, Color const& rhs) {
 ////////////////////////////////////////////////////////////////////////////////
 
 Color operator*(float const& lhs, Color rhs) {
-  return Color(rhs.r() * lhs, rhs.g() * lhs, rhs.b() * lhs);
+  return Color(rhs.r() * lhs, rhs.g() * lhs, rhs.b() * lhs, rhs.a());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -214,7 +228,7 @@ Color operator*(Color const& lhs, float rhs) {
 ////////////////////////////////////////////////////////////////////////////////
 
 Color operator/(Color const& lhs, float rhs) {
-  return Color(lhs.r() / rhs, lhs.g() / rhs, lhs.b() / rhs);
+  return Color(lhs.r() / rhs, lhs.g() / rhs, lhs.b() / rhs, lhs.a());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -224,6 +238,7 @@ Color operator+(Color const& lhs, Color const& rhs) {
   result.r(lhs.r() + rhs.r());
   result.g(lhs.g() + rhs.g());
   result.b(lhs.b() + rhs.b());
+  result.a(0.5*(lhs.a() + rhs.a()));
   return result;
 }
 
@@ -234,25 +249,27 @@ Color operator-(Color const& lhs, Color const& rhs) {
   result.r(lhs.r() - rhs.r());
   result.g(lhs.g() - rhs.g());
   result.b(lhs.b() - rhs.b());
+  result.a(0.5*(lhs.a() + rhs.a()));
   return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<(std::ostream& os, Color const& color) {
-  os << color.vec3();
+  os << color.vec4();
   return os;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 std::istream& operator>>(std::istream& is, Color& color) {
-  math::vec3 val;
+  math::vec4 val;
   is >> val;
 
   color.r(val[0]);
   color.g(val[1]);
   color.b(val[2]);
+  color.a(val[3]);
 
   return is;
 }

@@ -73,7 +73,7 @@ void Physics::update(double time) {
         auto scale(math::get_scale(transform));
         float mass(source->Density() * scale.x() * scale.y());
         b2Vec2 dist(b2Vec2(pos.x(), pos.y()) - body_pos);
-        dist *= ((mass * body->GetMass()) / dist.LengthSquared());
+        dist *= ((mass * body->GetMass()) / (dist.LengthSquared() + 0.001));
         body->ApplyForceToCenter(dist, true);
       }
     }

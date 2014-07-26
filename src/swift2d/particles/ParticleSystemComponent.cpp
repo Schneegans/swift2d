@@ -14,11 +14,17 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 ParticleSystemComponent::ParticleSystemComponent()
-  : Depth(0.f)
+  : MaxCount(1000)
+  , Depth(0.f)
   , Mass(0.f)
   , LinearDamping(0.f)
   , AngularDamping(0.f)
-  , particle_system_(ParticleSystem::create()) {}
+  , particle_system_(ParticleSystem::create(MaxCount())) {
+
+  MaxCount.on_change().connect([&](int val){
+    particle_system_->set_max_count(val);
+  });
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -30,13 +36,6 @@ void ParticleSystemComponent::add_emitter(ParticleEmitterComponentPtr const& emi
 
 void ParticleSystemComponent::remove_emitter(ParticleEmitterComponentPtr const& emitter) {
   emitters_.erase(emitter);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void ParticleSystemComponent::update(double time) {
-  DrawableComponent::update(time);
-  particle_system_->update(emitters_, time);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,6 +55,7 @@ void ParticleSystemComponent::draw_particles(RenderContext const& ctx) {
 
 void ParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   DrawableComponent::accept(visitor);
+  visitor.add_member("MaxCount", MaxCount);
   visitor.add_member("Depth", Depth);
   visitor.add_member("Mass", Mass);
   visitor.add_member("LinearDamping", LinearDamping);

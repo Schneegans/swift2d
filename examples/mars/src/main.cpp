@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 
   auto emitters(world->get_components<ParticleEmitterComponent>());
   for (auto emitter: emitters) {
-    world->get_component<SpriteParticleSystemComponent>()->add_emitter(emitter);
+    world->get_component<ParticleSystemComponent>()->add_emitter(emitter);
   }
 
   // player
@@ -83,8 +83,7 @@ int main(int argc, char** argv) {
 
     renderer.process(scene, camera);
 
-    double time(timer.get_elapsed());
-    timer.reset();
+    double time(timer.reset());
     Physics::instance()->update(time);
 
     window->process_input();

@@ -56,7 +56,7 @@ void Texture::bind(RenderContext const& context, unsigned location) const {
   }
 
   texture_->Active(location);
-  context.gl.Bind(oglplus::smart_enums::_2D(), *texture_);
+  context.gl.Bind(ose::_2D(), *texture_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,19 +88,19 @@ void Texture::upload_to(RenderContext const& context) const {
   bool success(data && width && height);
 
   if (success) {
-    auto internal_format(channels > 3 ? oglplus::InternalFormat::RGBA : oglplus::InternalFormat::RGB);
-    auto format(channels > 3 ? oglplus::Format::RGBA : oglplus::Format::RGB);
+    auto internal_format(channels > 3 ? ogl::InternalFormat::RGBA : ogl::InternalFormat::RGB);
+    auto format(channels > 3 ? ogl::Format::RGBA : ogl::Format::RGB);
 
-    texture_ = new oglplus::Texture();
+    texture_ = new ogl::Texture();
 
-    context.gl.Bound(oglplus::smart_enums::_2D(), *texture_)
+    context.gl.Bound(ose::_2D(), *texture_)
       .Image2D(0, internal_format, width, height, 0, format,
-               oglplus::DataType::UnsignedByte, data)
+               ogl::DataType::UnsignedByte, data)
       .GenerateMipmap()
-      .MinFilter(oglplus::smart_enums::LinearMipmapLinear())
-      .MagFilter(oglplus::smart_enums::Linear())
-      .WrapS(oglplus::smart_enums::Repeat())
-      .WrapT(oglplus::smart_enums::Repeat());
+      .MinFilter(ose::LinearMipmapLinear())
+      .MagFilter(ose::Linear())
+      .WrapS(ose::Repeat())
+      .WrapT(ose::Repeat());
   }
 
   stbi_image_free(data);

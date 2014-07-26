@@ -49,7 +49,7 @@ class SpriteShader : public Shader {
   oglplus::Lazy<oglplus::Uniform<float>>       depth;
   oglplus::Lazy<oglplus::Uniform<float>>       parallax;
   oglplus::Lazy<oglplus::Uniform<int>>         diffuse_tex;
-  oglplus::Lazy<oglplus::Uniform<math::vec3>>  diffuse;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  diffuse;
   oglplus::Lazy<oglplus::Uniform<int>>         normal_tex;
   oglplus::Lazy<oglplus::Uniform<math::mat3>>  normal_transform;
   oglplus::Lazy<oglplus::Uniform<int>>         emit_tex;
