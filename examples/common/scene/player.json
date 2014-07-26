@@ -51,34 +51,60 @@
                 },
                 "Emit": "1"
             }
-        },
+        }
+    ],
+    "Objects":
+    [
         {
-            "Type": "SpriteParticleSystemComponent",
-            "Enabled": "1",
-            "Depth": "-0.1",
-            "StartScale": "0.1",
-            "EndScale": "1",
-            "LinearDamping": "0.05",
-            "StartColor": "(0 0 0 1)",
-            "EndColor": "(1 1 1 0)",
-            "Mass": "-0.1",
-            "Texture":
-            {
-                "Type": "Texture",
-                "FileName": "images\/smoke.png"
-            }
-        },
-        {
-            "Type": "ParticleEmitterComponent",
-            "Enabled": "1",
-            "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
-            "Life": "3",
-            "LifeVariance": "1",
-            "Direction": "0",
-            "DirectionVariance": "1",
-            "Velocity": "-5",
-            "VelocityVariance": "0.5",
-            "Density": "5"
+            "Type": "SceneObject",
+            "Transform": "(1 0 -0.3\n 0 1 0\n 0 0 1)",
+            "Label": "Smoke",
+            "Components":
+            [
+                {
+                    "Type": "SpriteComponent",
+                    "Enabled": "1",
+                    "Transform": "(0.5 0 0\n 0 0.5 0\n 0 0 1)",
+                    "Depth": "0.001",
+                    "Material":
+                    {
+                        "Type": "SpriteMaterial",
+                        "DiffuseTexture":
+                        {
+                            "Type": "Texture",
+                            "FileName": "images\/ship.png"
+                        },
+                        "Emit": "1"
+                    }
+                },
+                {
+                    "Type": "SpriteParticleSystemComponent",
+                    "Enabled": "1",
+                    "Depth": "0.001",
+                    "StartScale": "0.05",
+                    "EndScale": "1",
+                    "LinearDamping": "0.0",
+                    "StartColor": "(0 0 0 1)",
+                    "EndColor": "(1 1 1 0)",
+                    "Mass": "-0.0",
+                    "Texture":
+                    {
+                        "Type": "Texture",
+                        "FileName": "images\/smoke.png"
+                    }
+                },
+                {
+                    "Type": "ParticleEmitterComponent",
+                    "Enabled": "1",
+                    "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
+                    "Life": "3",
+                    "LifeVariance": "2",
+                    "Direction": "0",
+                    "DirectionVariance": "0.4",
+                    "VelocityVariance": "1",
+                    "Density": "5"
+                }
+            ]
         }
     ]
 }

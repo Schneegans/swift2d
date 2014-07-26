@@ -51,20 +51,19 @@ int main(int argc, char** argv) {
     Application::instance()->get_resource("scene", "scene.json")
   ));
 
-  auto emitters(world->get_components<ParticleEmitterComponent>());
-  for (auto emitter: emitters) {
-    world->get_component<ParticleSystemComponent>()->add_emitter(emitter);
-  }
-
   // player
   auto player = scene->add_object(SceneObject::create_from_file(
     Application::instance()->get_resource("scene", "player.json")
   ));
   player->translate(2, 5);
   player->get_component<Mover>()->set_camera(camera);
-  player->get_component<SpriteParticleSystemComponent>()->add_emitter(
-    player->get_component<ParticleEmitterComponent>()
-  );
+
+  for (auto emitter: player->get_objects()) {
+    emitter->get_component<SpriteParticleSystemComponent>()->add_emitter(
+      emitter->get_component<ParticleEmitterComponent>()
+    );
+  }
+
 
   // gui
   GuiManager::instance()->on_quit.connect([&](){

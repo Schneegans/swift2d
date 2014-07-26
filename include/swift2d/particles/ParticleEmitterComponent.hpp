@@ -42,7 +42,7 @@ class ParticleEmitterComponent : public TransformableComponent {
   Float Velocity;
   Float VelocityVariance;
 
-  Float  Density;
+  Float Density;
 
   // ----------------------------------------------------- contruction interface
   ParticleEmitterComponent();

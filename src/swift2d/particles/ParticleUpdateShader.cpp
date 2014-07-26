@@ -111,7 +111,17 @@ ParticleUpdateShader::ParticleUpdateShader()
       }
     )",
     {"out_position", "out_velocity", "out_life"}
-  ) {}
+  )
+  , time(get_uniform<math::vec2>("time"))
+  , noise_tex(get_uniform<int>("noise_tex"))
+  , spawn_count(get_uniform<int>("spawn_count"))
+  , transform(get_uniform<math::mat3>("transform"))
+  , life(get_uniform<math::vec2>("life"))
+  , direction(get_uniform<math::vec2>("direction"))
+  , velocity(get_uniform<math::vec2>("velocity"))
+  , gravity_map(get_uniform<int>("gravity_map"))
+  , projection(get_uniform<math::mat3>("projection"))
+  , dynamics(get_uniform<math::vec3>("dynamics")) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 

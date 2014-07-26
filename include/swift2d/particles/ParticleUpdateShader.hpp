@@ -27,6 +27,17 @@ class ParticleUpdateShader : public Shader,
  public:
 
   // ------------------------------------------------------------------ uniforms
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>   time;
+  oglplus::Lazy<oglplus::Uniform<int>>          noise_tex;
+  oglplus::Lazy<oglplus::Uniform<int>>          spawn_count;
+  oglplus::Lazy<oglplus::Uniform<math::mat3>>   transform;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>   life;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>   direction;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>   velocity;
+  oglplus::Lazy<oglplus::Uniform<int>>          gravity_map;
+  oglplus::Lazy<oglplus::Uniform<math::mat3>>   projection;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>>   dynamics;
+
   friend class Singleton<ParticleUpdateShader>;
 
  ///////////////////////////////////////////////////////////////////////////////

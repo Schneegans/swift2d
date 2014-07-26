@@ -19,19 +19,22 @@ Mover::Mover()
   w->on_key_press.connect([&](Key key, int scancode, int action, int mods){
     if (action == 0) {
       if (key == Key::W) {
-        get_user()->get_components<ParticleEmitterComponent>()[0]->Density = 0.0;
-        // get_user()->get_components<ParticleEmitterComponent>()[1]->Density = 0.0;
-        // get_user()->get_components<ParticleEmitterComponent>()[2]->Density = 0.0;
-        // get_user()->get_components<ParticleEmitterComponent>()[3]->Density = 0.0;
-        // get_user()->get_components<ParticleEmitterComponent>()[4]->Density = 0.0;
+
+        for (auto emitter: get_user()->get_objects()) {
+          if (emitter->Label == "Smoke") {
+            emitter->get_component<ParticleEmitterComponent>()->Density = 0.0;
+          }
+        }
+
       }
     } else if (action == 1) {
       if (key == Key::W) {
-        get_user()->get_components<ParticleEmitterComponent>()[0]->Density = 100.0;
-        // get_user()->get_components<ParticleEmitterComponent>()[1]->Density = 100.0;
-        // get_user()->get_components<ParticleEmitterComponent>()[2]->Density = 50.0;
-        // get_user()->get_components<ParticleEmitterComponent>()[3]->Density = 15.0;
-        // get_user()->get_components<ParticleEmitterComponent>()[4]->Density = 100.0;
+
+        for (auto emitter: get_user()->get_objects()) {
+          if (emitter->Label == "Smoke") {
+            emitter->get_component<ParticleEmitterComponent>()->Density = 50.0;
+          }
+        }
       }
     }
   });
@@ -42,10 +45,17 @@ Mover::Mover()
 void Mover::update(double time) {
 
   auto c = get_user()->get_component<DynamicBodyComponent>();
+  auto speed(c->get_linear_velocity().Length());
+
+  for (auto emitter: get_user()->get_objects()) {
+    if (emitter->Label == "Smoke") {
+      emitter->get_component<ParticleEmitterComponent>()->Velocity = speed*3 - 3;
+    }
+  }
 
   if (camera_) {
 
-    float target_zoom(c->get_linear_velocity().Length()*0.05 + 0.9);
+    float target_zoom(speed*0.05 + 0.9);
     camera_zoom_ += (target_zoom - camera_zoom_) * time;
 
     math::vec2 target_offset(c->get_linear_velocity() * 0.5);
@@ -60,7 +70,7 @@ void Mover::update(double time) {
   auto w = WindowManager::instance()->get_default();
 
   if(w->key_pressed(Key::W)) {
-    if (c->get_linear_velocity().Length() < 3.f) {
+    if (speed < 3.f) {
       c->apply_local_force(math::vec2(0.075f, 0.f));
     }
   }

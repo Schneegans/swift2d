@@ -39,6 +39,7 @@ class SceneObject : public SavableObject {
 
   // ---------------------------------------------------------------- properties
   SceneObjectProperty Parent;
+  String              Label;
   Mat3                Transform;
   Mat3                WorldTransform;
 
@@ -69,6 +70,8 @@ class SceneObject : public SavableObject {
   // adds an existing object to the top level node of the scene and
   // returns a shared pointer
   SceneObjectPtr const& add_at_root(SceneObjectPtr const& object);
+
+  std::unordered_set<SceneObjectPtr> const& get_objects() const;
 
   // removes a given object from this scene
   void remove(SceneObjectPtr const& object, bool force = false);

@@ -68,6 +68,12 @@ SceneObjectPtr const& SceneObject::add_at_root(SceneObjectPtr const& object) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+std::unordered_set<SceneObjectPtr> const& SceneObject::get_objects() const {
+  return objects_;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void SceneObject::remove(SceneObjectPtr const& object, bool force) {
   if (force) {
     objects_.erase(object);
@@ -169,7 +175,7 @@ void SceneObject::serialize(SerializedScenePtr& scene) const {
 void SceneObject::update(double time) {
 
   if (Parent.get()) {
-    WorldTransform = Transform.get() * Parent.get()->WorldTransform.get();
+    WorldTransform = Parent.get()->WorldTransform.get() * Transform.get();
   } else {
     WorldTransform = Transform.get();
   }
@@ -199,6 +205,7 @@ void SceneObject::update(double time) {
 
 void SceneObject::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Transform", Transform);
+  visitor.add_member("Label", Label);
   visitor.add_array("Components", components_);
   visitor.add_array("Objects", objects_);
 
