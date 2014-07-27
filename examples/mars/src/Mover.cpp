@@ -21,7 +21,9 @@ Mover::Mover()
       if (key == Key::W) {
 
         for (auto emitter: get_user()->get_objects()) {
-          if (emitter->Label == "Smoke" || emitter->Label == "Sparks" || emitter->Label == "Fire") {
+          if (emitter->Label == "Smoke" || emitter->Label == "Sparks" ||
+              emitter->Label == "Fire"  || emitter->Label == "Light" ||
+              emitter->Label == "Heat") {
             emitter->get_component<ParticleEmitterComponent>()->Density = 0.0;
           }
         }
@@ -32,11 +34,15 @@ Mover::Mover()
 
         for (auto emitter: get_user()->get_objects()) {
           if (emitter->Label == "Smoke") {
-            emitter->get_component<ParticleEmitterComponent>()->Density = 50.0;
+            emitter->get_component<ParticleEmitterComponent>()->Density = 100.0;
           } else if (emitter->Label == "Sparks") {
             emitter->get_component<ParticleEmitterComponent>()->Density = 250.0;
           } else if (emitter->Label == "Fire") {
-            emitter->get_component<ParticleEmitterComponent>()->Density = 50.0;
+            emitter->get_component<ParticleEmitterComponent>()->Density = 100.0;
+          } else if (emitter->Label == "Light") {
+            emitter->get_component<ParticleEmitterComponent>()->Density = 10.0;
+          } else if (emitter->Label == "Heat") {
+            emitter->get_component<ParticleEmitterComponent>()->Density = 100.0;
           }
         }
       }
@@ -50,16 +56,6 @@ void Mover::update(double time) {
 
   auto c = get_user()->get_component<DynamicBodyComponent>();
   auto speed(c->get_linear_velocity().Length());
-
-  for (auto emitter: get_user()->get_objects()) {
-    if (emitter->Label == "Smoke") {
-      emitter->get_component<ParticleEmitterComponent>()->Velocity = speed*3 - 3;
-    } else if (emitter->Label == "Sparks") {
-      emitter->get_component<ParticleEmitterComponent>()->Velocity = speed*4 - 5;
-    } else if (emitter->Label == "Fire") {
-      emitter->get_component<ParticleEmitterComponent>()->Velocity = speed*3 - 3;
-    }
-  }
 
   if (camera_) {
 
@@ -78,7 +74,7 @@ void Mover::update(double time) {
   auto w = WindowManager::instance()->get_default();
 
   if(w->key_pressed(Key::W)) {
-    if (speed < 2.f) {
+    if (speed < 1.5f) {
       c->apply_local_force(math::vec2(0.075f, 0.f));
     }
   }

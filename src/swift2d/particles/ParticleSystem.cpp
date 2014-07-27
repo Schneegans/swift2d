@@ -95,6 +95,7 @@ void ParticleSystem::update_particles(
     update_max_count_ = 0;
   }
 
+  // get frame time
   double frame_time(timer_.reset());
   total_time_ += frame_time;
 
@@ -126,31 +127,34 @@ void ParticleSystem::update_particles(
       particles_to_spawn_[emitter.Self] -= spawn_count;
 
       if (spawn_count > 0) {
-        math::vec2 life(emitter.Life, emitter.LifeVariance);
-        math::vec2 time(frame_time * 1000.0, total_time_ * 1000.0);
-        math::vec2 direction(emitter.Direction, emitter.DirectionVariance);
-        math::vec2 velocity(emitter.Velocity, emitter.VelocityVariance);
+        math::vec2 time       (frame_time * 1000.0, total_time_ * 1000.0);
+        math::vec2 life       (emitter.Life,        emitter.LifeVariance);
+        math::vec2 direction  (emitter.Direction,   emitter.DirectionVariance);
+        math::vec2 velocity   (emitter.Velocity,    emitter.VelocityVariance);
         NoiseTexture::instance()->bind(ctx, 0);
+
         shader->noise_tex.  Set(0);
         shader->spawn_count.Set(spawn_count);
         shader->transform.  Set(emitter.WorldTransform);
-        shader->life.       Set(life);
+
         shader->time.       Set(time);
+        shader->life.       Set(life);
         shader->direction.  Set(direction);
         shader->velocity.   Set(velocity);
+
         ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       }
     }
 
     // update existing particles -----------------------------------------------
     if (!first_draw) {
-      Physics::instance()->bind_gravity_map(ctx, 1);
+      Physics::instance()->bind_gravity_map(ctx, 0);
       math::vec3 dynamics(mass, linear_damping, angular_damping);
 
-      shader->gravity_map.Set(1);
-      shader->spawn_count.Set(-1);
-      shader->projection. Set(ctx.projection_matrix);
-      shader->dynamics.   Set(dynamics);
+      shader->gravity_map.  Set(0);
+      shader->spawn_count.  Set(-1);
+      shader->projection.   Set(ctx.projection_matrix);
+      shader->dynamics.     Set(dynamics);
 
       ctx.gl.DrawTransformFeedback(
         ogl::PrimitiveType::Points, transform_feedbacks_[current_vb()]

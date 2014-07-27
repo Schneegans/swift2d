@@ -107,6 +107,56 @@ ShaderIncludes::ShaderIncludes() {
       return (1.0-light_info.r) * attenuation * light;
     }
   )");
+
+  add_include("emit_quad", R"(
+    void emit_quad(vec2 position, float scale, float rotation) {
+      const float yo[2] = float[2](0.5, -0.5);
+      const float xo[2] = float[2](0.5, -0.5);
+
+      for(int j=0; j!=2; ++j) {
+        for(int i=0; i!=2; ++i) {
+
+          vec2 pos = vec2(xo[i], yo[j]) * scale;
+
+          pos = vec2(
+            pos.x * cos(rotation) - pos.y * sin(rotation),
+            pos.y * cos(rotation) + pos.x * sin(rotation)
+          );
+
+          pos = position - pos;
+          pos = (projection * vec3(pos, 1.0)).xy;
+
+          gl_Position = vec4(pos, 0.0, 1.0);
+          age         = varying_age[0];
+          tex_coords  = vec2(-xo[i], yo[j]) + 0.5;
+
+          EmitVertex();
+        }
+      }
+      EndPrimitive();
+    }
+
+    void emit_quad(vec2 position, float scale) {
+      const float yo[2] = float[2](0.5, -0.5);
+      const float xo[2] = float[2](0.5, -0.5);
+
+      for(int j=0; j!=2; ++j) {
+        for(int i=0; i!=2; ++i) {
+
+          vec2 pos = vec2(xo[i], yo[j]) * scale;
+          pos = position - pos;
+          pos = (projection * vec3(pos, 1.0)).xy;
+
+          gl_Position = vec4(pos, 0.0, 1.0);
+          age         = varying_age[0];
+          tex_coords  = vec2(-xo[i], yo[j]) + 0.5;
+
+          EmitVertex();
+        }
+      }
+      EndPrimitive();
+    }
+  )");
 }
 
 ////////////////////////////////////////////////////////////////////////////////

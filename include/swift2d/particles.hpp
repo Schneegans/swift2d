@@ -13,5 +13,7 @@
 #include <swift2d/particles/ParticleEmitterComponent.hpp>
 #include <swift2d/particles/SpriteParticleSystemComponent.hpp>
 #include <swift2d/particles/PointParticleSystemComponent.hpp>
+#include <swift2d/particles/LightParticleSystemComponent.hpp>
+#include <swift2d/particles/HeatParticleSystemComponent.hpp>
 
 #endif  // SWIFT2D_INCLUDE_PARTICLES_HPP
