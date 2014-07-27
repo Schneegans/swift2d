@@ -56,6 +56,7 @@ ParticleUpdateShader::ParticleUpdateShader()
       uniform vec2      life;         // x: life        y: life variance   [sec]
       uniform vec2      direction;    // x: direction   y: direction variance
       uniform vec2      velocity;     // x: velocity    y: velocity variance
+      uniform float     position_variance;
 
       // update uniforms
       uniform sampler2D gravity_map;
@@ -76,8 +77,6 @@ ParticleUpdateShader::ParticleUpdateShader()
         if (spawn_count >= 0) {
 
           // spawn new particles -----------------------------------------------
-          vec2 frame_step = (transform * vec3(cos(direction.x), sin(direction.x), 0)).xy;
-          frame_step *= velocity.x * time.x / 1000;
 
           for (int i=0; i<spawn_count; ++i) {
 
@@ -88,7 +87,7 @@ ParticleUpdateShader::ParticleUpdateShader()
             float d = direction.x + random.y * direction.y;
             float v = velocity.x  + random.z * velocity.y;
 
-            out_position = (transform * vec3(0, 0, 1)).xy + delta*frame_step;
+            out_position = (transform * vec3(random.xy*position_variance, 1)).xy;
             out_life     = vec2(0, l*1000.0);
             out_velocity = (transform * vec3(cos(d), sin(d), 0)).xy * v;
 
@@ -122,6 +121,7 @@ ParticleUpdateShader::ParticleUpdateShader()
   , life(get_uniform<math::vec2>("life"))
   , direction(get_uniform<math::vec2>("direction"))
   , velocity(get_uniform<math::vec2>("velocity"))
+  , position_variance(get_uniform<float>("position_variance"))
   , gravity_map(get_uniform<int>("gravity_map"))
   , projection(get_uniform<math::mat3>("projection"))
   , dynamics(get_uniform<math::vec3>("dynamics")) {}

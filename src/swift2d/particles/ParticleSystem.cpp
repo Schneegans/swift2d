@@ -133,17 +133,20 @@ void ParticleSystem::update_particles(
         math::vec2 velocity   (emitter.Velocity,    emitter.VelocityVariance);
         NoiseTexture::instance()->bind(ctx, 0);
 
-        shader->noise_tex.  Set(0);
-        shader->spawn_count.Set(spawn_count);
-        shader->transform.  Set(emitter.WorldTransform);
+        shader->noise_tex.        Set(0);
+        shader->spawn_count.      Set(spawn_count);
+        shader->transform.        Set(emitter.WorldTransform);
+        shader->position_variance.Set(emitter.PositionVariance);
 
-        shader->time.       Set(time);
-        shader->life.       Set(life);
-        shader->direction.  Set(direction);
-        shader->velocity.   Set(velocity);
+        shader->time.             Set(time);
+        shader->life.             Set(life);
+        shader->direction.        Set(direction);
+        shader->velocity.         Set(velocity);
 
         ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       }
+
+      last_transforms_[emitter.Self] = emitter.WorldTransform;
     }
 
     // update existing particles -----------------------------------------------
@@ -151,10 +154,10 @@ void ParticleSystem::update_particles(
       Physics::instance()->bind_gravity_map(ctx, 0);
       math::vec3 dynamics(mass, linear_damping, angular_damping);
 
-      shader->gravity_map.  Set(0);
-      shader->spawn_count.  Set(-1);
-      shader->projection.   Set(ctx.projection_matrix);
-      shader->dynamics.     Set(dynamics);
+      shader->gravity_map.        Set(0);
+      shader->spawn_count.        Set(-1);
+      shader->projection.         Set(ctx.projection_matrix);
+      shader->dynamics.           Set(dynamics);
 
       ctx.gl.DrawTransformFeedback(
         ogl::PrimitiveType::Points, transform_feedbacks_[current_vb()]

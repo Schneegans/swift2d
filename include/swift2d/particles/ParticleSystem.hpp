@@ -65,7 +65,8 @@ class ParticleSystem {
   std::vector<oglplus::Buffer>            particle_buffers_;
   std::vector<oglplus::VertexArray>       particle_vaos_;
 
-  std::unordered_map<ParticleEmitterComponent const*, float>  particles_to_spawn_;
+  std::unordered_map<ParticleEmitterComponent const*, float>      particles_to_spawn_;
+  std::unordered_map<ParticleEmitterComponent const*, math::mat3> last_transforms_;
   bool   ping_;
   double total_time_;
   int    update_max_count_;

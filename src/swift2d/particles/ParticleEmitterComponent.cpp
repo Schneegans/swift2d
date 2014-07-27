@@ -20,6 +20,7 @@ ParticleEmitterComponent::ParticleEmitterComponent()
   , DirectionVariance     (0.3f)
   , Velocity              (0.3f)
   , VelocityVariance      (0.3f)
+  , PositionVariance      (0.0f)
   , Density               (5.f) {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,6 +33,7 @@ void ParticleEmitterComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("DirectionVariance", DirectionVariance);
   visitor.add_member("Velocity", Velocity);
   visitor.add_member("VelocityVariance", VelocityVariance);
+  visitor.add_member("PositionVariance", PositionVariance);
   visitor.add_member("Density", Density);
 }
 
@@ -47,6 +49,7 @@ SerializedEmitter ParticleEmitterComponent::make_serialized_emitter() const {
   result.Velocity = Velocity();
   result.VelocityVariance = VelocityVariance();
   result.Density = Density();
+  result.PositionVariance = PositionVariance();
   result.WorldTransform = WorldTransform();
   result.Self = this;
 

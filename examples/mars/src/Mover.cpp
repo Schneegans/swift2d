@@ -34,7 +34,7 @@ Mover::Mover()
 
         for (auto emitter: get_user()->get_objects()) {
           if (emitter->Label == "Smoke") {
-            emitter->get_component<ParticleEmitterComponent>()->Density = 100.0;
+            emitter->get_component<ParticleEmitterComponent>()->Density = 150.0;
           } else if (emitter->Label == "Sparks") {
             emitter->get_component<ParticleEmitterComponent>()->Density = 250.0;
           } else if (emitter->Label == "Fire") {

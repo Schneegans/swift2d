@@ -35,6 +35,7 @@ class Bullet: public SceneObject {
 
     auto emitter = add<ParticleEmitterComponent>();
          emitter->Density = 50;
+         emitter->PositionVariance = 1;
          emitter->Life = 1;
          emitter->LifeVariance = 0.7;
     scene->get_component<ParticleSystemComponent>()->add_emitter(emitter.get());

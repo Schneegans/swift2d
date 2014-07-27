@@ -29,6 +29,7 @@ struct SerializedEmitter {
   float Life,       LifeVariance;
   float Direction,  DirectionVariance;
   float Velocity,   VelocityVariance;
+  float PositionVariance;
   float Density;
   math::mat3 WorldTransform;
   ParticleEmitterComponent const* Self;
@@ -50,6 +51,8 @@ class ParticleEmitterComponent : public TransformableComponent {
 
   Float Velocity;
   Float VelocityVariance;
+
+  Float PositionVariance;
 
   Float Density;
 

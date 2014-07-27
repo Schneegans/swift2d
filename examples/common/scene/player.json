@@ -113,6 +113,7 @@
                     "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
                     "Life": "0.8",
                     "LifeVariance": "0.5",
+                    "PositionVariance": "0.1",
                     "Direction": "0",
                     "DirectionVariance": "0.5",
                     "Velocity": "-8",
@@ -149,6 +150,7 @@
                     "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
                     "Life": "0.3",
                     "LifeVariance": "0.2",
+                    "PositionVariance": "0.1",
                     "Direction": "0",
                     "DirectionVariance": "0.4",
                     "Velocity": "-8",
@@ -205,7 +207,7 @@
                     "StartScale": "0.01",
                     "EndScale": "0.3",
                     "LinearDamping": "0.01",
-                    "StartOpacity": "0.2",
+                    "StartOpacity": "0.3",
                     "EndOpacity": "0",
                     "Texture":
                     {
