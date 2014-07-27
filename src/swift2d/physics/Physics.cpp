@@ -28,12 +28,42 @@ class SwiftContactListener : public b2ContactListener {
       auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
       auto b = static_cast<StaticBodyComponent*>(body_b->GetUserData());
 
-      a->on_collision.emit(b);
-      b->on_collision.emit(a);
+      a->start_contact_with_static.emit(b);
+      b->start_contact_with_dynamic.emit(a);
     }
+
+    else if (body_b->GetType() == b2_dynamicBody && body_a->GetType() == b2_dynamicBody) {
+      auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
+      auto b = static_cast<DynamicBodyComponent*>(body_b->GetUserData());
+
+      a->start_contact_with_dynamic.emit(b);
+      b->start_contact_with_dynamic.emit(a);
+
+    }
+
   }
 
-  void EndContact(b2Contact* contact) {}
+  void EndContact(b2Contact* contact) {
+    auto body_a(contact->GetFixtureA()->GetBody());
+    auto body_b(contact->GetFixtureB()->GetBody());
+
+    if (body_b->GetType() == b2_staticBody && body_a->GetType() == b2_dynamicBody) {
+      auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
+      auto b = static_cast<StaticBodyComponent*>(body_b->GetUserData());
+
+      a->end_contact_with_static.emit(b);
+      b->end_contact_with_dynamic.emit(a);
+    }
+
+    else if (body_b->GetType() == b2_dynamicBody && body_a->GetType() == b2_dynamicBody) {
+      auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
+      auto b = static_cast<DynamicBodyComponent*>(body_b->GetUserData());
+
+      a->end_contact_with_dynamic.emit(b);
+      b->end_contact_with_dynamic.emit(a);
+    }
+
+  }
   void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) {}
   void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {}
 };
