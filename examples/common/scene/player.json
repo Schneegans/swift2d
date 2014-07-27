@@ -81,12 +81,12 @@
                     "Type": "ParticleEmitterComponent",
                     "Enabled": "1",
                     "Transform": "(2 0 -1\n 0 2 0\n 0 0 1)",
-                    "Life": "3",
-                    "LifeVariance": "2",
+                    "Life": "2",
+                    "LifeVariance": "1.5",
                     "Direction": "0",
                     "DirectionVariance": "0.4",
                     "Velocity": "-8",
-                    "VelocityVariance": "1",
+                    "VelocityVariance": "4",
                     "Density": "0"
                 }
             ]
@@ -202,8 +202,8 @@
                     "Type": "HeatParticleSystemComponent",
                     "Enabled": "1",
                     "Depth": "0.003",
-                    "StartScale": "0.05",
-                    "EndScale": "0.2",
+                    "StartScale": "0.01",
+                    "EndScale": "0.3",
                     "LinearDamping": "0.01",
                     "StartOpacity": "0.2",
                     "EndOpacity": "0",
@@ -220,9 +220,9 @@
                     "Life": "0.7",
                     "LifeVariance": "0.6",
                     "Direction": "0",
-                    "DirectionVariance": "0.8",
+                    "DirectionVariance": "1",
                     "Velocity": "-7",
-                    "VelocityVariance": "5",
+                    "VelocityVariance": "6",
                     "Density": "0"
                 }
             ]
