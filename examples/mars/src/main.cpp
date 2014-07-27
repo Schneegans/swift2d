@@ -8,6 +8,7 @@
 
 #include "../include/Mover.hpp"
 #include "../include/Bullet.hpp"
+#include "../include/Planet.hpp"
 #include "../include/GuiManager.hpp"
 #include "../include/AssetManager.hpp"
 #include "../include/MusicManager.hpp"
@@ -23,6 +24,7 @@ int main(int argc, char** argv) {
 
   Object::init<Mover>();
   Object::init<Bullet>();
+  Object::init<Planet>();
 
   // load resources ------------------------------------------------------------
   AssetManager assets;

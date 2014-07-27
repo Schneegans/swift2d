@@ -194,235 +194,59 @@
     "Objects":
     [
         {
-            "Type": "SceneObject",
+            "Type": "Planet",
             "Transform": "(0.7 0 1.2\n 0 0.7 -1\n 0 0 1)",
-            "Components":
-            [
-                {
-                    "Type": "SpriteComponent",
-                    "Enabled": "1",
-                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
-                    "Depth": "-0.01",
-                    "Material":
-                    {
-                        "Type": "SpriteMaterial",
-                        "DiffuseTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_diffuse3.png"
-                        },
-                        "NormalTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_normal3.png"
-                        },
-                        "Emit": "0.1",
-                        "Shinyness": "0.2"
-                    }
-                },
-                {
-                    "Type": "StaticBodyComponent",
-                    "Radius": "0.58"
-                },
-                {
-                    "Type": "GravitySourceComponent",
-                    "Density": "0.5"
-                },
-                {
-                    "Type": "MoveBehavior",
-                    "Enabled": "1",
-                    "LinearSpeed": "0",
-                    "AngularSpeed": "0.03"
-                }
-            ]
+            "DiffuseTex": "planet_diffuse3.png",
+            "NormalTex": "planet_normal3.png",
+            "Radius": "0.58",
+            "Density": "0.5",
+            "Emit": "0.0",
+            "Shinyness": "0.1",
+            "Color": "(0.8 0.8 0.8 1)"
         },
         {
-            "Type": "SceneObject",
-            "Transform": "(1 0 1.2\n 0 1 2.5\n 0 0 1)",
-            "Components":
-            [
-                {
-                    "Type": "SpriteComponent",
-                    "Enabled": "1",
-                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
-                    "Depth": "-0.01",
-                    "Material":
-                    {
-                        "Type": "SpriteMaterial",
-                        "DiffuseTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_diffuse2.png"
-                        },
-                        "NormalTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_normal2.png"
-                        },
-                        "EmitTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_emit2.png"
-                        },
-                        "Shinyness": "0.2"
-                    }
-                },
-                {
-                    "Type": "StaticBodyComponent",
-                    "Radius": "0.58"
-                },
-                {
-                    "Type": "GravitySourceComponent",
-                    "Density": "0.5"
-                },
-                {
-                    "Type": "MoveBehavior",
-                    "Enabled": "1",
-                    "LinearSpeed": "0",
-                    "AngularSpeed": "0.03"
-                }
-            ]
+            "Type": "Planet",
+            "Transform": "(1 0 2.2\n 0 1 2.5\n 0 0 1)",
+            "DiffuseTex": "planet_diffuse2.png",
+            "NormalTex": "planet_normal2.png",
+            "EmitTex": "planet_emit2.png",
+            "Radius": "0.58",
+            "Density": "0.5",
+            "Shinyness": "0.2",
+            "Color": "(1 0.8 0.5 1)"
         },
         {
-            "Type": "SceneObject",
+            "Type": "Planet",
             "Transform": "(1 0 3.2\n 0 1 0\n 0 0 1)",
-            "Components":
-            [
-                {
-                    "Type": "SpriteComponent",
-                    "Enabled": "1",
-                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
-                    "Depth": "-0.01",
-                    "Material":
-                    {
-                        "Type": "SpriteMaterial",
-                        "DiffuseTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_diffuse1.png"
-                        },
-                        "NormalTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_normal1.png"
-                        },
-                        "EmitTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_emit1.png"
-                        },
-                        "Shinyness": "0.2"
-                    }
-                },
-                {
-                    "Type": "StaticBodyComponent",
-                    "Radius": "0.58"
-                },
-                {
-                    "Type": "GravitySourceComponent",
-                    "Density": "0.5"
-                },
-                {
-                    "Type": "MoveBehavior",
-                    "Enabled": "1",
-                    "LinearSpeed": "0",
-                    "AngularSpeed": "-0.08"
-                }
-            ]
+            "DiffuseTex": "planet_diffuse1.png",
+            "NormalTex": "planet_normal1.png",
+            "EmitTex": "planet_emit1.png",
+            "Radius": "0.58",
+            "Density": "0.5",
+            "Shinyness": "0.2",
+            "Color": "(1 0.5 0.8 1)"
         },
         {
-            "Type": "SceneObject",
+            "Type": "Planet",
             "Transform": "(0.9 0 -1.2\n 0 0.9 -5\n 0 0 1)",
-            "Components":
-            [
-                {
-                    "Type": "SpriteComponent",
-                    "Enabled": "1",
-                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
-                    "Depth": "-0.01",
-                    "Material":
-                    {
-                        "Type": "SpriteMaterial",
-                        "DiffuseTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_diffuse6.png"
-                        },
-                        "NormalTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_normal6.png"
-                        },
-                        "EmitTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_emit6.png"
-                        },
-                        "Shinyness": "0"
-                    }
-                },
-                {
-                    "Type": "StaticBodyComponent",
-                    "Radius": "0.58"
-                },
-                {
-                    "Type": "GravitySourceComponent",
-                    "Density": "0.5"
-                },
-                {
-                    "Type": "MoveBehavior",
-                    "Enabled": "1",
-                    "LinearSpeed": "0",
-                    "AngularSpeed": "0.09"
-                }
-            ]
+            "DiffuseTex": "planet_diffuse6.png",
+            "NormalTex": "planet_normal6.png",
+            "EmitTex": "planet_emit6.png",
+            "Radius": "0.58",
+            "Density": "0.5",
+            "Shinyness": "0.2",
+            "Color": "(0.8 0.9 1 1)"
         },
         {
-            "Type": "SceneObject",
+            "Type": "Planet",
             "Transform": "(1.4 0 -3.2\n 0 1.4 -2\n 0 0 1)",
-            "Components":
-            [
-                {
-                    "Type": "SpriteComponent",
-                    "Enabled": "1",
-                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
-                    "Depth": "-0.01",
-                    "Material":
-                    {
-                        "Type": "SpriteMaterial",
-                        "DiffuseTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_diffuse4.png"
-                        },
-                        "NormalTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_normal4.png"
-                        },
-                        "EmitTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_emit4.png"
-                        },
-                        "Shinyness": "1"
-                    }
-                },
-                {
-                    "Type": "StaticBodyComponent",
-                    "Radius": "0.58"
-                },
-                {
-                    "Type": "GravitySourceComponent",
-                    "Density": "0.5"
-                },
-                {
-                    "Type": "MoveBehavior",
-                    "Enabled": "1",
-                    "LinearSpeed": "0",
-                    "AngularSpeed": "0.03"
-                }
-            ]
+            "DiffuseTex": "planet_diffuse4.png",
+            "NormalTex": "planet_normal4.png",
+            "EmitTex": "planet_emit4.png",
+            "Radius": "0.58",
+            "Density": "0.5",
+            "Shinyness": "0.9",
+            "Color": "(0.9 0.7 1 1)"
         },
         {
             "Type": "SceneObject",
@@ -454,51 +278,15 @@
             ]
         },
         {
-            "Type": "SceneObject",
+            "Type": "Planet",
             "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
-            "Components":
-            [
-                {
-                    "Type": "SpriteComponent",
-                    "Enabled": "1",
-                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
-                    "Depth": "-0.1",
-                    "Material":
-                    {
-                        "Type": "SpriteMaterial",
-                        "DiffuseTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_diffuse0.png"
-                        },
-                        "NormalTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_normal0.png"
-                        },
-                        "EmitTexture":
-                        {
-                            "Type": "Texture",
-                            "FileName": "images\/planet_emit0.png"
-                        },
-                        "Shinyness": "1"
-                    }
-                },
-                {
-                    "Type": "GravitySourceComponent",
-                    "Density": "0.5"
-                },
-                {
-                    "Type": "StaticBodyComponent",
-                    "Radius": "0.58"
-                },
-                {
-                    "Type": "MoveBehavior",
-                    "Enabled": "1",
-                    "LinearSpeed": "0",
-                    "AngularSpeed": "0.1"
-                }
-            ]
+            "DiffuseTex": "planet_diffuse0.png",
+            "NormalTex": "planet_normal0.png",
+            "EmitTex": "planet_emit0.png",
+            "Radius": "0.58",
+            "Density": "0.5",
+            "Shinyness": "0.8",
+            "Color": "(0.7 0.8 1 1)"
         }
     ]
 }

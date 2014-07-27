@@ -40,6 +40,12 @@ void ParticleSystemComponent::remove_emitter(ParticleEmitterComponent const* emi
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void ParticleSystemComponent::spawn_once(SerializedEmitter const& emitter) {
+  once_emitters_.push_back(emitter);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void ParticleSystemComponent::update_particles(RenderContext const& ctx) {
   particle_system_->update_particles(
     serialized_emitters_, Mass(), LinearDamping(), AngularDamping(), ctx);
@@ -58,6 +64,10 @@ void ParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
   for (auto const& emitter: emitters_) {
     serialized_emitters_.push_back(emitter->make_serialized_emitter());
   }
+  for (auto const& emitter: once_emitters_) {
+    serialized_emitters_.push_back(emitter);
+  }
+  once_emitters_.clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

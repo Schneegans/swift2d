@@ -24,20 +24,31 @@ class SwiftContactListener : public b2ContactListener {
     auto body_a(contact->GetFixtureA()->GetBody());
     auto body_b(contact->GetFixtureB()->GetBody());
 
+    b2WorldManifold p;
+    contact->GetWorldManifold(&p);
+    math::vec2 point(p.points[0].x, p.points[0].y);
+
     if (body_b->GetType() == b2_staticBody && body_a->GetType() == b2_dynamicBody) {
       auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
       auto b = static_cast<StaticBodyComponent*>(body_b->GetUserData());
 
-      a->start_contact_with_static.emit(b);
-      b->start_contact_with_dynamic.emit(a);
-    }
 
-    else if (body_b->GetType() == b2_dynamicBody && body_a->GetType() == b2_dynamicBody) {
+      a->start_contact_with_static.emit(b, point);
+      b->start_contact_with_dynamic.emit(a, point);
+
+    } else if (body_b->GetType() == b2_dynamicBody && body_a->GetType() == b2_staticBody) {
+      auto a = static_cast<DynamicBodyComponent*>(body_b->GetUserData());
+      auto b = static_cast<StaticBodyComponent*>(body_a->GetUserData());
+
+      a->start_contact_with_static.emit(b, point);
+      b->start_contact_with_dynamic.emit(a, point);
+
+    } else if (body_b->GetType() == b2_dynamicBody && body_a->GetType() == b2_dynamicBody) {
       auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
       auto b = static_cast<DynamicBodyComponent*>(body_b->GetUserData());
 
-      a->start_contact_with_dynamic.emit(b);
-      b->start_contact_with_dynamic.emit(a);
+      a->start_contact_with_dynamic.emit(b, point);
+      b->start_contact_with_dynamic.emit(a, point);
 
     }
 
@@ -47,20 +58,24 @@ class SwiftContactListener : public b2ContactListener {
     auto body_a(contact->GetFixtureA()->GetBody());
     auto body_b(contact->GetFixtureB()->GetBody());
 
+    b2WorldManifold p;
+    contact->GetWorldManifold(&p);
+    math::vec2 point(p.points[0].x, p.points[0].y);
+
     if (body_b->GetType() == b2_staticBody && body_a->GetType() == b2_dynamicBody) {
       auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
       auto b = static_cast<StaticBodyComponent*>(body_b->GetUserData());
 
-      a->end_contact_with_static.emit(b);
-      b->end_contact_with_dynamic.emit(a);
+      a->end_contact_with_static.emit(b, point);
+      b->end_contact_with_dynamic.emit(a, point);
     }
 
     else if (body_b->GetType() == b2_dynamicBody && body_a->GetType() == b2_dynamicBody) {
       auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
       auto b = static_cast<DynamicBodyComponent*>(body_b->GetUserData());
 
-      a->end_contact_with_dynamic.emit(b);
-      b->end_contact_with_dynamic.emit(a);
+      a->end_contact_with_dynamic.emit(b, point);
+      b->end_contact_with_dynamic.emit(a, point);
     }
 
   }

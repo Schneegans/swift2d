@@ -48,6 +48,8 @@ class ParticleSystemComponent : public DrawableComponent {
   void add_emitter(ParticleEmitterComponent const* emitter);
   void remove_emitter(ParticleEmitterComponent const* emitter);
 
+  void spawn_once(SerializedEmitter const& emitter);
+
   void update_particles(RenderContext const& ctx);
   void draw_particles(RenderContext const& ctx);
 
@@ -61,6 +63,7 @@ class ParticleSystemComponent : public DrawableComponent {
 
   std::unordered_set<ParticleEmitterComponent const*> emitters_;
   mutable std::vector<SerializedEmitter>              serialized_emitters_;
+  mutable std::vector<SerializedEmitter>              once_emitters_;
 
 };
 

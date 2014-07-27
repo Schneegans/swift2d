@@ -205,9 +205,9 @@ void SceneObject::update(double time) {
 
 void SceneObject::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Transform", Transform);
-  visitor.add_member("Label", Label);
+  visitor.add_member("Label",     Label);
   visitor.add_array("Components", components_);
-  visitor.add_array("Objects", objects_);
+  visitor.add_array("Objects",    objects_);
 
   for (auto& ptr: objects_) {
     ptr->Parent = this;

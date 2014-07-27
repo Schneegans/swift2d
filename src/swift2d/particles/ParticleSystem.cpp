@@ -122,9 +122,15 @@ void ParticleSystem::update_particles(
     for (auto const& emitter: emitters) {
 
       // calculate spawn count
-      particles_to_spawn_[emitter.Self] += emitter.Density * frame_time;
-      int spawn_count(particles_to_spawn_[emitter.Self]);
-      particles_to_spawn_[emitter.Self] -= spawn_count;
+      int spawn_count(0);
+
+      if (emitter.Self) {
+        particles_to_spawn_[emitter.Self] += emitter.Density * frame_time;
+        spawn_count = particles_to_spawn_[emitter.Self];
+        particles_to_spawn_[emitter.Self] -= spawn_count;
+      } else {
+        spawn_count = emitter.Density;
+      }
 
       if (spawn_count > 0) {
         math::vec2 time       (frame_time * 1000.0, total_time_ * 1000.0);
@@ -146,7 +152,9 @@ void ParticleSystem::update_particles(
         ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       }
 
-      last_transforms_[emitter.Self] = emitter.WorldTransform;
+      if (emitter.Self) {
+        last_transforms_[emitter.Self] = emitter.WorldTransform;
+      }
     }
 
     // update existing particles -----------------------------------------------
