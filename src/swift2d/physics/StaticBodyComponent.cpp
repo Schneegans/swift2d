@@ -20,8 +20,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 StaticBodyComponent::StaticBodyComponent()
-  : Radius(1.0f)
-  , Density(1.0f)
+  : Density(1.0f)
   , Friction(0.5f)
   , Restitution(0.5f)
   , body_(nullptr) {}
@@ -40,9 +39,9 @@ void StaticBodyComponent::update(double time) {
   if (!body_) {
     body_ = Physics::instance()->add(this);
 
-    Radius.on_change().connect([&](float val){
-      body_->GetFixtureList()->GetShape()->m_radius = val;
-      body_->ResetMassData();
+    Shape.on_change().connect([&](CollisionShapePtr const&){
+      Logger::LOG_WARNING << "Updating collision shapes is not implmented yet!"
+                          << std::endl;
     });
     Density.on_change().connect([&](float val){
       body_->GetFixtureList()->SetDensity(val);
@@ -61,7 +60,7 @@ void StaticBodyComponent::update(double time) {
 
 void StaticBodyComponent::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
-  visitor.add_member("Radius", Radius);
+  visitor.add_object("Shape", Shape);
   visitor.add_member("Density", Density);
   visitor.add_member("Friction", Friction);
   visitor.add_member("Restitution", Restitution);
