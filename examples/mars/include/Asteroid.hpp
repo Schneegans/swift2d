@@ -17,14 +17,14 @@ using namespace swift;
 class Asteroid: public SceneObject {
  public:
 
-  String        DiffuseTex;
-  String        NormalTex;
-  String        EmitTex;
-  Float         Radius;
-  Float         Density;
-  Float         Shinyness;
-  Float         Emit;
-  ColorProperty Color;
+  std::vector<math::vec2> ShapeCorners;
+  String                  DiffuseTex;
+  String                  NormalTex;
+  String                  EmitTex;
+  Float                   Density;
+  Float                   Shinyness;
+  Float                   Emit;
+  ColorProperty           Color;
 
   Asteroid();
 

@@ -22,7 +22,6 @@
             {
                 "Type": "CircleCollisionShape",
                 "Radius": "1"
-
             }
         },
         {

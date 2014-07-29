@@ -12,8 +12,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 Asteroid::Asteroid()
-  : Radius(0.5f)
-  , Density(0.5)
+  : Density(0.5)
   , Shinyness(0.2)
   , Emit(1.0)
   , Color(swift::Color(1, 1, 1, 1))
@@ -67,8 +66,8 @@ void Asteroid::update(double time) {
     g_source->Density = Density();
 
     auto body = add<DynamicBodyComponent>();
-    auto shape = CircleCollisionShape::create();
-    shape->Radius = 0.5;
+    auto shape = PolygonCollisionShape::create();
+    shape->Coordinates = ShapeCorners;
     body->Shape = shape;
     body->LinearDamping = 0;
     body->Density = 0.2;
@@ -101,10 +100,10 @@ void Asteroid::update(double time) {
 
 void Asteroid::accept(SavableObjectVisitor& visitor) {
   SceneObject::accept(visitor);
+  visitor.add_member("ShapeCorners", ShapeCorners);
   visitor.add_member("DiffuseTex", DiffuseTex);
   visitor.add_member("NormalTex", NormalTex);
   visitor.add_member("EmitTex", EmitTex);
-  visitor.add_member("Radius", Radius);
   visitor.add_member("Density", Density);
   visitor.add_member("Shinyness", Shinyness);
   visitor.add_member("Emit", Emit);

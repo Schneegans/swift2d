@@ -16,5 +16,6 @@
 #include <swift2d/physics/StaticBodyComponent.hpp>
 #include <swift2d/physics/BoxCollisionShape.hpp>
 #include <swift2d/physics/CircleCollisionShape.hpp>
+#include <swift2d/physics/PolygonCollisionShape.hpp>
 
 #endif // SWIFT2D_INCLUDE_PHYSICS_HPP

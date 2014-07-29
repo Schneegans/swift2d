@@ -32,7 +32,6 @@ void SavableObjectVisitor::write_json(std::string const& path) {
 
 void SavableObjectVisitor::read_json(std::string const& path) {
   boost::property_tree::read_json(path, json_);
-  // accept(visitor);
 
   loaded_object_ = std::dynamic_pointer_cast<SavableObject>(
     Object::create(json_.get<std::string>("Type"))
