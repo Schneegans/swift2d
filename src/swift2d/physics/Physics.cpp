@@ -201,6 +201,8 @@ b2Body* Physics::add(StaticBodyComponent* body) {
 
   result->CreateFixture(&fixtureDef);
 
+  delete shape;
+
   return result;
 }
 
