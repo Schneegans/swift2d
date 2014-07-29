@@ -54,6 +54,8 @@ namespace {
         Object::init<StaticBodyComponent>();
         Object::init<Texture>();
         Object::init<TimedDeleteBehavior>();
+        Object::init<BoxCollisionShape>();
+        Object::init<CircleCollisionShape>();
 
         // init glfw -----------------------------------------------------------
         if (!glfwInit()) {

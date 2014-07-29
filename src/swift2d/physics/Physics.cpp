@@ -150,20 +150,23 @@ b2Body* Physics::add(DynamicBodyComponent* body) {
   fixtureDef.friction = body->Friction();
   fixtureDef.restitution = body->Restitution();
 
-  // if (body->IsBox()) {
-  //   b2PolygonShape shape;
-  //   shape.SetAsBox(1, 1);
-  //   shape.m_radius = body->Radius()*scale;
-  //   fixtureDef.shape = &shape;
-  // } else {
-    b2CircleShape shape;
-    shape.m_radius = body->Radius()*scale;
-    fixtureDef.shape = &shape;
-  // }
+  b2Shape* shape;
+
+  if (!body->Shape()) {
+    Logger::LOG_WARNING << "Failed to add DynamicBodyComponent: "
+                        << "No CollisionShape attached!" << std::endl;
+    shape = new b2CircleShape();
+  } else {
+    shape = body->Shape()->get_shape();
+  }
+  shape->m_radius = scale;
+  fixtureDef.shape = shape;
 
   result->CreateFixture(&fixtureDef);
   result->SetLinearDamping(body->LinearDamping());
   result->SetAngularDamping(body->AngularDamping());
+
+  delete shape;
 
   return result;
 }

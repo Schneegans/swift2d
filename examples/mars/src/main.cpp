@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
   auto scene = SceneManager::instance()->get_default();
 
   auto camera = scene->add<CameraComponent>();
-       camera->Size = math::vec2(2.f, 2.f);
+       camera->Size = math::vec2(10.f, 10.f);
        camera->Parallax = 1.05;
 
   // scene
@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
   });
 
   window->on_resize.connect([&](math::vec2i const& size){
-    float height = 2;
+    float height = 10;
     float aspect = 1.0f * size.x() / size.y();
     math::vec2 camera_size(height*aspect, height);
     camera->Size = camera_size;

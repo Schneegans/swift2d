@@ -59,34 +59,33 @@ void Mover::update(double time) {
 
   if (camera_) {
 
-    float target_zoom(speed*0.05 + 0.9);
+    float target_zoom(speed*0.01 + 0.9);
     camera_zoom_ += (target_zoom - camera_zoom_) * time;
 
-    math::vec2 target_offset(c->get_linear_velocity() * 0.5);
+    math::vec2 target_offset(c->get_linear_velocity() * 0.1);
     camera_offset_ += (target_offset - camera_offset_) * time;
 
     auto mat(math::make_translation(camera_offset_ + math::get_translation(get_user()->WorldTransform())));
     mat = mat*math::make_scale(camera_zoom_);
-    // mat = mat*math::make_rotation(math::get_rotation(get_user()->WorldTransform()) - M_PI*0.5);
     camera_->Transform = mat;
   }
 
   auto w = WindowManager::instance()->get_default();
 
   if(w->key_pressed(Key::W)) {
-    if (speed < 1.5f) {
-      c->apply_local_force(math::vec2(0.075f, 0.f));
+    if (speed < 7.5f) {
+      c->apply_local_force(math::vec2(5.5f, 0.f));
     }
   }
 
   if(w->key_pressed(Key::D)) {
     if (c->get_angular_velocity() > -5.f) {
-      c->apply_torque(-0.01f);
+      c->apply_torque(-5.f);
     }
   }
   if(w->key_pressed(Key::A)) {
     if (c->get_angular_velocity() < 5.f) {
-      c->apply_torque(0.01f);
+      c->apply_torque(5.f);
     }
   }
 }

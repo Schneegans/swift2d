@@ -20,8 +20,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 DynamicBodyComponent::DynamicBodyComponent()
-  : Radius(1.f)
-  , Density(1.f)
+  : Density(1.f)
   , Friction(0.5f)
   , Restitution(0.5f)
   , LinearDamping(0.5f)
@@ -128,7 +127,7 @@ void DynamicBodyComponent::update(double time) {
 
 void DynamicBodyComponent::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
-  visitor.add_member("Radius", Radius);
+  visitor.add_object("Shape", Shape);
   visitor.add_member("Density", Density);
   visitor.add_member("Friction", Friction);
   visitor.add_member("Restitution", Restitution);
@@ -142,10 +141,10 @@ void DynamicBodyComponent::init() {
   if (!body_) {
     body_ = Physics::instance()->add(this);
 
-    Radius.on_change().connect([&](float val){
-      body_->GetFixtureList()->GetShape()->m_radius = val;
-      body_->ResetMassData();
-    });
+    // Radius.on_change().connect([&](float val){
+    //   body_->GetFixtureList()->GetShape()->m_radius = val;
+    //   body_->ResetMassData();
+    // });
     Density.on_change().connect([&](float val){
       body_->GetFixtureList()->SetDensity(val);
       body_->ResetMassData();

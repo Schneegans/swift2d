@@ -11,7 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
-#include <iostream>
+#include <swift2d/physics/CollisionShape.hpp>
 
 // forward declares ------------------------------------------------------------
 class b2Body;
@@ -36,12 +36,12 @@ class DynamicBodyComponent : public Component {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float Radius;
-  Float Density;
-  Float Friction;
-  Float Restitution;
-  Float LinearDamping;
-  Float AngularDamping;
+  CollisionShapeProperty  Shape;
+  Float                   Density;
+  Float                   Friction;
+  Float                   Restitution;
+  Float                   LinearDamping;
+  Float                   AngularDamping;
 
   // ------------------------------------------------------------------- signals
   Signal<StaticBodyComponent*, math::vec2> start_contact_with_static;

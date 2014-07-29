@@ -95,7 +95,7 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
   if (NormalTexture()) {
     NormalTexture()->bind(ctx, 1);
     current_shader_->normal_tex.Set(1);
-    current_shader_->normal_transform.Set(math::transposed(math::inversed(object_transform)));
+    current_shader_->normal_transform.Set(math::make_rotation(math::get_rotation(object_transform)));
   }
 
   if (EmitTexture()) {

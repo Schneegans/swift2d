@@ -1,6 +1,6 @@
 {
     "Type": "SceneObject",
-    "Transform": "(0.1 0 0\n 0 0.1 0\n 0 0 1)",
+    "Transform": "(0.5 0 0\n 0 0.5 0\n 0 0 1)",
     "Components":
     [
         {
@@ -16,9 +16,14 @@
         {
             "Type": "DynamicBodyComponent",
             "Enabled": "1",
-            "Radius": "1",
             "Friction": "0.2",
-            "AngularDamping": "15"
+            "AngularDamping": "15",
+            "Shape":
+            {
+                "Type": "CircleCollisionShape",
+                "Radius": "0.05"
+
+            }
         },
         {
             "Type": "LightComponent",
@@ -65,8 +70,8 @@
                     "Type": "SpriteParticleSystemComponent",
                     "Enabled": "1",
                     "Depth": "0.001",
-                    "StartScale": "0.05",
-                    "EndScale": "1",
+                    "StartScale": "0.25",
+                    "EndScale": "4",
                     "LinearDamping": "0.03",
                     "StartColor": "(0.2 0.2 0.2 1)",
                     "EndColor": "(1 1 1 0)",
@@ -132,8 +137,8 @@
                     "Type": "SpriteParticleSystemComponent",
                     "Enabled": "1",
                     "Depth": "0.003",
-                    "StartScale": "0.05",
-                    "EndScale": "0.3",
+                    "StartScale": "0.25",
+                    "EndScale": "1.5",
                     "LinearDamping": "0.08",
                     "StartColor": "(1 1 1 1)",
                     "EndColor": "(1 0.1 0.1 0)",
@@ -169,8 +174,8 @@
                     "Type": "LightParticleSystemComponent",
                     "Enabled": "1",
                     "Depth": "0.003",
-                    "StartScale": "1",
-                    "EndScale": "3",
+                    "StartScale": "5",
+                    "EndScale": "15",
                     "LinearDamping": "0.05",
                     "StartColor": "(1 1 0.1 1)",
                     "EndColor": "(1 0 0 0)",
@@ -204,8 +209,8 @@
                     "Type": "HeatParticleSystemComponent",
                     "Enabled": "1",
                     "Depth": "0.003",
-                    "StartScale": "0.01",
-                    "EndScale": "0.3",
+                    "StartScale": "0.05",
+                    "EndScale": "1.5",
                     "LinearDamping": "0.01",
                     "StartOpacity": "0.3",
                     "EndOpacity": "0",
