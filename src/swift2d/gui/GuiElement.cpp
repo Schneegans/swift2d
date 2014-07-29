@@ -63,13 +63,13 @@ GuiElement::GuiElement(GuiComponent* parent)
     }
   });
 
-  callbacks_[1] = window->on_scroll.connect([&](math::vec2 const& dir) {
+  callbacks_[1] = window->on_mouse_scroll.connect([&](math::vec2 const& dir) {
     if (active_) {
       view_->InjectMouseWheel(dir.y()*10, dir.x()*10);
     }
   });
 
-  callbacks_[2] = window->on_button_press.connect([&](Button button, int action, int mods) {
+  callbacks_[2] = window->on_mouse_button_press.connect([&](Button button, int action, int mods) {
     if (active_) {
       if (action == 0) {
         view_->InjectMouseUp(static_cast<Awesomium::MouseButton>(button));
@@ -112,8 +112,8 @@ GuiElement::~GuiElement() {
 
   auto window = WindowManager::instance()->get_default();
   window->on_mouse_move.disconnect(callbacks_[0]);
-  window->on_scroll.disconnect(callbacks_[1]);
-  window->on_button_press.disconnect(callbacks_[2]);
+  window->on_mouse_scroll.disconnect(callbacks_[1]);
+  window->on_mouse_button_press.disconnect(callbacks_[2]);
   window->on_char.disconnect(callbacks_[3]);
   window->on_key_press.disconnect(callbacks_[4]);
 }

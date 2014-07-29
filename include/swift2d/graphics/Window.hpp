@@ -44,13 +44,17 @@ class Window {
   Bool HideCursor;
 
   // ------------------------------------------------------------------- signals
-  Signal<>                    on_close;
-  Signal<Key, int, int, int>  on_key_press;
-  Signal<math::vec2i>         on_resize;
-  Signal<math::vec2>          on_mouse_move;
-  Signal<Button, int, int>    on_button_press;
-  Signal<math::vec2>          on_scroll;
-  Signal<unsigned>            on_char;
+  Signal<>                                  on_close;
+  Signal<Key, int, int, int>                on_key_press;
+  Signal<math::vec2i>                       on_resize;
+  Signal<math::vec2>                        on_mouse_move;
+  Signal<Button, int, int>                  on_mouse_button_press;
+  Signal<math::vec2>                        on_mouse_scroll;
+  Signal<unsigned>                          on_char;
+
+  // one vector for each joystick
+  Signal<std::vector<std::vector<float>>>   joystick_axes;
+  Signal<std::vector<std::vector<unsigned char>>>    joystick_buttons;
 
   // ---------------------------------------------------- construction interface
   Window();
@@ -74,8 +78,10 @@ class Window {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void open_();
-  void close_();
+  void open();
+  void close();
+
+  void update_joysticks();
 
   RenderContext render_context_;
   GLFWwindow* window_;

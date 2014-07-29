@@ -25,9 +25,9 @@ Window::Window()
 
   Open.on_change().connect([&](bool val) {
     if (val) {
-      open_();
+      open();
     } else {
-      close_();
+      close();
     }
   });
 }
@@ -35,7 +35,7 @@ Window::Window()
 ////////////////////////////////////////////////////////////////////////////////
 
 Window::~Window() {
-  close_();
+  close();
   glfwDestroyWindow(window_);
 }
 
@@ -43,7 +43,10 @@ Window::~Window() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Window::process_input() {
-  glfwPollEvents();
+  if (window_) {
+    glfwPollEvents();
+    update_joysticks();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +90,7 @@ math::vec2 Window::get_cursor_pos() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Window::open_() {
+void Window::open() {
 
   if (!window_) {
 
@@ -143,11 +146,11 @@ void Window::open_() {
     });
 
     glfwSetMouseButtonCallback(window_, [](GLFWwindow* w, int button, int action, int mods) {
-      WindowManager::instance()->glfw_windows[w]->on_button_press.emit(static_cast<Button>(button), action, mods);
+      WindowManager::instance()->glfw_windows[w]->on_mouse_button_press.emit(static_cast<Button>(button), action, mods);
     });
 
     glfwSetScrollCallback(window_, [](GLFWwindow* w, double x, double y) {
-      WindowManager::instance()->glfw_windows[w]->on_scroll.emit(math::vec2(x, y));
+      WindowManager::instance()->glfw_windows[w]->on_mouse_scroll.emit(math::vec2(x, y));
     });
 
     glfwSetCharCallback(window_, [](GLFWwindow* w, unsigned c) {
@@ -172,11 +175,35 @@ void Window::open_() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Window::close_() {
+void Window::close() {
   if (window_) {
     glfwDestroyWindow(window_);
     window_ = nullptr;
   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Window::update_joysticks() {
+  std::vector<std::vector<float>> axes;
+  std::vector<std::vector<unsigned char>> buttons;
+  for (unsigned joy(0); joy <= GLFW_JOYSTICK_LAST; ++joy) {
+    if (glfwJoystickPresent(joy)) {
+      int axes_count(0);
+      auto axes_array(glfwGetJoystickAxes(joy, &axes_count));
+      axes.push_back(std::vector<float>(axes_array, axes_array + axes_count));
+
+      int button_count(0);
+      auto button_array(glfwGetJoystickButtons(joy, &button_count));
+      buttons.push_back(std::vector<unsigned char>(button_array, button_array + button_count));
+    }
+  }
+
+  if (!axes.empty())
+    joystick_axes.emit(axes);
+
+  if (!buttons.empty())
+    joystick_buttons.emit(buttons);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

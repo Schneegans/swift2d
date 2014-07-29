@@ -115,6 +115,15 @@ int main(int argc, char** argv) {
     }
   });
 
+  window->joystick_buttons.connect([&](std::vector<std::vector<unsigned char>> const& joysticks) {
+    for (auto const& joy : joysticks) {
+      for (auto const& axis : joy) {
+        if (static_cast<int>(axis) == 2)
+          std::cout << "repeat" << std::endl;
+      }
+    }
+  });
+
   Application::instance()->start();
 
   return 0;
