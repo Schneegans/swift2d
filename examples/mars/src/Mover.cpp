@@ -59,11 +59,11 @@ void Mover::update(double time) {
 
   if (camera_) {
 
-    float target_zoom(speed*0.01 + 0.9);
-    camera_zoom_ += (target_zoom - camera_zoom_) * time;
+    float target_zoom(speed*0.02 + 0.8);
+    camera_zoom_ += (target_zoom - camera_zoom_) * time * 0.5;
 
-    math::vec2 target_offset(c->get_linear_velocity() * 0.1);
-    camera_offset_ += (target_offset - camera_offset_) * time;
+    math::vec2 target_offset(c->get_linear_velocity() * 0.75);
+    camera_offset_ += (target_offset - camera_offset_) * time * 0.5;
 
     auto mat(math::make_translation(camera_offset_ + math::get_translation(get_user()->WorldTransform())));
     mat = mat*math::make_scale(camera_zoom_);

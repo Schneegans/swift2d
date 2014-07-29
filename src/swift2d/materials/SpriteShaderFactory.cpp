@@ -76,16 +76,17 @@ SpriteShaderPtr SpriteShaderFactory::get_shader(int capabilities) {
 
   auto append_float_parameter = [&](std::string const& name, Capabilities cap) {
     if (capabilities & cap) {
-      f_shader << "uniform sampler2D " << name << "_tex;"             << std::endl;
-      f_shader << "uniform float " << name << ";"                     << std::endl;
-      f_shader << "float get_" << name << "() {"                      << std::endl;
-      f_shader << "  return texture2D(" << name << "_tex, tex_coords).r * " << name << ";" << std::endl;
-      f_shader << "}"                                                 << std::endl;
+      f_shader << "uniform sampler2D " << name << "_tex;"          << std::endl;
+      f_shader << "uniform float " << name << ";"                  << std::endl;
+      f_shader << "float get_" << name << "() {"                   << std::endl;
+      f_shader << "  return texture2D(" << name << "_tex, tex_coords).r * "
+                                        << name << ";"             << std::endl;
+      f_shader << "}"                                              << std::endl;
     } else {
-      f_shader << "uniform float " << name << ";"                     << std::endl;
-      f_shader << "float get_" << name << "() {"                      << std::endl;
-      f_shader << "  return " << name << ";"                          << std::endl;
-      f_shader << "}"                                                 << std::endl;
+      f_shader << "uniform float " << name << ";"                  << std::endl;
+      f_shader << "float get_" << name << "() {"                   << std::endl;
+      f_shader << "  return " << name << ";"                       << std::endl;
+      f_shader << "}"                                              << std::endl;
     }
   };
 
