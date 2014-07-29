@@ -14,12 +14,10 @@
 AssetManager::AssetManager() {
 
   TextureDatabase::instance()->add("point_light", Texture::create(Application::instance()->get_resource("images", "light.png")));
-  TextureDatabase::instance()->add("bullet", Texture::create(Application::instance()->get_resource("images", "bullet.png")));
 
   auto mat1 = SpriteMaterial::create();
-  mat1->DiffuseTexture = TextureDatabase::instance()->get("bullet");
   mat1->Emit = 1.0;
-  mat1->Glow = 1.0;
+  mat1->Glow = 0.5;
   MaterialDatabase::instance()->add("bullet", mat1);
 
   auto mat2 = PointLightMaterial::create_from_database("point_light");

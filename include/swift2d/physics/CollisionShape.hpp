@@ -30,7 +30,7 @@ typedef Property<CollisionShapePtr>           CollisionShapeProperty;
 // -----------------------------------------------------------------------------
 class CollisionShape : public SavableObject {
  public:
-  virtual b2Shape* get_shape() const = 0;
+  virtual b2Shape* get_shape(math::mat3 const& body_transform) const = 0;
 };
 
 // shared pointer type definition ----------------------------------------------
@@ -43,13 +43,16 @@ typedef Property<CircleCollisionShapePtr>           CircleCollisionShapeProperty
 class CircleCollisionShape : public CollisionShape {
  public:
 
-  float radius;
+  float Radius;
 
   static CircleCollisionShapePtr create() {
     return std::make_shared<CircleCollisionShape>();
   }
 
-  b2Shape* get_shape() const;
+  CircleCollisionShape()
+    : Radius(1.f) {}
+
+  b2Shape* get_shape(math::mat3 const& body_transform) const;
 
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "CircleCollisionShape"; }
@@ -66,14 +69,18 @@ typedef Property<BoxCollisionShapePtr>           BoxCollisionShapeProperty;
 class BoxCollisionShape : public CollisionShape {
  public:
 
-  float width;
-  float height;
+  float Width;
+  float Height;
 
   static BoxCollisionShapePtr create() {
     return std::make_shared<BoxCollisionShape>();
   }
 
-  b2Shape* get_shape() const;
+  BoxCollisionShape()
+    : Width(1.f)
+    , Height(1.f) {}
+
+  b2Shape* get_shape(math::mat3 const& body_transform) const;
 
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "BoxCollisionShape"; }

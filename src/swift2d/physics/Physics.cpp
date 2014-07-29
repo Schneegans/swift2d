@@ -135,7 +135,6 @@ b2Body* Physics::add(DynamicBodyComponent* body) {
   auto transform(body->get_user()->WorldTransform());
   math::vec2 pos(math::get_translation(transform));
   float rot(math::get_rotation(transform));
-  float scale(math::get_scale(transform).x());
 
   b2BodyDef bodyDef;
   bodyDef.type = b2_dynamicBody;
@@ -157,9 +156,8 @@ b2Body* Physics::add(DynamicBodyComponent* body) {
                         << "No CollisionShape attached!" << std::endl;
     shape = new b2CircleShape();
   } else {
-    shape = body->Shape()->get_shape();
+    shape = body->Shape()->get_shape(transform);
   }
-  shape->m_radius = scale;
   fixtureDef.shape = shape;
 
   result->CreateFixture(&fixtureDef);

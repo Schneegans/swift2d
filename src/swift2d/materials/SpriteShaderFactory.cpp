@@ -49,9 +49,9 @@ SpriteShaderPtr SpriteShaderFactory::get_shader(int capabilities) {
     )";
   } else {
     f_shader << R"(
-      uniform vec3 diffuse;
+      uniform vec4 diffuse;
       vec4 get_diffuse() {
-        return vec4(diffuse, 1.0);
+        return diffuse;
       }
     )";
   }

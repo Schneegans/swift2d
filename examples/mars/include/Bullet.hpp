@@ -23,10 +23,12 @@ class Bullet: public SceneObject {
     position = transform * position;
     float rot = math::get_rotation(transform);
 
-    Transform = math::make_translation(position.x(), position.y()) * math::make_scale(0.03) * math::make_rotation(rot);
+    Transform = math::make_translation(position.x(), position.y()) * math::make_scale(0.8) * math::make_rotation(rot);
 
+    auto shape = BoxCollisionShape::create();
     auto body = add<DynamicBodyComponent>();
          body->Density = 1;
+         body->Shape = shape;
 
     auto tex = add<SpriteComponent>();
          tex->Depth = 0.0f;

@@ -68,7 +68,7 @@ void Asteroid::update(double time) {
 
     auto body = add<DynamicBodyComponent>();
     auto shape = CircleCollisionShape::create();
-    shape->radius = 0.5;
+    shape->Radius = 0.5;
     body->Shape = shape;
     body->LinearDamping = 0;
     body->Density = 0.2;
