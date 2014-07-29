@@ -22,8 +22,6 @@ Asteroid::Asteroid()
 
 void Asteroid::update(double time) {
 
-  SceneObject::update(time);
-
   if (!initialized_) {
     initialized_ = true;
 
@@ -62,16 +60,14 @@ void Asteroid::update(double time) {
     dirt->EndColor = swift::Color(Color().r(), Color().g(), Color().b(), 0);
     dirt->Mass = 1;
 
-    auto g_source = add<GravitySourceComponent>();
-    g_source->Density = Density();
-
-    auto body = add<DynamicBodyComponent>();
     auto shape = PolygonCollisionShape::create();
+    auto body = add<DynamicBodyComponent>();
     shape->Coordinates = ShapeCorners;
-    body->Shape = shape;
     body->LinearDamping = 0;
     body->Density = 0.2;
     body->AngularDamping = 0;
+    body->Shape = shape;
+
     body->start_contact_with_dynamic.connect([this, dirt](DynamicBodyComponent* other, math::vec2 const& pos) {
 
       auto dir(pos - math::get_translation(WorldTransform()));
@@ -91,9 +87,11 @@ void Asteroid::update(double time) {
       }
     });
 
-    body->apply_angular_impulse(1);
-    body->apply_local_linear_impulse(math::vec2(1.f, 1.f));
+    // body->apply_angular_impulse(1);
+    // body->apply_local_linear_impulse(math::vec2(1.f, 1.f));
   }
+
+  SceneObject::update(time);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

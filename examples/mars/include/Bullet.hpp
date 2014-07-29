@@ -26,7 +26,7 @@ class Bullet: public SceneObject {
     Transform = math::make_translation(position.x(), position.y()) * math::make_scale(0.8) * math::make_rotation(rot);
 
     auto shape = PolygonCollisionShape::create();
-         shape->Coordinates = {math::vec2(-1.f, -1.f), math::vec2(1.f, -1.f), math::vec2(0.0f, 1.f)};
+         shape->Coordinates = {math::vec2(-0.8, -0.2), math::vec2(0.6 ,-0.6), math::vec2(0.8 ,-0.1), math::vec2(0.4 ,0.5), math::vec2(-0.3, 0.6)};
     auto body = add<DynamicBodyComponent>();
          body->Density = 1;
          body->Shape = shape;

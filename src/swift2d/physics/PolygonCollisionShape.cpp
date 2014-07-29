@@ -33,6 +33,7 @@ b2Shape* PolygonCollisionShape::get_shape(math::mat3 const& body_transform) cons
 
   auto shape(new b2PolygonShape());
   shape->Set(vertices, Coordinates.size());
+
   return shape;
 }
 

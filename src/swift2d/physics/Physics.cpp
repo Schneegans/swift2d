@@ -134,23 +134,10 @@ void Physics::update(double time) {
 b2Body* Physics::add(DynamicBodyComponent* body) {
   auto transform(body->get_user()->WorldTransform());
   math::vec2 pos(math::get_translation(transform));
-  float rot(math::get_rotation(transform));
-
-  b2BodyDef bodyDef;
-  bodyDef.type = b2_dynamicBody;
-  bodyDef.position.Set(pos.x(), pos.y());
-  bodyDef.angle = rot;
-  b2Body* result = world_->CreateBody(&bodyDef);
-
-  result->SetUserData(body);
 
   b2FixtureDef fixtureDef;
-  fixtureDef.density = body->Density();
-  fixtureDef.friction = body->Friction();
-  fixtureDef.restitution = body->Restitution();
 
   b2Shape* shape;
-
   if (!body->Shape()) {
     Logger::LOG_WARNING << "Failed to add DynamicBodyComponent: "
                         << "No CollisionShape attached!" << std::endl;
@@ -158,8 +145,19 @@ b2Body* Physics::add(DynamicBodyComponent* body) {
   } else {
     shape = body->Shape()->get_shape(transform);
   }
+  fixtureDef.density = body->Density();
+  fixtureDef.friction = body->Friction();
+  fixtureDef.restitution = body->Restitution();
   fixtureDef.shape = shape;
 
+  b2BodyDef bodyDef;
+  bodyDef.type = b2_dynamicBody;
+  bodyDef.position.Set(pos.x(), pos.y());
+  bodyDef.angle = math::get_rotation(transform);
+
+  b2Body* result = world_->CreateBody(&bodyDef);
+
+  result->SetUserData(body);
   result->CreateFixture(&fixtureDef);
   result->SetLinearDamping(body->LinearDamping());
   result->SetAngularDamping(body->AngularDamping());
