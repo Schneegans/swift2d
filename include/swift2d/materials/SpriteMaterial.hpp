@@ -15,6 +15,7 @@
 #include <swift2d/utils/Color.hpp>
 #include <swift2d/textures/AnimatedTexture.hpp>
 #include <swift2d/textures/Texture.hpp>
+#include <swift2d/events/Timer.hpp>
 
 namespace swift {
 
@@ -81,6 +82,7 @@ class SpriteMaterial : public Material {
  private:
   bool            current_shader_dirty_;
   SpriteShaderPtr current_shader_;
+  Timer           timer_;
 };
 
 // -----------------------------------------------------------------------------

@@ -35,6 +35,8 @@ SpriteShaderPtr SpriteShaderFactory::get_shader(int capabilities) {
     @include "version"
     in vec2 tex_coords;
     @include "write_gbuffer"
+
+    uniform float time;
   )";
 
   if (capabilities & ANIMATED_DIFFUSE_TEX) {
@@ -42,7 +44,7 @@ SpriteShaderPtr SpriteShaderFactory::get_shader(int capabilities) {
       uniform sampler3D diffuse_tex;
       uniform vec4 diffuse;
       vec4 get_diffuse() {
-        vec4 result = texture3D(diffuse_tex, vec3(tex_coords, 0));
+        vec4 result = texture(diffuse_tex, vec3(tex_coords, time));
         result *= diffuse;
         return result;
       }

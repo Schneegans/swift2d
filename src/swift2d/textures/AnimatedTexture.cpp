@@ -101,14 +101,16 @@ void AnimatedTexture::upload_to(RenderContext const& context) const {
         std::vector<unsigned char> data(width*height*channels);
 
         int d(0);
-        int start(map_y * height * channels + width * map_x * channels);
+        int start(map_y * height * channels * map_width + width * map_x * channels);
         int stride(map_width * channels);
 
-        while (d<data.size()) {
-          int x(d%width);
-          int y(d/width);
+        // std::cout << layer << " " << start/4 << " " << stride/4 << std::endl;
 
-          int pos(start + x + stride*y);
+        while (d<data.size()) {
+          int x(d%(width*channels));
+          int y(d/(width*channels));
+
+          int pos(start + x*channels + stride*y);
 
           for (int c(0); c<channels; ++c) {
             data[d++] = map_data[pos + c];
@@ -127,7 +129,8 @@ void AnimatedTexture::upload_to(RenderContext const& context) const {
        .MagFilter(ose::Linear())
        .WrapS(ose::Repeat())
        .WrapT(ose::Repeat())
-       .WrapR(ose::ClampToEdge());
+       .WrapR(ose::Repeat());
+
   } else {
     Logger::LOG_ERROR << "Failed to load texture \"" << FileName() << "\"!" << std::endl;
   }

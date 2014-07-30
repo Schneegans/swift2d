@@ -85,6 +85,8 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
     }
 
     current_shader_ = SpriteShaderFactory::instance()->get_shader(capabilities);
+
+    timer_.start();
   }
 
   current_shader_->use(ctx);
@@ -93,9 +95,12 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
   current_shader_->depth.Set(object_depth);
   current_shader_->parallax.Set(ctx.projection_parallax);
 
+  bool needs_time(false);
+
   if (AnimatedDiffuseTexture()) {
     AnimatedDiffuseTexture()->bind(ctx, 0);
     current_shader_->diffuse_tex.Set(0);
+    needs_time = true;
 
   } else if (DiffuseTexture()) {
     DiffuseTexture()->bind(ctx, 0);
@@ -127,6 +132,10 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
     current_shader_->shinyness_tex.Set(4);
   }
   current_shader_->shinyness.Set(Shinyness());
+
+  if (needs_time) {
+    current_shader_->time.Set(timer_.get_elapsed());
+  }
 
   if (BlendAdditive()) {
     ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::One);
