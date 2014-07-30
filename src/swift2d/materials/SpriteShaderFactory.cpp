@@ -37,7 +37,17 @@ SpriteShaderPtr SpriteShaderFactory::get_shader(int capabilities) {
     @include "write_gbuffer"
   )";
 
-  if (capabilities & DIFFUSE_TEX) {
+  if (capabilities & ANIMATED_DIFFUSE_TEX) {
+    f_shader << R"(
+      uniform sampler3D diffuse_tex;
+      uniform vec4 diffuse;
+      vec4 get_diffuse() {
+        vec4 result = texture3D(diffuse_tex, vec3(tex_coords, 0));
+        result *= diffuse;
+        return result;
+      }
+    )";
+  } else if (capabilities & DIFFUSE_TEX) {
     f_shader << R"(
       uniform sampler2D diffuse_tex;
       uniform vec4 diffuse;

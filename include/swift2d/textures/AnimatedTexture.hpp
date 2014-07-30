@@ -6,15 +6,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TEXTURE_HPP
-#define SWIFT2D_TEXTURE_HPP
+#ifndef SWIFT2D_ANIMATED_TEXTURE_HPP
+#define SWIFT2D_ANIMATED_TEXTURE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/objects/SavableObjectVisitor.hpp>
-#include <swift2d/graphics/RenderContext.hpp>
-#include <swift2d/properties.hpp>
-
-#include <memory>
+#include <swift2d/textures/Texture.hpp>
 
 namespace swift {
 
@@ -23,35 +19,34 @@ namespace swift {
 
 
 // shared pointer type definition ----------------------------------------------
-class Texture;
-typedef std::shared_ptr<Texture>       TexturePtr;
-typedef std::shared_ptr<const Texture> ConstTexturePtr;
-typedef Property<TexturePtr>           TextureProperty;
+class AnimatedTexture;
+typedef std::shared_ptr<AnimatedTexture>       AnimatedTexturePtr;
+typedef std::shared_ptr<const AnimatedTexture> ConstAnimatedTexturePtr;
+typedef Property<AnimatedTexturePtr>           AnimatedTextureProperty;
 
 // -----------------------------------------------------------------------------
-class Texture : public SavableObject {
+class AnimatedTexture : public Texture {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ---------------------------------------------------------------- properties
-  String FileName;
+  UInt TilesX;
+  UInt TilesY;
 
   // ---------------------------------------------------- construction interface
   template <typename... Args>
-  static TexturePtr create(Args&& ... a) {
-    return std::make_shared<Texture>(a...);
+  static AnimatedTexturePtr create(Args&& ... a) {
+    return std::make_shared<AnimatedTexture>(a...);
   }
 
-  Texture();
-  Texture(std::string const& file_name);
-
-  virtual ~Texture();
+  AnimatedTexture();
+  AnimatedTexture(std::string const& file_name, unsigned tiles_x, unsigned tiles_y);
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "Texture"; }
+  static  std::string get_type_name_static() { return "AnimatedTexture"; }
 
   // Binds the texture on the given context to the given location.
   virtual void bind(RenderContext const& context, unsigned location) const;
@@ -59,17 +54,11 @@ class Texture : public SavableObject {
   virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
- // -------------------------------------------------------- protected interface
- protected:
-  virtual void upload_to(RenderContext const& context) const;
-
-  unsigned char* load_texture_data(std::string f, int* w, int* h, int* c) const;
-  void free_texture_data(unsigned char* data) const;
-
-  mutable oglplus::Texture* texture_;
-  mutable bool needs_update_;
+ // ---------------------------------------------------------- private interface
+ private:
+  void upload_to(RenderContext const& context) const;
 };
 
 }
 
-#endif // SWIFT2D_TEXTURE_HPP
+#endif // SWIFT2D_ANIMATED_TEXTURE_HPP

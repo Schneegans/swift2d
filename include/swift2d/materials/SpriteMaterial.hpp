@@ -13,6 +13,7 @@
 #include <swift2d/materials/Material.hpp>
 #include <swift2d/materials/SpriteShader.hpp>
 #include <swift2d/utils/Color.hpp>
+#include <swift2d/textures/AnimatedTexture.hpp>
 #include <swift2d/textures/Texture.hpp>
 
 namespace swift {
@@ -34,8 +35,9 @@ class SpriteMaterial : public Material {
  public:
 
   // ---------------------------------------------------------------- properties
-  TextureProperty DiffuseTexture;
-  ColorProperty   Diffuse;
+  AnimatedTextureProperty AnimatedDiffuseTexture;
+  TextureProperty         DiffuseTexture;
+  ColorProperty           Diffuse;
 
   TextureProperty NormalTexture;
 

@@ -11,7 +11,7 @@
             "Type": "ListenerComponent",
             "Enabled": "1",
             "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
-            "Volume": "0.0"
+            "Volume": "0.5"
         },
         {
             "Type": "DynamicBodyComponent",
@@ -52,6 +52,10 @@
                 {
                     "Type": "Texture",
                     "FileName": "images\/ship.png"
+                    // "Type": "AnimatedTexture",
+                    // "FileName": "images\/explode.png",
+                    // "TilesX": "3",
+                    // "TilesY": "4"
                 },
                 "Emit": "1"
             }
