@@ -49,6 +49,8 @@ namespace {
         Object::init<ParticleEmitterComponent>();
         Object::init<PointLightMaterial>();
         Object::init<PointParticleSystemComponent>();
+        Object::init<TrailSystemComponent>();
+        Object::init<TrailEmitterComponent>();
         Object::init<PolygonCollisionShape>();
         Object::init<SceneObject>();
         Object::init<Sound>();

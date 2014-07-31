@@ -64,6 +64,8 @@ int main(int argc, char** argv) {
   player->translate(2, 5);
   player->get_component<Mover>()->set_camera(camera);
 
+  player->get_component<TrailSystemComponent>()->add_emitter(player->get_component<TrailEmitterComponent>().get());
+
   for (auto emitter: player->get_objects()) {
     emitter->get_component<ParticleSystemComponent>()->add_emitter(
       emitter->get_component<ParticleEmitterComponent>().get()

@@ -4,6 +4,22 @@
     "Components":
     [
         {
+            "Type": "TrailSystemComponent",
+            "Enabled": "1",
+            "Width": "2",
+            "StartColor": "(0.5 0.2 0.0 1.0)",
+            "EndColor": "(0.5 0.2 1.0 0.0)",
+            "StartGlow": "1.0",
+            "EndGlow": "0.0"
+
+        },
+        {
+            "Type": "TrailEmitterComponent",
+            "Enabled": "1",
+            "Life": "2",
+            "Density": "20"
+        },
+        {
             "Type": "Mover",
             "Enabled": "1"
         },
