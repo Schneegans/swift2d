@@ -48,14 +48,14 @@
             "Material":
             {
                 "Type": "SpriteMaterial",
-                "AnimatedDiffuseTexture":
+                "DiffuseTexture":
                 {
-                    // "Type": "Texture",
-                    // "FileName": "images\/ship.png"
-                    "Type": "AnimatedTexture",
-                    "FileName": "images\/explode.png",
-                    "TilesX": "3",
-                    "TilesY": "4"
+                    "Type": "Texture",
+                    "FileName": "images\/ship.png"
+                    // "Type": "AnimatedTexture",
+                    // "FileName": "images\/explode.png",
+                    // "TilesX": "3",
+                    // "TilesY": "4"
                 },
                 "Emit": "1"
             }
