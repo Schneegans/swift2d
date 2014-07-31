@@ -115,13 +115,24 @@ int main(int argc, char** argv) {
     }
   });
 
-  window->joystick_buttons.connect([&](std::vector<std::vector<unsigned char>> const& joysticks) {
-    for (auto const& joy : joysticks) {
-      for (auto const& axis : joy) {
-        if (static_cast<int>(axis) == 2)
-          std::cout << "repeat" << std::endl;
-      }
-    }
+  window->on_joystick_button_pressed.connect([&](swift::JoystickId joy_id,
+                                                 swift::JoystickButtonId button_id) {
+    // std::cout << "BUTTON PRESSED!" << std::endl;
+    // std::cout << static_cast<int>(joy_id) << " " << static_cast<int>(button_id) << std::endl;
+  });
+
+  window->on_joystick_button_released.connect([&](swift::JoystickId joy_id,
+                                                  swift::JoystickButtonId button_id) {
+    // std::cout << "BUTTON RELEASED!" << std::endl;
+    // std::cout << static_cast<int>(joy_id) << " " << static_cast<int>(button_id) << std::endl;
+  });
+
+  window->on_joystick_axis_changed.connect([&](swift::JoystickId joy_id,
+                                               swift::JoystickAxisId axis_id,
+                                               float value) {
+    // std::cout << "AXIS CHANGED!" << std::endl;
+    if (std::abs(value) >= 0.5)
+      std::cout << static_cast<int>(joy_id) << " " << static_cast<int>(axis_id) << " " << value << std::endl;
   });
 
   Application::instance()->start();

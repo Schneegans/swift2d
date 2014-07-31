@@ -21,7 +21,14 @@ Window::Window()
   : VSync(false)
   , Open(false)
   , Fullscreen(false)
-  , window_(nullptr) {
+  , window_(nullptr)
+  , joystick_axis_cache_(static_cast<int>(JoystickId::JOYSTICK_NUM),
+                         std::vector<float>(
+                         static_cast<int>(JoystickAxisId::JOYSTICK_AXIS_NUM)))
+  , joystick_button_cache_(static_cast<int>(JoystickId::JOYSTICK_NUM),
+                           std::vector<int>(
+                           static_cast<int>(
+                           JoystickButtonId::JOYSTICK_BUTTON_NUM))) {
 
   Open.on_change().connect([&](bool val) {
     if (val) {
@@ -185,25 +192,44 @@ void Window::close() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Window::update_joysticks() {
-  std::vector<std::vector<float>> axes;
-  std::vector<std::vector<unsigned char>> buttons;
-  for (unsigned joy(0); joy <= GLFW_JOYSTICK_LAST; ++joy) {
+
+  const int joystick_num(static_cast<int>(JoystickId::JOYSTICK_NUM));
+  for (int joy(0); joy < joystick_num; ++joy) {
     if (glfwJoystickPresent(joy)) {
+      JoystickId joy_id(static_cast<JoystickId>(joy));
       int axes_count(0);
       auto axes_array(glfwGetJoystickAxes(joy, &axes_count));
-      axes.push_back(std::vector<float>(axes_array, axes_array + axes_count));
+      for (int axis(0); axis < axes_count; ++axis) {
+        float axis_value(axes_array[axis]);
+        if (axis_value != joystick_axis_cache_[joy][axis]) {
+          JoystickAxisId axis_id(static_cast<JoystickAxisId>(axis));
+          on_joystick_axis_changed.emit(joy_id, axis_id, axis_value);
+          joystick_axis_cache_[joy][axis] = axis_value;
+        }
+      }
 
       int button_count(0);
       auto button_array(glfwGetJoystickButtons(joy, &button_count));
-      buttons.push_back(std::vector<unsigned char>(button_array, button_array + button_count));
+      for (int button(0); button < button_count; ++button) {
+        JoystickButtonId button_id(static_cast<JoystickButtonId>(button));
+        int button_value(static_cast<int>(button_array[button]));
+
+        if (button_value != joystick_button_cache_[joy][button]) {
+
+          if (button_value == 0) {
+            on_joystick_button_released.emit(joy_id, button_id);
+          }
+          else if (button_value == 1) {
+            on_joystick_button_pressed.emit(joy_id, button_id);
+          }
+
+          joystick_button_cache_[joy][button] = button_value;
+        }
+
+      }
     }
   }
 
-  if (!axes.empty())
-    joystick_axes.emit(axes);
-
-  if (!buttons.empty())
-    joystick_buttons.emit(buttons);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
