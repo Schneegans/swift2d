@@ -11,7 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/DrawableComponent.hpp>
-#include <swift2d/materials/Material.hpp>
+#include <swift2d/materials/LightMaterial.hpp>
 #include <swift2d/geometries/Quad.hpp>
 #include <swift2d/textures/Texture.hpp>
 
@@ -36,8 +36,8 @@ class LightComponent : public DrawableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float            Depth;
-  MaterialProperty Material;
+  Float                 Depth;
+  LightMaterialProperty Material;
 
   // ----------------------------------------------------- contruction interface
   LightComponent();

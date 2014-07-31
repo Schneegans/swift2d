@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/databases/TextureDatabase.hpp>
 #include <swift2d/databases/SoundDatabase.hpp>
-#include <swift2d/databases/MaterialDatabase.hpp>
+#include <swift2d/databases/LightMaterialDatabase.hpp>
+#include <swift2d/databases/SpriteMaterialDatabase.hpp>
 
 #endif // SWIFT2D_INCLUDE_RESOURCES_HPP

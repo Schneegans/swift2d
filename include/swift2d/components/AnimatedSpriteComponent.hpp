@@ -6,13 +6,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SPRITE_COMPONENT_HPP
-#define SWIFT2D_SPRITE_COMPONENT_HPP
+#ifndef SWIFT2D_ANIMATED_SPRITE_COMPONENT_HPP
+#define SWIFT2D_ANIMATED_SPRITE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/DrawableComponent.hpp>
-#include <swift2d/geometries/Quad.hpp>
-#include <swift2d/materials/SpriteMaterial.hpp>
+#include <swift2d/components/SpriteComponent.hpp>
 
 namespace swift {
 
@@ -21,49 +19,49 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class SpriteComponent;
-typedef std::shared_ptr<SpriteComponent>       SpriteComponentPtr;
-typedef std::shared_ptr<const SpriteComponent> ConstSpriteComponentPtr;
+class AnimatedSpriteComponent;
+typedef std::shared_ptr<AnimatedSpriteComponent>       AnimatedSpriteComponentPtr;
+typedef std::shared_ptr<const AnimatedSpriteComponent> ConstAnimatedSpriteComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SpriteComponent : public DrawableComponent {
+class AnimatedSpriteComponent : public SpriteComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ---------------------------------------------------------------- properties
-  Float                  Depth;
-  SpriteMaterialProperty Material;
+  AnimatedFloat Time;
 
   // ----------------------------------------------------- contruction interface
-  SpriteComponent();
+  AnimatedSpriteComponent();
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static SpriteComponentPtr create(Args&& ... a) {
-    return std::make_shared<SpriteComponent>(a...);
+  static AnimatedSpriteComponentPtr create(Args&& ... a) {
+    return std::make_shared<AnimatedSpriteComponent>(a...);
   }
 
   // creates a copy from this
-  SpriteComponentPtr create_copy() const {
-    return std::make_shared<SpriteComponent>(*this);
+  AnimatedSpriteComponentPtr create_copy() const {
+    return std::make_shared<AnimatedSpriteComponent>(*this);
   }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "SpriteComponent"; }
+  static  std::string get_type_name_static() { return "AnimatedSpriteComponent"; }
+
+  virtual void update(double time);
 
   virtual void draw(RenderContext const& ctx);
 
   virtual void serialize(SerializedScenePtr& scene) const;
 
   virtual void accept(SavableObjectVisitor& visitor);
-
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_SPRITE_COMPONENT_HPP
+#endif  // SWIFT2D_ANIMATED_SPRITE_COMPONENT_HPP

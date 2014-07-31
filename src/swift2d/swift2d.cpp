@@ -28,6 +28,7 @@ namespace {
 
         // register all objects ------------------------------------------------
         // Object::init<RectangularShape>();
+        Object::init<AnimatedSpriteComponent>();
         Object::init<AnimatedTexture>();
         Object::init<BoxCollisionShape>();
         Object::init<CameraComponent>();

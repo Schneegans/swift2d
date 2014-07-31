@@ -6,40 +6,37 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_MATERIAL_HPP
-#define SWIFT2D_MATERIAL_HPP
+#ifndef SWIFT2D_SPRITE_MATERIAL_DATABASE_HPP
+#define SWIFT2D_SPRITE_MATERIAL_DATABASE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/graphics/RenderContext.hpp>
-#include <swift2d/utils/SavableObject.hpp>
-#include <swift2d/properties.hpp>
+#include <swift2d/utils/Singleton.hpp>
+#include <swift2d/databases/Database.hpp>
+#include <swift2d/materials/SpriteMaterial.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-// shared pointer type definition ----------------------------------------------
-class Material;
-typedef std::shared_ptr<Material>       MaterialPtr;
-typedef std::shared_ptr<const Material> ConstMaterialPtr;
-typedef Property<MaterialPtr>           MaterialProperty;
-
 // -----------------------------------------------------------------------------
-class Material : public SavableObject {
+class SpriteMaterialDatabase : public Database<SpriteMaterial>,
+                               public Singleton<SpriteMaterialDatabase> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  friend class Singleton<SpriteMaterialDatabase>;
 
-  // uses the Material on the given context.
-  virtual void draw_quad(RenderContext const& context,
-                         math::mat3 const& object_transform,
-                         float object_depth) = 0;
+ ///////////////////////////////////////////////////////////////////////////////
+ // ---------------------------------------------------------- private interface
+ private:
+  // this class is a Singleton --- private c'tor and d'tor
+  SpriteMaterialDatabase() {}
+  ~SpriteMaterialDatabase() {}
+
 };
-
-// -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_MATERIAL_HPP
+#endif  // SWIFT2D_SPRITE_MATERIAL_DATABASE_HPP

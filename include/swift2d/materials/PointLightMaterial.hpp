@@ -10,7 +10,7 @@
 #define SWIFT2D_POINT_LIGHT_MATERIAL_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/Material.hpp>
+#include <swift2d/materials/LightMaterial.hpp>
 #include <swift2d/materials/PointLightShader.hpp>
 #include <swift2d/databases/TextureDatabase.hpp>
 #include <swift2d/textures/Texture.hpp>
@@ -28,7 +28,7 @@ typedef std::shared_ptr<const PointLightMaterial> ConstPointLightMaterialPtr;
 typedef Property<PointLightMaterialPtr>           PointLightMaterialProperty;
 
 // -----------------------------------------------------------------------------
-class PointLightMaterial : public Material {
+class PointLightMaterial : public LightMaterial {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

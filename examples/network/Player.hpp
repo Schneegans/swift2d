@@ -49,12 +49,12 @@ class Player : public NetworkObject<Player> {
     // appearance --------------------------------------------------------------
     auto ship = player_->add<SpriteComponent>();
     ship->Depth = 1.0f;
-    ship->Material = MaterialDatabase::instance()->get("ship");
+    ship->Material = SpriteMaterialDatabase::instance()->get("ship");
 
     auto light = player_->add<LightComponent>();
     light->Depth = 1.0f;
     light->Transform = math::make_scale(20);
-    light->Material = MaterialDatabase::instance()->get("light");
+    light->Material = LightMaterialDatabase::instance()->get("light");
 
 
     mover->LinearSpeed.on_change().connect([&](float val){

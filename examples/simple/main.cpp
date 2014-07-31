@@ -59,8 +59,8 @@ int main(int argc, char** argv) {
 
   // load resources ------------------------------------------------------------
   TextureDatabase::instance()->add("point_light", Texture::create(Application::instance()->get_resource("images", "light.png")));
-  MaterialDatabase::instance()->add("sun1",       DirectionalLightMaterial::create(math::vec3(0.1, 1, 0), Color(1, 0.5, 1.0)));
-  MaterialDatabase::instance()->add("sun2",       DirectionalLightMaterial::create(math::vec3(-1, -1, 0), Color(0.4, 0.8, 1.0)));
+  LightMaterialDatabase::instance()->add("sun1",       DirectionalLightMaterial::create(math::vec3(0.1, 1, 0), Color(1, 0.5, 1.0)));
+  LightMaterialDatabase::instance()->add("sun2",       DirectionalLightMaterial::create(math::vec3(-1, -1, 0), Color(0.4, 0.8, 1.0)));
 
   // window setup --------------------------------------------------------------
   auto window = WindowManager::instance()->get_default();

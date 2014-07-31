@@ -47,7 +47,7 @@ void PointLightMaterial::draw_quad(RenderContext const& ctx,
 ////////////////////////////////////////////////////////////////////////////////
 
 void PointLightMaterial::accept(SavableObjectVisitor& visitor) {
-  Material::accept(visitor);
+  LightMaterial::accept(visitor);
   visitor.add_object("Texture", Texture);
   visitor.add_member("Color", Color);
 }

@@ -6,13 +6,13 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_MATERIAL_DATABASE_HPP
-#define SWIFT2D_MATERIAL_DATABASE_HPP
+#ifndef SWIFT2D_LIGHT_MATERIAL_DATABASE_HPP
+#define SWIFT2D_LIGHT_MATERIAL_DATABASE_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Singleton.hpp>
 #include <swift2d/databases/Database.hpp>
-#include <swift2d/materials/Material.hpp>
+#include <swift2d/materials/LightMaterial.hpp>
 
 namespace swift {
 
@@ -20,23 +20,23 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class MaterialDatabase : public Database<Material>,
-                         public Singleton<MaterialDatabase> {
+class LightMaterialDatabase : public Database<LightMaterial>,
+                              public Singleton<LightMaterialDatabase> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-  friend class Singleton<MaterialDatabase>;
+  friend class Singleton<LightMaterialDatabase>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  MaterialDatabase() {}
-  ~MaterialDatabase() {}
+  LightMaterialDatabase() {}
+  ~LightMaterialDatabase() {}
 
 };
 
 }
 
-#endif  // SWIFT2D_MATERIAL_DATABASE_HPP
+#endif  // SWIFT2D_LIGHT_MATERIAL_DATABASE_HPP

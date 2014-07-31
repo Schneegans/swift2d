@@ -40,7 +40,7 @@ void DirectionalLightMaterial::draw_quad(RenderContext const& ctx,
 ////////////////////////////////////////////////////////////////////////////////
 
 void DirectionalLightMaterial::accept(SavableObjectVisitor& visitor) {
-  Material::accept(visitor);
+  LightMaterial::accept(visitor);
   visitor.add_member("Direction", Direction);
   visitor.add_member("Color", Color);
 }
