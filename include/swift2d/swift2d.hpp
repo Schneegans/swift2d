@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Logger.hpp>
+#include <swift2d/utils/stl_helpers.hpp>
 #include <swift2d/math.hpp>
 #include <swift2d/events.hpp>
 #include <swift2d/properties.hpp>

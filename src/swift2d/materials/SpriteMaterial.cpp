@@ -25,6 +25,10 @@ SpriteMaterial::SpriteMaterial()
   , current_shader_dirty_(true)
   , current_shader_(nullptr) {
 
+  AnimatedDiffuseTexture.on_change().connect([&](TexturePtr const& val){
+    current_shader_dirty_ = true;
+  });
+
   DiffuseTexture.on_change().connect([&](TexturePtr const& val){
     current_shader_dirty_ = true;
   });
@@ -56,6 +60,10 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
 
     int capabilities(0);
 
+    if (AnimatedDiffuseTexture()) {
+      capabilities |= SpriteShaderFactory::ANIMATED_DIFFUSE_TEX;
+    }
+
     if (DiffuseTexture()) {
       capabilities |= SpriteShaderFactory::DIFFUSE_TEX;
     }
@@ -77,6 +85,8 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
     }
 
     current_shader_ = SpriteShaderFactory::instance()->get_shader(capabilities);
+
+    timer_.start();
   }
 
   current_shader_->use(ctx);
@@ -85,7 +95,14 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
   current_shader_->depth.Set(object_depth);
   current_shader_->parallax.Set(ctx.projection_parallax);
 
-  if (DiffuseTexture()) {
+  bool needs_time(false);
+
+  if (AnimatedDiffuseTexture()) {
+    AnimatedDiffuseTexture()->bind(ctx, 0);
+    current_shader_->diffuse_tex.Set(0);
+    needs_time = true;
+
+  } else if (DiffuseTexture()) {
     DiffuseTexture()->bind(ctx, 0);
     current_shader_->diffuse_tex.Set(0);
   }
@@ -116,6 +133,10 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
   }
   current_shader_->shinyness.Set(Shinyness());
 
+  if (needs_time) {
+    current_shader_->time.Set(timer_.get_elapsed());
+  }
+
   if (BlendAdditive()) {
     ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::One);
     Quad::instance()->draw(ctx);
@@ -129,6 +150,7 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
 
 void SpriteMaterial::accept(SavableObjectVisitor& visitor) {
   Material::accept(visitor);
+  visitor.add_object("AnimatedDiffuseTexture", AnimatedDiffuseTexture);
   visitor.add_object("DiffuseTexture", DiffuseTexture);
   visitor.add_member("Diffuse", Diffuse);
   visitor.add_object("NormalTexture", NormalTexture);

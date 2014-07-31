@@ -7,9 +7,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/physics/CollisionShape.hpp>
+#include <swift2d/physics/BoxCollisionShape.hpp>
 
 #include <swift2d/objects/SavableObjectVisitor.hpp>
+#include <swift2d/math.hpp>
 
 #include <Box2D/Box2D.h>
 
@@ -17,34 +18,27 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-b2Shape* CircleCollisionShape::get_shape() const {
-  auto shape(new b2CircleShape());
-  shape->m_radius = radius;
-  return shape;
-}
-
-void CircleCollisionShape::accept(SavableObjectVisitor& visitor) {
-  CollisionShape::accept(visitor);
-  visitor.add_member("Radius", radius);
-}
+BoxCollisionShape::BoxCollisionShape()
+  : Width(1.f)
+  , Height(1.f) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-b2Shape* BoxCollisionShape::get_shape() const {
+b2Shape* BoxCollisionShape::get_shape(math::mat3 const& body_transform) const {
+  auto scale(math::get_scale(body_transform));
+
   auto shape(new b2PolygonShape());
-  shape->SetAsBox(width, height);
+  shape->SetAsBox(Width*scale.x(), Height*scale.y());
   return shape;
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 void BoxCollisionShape::accept(SavableObjectVisitor& visitor) {
   CollisionShape::accept(visitor);
-  visitor.add_member("Width", width);
-  visitor.add_member("Height", height);
+  visitor.add_member("Width", Width);
+  visitor.add_member("Height", Height);
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 

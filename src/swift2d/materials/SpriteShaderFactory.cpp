@@ -35,9 +35,21 @@ SpriteShaderPtr SpriteShaderFactory::get_shader(int capabilities) {
     @include "version"
     in vec2 tex_coords;
     @include "write_gbuffer"
+
+    uniform float time;
   )";
 
-  if (capabilities & DIFFUSE_TEX) {
+  if (capabilities & ANIMATED_DIFFUSE_TEX) {
+    f_shader << R"(
+      uniform sampler3D diffuse_tex;
+      uniform vec4 diffuse;
+      vec4 get_diffuse() {
+        vec4 result = texture(diffuse_tex, vec3(tex_coords, time));
+        result *= diffuse;
+        return result;
+      }
+    )";
+  } else if (capabilities & DIFFUSE_TEX) {
     f_shader << R"(
       uniform sampler2D diffuse_tex;
       uniform vec4 diffuse;
@@ -49,9 +61,9 @@ SpriteShaderPtr SpriteShaderFactory::get_shader(int capabilities) {
     )";
   } else {
     f_shader << R"(
-      uniform vec3 diffuse;
+      uniform vec4 diffuse;
       vec4 get_diffuse() {
-        return vec4(diffuse, 1.0);
+        return diffuse;
       }
     )";
   }

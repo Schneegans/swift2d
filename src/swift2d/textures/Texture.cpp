@@ -75,19 +75,10 @@ void Texture::upload_to(RenderContext const& context) const {
     delete texture_;
   }
 
-  std::string file(FileName.get());
-
-  if (file[0] != '/') {
-    file = Application::instance()->make_absolute(file);
-  }
-
   int width(0), height(0), channels(0);
-  unsigned char* data(stbi_load(file.c_str(), &width, &height,
-                                &channels, STBI_default));
+  unsigned char* data(load_texture_data(FileName(), &width, &height, &channels));
 
-  bool success(data && width && height);
-
-  if (success) {
+  if (data) {
     auto internal_format(channels > 3 ? ogl::InternalFormat::RGBA : ogl::InternalFormat::RGB);
     auto format(channels > 3 ? ogl::Format::RGBA : ogl::Format::RGB);
 
@@ -101,8 +92,33 @@ void Texture::upload_to(RenderContext const& context) const {
       .MagFilter(ose::Linear())
       .WrapS(ose::Repeat())
       .WrapT(ose::Repeat());
+
+  } else {
+    Logger::LOG_ERROR << "Failed to load texture \"" << FileName() << "\"!" << std::endl;
   }
 
+  free_texture_data(data);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+unsigned char* Texture::load_texture_data(std::string f, int* w, int* h, int* c) const {
+  if (f[0] != '/') {
+    f = Application::instance()->make_absolute(f);
+  }
+
+  unsigned char* data(stbi_load(f.c_str(), w, h, c, STBI_default));
+
+  if (data && *w && *h) {
+    return data;
+  }
+
+  return nullptr;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Texture::free_texture_data(unsigned char* data) const {
   stbi_image_free(data);
 }
 

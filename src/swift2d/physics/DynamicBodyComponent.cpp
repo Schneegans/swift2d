@@ -117,8 +117,8 @@ void DynamicBodyComponent::update(double time) {
 
   auto transform(get_user()->Transform.get());
 
-  math::set_translation(transform, position.x, position.y);
   math::set_rotation(transform, angle);
+  math::set_translation(transform, position.x, position.y);
 
   get_user()->Transform.set(transform);
 }
@@ -141,10 +141,10 @@ void DynamicBodyComponent::init() {
   if (!body_) {
     body_ = Physics::instance()->add(this);
 
-    // Radius.on_change().connect([&](float val){
-    //   body_->GetFixtureList()->GetShape()->m_radius = val;
-    //   body_->ResetMassData();
-    // });
+    Shape.on_change().connect([&](CollisionShapePtr const&){
+      Logger::LOG_WARNING << "Updating collision shapes is not implmented yet!"
+                          << std::endl;
+    });
     Density.on_change().connect([&](float val){
       body_->GetFixtureList()->SetDensity(val);
       body_->ResetMassData();

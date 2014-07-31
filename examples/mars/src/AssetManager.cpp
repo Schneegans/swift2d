@@ -14,12 +14,14 @@
 AssetManager::AssetManager() {
 
   TextureDatabase::instance()->add("point_light", Texture::create(Application::instance()->get_resource("images", "light.png")));
-  TextureDatabase::instance()->add("bullet", Texture::create(Application::instance()->get_resource("images", "bullet.png")));
+  TextureDatabase::instance()->add("bullet", Texture::create(Application::instance()->get_resource("images", "asteroid_diffuse0.png")));
+  TextureDatabase::instance()->add("bulletn", Texture::create(Application::instance()->get_resource("images", "asteroid_normal0.png")));
 
   auto mat1 = SpriteMaterial::create();
   mat1->DiffuseTexture = TextureDatabase::instance()->get("bullet");
-  mat1->Emit = 1.0;
-  mat1->Glow = 1.0;
+  mat1->NormalTexture = TextureDatabase::instance()->get("bulletn");
+  mat1->Emit = 0.3;
+  mat1->Glow = 0.0;
   MaterialDatabase::instance()->add("bullet", mat1);
 
   auto mat2 = PointLightMaterial::create_from_database("point_light");

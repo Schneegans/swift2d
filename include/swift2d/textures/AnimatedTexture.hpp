@@ -6,76 +6,59 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_STATIC_BODY_COMPONENT_HPP
-#define SWIFT2D_STATIC_BODY_COMPONENT_HPP
+#ifndef SWIFT2D_ANIMATED_TEXTURE_HPP
+#define SWIFT2D_ANIMATED_TEXTURE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/Component.hpp>
-#include <swift2d/physics/CollisionShape.hpp>
-
-// forward declares ------------------------------------------------------------
-class b2Body;
+#include <swift2d/textures/Texture.hpp>
 
 namespace swift {
 
-class DynamicBodyComponent;
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class StaticBodyComponent;
-typedef std::shared_ptr<StaticBodyComponent>       StaticBodyComponentPtr;
-typedef std::shared_ptr<const StaticBodyComponent> ConstStaticBodyComponentPtr;
+class AnimatedTexture;
+typedef std::shared_ptr<AnimatedTexture>       AnimatedTexturePtr;
+typedef std::shared_ptr<const AnimatedTexture> ConstAnimatedTexturePtr;
+typedef Property<AnimatedTexturePtr>           AnimatedTextureProperty;
 
 // -----------------------------------------------------------------------------
-class StaticBodyComponent : public Component {
+class AnimatedTexture : public Texture {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ---------------------------------------------------------------- properties
-  CollisionShapeProperty  Shape;
-  Float                   Density;
-  Float                   Friction;
-  Float                   Restitution;
-
-  // ------------------------------------------------------------------- signals
-  Signal<DynamicBodyComponent*, math::vec2> start_contact_with_dynamic;
-  Signal<DynamicBodyComponent*, math::vec2> end_contact_with_dynamic;
+  UInt TilesX;
+  UInt TilesY;
 
   // ---------------------------------------------------- construction interface
-  StaticBodyComponent();
-  ~StaticBodyComponent();
-
-  // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static StaticBodyComponentPtr create(Args&& ... a) {
-    return std::make_shared<StaticBodyComponent>(a...);
+  static AnimatedTexturePtr create(Args&& ... a) {
+    return std::make_shared<AnimatedTexture>(a...);
   }
 
-  // creates a copy from this
-  StaticBodyComponentPtr create_copy() const {
-    return std::make_shared<StaticBodyComponent>(*this);
-  }
+  AnimatedTexture();
+  AnimatedTexture(std::string const& file_name, unsigned tiles_x, unsigned tiles_y);
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "StaticBodyComponent"; }
+  static  std::string get_type_name_static() { return "AnimatedTexture"; }
 
-  virtual void update(double time);
+  // Binds the texture on the given context to the given location.
+  virtual void bind(RenderContext const& context, unsigned location) const;
 
   virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  b2Body* body_;
+  void upload_to(RenderContext const& context) const;
 };
-
-// -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_STATIC_BODY_COMPONENT_HPP
+#endif // SWIFT2D_ANIMATED_TEXTURE_HPP

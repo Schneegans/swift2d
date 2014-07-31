@@ -12,8 +12,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 Asteroid::Asteroid()
-  : Radius(0.5f)
-  , Density(0.5)
+  : Density(0.5)
   , Shinyness(0.2)
   , Emit(1.0)
   , Color(swift::Color(1, 1, 1, 1))
@@ -22,8 +21,6 @@ Asteroid::Asteroid()
 ////////////////////////////////////////////////////////////////////////////////
 
 void Asteroid::update(double time) {
-
-  SceneObject::update(time);
 
   if (!initialized_) {
     initialized_ = true;
@@ -63,16 +60,14 @@ void Asteroid::update(double time) {
     dirt->EndColor = swift::Color(Color().r(), Color().g(), Color().b(), 0);
     dirt->Mass = 1;
 
-    auto g_source = add<GravitySourceComponent>();
-    g_source->Density = Density();
-
+    auto shape = PolygonCollisionShape::create();
     auto body = add<DynamicBodyComponent>();
-    auto shape = CircleCollisionShape::create();
-    shape->radius = 0.5;
-    body->Shape = shape;
+    shape->Coordinates = ShapeCorners;
     body->LinearDamping = 0;
     body->Density = 0.2;
     body->AngularDamping = 0;
+    body->Shape = shape;
+
     body->start_contact_with_dynamic.connect([this, dirt](DynamicBodyComponent* other, math::vec2 const& pos) {
 
       auto dir(pos - math::get_translation(WorldTransform()));
@@ -92,19 +87,21 @@ void Asteroid::update(double time) {
       }
     });
 
-    body->apply_angular_impulse(1);
-    body->apply_local_linear_impulse(math::vec2(1.f, 1.f));
+    // body->apply_angular_impulse(1);
+    // body->apply_local_linear_impulse(math::vec2(1.f, 1.f));
   }
+
+  SceneObject::update(time);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Asteroid::accept(SavableObjectVisitor& visitor) {
   SceneObject::accept(visitor);
+  visitor.add_member("ShapeCorners", ShapeCorners);
   visitor.add_member("DiffuseTex", DiffuseTex);
   visitor.add_member("NormalTex", NormalTex);
   visitor.add_member("EmitTex", EmitTex);
-  visitor.add_member("Radius", Radius);
   visitor.add_member("Density", Density);
   visitor.add_member("Shinyness", Shinyness);
   visitor.add_member("Emit", Emit);

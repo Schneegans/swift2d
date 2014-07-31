@@ -28,7 +28,10 @@ namespace {
 
         // register all objects ------------------------------------------------
         // Object::init<RectangularShape>();
+        Object::init<AnimatedTexture>();
+        Object::init<BoxCollisionShape>();
         Object::init<CameraComponent>();
+        Object::init<CircleCollisionShape>();
         Object::init<CircularShape>();
         Object::init<DeleteOnLeaveBehavior>();
         Object::init<DirectionalLightMaterial>();
@@ -45,6 +48,7 @@ namespace {
         Object::init<ParticleEmitterComponent>();
         Object::init<PointLightMaterial>();
         Object::init<PointParticleSystemComponent>();
+        Object::init<PolygonCollisionShape>();
         Object::init<SceneObject>();
         Object::init<Sound>();
         Object::init<SoundComponent>();
@@ -54,8 +58,6 @@ namespace {
         Object::init<StaticBodyComponent>();
         Object::init<Texture>();
         Object::init<TimedDeleteBehavior>();
-        Object::init<BoxCollisionShape>();
-        Object::init<CircleCollisionShape>();
 
         // init glfw -----------------------------------------------------------
         if (!glfwInit()) {

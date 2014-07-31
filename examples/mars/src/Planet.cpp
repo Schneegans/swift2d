@@ -67,7 +67,9 @@ void Planet::update(double time) {
     g_source->Density = Density();
 
     auto body = add<StaticBodyComponent>();
-    body->Radius = Radius();
+    auto shape = CircleCollisionShape::create();
+    shape->Radius = Radius();
+    body->Shape = shape;
     body->start_contact_with_dynamic.connect([this, dirt](DynamicBodyComponent* other, math::vec2 const& pos) {
 
       auto dir(pos - math::get_translation(WorldTransform()));

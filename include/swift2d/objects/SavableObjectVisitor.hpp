@@ -50,7 +50,7 @@ class SavableObjectVisitor {
         target.set(std::dynamic_pointer_cast<typename T::value_type::element_type>(sub_visitor.to_object()));
       }
 
-    } else {
+    } else if (target()) {
       SavableObjectVisitor visitor(target()->get_type_name());
       target()->accept(visitor);
       json_.push_back(std::make_pair(name, visitor.to_json()));

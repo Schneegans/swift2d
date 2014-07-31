@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_MATH_OPERATORS_HPP__BLUPL
-#define SWIFT2D_MATH_OPERATORS_HPP__BLUPL
+#ifndef SWIFT2D_MATH_OPERATORS_HPP
+#define SWIFT2D_MATH_OPERATORS_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/math/types.hpp>
@@ -160,4 +160,4 @@ std::istream& operator>>(std::istream& in_stream, Matrix<T, R, C>& mat) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif //SWIFT2D_MATH_OPERATORS_HPP__BLUPL
+#endif //SWIFT2D_MATH_OPERATORS_HPP

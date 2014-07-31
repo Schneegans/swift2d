@@ -21,8 +21,7 @@
             "Shape":
             {
                 "Type": "CircleCollisionShape",
-                "Radius": "0.05"
-
+                "Radius": "1"
             }
         },
         {

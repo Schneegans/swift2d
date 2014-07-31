@@ -46,26 +46,28 @@ class Texture : public SavableObject {
 
   Texture();
   Texture(std::string const& file_name);
-  ~Texture();
+
+  virtual ~Texture();
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "Texture"; }
 
   // Binds the texture on the given context to the given location.
-  void bind(RenderContext const& context, unsigned location) const;
+  virtual void bind(RenderContext const& context, unsigned location) const;
 
   virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
- private:
-  void upload_to(RenderContext const& context) const;
+ // -------------------------------------------------------- protected interface
+ protected:
+  virtual void upload_to(RenderContext const& context) const;
+
+  unsigned char* load_texture_data(std::string f, int* w, int* h, int* c) const;
+  void free_texture_data(unsigned char* data) const;
 
   mutable oglplus::Texture* texture_;
-
   mutable bool needs_update_;
-
 };
 
 }

@@ -195,14 +195,14 @@
     [
         {
             "Type": "Asteroid",
-            "Transform": "(1 0 -3.2\n 0 1 0\n 0 0 1)",
+            "Transform": "(2 0 0\n 0 2 0\n 0 0 1)",
             "DiffuseTex": "asteroid_diffuse0.png",
             "NormalTex": "asteroid_normal0.png",
-            "Radius": "0.58",
+            "ShapeCorners": "(-0.8 -0.2) (0.6 -0.6) (0.8 -0.1) (0.4 0.5) (-0.3 0.6)",
             "Density": "0.5",
-            "Emit": "0.5",
-            "Shinyness": "0.2",
-            "Color": "(0.8 0.8 0.8 1)"
+            "Emit": "0.3",
+            "Shinyness": "0.6",
+            "Color": "(0.9 0.7 0.8 1)"
         },
         {
             "Type": "Planet",
@@ -278,7 +278,7 @@
                 {
                     "Type": "SpriteComponent",
                     "Enabled": "1",
-                    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
+                    "Transform": "(1 0 0\n 0 0.5 0\n 0 0 1)",
                     "Depth": "5",
                     "Material":
                     {
