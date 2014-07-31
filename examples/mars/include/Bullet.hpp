@@ -12,6 +12,8 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/swift2d.hpp>
 
+#include "../include/Explosion.hpp"
+
 using namespace swift;
 
 class Bullet: public SceneObject {
@@ -30,6 +32,10 @@ class Bullet: public SceneObject {
     auto body = add<DynamicBodyComponent>();
          body->Density = 1;
          body->Shape = shape;
+    body->start_contact_with_static.connect([this, scene](StaticBodyComponent* other, math::vec2 const& pos) {
+      scene->add_object(std::make_shared<Explosion>(math::get_translation(WorldTransform())));
+      detach();
+    });
 
     auto tex = add<SpriteComponent>();
          tex->Depth = 0.0f;

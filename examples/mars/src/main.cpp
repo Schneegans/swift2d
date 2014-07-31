@@ -13,6 +13,7 @@
 #include "../include/GuiManager.hpp"
 #include "../include/AssetManager.hpp"
 #include "../include/MusicManager.hpp"
+#include "../include/Explosion.hpp"
 
 #include <iostream>
 
@@ -27,6 +28,7 @@ int main(int argc, char** argv) {
   Object::init<Bullet>();
   Object::init<Planet>();
   Object::init<Asteroid>();
+  Object::init<Explosion>();
 
   // load resources ------------------------------------------------------------
   AssetManager assets;
