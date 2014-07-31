@@ -12,7 +12,9 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/properties.hpp>
 #include <swift2d/graphics/RenderContext.hpp>
-#include <swift2d/input/keys.hpp>
+#include <swift2d/input/keyboard_enums.hpp>
+#include <swift2d/input/mouse_enums.hpp>
+#include <swift2d/input/joystick_enums.hpp>
 
 #include <memory>
 
@@ -44,13 +46,17 @@ class Window {
   Bool HideCursor;
 
   // ------------------------------------------------------------------- signals
-  Signal<>                    on_close;
-  Signal<Key, int, int, int>  on_key_press;
-  Signal<math::vec2i>         on_resize;
-  Signal<math::vec2>          on_mouse_move;
-  Signal<Button, int, int>    on_button_press;
-  Signal<math::vec2>          on_scroll;
-  Signal<unsigned>            on_char;
+  Signal<>                                    on_close;
+  Signal<Key, int, int, int>                  on_key_press;
+  Signal<math::vec2i>                         on_resize;
+  Signal<math::vec2>                          on_mouse_move;
+  Signal<Button, int, int>                    on_mouse_button_press;
+  Signal<math::vec2>                          on_mouse_scroll;
+  Signal<unsigned>                            on_char;
+
+  Signal<JoystickId, JoystickAxisId, float>   on_joystick_axis_changed;
+  Signal<JoystickId, JoystickButtonId>        on_joystick_button_pressed;
+  Signal<JoystickId, JoystickButtonId>        on_joystick_button_released;
 
   // ---------------------------------------------------- construction interface
   Window();
@@ -74,11 +80,16 @@ class Window {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void open_();
-  void close_();
+  void open();
+  void close();
+
+  void update_joysticks();
 
   RenderContext render_context_;
   GLFWwindow* window_;
+
+  std::vector<std::vector<float>> joystick_axis_cache_;
+  std::vector<std::vector<int>> joystick_button_cache_;
 };
 
 }

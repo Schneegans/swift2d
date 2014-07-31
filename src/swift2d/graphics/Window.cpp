@@ -21,13 +21,20 @@ Window::Window()
   : VSync(false)
   , Open(false)
   , Fullscreen(false)
-  , window_(nullptr) {
+  , window_(nullptr)
+  , joystick_axis_cache_(static_cast<int>(JoystickId::JOYSTICK_NUM),
+                         std::vector<float>(
+                         static_cast<int>(JoystickAxisId::JOYSTICK_AXIS_NUM)))
+  , joystick_button_cache_(static_cast<int>(JoystickId::JOYSTICK_NUM),
+                           std::vector<int>(
+                           static_cast<int>(
+                           JoystickButtonId::JOYSTICK_BUTTON_NUM))) {
 
   Open.on_change().connect([&](bool val) {
     if (val) {
-      open_();
+      open();
     } else {
-      close_();
+      close();
     }
   });
 }
@@ -35,7 +42,7 @@ Window::Window()
 ////////////////////////////////////////////////////////////////////////////////
 
 Window::~Window() {
-  close_();
+  close();
   glfwDestroyWindow(window_);
 }
 
@@ -43,7 +50,10 @@ Window::~Window() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Window::process_input() {
-  glfwPollEvents();
+  if (window_) {
+    glfwPollEvents();
+    update_joysticks();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +97,7 @@ math::vec2 Window::get_cursor_pos() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Window::open_() {
+void Window::open() {
 
   if (!window_) {
 
@@ -143,11 +153,11 @@ void Window::open_() {
     });
 
     glfwSetMouseButtonCallback(window_, [](GLFWwindow* w, int button, int action, int mods) {
-      WindowManager::instance()->glfw_windows[w]->on_button_press.emit(static_cast<Button>(button), action, mods);
+      WindowManager::instance()->glfw_windows[w]->on_mouse_button_press.emit(static_cast<Button>(button), action, mods);
     });
 
     glfwSetScrollCallback(window_, [](GLFWwindow* w, double x, double y) {
-      WindowManager::instance()->glfw_windows[w]->on_scroll.emit(math::vec2(x, y));
+      WindowManager::instance()->glfw_windows[w]->on_mouse_scroll.emit(math::vec2(x, y));
     });
 
     glfwSetCharCallback(window_, [](GLFWwindow* w, unsigned c) {
@@ -172,11 +182,54 @@ void Window::open_() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Window::close_() {
+void Window::close() {
   if (window_) {
     glfwDestroyWindow(window_);
     window_ = nullptr;
   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Window::update_joysticks() {
+
+  const int joystick_num(static_cast<int>(JoystickId::JOYSTICK_NUM));
+  for (int joy(0); joy < joystick_num; ++joy) {
+    if (glfwJoystickPresent(joy)) {
+      JoystickId joy_id(static_cast<JoystickId>(joy));
+      int axes_count(0);
+      auto axes_array(glfwGetJoystickAxes(joy, &axes_count));
+      for (int axis(0); axis < axes_count; ++axis) {
+        float axis_value(axes_array[axis]);
+        if (axis_value != joystick_axis_cache_[joy][axis]) {
+          JoystickAxisId axis_id(static_cast<JoystickAxisId>(axis));
+          on_joystick_axis_changed.emit(joy_id, axis_id, axis_value);
+          joystick_axis_cache_[joy][axis] = axis_value;
+        }
+      }
+
+      int button_count(0);
+      auto button_array(glfwGetJoystickButtons(joy, &button_count));
+      for (int button(0); button < button_count; ++button) {
+        JoystickButtonId button_id(static_cast<JoystickButtonId>(button));
+        int button_value(static_cast<int>(button_array[button]));
+
+        if (button_value != joystick_button_cache_[joy][button]) {
+
+          if (button_value == 0) {
+            on_joystick_button_released.emit(joy_id, button_id);
+          }
+          else if (button_value == 1) {
+            on_joystick_button_pressed.emit(joy_id, button_id);
+          }
+
+          joystick_button_cache_[joy][button] = button_value;
+        }
+
+      }
+    }
+  }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
