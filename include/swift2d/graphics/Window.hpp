@@ -12,7 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/properties.hpp>
 #include <swift2d/graphics/RenderContext.hpp>
-#include <swift2d/input/keys.hpp>
+#include <swift2d/input/input_enums.hpp>
 
 #include <memory>
 
