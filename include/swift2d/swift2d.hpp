@@ -23,6 +23,7 @@
 #include <swift2d/databases.hpp>
 #include <swift2d/materials.hpp>
 #include <swift2d/particles.hpp>
+#include <swift2d/trails.hpp>
 #include <swift2d/physics.hpp>
 #include <swift2d/input/keyboard_enums.hpp>
 #include <swift2d/input/mouse_enums.hpp>
