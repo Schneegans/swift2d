@@ -74,14 +74,14 @@ void AnimatedTexture::upload_to(RenderContext const& context) const {
     delete texture_;
   }
 
-  int map_width(0), map_height(0), channels(0);
-  unsigned char* map_data(load_texture_data(FileName(), &map_width, &map_height, &channels));
+  int width(0), height(0), channels(0);
+  unsigned char* map_data(load_texture_data(FileName(), &width, &height, &channels));
 
   if (map_data) {
 
-    int width  (map_width  / TilesX());
-    int height (map_height / TilesY());
-    int depth  (TilesX() * TilesY());
+    int tile_width  (width  / TilesX());
+    int tile_height (height / TilesY());
+    int tile_count  (TilesX() * TilesY());
 
     auto internal_format(channels > 3 ? ogl::InternalFormat::RGBA : ogl::InternalFormat::RGB);
     auto format(channels > 3 ? ogl::Format::RGBA : ogl::Format::RGB);
@@ -89,36 +89,34 @@ void AnimatedTexture::upload_to(RenderContext const& context) const {
     texture_ = new ogl::Texture();
 
     auto tex = context.gl.Bound(ose::_3D(), *texture_);
-    tex.Image3D(0, internal_format, width, height, depth, 0, format,
-                ogl::DataType::UnsignedByte, nullptr);
+    tex.Image3D(0, internal_format, tile_width, tile_height, tile_count, 0,
+                format, ogl::DataType::UnsignedByte, nullptr);
 
 
-    for (int map_y(0); map_y<TilesY(); ++map_y) {
-      for (int map_x(0); map_x<TilesX(); ++map_x) {
+    for (int tile_y(0); tile_y<TilesY(); ++tile_y) {
+      for (int tile_x(0); tile_x<TilesX(); ++tile_x) {
 
-        int layer(map_y*TilesX() + map_x);
+        int tile_number(tile_y*TilesX() + tile_x);
 
-        std::vector<unsigned char> data(width*height*channels);
+        std::vector<unsigned char> data(tile_width*tile_height*channels);
 
         int d(0);
-        int start(map_y * height * channels * map_width + width * map_x * channels);
-        int stride(map_width * channels);
-
-        // std::cout << layer << " " << start/4 << " " << stride/4 << std::endl;
+        int start(tile_y * tile_height * width + tile_width * tile_x);
+        int stride(width);
 
         while (d<data.size()) {
-          int x(d%(width*channels));
-          int y(d/(width*channels));
+          int x((d/channels)%(tile_width));
+          int y((d/channels)/(tile_width));
 
-          int pos(start + x*channels + stride*y);
+          int pos(start + x + stride*y);
 
           for (int c(0); c<channels; ++c) {
-            data[d++] = map_data[pos + c];
+            data[d++] = map_data[pos*channels + c];
           }
         }
 
         tex.SubImage3D(
-          0, 0, 0, layer, width, height, 1,
+          0, 0, 0, tile_number, tile_width, tile_height, 1,
           format, ogl::DataType::UnsignedByte, &data.front()
         );
       }
