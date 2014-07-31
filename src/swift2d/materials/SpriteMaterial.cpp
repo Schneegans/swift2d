@@ -53,7 +53,7 @@ SpriteMaterial::SpriteMaterial()
 ////////////////////////////////////////////////////////////////////////////////
 
 void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& object_transform,
-               float object_depth) {
+                               float object_depth, float time) {
 
   if (current_shader_dirty_) {
     current_shader_dirty_ = false;
@@ -101,8 +101,6 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
     }
 
     current_shader_ = SpriteShaderFactory::instance()->get_shader(capabilities);
-
-    timer_.start();
   }
 
   current_shader_->use(ctx);
@@ -171,7 +169,8 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
   current_shader_->shinyness.Set(Shinyness());
 
   if (needs_time) {
-    current_shader_->time.Set(timer_.get_elapsed());
+    // std::cout << time << std::endl;
+    current_shader_->time.Set(time);
   }
 
   if (BlendAdditive()) {
@@ -186,7 +185,6 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
 ////////////////////////////////////////////////////////////////////////////////
 
 void SpriteMaterial::accept(SavableObjectVisitor& visitor) {
-  Material::accept(visitor);
   visitor.add_object("AnimatedDiffuseTexture", AnimatedDiffuseTexture);
   visitor.add_object("DiffuseTexture", DiffuseTexture);
   visitor.add_member("Diffuse", Diffuse);

@@ -22,14 +22,14 @@ AssetManager::AssetManager() {
   mat1->NormalTexture = TextureDatabase::instance()->get("bulletn");
   mat1->Emit = 0.3;
   mat1->Glow = 0.0;
-  MaterialDatabase::instance()->add("bullet", mat1);
+  SpriteMaterialDatabase::instance()->add("bullet", mat1);
 
   auto mat2 = PointLightMaterial::create_from_database("point_light");
   mat2->Color = Color(0.4, 0.3, 1.0);
-  MaterialDatabase::instance()->add("light", mat2);
+  LightMaterialDatabase::instance()->add("light", mat2);
 
-  MaterialDatabase::instance()->add("sun1",  DirectionalLightMaterial::create(math::vec3(0.1, 1, 0), Color(1, 0.5, 1.0)));
-  MaterialDatabase::instance()->add("sun2",  DirectionalLightMaterial::create(math::vec3(-1, -1, 0), Color(0.4, 0.8, 1.0)));
+  LightMaterialDatabase::instance()->add("sun1",  DirectionalLightMaterial::create(math::vec3(0.1, 1, 0), Color(1, 0.5, 1.0)));
+  LightMaterialDatabase::instance()->add("sun2",  DirectionalLightMaterial::create(math::vec3(-1, -1, 0), Color(0.4, 0.8, 1.0)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

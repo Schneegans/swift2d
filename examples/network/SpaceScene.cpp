@@ -20,28 +20,28 @@ swift::SceneObjectPtr SpaceScene::create() {
 
   auto mat = SpriteMaterial::create();
   mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "bg.jpg"));
-  MaterialDatabase::instance()->add("background", mat);
+  SpriteMaterialDatabase::instance()->add("background", mat);
 
   mat = SpriteMaterial::create();
   mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "ship.jpg"));
-  MaterialDatabase::instance()->add("ship", mat);
+  SpriteMaterialDatabase::instance()->add("ship", mat);
 
   mat = SpriteMaterial::create();
   mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "bullet.jpg"));
-  MaterialDatabase::instance()->add("bullet", mat);
+  SpriteMaterialDatabase::instance()->add("bullet", mat);
 
   mat = SpriteMaterial::create();
   mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "planet_diffuse2.png"));
   mat->NormalTexture = Texture::create(Application::instance()->get_resource("images", "planet_normal2.png"));
-  MaterialDatabase::instance()->add("planet1", mat);
+  SpriteMaterialDatabase::instance()->add("planet1", mat);
 
   mat = SpriteMaterial::create();
   mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "planet_diffuse.png"));
   mat->NormalTexture = Texture::create(Application::instance()->get_resource("images", "planet_normal.png"));
-  MaterialDatabase::instance()->add("planet2", mat);
+  SpriteMaterialDatabase::instance()->add("planet2", mat);
 
-  MaterialDatabase::instance()->add("light",      PointLightMaterial::create_from_file(Application::instance()->get_resource("images", "light.png")));
-  MaterialDatabase::instance()->add("sun",        DirectionalLightMaterial::create(math::vec3(1, 1, -1)));
+  LightMaterialDatabase::instance()->add("light",      PointLightMaterial::create_from_file(Application::instance()->get_resource("images", "light.png")));
+  LightMaterialDatabase::instance()->add("sun",        DirectionalLightMaterial::create(math::vec3(1, 1, -1)));
 
   // example scene setup -------------------------------------------------------
   auto scene = SceneManager::instance()->get_default();
@@ -56,11 +56,11 @@ swift::SceneObjectPtr SpaceScene::create() {
 
   auto sun = scene->add<LightComponent>();
        sun->Transform = math::make_scale(15) * math::make_translation(-0.2, 0.2);
-       sun->Material = MaterialDatabase::instance()->get("sun");
+       sun->Material = LightMaterialDatabase::instance()->get("sun");
 
   auto bg = scene->add<SpriteComponent>();
        bg->Depth = -1000.0f;
-       bg->Material = MaterialDatabase::instance()->get("background");
+       bg->Material = SpriteMaterialDatabase::instance()->get("background");
        bg->Transform = math::make_scale(2.f);
 
   // planet
@@ -68,13 +68,13 @@ swift::SceneObjectPtr SpaceScene::create() {
        planet1->Transform = math::make_translation(-0.9, -0.5);
   auto sprite2 = planet1->add<SpriteComponent>();
        sprite2->Depth = 0.0f;
-       sprite2->Material = MaterialDatabase::instance()->get("planet1");
+       sprite2->Material = SpriteMaterialDatabase::instance()->get("planet1");
 
   auto planet2 = scene->add_object();
        planet2->Transform = math::make_translation(-1.2, 1.0);
   auto sprite3 = planet2->add<SpriteComponent>();
        sprite3->Depth = 0.0f;
-       sprite3->Material = MaterialDatabase::instance()->get("planet2");
+       sprite3->Material = SpriteMaterialDatabase::instance()->get("planet2");
 
   return scene;
 }

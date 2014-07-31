@@ -10,7 +10,7 @@
 #define SWIFT2D_SPRITE_MATERIAL_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/Material.hpp>
+#include <swift2d/utils/SavableObject.hpp>
 #include <swift2d/materials/SpriteShader.hpp>
 #include <swift2d/utils/Color.hpp>
 #include <swift2d/textures/AnimatedTexture.hpp>
@@ -29,7 +29,7 @@ typedef std::shared_ptr<const SpriteMaterial> ConstSpriteMaterialPtr;
 typedef Property<SpriteMaterialPtr>           SpriteMaterialProperty;
 
 // -----------------------------------------------------------------------------
-class SpriteMaterial : public Material {
+class SpriteMaterial : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -77,7 +77,7 @@ class SpriteMaterial : public Material {
   // uses the Material on the given context.
   /* virtual */ void draw_quad(RenderContext const& ctx,
                                math::mat3 const& object_transform,
-                               float object_depth);
+                               float object_depth, float time = 0.f);
 
   virtual void accept(SavableObjectVisitor& visitor);
 
@@ -86,7 +86,6 @@ class SpriteMaterial : public Material {
  private:
   bool            current_shader_dirty_;
   SpriteShaderPtr current_shader_;
-  Timer           timer_;
 };
 
 // -----------------------------------------------------------------------------

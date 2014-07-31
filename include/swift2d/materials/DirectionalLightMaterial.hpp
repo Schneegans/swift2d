@@ -10,7 +10,7 @@
 #define SWIFT2D_DIRECTIONAL_LIGHT_MATERIAL_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/Material.hpp>
+#include <swift2d/materials/LightMaterial.hpp>
 #include <swift2d/materials/DirectionalLightShader.hpp>
 #include <swift2d/databases/TextureDatabase.hpp>
 #include <swift2d/textures/Texture.hpp>
@@ -28,7 +28,7 @@ typedef std::shared_ptr<const DirectionalLightMaterial> ConstDirectionalLightMat
 typedef Property<DirectionalLightMaterialPtr>           DirectionalLightMaterialProperty;
 
 // -----------------------------------------------------------------------------
-class DirectionalLightMaterial : public Material {
+class DirectionalLightMaterial : public LightMaterial {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

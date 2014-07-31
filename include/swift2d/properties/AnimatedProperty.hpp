@@ -71,12 +71,16 @@ class AnimatedProperty: public Property<T> {
     state_ = 0.0;
   }
 
-  /* virtual */ void set(T const& value) {
+  void set(T const& value) {
     start_ = this->get();
     end_ = value;
     duration_ = 0.0;
     state_ = -1.0;
     Property<T>::set(value);
+  }
+
+  void set_direction(Direction dir) {
+    direction_ = dir;
   }
 
   void update(double time) {
