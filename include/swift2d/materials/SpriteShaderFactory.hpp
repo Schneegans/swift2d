@@ -28,12 +28,16 @@ class SpriteShaderFactory : public Singleton<SpriteShaderFactory> {
  public:
 
   enum Capabilities {
-    ANIMATED_DIFFUSE_TEX    = 1 << 0,
-    DIFFUSE_TEX             = 1 << 1,
-    NORMAL_TEX              = 1 << 2,
-    EMIT_TEX                = 1 << 3,
-    GLOW_TEX                = 1 << 4,
-    SHINYNESS_TEX           = 1 << 5
+    ANIMATED_DIFFUSE_TEX      = 1 << 0,
+    DIFFUSE_TEX               = 1 << 1,
+    ANIMATED_NORMAL_TEX       = 1 << 2,
+    NORMAL_TEX                = 1 << 3,
+    ANIMATED_EMIT_TEX         = 1 << 4,
+    EMIT_TEX                  = 1 << 5,
+    ANIMATED_GLOW_TEX         = 1 << 6,
+    GLOW_TEX                  = 1 << 7,
+    ANIMATED_SHINYNESS_TEX    = 1 << 8,
+    SHINYNESS_TEX             = 1 << 9
   };
 
   SpriteShaderPtr get_shader(int capabilities);

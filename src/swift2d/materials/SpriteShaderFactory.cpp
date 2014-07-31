@@ -68,7 +68,17 @@ SpriteShaderPtr SpriteShaderFactory::get_shader(int capabilities) {
     )";
   }
 
-  if (capabilities & NORMAL_TEX) {
+  if (capabilities & ANIMATED_NORMAL_TEX) {
+    f_shader << R"(
+      uniform sampler3D normal_tex;
+      uniform mat3 normal_transform;
+      vec4 get_normal() {
+        vec4 result = texture(normal_tex, tex_coords, time);
+        result.xy   = (normal_transform * vec3(result.xy-0.5, 0.0)).xy+0.5;
+        return result;
+      }
+    )";
+  } else if (capabilities & NORMAL_TEX) {
     f_shader << R"(
       uniform sampler2D normal_tex;
       uniform mat3 normal_transform;
@@ -86,8 +96,15 @@ SpriteShaderPtr SpriteShaderFactory::get_shader(int capabilities) {
     )";
   }
 
-  auto append_float_parameter = [&](std::string const& name, Capabilities cap) {
-    if (capabilities & cap) {
+  auto append_float_parameter = [&](std::string const& name, Capabilities cap, Capabilities anim_cap) {
+    if (capabilities & anim_cap) {
+      f_shader << "uniform sampler3D " << name << "_tex;"          << std::endl;
+      f_shader << "uniform float " << name << ";"                  << std::endl;
+      f_shader << "float get_" << name << "() {"                   << std::endl;
+      f_shader << "  return texture(" << name << "_tex, tex_coords, time).r * "
+                                      << name << ";"               << std::endl;
+      f_shader << "}"                                              << std::endl;
+    } else if (capabilities & cap) {
       f_shader << "uniform sampler2D " << name << "_tex;"          << std::endl;
       f_shader << "uniform float " << name << ";"                  << std::endl;
       f_shader << "float get_" << name << "() {"                   << std::endl;
@@ -102,9 +119,9 @@ SpriteShaderPtr SpriteShaderFactory::get_shader(int capabilities) {
     }
   };
 
-  append_float_parameter("emit", EMIT_TEX);
-  append_float_parameter("glow", GLOW_TEX);
-  append_float_parameter("shinyness", SHINYNESS_TEX);
+  append_float_parameter("emit",      EMIT_TEX,       ANIMATED_EMIT_TEX);
+  append_float_parameter("glow",      GLOW_TEX,       ANIMATED_GLOW_TEX);
+  append_float_parameter("shinyness", SHINYNESS_TEX,  ANIMATED_SHINYNESS_TEX);
 
   f_shader << R"(
     void main(void) {

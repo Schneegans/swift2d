@@ -40,18 +40,22 @@ class SpriteMaterial : public Material {
   TextureProperty         DiffuseTexture;
   ColorProperty           Diffuse;
 
-  TextureProperty NormalTexture;
+  AnimatedTextureProperty AnimatedNormalTexture;
+  TextureProperty         NormalTexture;
 
-  TextureProperty EmitTexture;
-  Float           Emit;
+  AnimatedTextureProperty AnimatedEmitTexture;
+  TextureProperty         EmitTexture;
+  Float                   Emit;
 
-  TextureProperty GlowTexture;
-  Float           Glow;
+  AnimatedTextureProperty AnimatedGlowTexture;
+  TextureProperty         GlowTexture;
+  Float                   Glow;
 
-  TextureProperty ShinynessTexture;
-  Float           Shinyness;
+  AnimatedTextureProperty AnimatedShinynessTexture;
+  TextureProperty         ShinynessTexture;
+  Float                   Shinyness;
 
-  Bool            BlendAdditive;
+  Bool                    BlendAdditive;
 
   // ----------------------------------------------------- contruction interface
   SpriteMaterial();

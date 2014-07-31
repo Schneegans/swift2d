@@ -68,16 +68,32 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
       capabilities |= SpriteShaderFactory::DIFFUSE_TEX;
     }
 
+    if (AnimatedNormalTexture()) {
+      capabilities |= SpriteShaderFactory::ANIMATED_NORMAL_TEX;
+    }
+
     if (NormalTexture()) {
       capabilities |= SpriteShaderFactory::NORMAL_TEX;
+    }
+
+    if (AnimatedEmitTexture()) {
+      capabilities |= SpriteShaderFactory::ANIMATED_EMIT_TEX;
     }
 
     if (EmitTexture()) {
       capabilities |= SpriteShaderFactory::EMIT_TEX;
     }
 
+    if (AnimatedGlowTexture()) {
+      capabilities |= SpriteShaderFactory::ANIMATED_GLOW_TEX;
+    }
+
     if (GlowTexture()) {
       capabilities |= SpriteShaderFactory::GLOW_TEX;
+    }
+
+    if (AnimatedShinynessTexture()) {
+      capabilities |= SpriteShaderFactory::ANIMATED_SHINYNESS_TEX;
     }
 
     if (ShinynessTexture()) {
@@ -109,25 +125,46 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
   current_shader_->diffuse.Set(Diffuse().vec4());
 
 
-  if (NormalTexture()) {
+  if (AnimatedNormalTexture()) {
+    AnimatedNormalTexture()->bind(ctx, 0);
+    current_shader_->normal_tex.Set(0);
+    current_shader_->normal_transform.Set(math::make_rotation(math::get_rotation(object_transform)));
+    needs_time = true;
+
+  } else if (NormalTexture()) {
     NormalTexture()->bind(ctx, 1);
     current_shader_->normal_tex.Set(1);
     current_shader_->normal_transform.Set(math::make_rotation(math::get_rotation(object_transform)));
   }
 
-  if (EmitTexture()) {
+  if (AnimatedEmitTexture()) {
+    AnimatedEmitTexture()->bind(ctx, 2);
+    current_shader_->emit_tex.Set(2);
+    needs_time = true;
+
+  } else if (EmitTexture()) {
     EmitTexture()->bind(ctx, 2);
     current_shader_->emit_tex.Set(2);
   }
   current_shader_->emit.Set(Emit());
 
-  if (GlowTexture()) {
+  if (AnimatedGlowTexture()) {
+    AnimatedGlowTexture()->bind(ctx, 3);
+    current_shader_->glow_tex.Set(3);
+    needs_time = true;
+
+  } else if (GlowTexture()) {
     GlowTexture()->bind(ctx, 3);
     current_shader_->glow_tex.Set(3);
   }
   current_shader_->glow.Set(Glow());
 
-  if (ShinynessTexture()) {
+  if (AnimatedShinynessTexture()) {
+    AnimatedShinynessTexture()->bind(ctx, 4);
+    current_shader_->shinyness_tex.Set(4);
+    needs_time = true;
+
+  } else if (ShinynessTexture()) {
     ShinynessTexture()->bind(ctx, 4);
     current_shader_->shinyness_tex.Set(4);
   }
