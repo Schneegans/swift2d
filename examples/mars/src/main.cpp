@@ -72,7 +72,6 @@ int main(int argc, char** argv) {
     );
   }
 
-
   // gui
   GuiManager::instance()->on_quit.connect([&](){
     renderer.stop();
@@ -80,12 +79,14 @@ int main(int argc, char** argv) {
   });
 
   // play music ----------------------------------------------------------------
-  // MusicManager::instance()->play_next();
+  MusicManager::instance()->play_next();
 
   // main loop -----------------------------------------------------------------
   Timer timer;
   timer.start();
 
+  scene->update(0);
+  Physics::instance()->update(0);
   scene->update(0);
 
   renderer.on_frame.connect([&]() {

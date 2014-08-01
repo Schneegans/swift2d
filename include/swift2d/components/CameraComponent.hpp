@@ -52,8 +52,8 @@ class CameraComponent : public TransformableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "CameraComponent"; }
 
-  math::vec2 gui_to_world(math::vec2 const& gui_pos) const;
-  math::vec2 world_to_gui(math::vec2 const& world_pos) const;
+  math::vec2 pixel_to_world(math::vec2 const& pixel_pos) const;
+  math::vec2 world_to_pixel(math::vec2 const& world_pos) const;
 
   virtual void accept(SavableObjectVisitor& visitor);
 };

@@ -1,6 +1,6 @@
 {
     "Type": "SceneObject",
-    "Transform": "(0.5 0 0\n 0 0.5 0\n 0 0 1)",
+    "Transform": "(0.5 0 3\n 0 0.5 3\n 0 0 1)",
     "Components":
     [
         {
@@ -12,6 +12,13 @@
             "StartGlow": "1.0",
             "EndGlow": "0.0"
 
+        },
+        {
+            "Type": "GuiComponent",
+            "Enabled": "1",
+            "Resource": "gui/player_tag.html",
+            "Size": "(100 24)",
+            "Anchor": "(0 1)"
         },
         {
             "Type": "TrailEmitterComponent",
@@ -27,7 +34,7 @@
             "Type": "ListenerComponent",
             "Enabled": "1",
             "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
-            "Volume": "0.0"
+            "Volume": "0.5"
         },
         {
             "Type": "DynamicBodyComponent",

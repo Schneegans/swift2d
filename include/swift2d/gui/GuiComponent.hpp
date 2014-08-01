@@ -36,7 +36,7 @@ class GuiComponent : public DrawableComponent {
   String Resource;
   Vec2i  Size;
   Vec2   Anchor;
-  Vec2i  Offset;
+  Vec2   Offset;
   Bool   Active;
 
   // ------------------------------------------------------------------- signals

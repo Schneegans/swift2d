@@ -20,10 +20,10 @@ CameraComponent::CameraComponent()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-math::vec2 CameraComponent::gui_to_world(math::vec2 const& gui_pos) const {
+math::vec2 CameraComponent::pixel_to_world(math::vec2 const& pixel_pos) const {
   auto w = WindowManager::instance()->get_default();
   if (w->get_context().ready) {
-    math::vec2 scaled = (gui_pos / math::vec2(w->get_context().size));
+    math::vec2 scaled = (pixel_pos / math::vec2(w->get_context().size));
     math::vec3 tmp = WorldTransform() * math::vec3(scaled.x(), scaled.y(), 1.f);
     return math::vec2(tmp.x(), tmp.y());
   }
@@ -32,11 +32,10 @@ math::vec2 CameraComponent::gui_to_world(math::vec2 const& gui_pos) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-math::vec2 CameraComponent::world_to_gui(math::vec2 const& world_pos) const {
+math::vec2 CameraComponent::world_to_pixel(math::vec2 const& world_pos) const {
   auto w = WindowManager::instance()->get_default();
   math::vec3 tmp = math::inversed(WorldTransform()) * math::vec3(world_pos.x(), world_pos.y(), 1.f);
-  math::vec2 unscaled(tmp.x(), tmp.y());
-  return unscaled * math::vec2(w->get_context().size) / math::vec2(Size()) + math::vec2(w->get_context().size)*0.5;
+  return tmp.xy() * math::vec2(w->get_context().size) / (2.0f*Size()) + math::vec2(w->get_context().size)*0.5f;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

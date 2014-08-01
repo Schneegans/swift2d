@@ -1,0 +1,38 @@
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('fonts/Ubuntu-Title.eot?') format('eot'),
+       url('fonts/Ubuntu-Title.woff') format('woff'),
+       url('fonts/Ubuntu-Title.ttf')  format('truetype'),
+       url('fonts/Ubuntu-Title.svg#Ubuntu-Title') format('svg');
+}
+
+body {
+  font-family: 'Ubuntu' !important;
+  margin: 0;
+  zoom: 1;
+  overflow: hidden;
+  -webkit-user-select: none;
+  background-color: transparent;
+}
+
+.player_name {
+    color: rgb(255, 171, 235);
+    width: 100px;
+    height: 20px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.player_life_bar {
+    position: relative;
+    width: 100px;
+    height: 4px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 1px;
+}
+
+.player_life {
+    width: 70%;
+    height: 2px;
+    background-color: rgb(255, 171, 235);
+}

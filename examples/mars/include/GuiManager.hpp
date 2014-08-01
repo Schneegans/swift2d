@@ -44,9 +44,6 @@ class GuiManager : public swift::Singleton<GuiManager> {
 
   std::unordered_map<std::string, std::function<void()>> callbacks_;
   std::vector<MarsGuiComponentPtr> open_windows_;
-
-  int frame_count_;
-
 };
 
 // -----------------------------------------------------------------------------

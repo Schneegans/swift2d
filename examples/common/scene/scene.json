@@ -195,7 +195,7 @@
     [
         {
             "Type": "Asteroid",
-            "Transform": "(2 0 0\n 0 2 0\n 0 0 1)",
+            "Transform": "(2 0 -10\n 0 2 10\n 0 0 1)",
             "DiffuseTex": "asteroid_diffuse0.png",
             "NormalTex": "asteroid_normal0.png",
             "ShapeCorners": "(-0.8 -0.2) (0.6 -0.6) (0.8 -0.1) (0.4 0.5) (-0.3 0.6)",

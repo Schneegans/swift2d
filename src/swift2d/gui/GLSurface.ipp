@@ -40,11 +40,15 @@ class GLSurface : public Awesomium::Surface {
       );
   }
 
-  void bind(RenderContext const& ctx, unsigned location) {
-
+  bool bind(RenderContext const& ctx, unsigned location) {
 
     if (!tex_) {
-      init(ctx);
+      if (ctx.upload_budget > 0) {
+        --ctx.upload_budget;
+         init(ctx);
+      } else {
+        return false;
+      }
     }
 
     tex_->Active(location);
@@ -62,6 +66,8 @@ class GLSurface : public Awesomium::Surface {
 
       needs_update_ = false;
     }
+
+    return true;
   }
 
   void Paint(unsigned char* src_buffer, int src_row_span,

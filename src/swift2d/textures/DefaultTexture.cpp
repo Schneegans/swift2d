@@ -9,8 +9,6 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/textures/DefaultTexture.hpp>
 
-#include <oglplus/images/random.hpp>
-
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,12 +39,12 @@ void DefaultTexture::upload_to(RenderContext const& context) const {
 
   texture_ = new oglplus::Texture();
 
+  std::vector<unsigned char> data = {0, 0, 0, 0};
+
   context.gl.Bound(ose::_2D(), *texture_)
-    .Image2D(oglplus::images::RandomRGBUByte(4, 4))
-    .MinFilter(ose::Linear())
-    .MagFilter(ose::Linear())
-    .WrapS(ose::Repeat())
-    .WrapT(ose::Repeat());
+    .Image2D(0, oglplus::PixelDataInternalFormat::RGBA, 1, 1,
+             0, oglplus::PixelDataFormat::RGBA,
+             oglplus::PixelDataType::UnsignedByte, &data.front());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

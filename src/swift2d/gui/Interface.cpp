@@ -64,12 +64,7 @@ Interface::~Interface() {
 
 bool Interface::bind(Awesomium::WebView* view, RenderContext const& ctx, unsigned location) const {
   auto surface = static_cast<GLSurface*>(view->surface());
-  if (surface) {
-    surface->bind(ctx, location);
-    return true;
-  }
-
-  return false;
+  return surface && surface->bind(ctx, location);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

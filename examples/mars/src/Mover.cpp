@@ -56,6 +56,7 @@ void Mover::update(double time) {
 
   auto c = get_user()->get_component<DynamicBodyComponent>();
   auto speed(c->get_linear_velocity().Length());
+  auto w = WindowManager::instance()->get_default();
 
   if (camera_) {
 
@@ -65,12 +66,19 @@ void Mover::update(double time) {
     math::vec2 target_offset(c->get_linear_velocity() * 0.75);
     camera_offset_ += (target_offset - camera_offset_) * time * 0.5;
 
-    auto mat(math::make_translation(camera_offset_ + math::get_translation(get_user()->WorldTransform())));
+    auto pos(math::get_translation(get_user()->WorldTransform()));
+    auto mat(math::make_translation(camera_offset_ + pos));
     mat = mat*math::make_scale(camera_zoom_);
     camera_->Transform = mat;
+
+    auto name = get_user()->get_component<GuiComponent>();
+    auto ctx_size = w->get_context().size;
+    name->Offset = math::vec2(camera_->world_to_pixel(pos))
+                 - math::vec2(ctx_size.x()*0.5f, ctx_size.y())
+                 + math::vec2(0.0f, 70.0f);
   }
 
-  auto w = WindowManager::instance()->get_default();
+
 
   if(w->key_pressed(Key::W)) {
     if (speed < 7.5f) {
