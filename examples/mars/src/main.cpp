@@ -80,11 +80,13 @@ int main(int argc, char** argv) {
   });
 
   // play music ----------------------------------------------------------------
-  MusicManager::instance()->play_next();
+  // MusicManager::instance()->play_next();
 
   // main loop -----------------------------------------------------------------
   Timer timer;
   timer.start();
+
+  scene->update(0);
 
   renderer.on_frame.connect([&]() {
 

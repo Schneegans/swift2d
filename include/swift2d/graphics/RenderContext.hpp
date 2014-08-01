@@ -28,6 +28,8 @@ struct RenderContext {
   math::mat3  projection_matrix;
   float       projection_parallax;
   bool        ready;
+
+  mutable int upload_budget;
 };
 
 }

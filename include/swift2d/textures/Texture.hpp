@@ -63,11 +63,16 @@ class Texture : public SavableObject {
  protected:
   virtual void upload_to(RenderContext const& context) const;
 
-  unsigned char* load_texture_data(std::string f, int* w, int* h, int* c) const;
-  void free_texture_data(unsigned char* data) const;
+  void load_texture_data() const;
+  void free_texture_data() const;
 
   mutable oglplus::Texture* texture_;
-  mutable bool needs_update_;
+
+  mutable bool needs_update_, loading_;
+
+  mutable int width_, height_, channels_;
+  mutable unsigned char* data_;
+
 };
 
 }

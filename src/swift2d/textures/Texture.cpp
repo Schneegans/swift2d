@@ -9,12 +9,12 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/textures/Texture.hpp>
 
+#include <swift2d/textures/DefaultTexture.hpp>
 #include <swift2d/application/Application.hpp>
 #include <oglplus/images/png.hpp>
 #include <oglplus/images/newton.hpp>
 #include <stb_image/stb_image.h>
-#include <istream>
-#include <streambuf>
+#include <thread>
 
 namespace swift {
 
@@ -23,7 +23,13 @@ namespace swift {
 Texture::Texture()
   : FileName("")
   , texture_(nullptr)
-  , needs_update_(true) {
+  , needs_update_(true)
+  , loading_(false)
+  , data_(nullptr)
+  , width_(0)
+  , height_(0)
+  , channels_(0) {
+
 
   FileName.on_change().connect([&](std::string const& path){
     needs_update_ = true;
@@ -35,7 +41,13 @@ Texture::Texture()
 Texture::Texture(std::string const& file_name)
   : FileName(file_name)
   , texture_(nullptr)
-  , needs_update_(true) {
+  , needs_update_(true)
+  , loading_(false)
+  , data_(nullptr)
+  , width_(0)
+  , height_(0)
+  , channels_(0) {
+
 
   FileName.on_change().connect([&](std::string const& path){
     needs_update_ = true;
@@ -51,12 +63,14 @@ Texture::~Texture() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Texture::bind(RenderContext const& context, unsigned location) const {
-  if (needs_update_) {
-    upload_to(context);
-  }
 
-  texture_->Active(location);
-  context.gl.Bind(ose::_2D(), *texture_);
+  if (texture_) {
+    texture_->Active(location);
+    context.gl.Bind(ose::_2D(), *texture_);
+  } else {
+    upload_to(context);
+    DefaultTexture::instance()->bind(context, location);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -69,57 +83,73 @@ void Texture::accept(SavableObjectVisitor& visitor) {
 
 void Texture::upload_to(RenderContext const& context) const {
 
-  needs_update_ = false;
-
-  if (texture_) {
-    delete texture_;
+  if (!loading_) {
+    load_texture_data();
   }
 
-  int width(0), height(0), channels(0);
-  unsigned char* data(load_texture_data(FileName(), &width, &height, &channels));
+  if (data_ && context.upload_budget > 0) {
+    context.upload_budget -= 1;
+    loading_ = false;
+    needs_update_ = false;
 
-  if (data) {
-    auto internal_format(channels > 3 ? ogl::InternalFormat::RGBA : ogl::InternalFormat::RGB);
-    auto format(channels > 3 ? ogl::Format::RGBA : ogl::Format::RGB);
+    if (texture_) {
+      delete texture_;
+    }
+
+    auto internal_format(channels_ > 3 ? ogl::InternalFormat::RGBA : ogl::InternalFormat::RGB);
+    auto format(channels_ > 3 ? ogl::Format::RGBA : ogl::Format::RGB);
 
     texture_ = new ogl::Texture();
 
     context.gl.Bound(ose::_2D(), *texture_)
-      .Image2D(0, internal_format, width, height, 0, format,
-               ogl::DataType::UnsignedByte, data)
+      .Image2D(0, internal_format, width_, height_, 0, format,
+               ogl::DataType::UnsignedByte, data_)
       .GenerateMipmap()
       .MinFilter(ose::LinearMipmapLinear())
       .MagFilter(ose::Linear())
       .WrapS(ose::Repeat())
       .WrapT(ose::Repeat());
 
-  } else {
-    Logger::LOG_ERROR << "Failed to load texture \"" << FileName() << "\"!" << std::endl;
+    free_texture_data();
   }
-
-  free_texture_data(data);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-unsigned char* Texture::load_texture_data(std::string f, int* w, int* h, int* c) const {
-  if (f[0] != '/') {
-    f = Application::instance()->make_absolute(f);
+void Texture::load_texture_data() const {
+
+  std::string f(FileName());
+
+  if (f.length() > 0) {
+    loading_ = true;
+
+    if (f[0] != '/') {
+      f = Application::instance()->make_absolute(f);
+    }
+
+    std::thread load([this, f](){
+      int w(0), h(0), c(0);
+      auto d(stbi_load(f.c_str(), &w, &h, &c, STBI_default));
+
+      if (d) {
+        data_ = d;
+        width_ = w;
+        height_ = h;
+        channels_ = c;
+      } else {
+        Logger::LOG_ERROR << "Failed to load texture \"" << FileName() << "\"!" << std::endl;
+      }
+    });
+
+    load.detach();
   }
-
-  unsigned char* data(stbi_load(f.c_str(), w, h, c, STBI_default));
-
-  if (data && *w && *h) {
-    return data;
-  }
-
-  return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture::free_texture_data(unsigned char* data) const {
-  stbi_image_free(data);
+void Texture::free_texture_data() const {
+  stbi_image_free(data_);
+  data_ = nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
