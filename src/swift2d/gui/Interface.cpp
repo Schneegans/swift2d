@@ -11,6 +11,7 @@
 
 #include <swift2d/utils/Logger.hpp>
 #include <swift2d/utils/TextFile.hpp>
+#include <swift2d/application/Application.hpp>
 
 #include <Awesomium/WebCore.h>
 #include <Awesomium/BitmapSurface.h>

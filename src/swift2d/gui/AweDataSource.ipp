@@ -18,7 +18,13 @@ class AweDataSource : public Awesomium::DataSource {
 
     std::string html_str("<h1>Failed to load resource.</h1>");
 
-    TextFile file(Awesomium::ToString(path));
+    std::string absolute_path(Awesomium::ToString(path));
+
+    if (absolute_path[0] != '/') {
+      absolute_path = Application::instance()->make_absolute(absolute_path);
+    }
+
+    TextFile file(absolute_path);
 
     if (file.is_valid()) {
       html_str = file.get_content();
