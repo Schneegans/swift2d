@@ -39,7 +39,7 @@ void PointLightComponent::draw(RenderContext const& ctx) {
   PointLightShader::instance()->g_buffer_normal.Set(2);
   PointLightShader::instance()->g_buffer_light.Set(3);
   PointLightShader::instance()->light_tex.Set(0);
-  PointLightShader::instance()->light_color.Set(Color().vec3());
+  PointLightShader::instance()->light_color.Set(Color().vec4());
 
   Quad::instance()->draw(ctx);
 }

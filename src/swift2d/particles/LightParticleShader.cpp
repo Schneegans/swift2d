@@ -54,7 +54,7 @@ LightParticleShader::LightParticleShader()
         vec3 light_dir    = normalize(light.rgb - 0.5);
         float attenuation = light.a * c.a;
 
-        fragColor = get_lit_surface_color(light_dir, c.rgb, attenuation);
+        fragColor = get_lit_surface_color(light_dir, c, attenuation);
       }
     )",
 

@@ -13,14 +13,12 @@
 
 AssetManager::AssetManager() {
 
-  TextureDatabase::instance()->add("bullet", Texture::create(Application::instance()->get_resource("images", "asteroid_diffuse0.png")));
-  TextureDatabase::instance()->add("bulletn", Texture::create(Application::instance()->get_resource("images", "asteroid_normal0.png")));
+  TextureDatabase::instance()->add("light", Texture::create(Application::instance()->get_resource("images", "light.png")));
 
   auto mat = Material::create();
-  mat->DiffuseTexture = TextureDatabase::instance()->get("bullet");
-  mat->NormalTexture = TextureDatabase::instance()->get("bulletn");
-  mat->Emit = 0.3;
-  mat->Glow = 0.0;
+  mat->AnimatedDiffuseTexture = AnimatedTexture::create(Application::instance()->get_resource("images", "bomb.png"), 5, 4);
+  mat->Emit = 1;
+  mat->Glow = 0.5;
   MaterialDatabase::instance()->add("bullet", mat);
 }
 

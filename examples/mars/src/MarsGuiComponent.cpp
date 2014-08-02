@@ -14,7 +14,7 @@
 MarsGuiComponent::MarsGuiComponent(
   std::unordered_map<std::string, std::function<void()>> const& callbacks,
   bool hide_top, int overlap)
-  : top_(-1.f, 0.f, 0.f, swift::AnimatedFloat::IN_OUT, 1.5f)
+  : top_(-1.f, 0.f, 0.f, swift::AnimatedFloat::IN_OUT, swift::AnimatedFloat::NONE, 1.5f)
   , hide_top_(hide_top)
   , visible_(false)
   , overlap_(overlap) {

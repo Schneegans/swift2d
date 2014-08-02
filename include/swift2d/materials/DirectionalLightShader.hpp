@@ -32,7 +32,7 @@ class DirectionalLightShader : public Shader,
   oglplus::Lazy<oglplus::Uniform<int>>          g_buffer_normal;
   oglplus::Lazy<oglplus::Uniform<int>>          g_buffer_light;
   oglplus::Lazy<oglplus::Uniform<math::vec3>>   light_dir;
-  oglplus::Lazy<oglplus::Uniform<math::vec3>>   light_color;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>   light_color;
 
   friend class Singleton<DirectionalLightShader>;
 

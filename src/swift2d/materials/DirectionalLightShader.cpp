@@ -25,7 +25,7 @@ DirectionalLightShader::DirectionalLightShader()
 
       // uniforms
       uniform vec3 light_dir;
-      uniform vec3 light_color;
+      uniform vec4 light_color;
 
       @include "gbuffer_input"
       @include "get_lit_surface_color"
@@ -42,7 +42,7 @@ DirectionalLightShader::DirectionalLightShader()
   , g_buffer_normal(get_uniform<int>("g_buffer_normal"))
   , g_buffer_light(get_uniform<int>("g_buffer_light"))
   , light_dir(get_uniform<math::vec3>("light_dir"))
-  , light_color(get_uniform<math::vec3>("light_color")) {}
+  , light_color(get_uniform<math::vec4>("light_color")) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 

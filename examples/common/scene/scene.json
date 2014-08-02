@@ -145,7 +145,7 @@
         {
             "Type": "SpriteComponent",
             "Enabled": "1",
-            "Transform": "(2 0 -15\n 0 2 5\n 0 0 1)",
+            "Transform": "(10 0 -15\n 0 10 5\n 0 0 1)",
             "Depth": "-3",
             "Material":
             {

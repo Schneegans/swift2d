@@ -34,6 +34,10 @@ class AnimatedProperty: public Property<T> {
     IN, OUT, IN_OUT, OUT_IN, LINEAR
   };
 
+  enum Loop {
+    NONE, REPEAT, TOGGLE
+  };
+
   // ----------------------------------------------------- contruction interface
   AnimatedProperty()
     : Property<T>()
@@ -54,9 +58,11 @@ class AnimatedProperty: public Property<T> {
     , exp_(0.0) {}
 
   AnimatedProperty(T const& start, T const& end, double duration = 1.0,
-                   Direction direction = IN_OUT, double exponent = 0.0)
+                   Direction direction = IN_OUT, Loop loop = NONE,
+                   double exponent = 0.0)
     : Property<T>(start)
     , direction_(direction)
+    , loop_(loop)
     , start_(start)
     , end_(end)
     , state_(0.0)
@@ -81,6 +87,10 @@ class AnimatedProperty: public Property<T> {
 
   void set_direction(Direction dir) {
     direction_ = dir;
+  }
+
+  void set_loop(Loop loop) {
+    loop_ = loop;
   }
 
   void update(double time) {
@@ -108,6 +118,14 @@ class AnimatedProperty: public Property<T> {
       Property<T>::set(end_);
       state_ = -1.0;
       on_finish_.emit();
+
+      if (loop_ == REPEAT) {
+        Property<T>::set(start_);
+        set(end_, duration_);
+
+      } else if (loop_ == TOGGLE) {
+        set(start_, duration_);
+      }
     }
   }
 
@@ -146,6 +164,7 @@ class AnimatedProperty: public Property<T> {
 
   Signal<> on_finish_;
   Direction direction_;
+  Loop loop_;
 
   T start_, end_;
   double state_;

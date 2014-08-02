@@ -42,7 +42,7 @@ void Explosion::update(double time) {
     auto mat = Material::create();
     mat->AnimatedDiffuseTexture.set(get_texture("explosion.png"));
     mat->Emit = 1.0;
-    mat->Glow = 0.0;
+    mat->Glow = 1.0;
     MaterialDatabase::instance()->add("explosion", mat);
   }
 
@@ -50,14 +50,23 @@ void Explosion::update(double time) {
     initialized_ = true;
 
     auto deleter = add<TimedDeleteBehavior>();
-         deleter->Life = 0.9f;
+         deleter->Life = 0.69f;
+
+    auto flash = add<PointLightComponent>();
+         flash->Texture = TextureDatabase::instance()->get("light");
+         flash->Transform = math::make_scale(5);
+         flash->Color = Color(1, 1, 0.6, 1);
 
     auto tex = add<AnimatedSpriteComponent>();
-         tex->Transform = math::make_scale(2);
+         tex->Transform = math::make_scale(1.5);
          tex->Depth = 0.1f;
          tex->Material.set(MaterialDatabase::instance()->get("explosion"));
-         tex->Time.set(1, 1);
+         tex->Time.set(1, 0.7);
          tex->Time.set_direction(AnimatedFloat::LINEAR);
+         tex->Time.on_change().connect([flash](float val){
+           auto c = flash->Color();
+           flash->Color = Color(c.r(), c.g(), c.b(), 0.7-val);
+         });
 
     for (int i(0); i<20; ++i) {
       float r(math::random::get(0.0f, 2*M_PI));
