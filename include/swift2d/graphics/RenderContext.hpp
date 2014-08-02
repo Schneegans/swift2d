@@ -30,6 +30,7 @@ struct RenderContext {
   bool        ready;
 
   mutable int upload_budget;
+  mutable int upload_remaining;
 };
 
 }

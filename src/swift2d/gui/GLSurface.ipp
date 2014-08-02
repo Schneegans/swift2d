@@ -47,6 +47,7 @@ class GLSurface : public Awesomium::Surface {
         --ctx.upload_budget;
          init(ctx);
       } else {
+        ++ctx.upload_remaining;
         return false;
       }
     }

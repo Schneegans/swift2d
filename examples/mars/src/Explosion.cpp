@@ -50,13 +50,13 @@ void Explosion::update(double time) {
     initialized_ = true;
 
     auto deleter = add<TimedDeleteBehavior>();
-         deleter->Life = 1.9f;
+         deleter->Life = 0.9f;
 
     auto tex = add<AnimatedSpriteComponent>();
          tex->Transform = math::make_scale(2);
          tex->Depth = 0.1f;
          tex->Material.set(MaterialDatabase::instance()->get("explosion"));
-         tex->Time.set(1, 2);
+         tex->Time.set(1, 1);
          tex->Time.set_direction(AnimatedFloat::LINEAR);
 
     for (int i(0); i<20; ++i) {

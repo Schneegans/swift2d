@@ -48,14 +48,14 @@ AnimatedTexture::AnimatedTexture(std::string const& file_name, unsigned tiles_x,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void AnimatedTexture::bind(RenderContext const& context, unsigned location) const {
+void AnimatedTexture::bind(RenderContext const& ctx, unsigned location) const {
 
   if (texture_) {
     texture_->Active(location);
-    context.gl.Bind(ose::_3D(), *texture_);
+    ctx.gl.Bind(ose::_3D(), *texture_);
   } else {
-    upload_to(context);
-    DefaultAnimatedTexture::instance()->bind(context, location);
+    upload_to(ctx);
+    DefaultAnimatedTexture::instance()->bind(ctx, location);
   }
 }
 
@@ -69,14 +69,14 @@ void AnimatedTexture::accept(SavableObjectVisitor& visitor) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void AnimatedTexture::upload_to(RenderContext const& context) const {
+void AnimatedTexture::upload_to(RenderContext const& ctx) const {
 
   if (!loading_) {
     load_texture_data();
   }
 
-  if (data_ && context.upload_budget > 0) {
-    context.upload_budget -= 1;
+  if (data_ && ctx.upload_budget > 0) {
+    --ctx.upload_budget;
     loading_ = false;
     needs_update_ = false;
 
@@ -94,7 +94,7 @@ void AnimatedTexture::upload_to(RenderContext const& context) const {
 
     texture_ = new ogl::Texture();
 
-    auto tex = context.gl.Bound(ose::_3D(), *texture_);
+    auto tex = ctx.gl.Bound(ose::_3D(), *texture_);
     tex.Image3D(0, internal_format, tile_width, tile_height, tile_count, 0,
                 format, ogl::DataType::UnsignedByte, nullptr);
 
@@ -137,6 +137,8 @@ void AnimatedTexture::upload_to(RenderContext const& context) const {
 
     free_texture_data();
 
+  } else {
+    ++ctx.upload_remaining;
   }
 }
 

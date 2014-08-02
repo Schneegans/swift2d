@@ -32,6 +32,7 @@ class Compositor {
   void draw_lights  (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
   void post_process (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
   void draw_gui     (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
+  void draw_loading (ConstSerializedScenePtr const& scene, RenderContext const& ctx);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

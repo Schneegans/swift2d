@@ -62,14 +62,14 @@ Texture::~Texture() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture::bind(RenderContext const& context, unsigned location) const {
+void Texture::bind(RenderContext const& ctx, unsigned location) const {
 
   if (texture_) {
     texture_->Active(location);
-    context.gl.Bind(ose::_2D(), *texture_);
+    ctx.gl.Bind(ose::_2D(), *texture_);
   } else {
-    upload_to(context);
-    DefaultTexture::instance()->bind(context, location);
+    upload_to(ctx);
+    DefaultTexture::instance()->bind(ctx, location);
   }
 }
 
@@ -81,14 +81,14 @@ void Texture::accept(SavableObjectVisitor& visitor) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture::upload_to(RenderContext const& context) const {
+void Texture::upload_to(RenderContext const& ctx) const {
 
   if (!loading_) {
     load_texture_data();
   }
 
-  if (data_ && context.upload_budget > 0) {
-    context.upload_budget -= 1;
+  if (data_ && ctx.upload_budget > 0) {
+    --ctx.upload_budget;
     loading_ = false;
     needs_update_ = false;
 
@@ -101,7 +101,7 @@ void Texture::upload_to(RenderContext const& context) const {
 
     texture_ = new ogl::Texture();
 
-    context.gl.Bound(ose::_2D(), *texture_)
+    ctx.gl.Bound(ose::_2D(), *texture_)
       .Image2D(0, internal_format, width_, height_, 0, format,
                ogl::DataType::UnsignedByte, data_)
       .GenerateMipmap()
@@ -111,6 +111,8 @@ void Texture::upload_to(RenderContext const& context) const {
       .WrapT(ose::Repeat());
 
     free_texture_data();
+  } else {
+    ++ctx.upload_remaining;
   }
 }
 

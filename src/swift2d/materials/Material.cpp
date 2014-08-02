@@ -55,6 +55,39 @@ Material::Material()
 void Material::draw_quad(RenderContext const& ctx, math::mat3 const& object_transform,
                                float object_depth, float time) {
 
+  draw_quad_impl(ctx, object_transform, ctx.projection_matrix, object_depth, time);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Material::draw_fullscreen_quad(RenderContext const& ctx, float time) {
+
+  draw_quad_impl(ctx, math::mat3(), math::mat3(), 1.0f, time);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Material::accept(SavableObjectVisitor& visitor) {
+  visitor.add_object("AnimatedDiffuseTexture", AnimatedDiffuseTexture);
+  visitor.add_object("DiffuseTexture", DiffuseTexture);
+  visitor.add_member("Diffuse", Diffuse);
+  visitor.add_object("NormalTexture", NormalTexture);
+  visitor.add_object("EmitTexture", EmitTexture);
+  visitor.add_member("Emit", Emit);
+  visitor.add_object("GlowTexture", GlowTexture);
+  visitor.add_member("Glow", Glow);
+  visitor.add_object("ShinynessTexture", ShinynessTexture);
+  visitor.add_member("Shinyness", Shinyness);
+  visitor.add_member("BlendAdditive", BlendAdditive);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Material::draw_quad_impl(RenderContext const& ctx,
+                              math::mat3 const& object_transform,
+                              math::mat3 const& projection, float object_depth,
+                              float time) {
+
   if (current_shader_dirty_) {
     current_shader_dirty_ = false;
 
@@ -104,7 +137,7 @@ void Material::draw_quad(RenderContext const& ctx, math::mat3 const& object_tran
   }
 
   current_shader_->use(ctx);
-  current_shader_->projection.Set(ctx.projection_matrix);
+  current_shader_->projection.Set(projection);
   current_shader_->transform.Set(object_transform);
   current_shader_->depth.Set(object_depth);
   current_shader_->parallax.Set(ctx.projection_parallax);
@@ -169,7 +202,6 @@ void Material::draw_quad(RenderContext const& ctx, math::mat3 const& object_tran
   current_shader_->shinyness.Set(Shinyness());
 
   if (needs_time) {
-    // std::cout << time << std::endl;
     current_shader_->time.Set(time);
   }
 
@@ -180,22 +212,6 @@ void Material::draw_quad(RenderContext const& ctx, math::mat3 const& object_tran
   } else {
     Quad::instance()->draw(ctx);
   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Material::accept(SavableObjectVisitor& visitor) {
-  visitor.add_object("AnimatedDiffuseTexture", AnimatedDiffuseTexture);
-  visitor.add_object("DiffuseTexture", DiffuseTexture);
-  visitor.add_member("Diffuse", Diffuse);
-  visitor.add_object("NormalTexture", NormalTexture);
-  visitor.add_object("EmitTexture", EmitTexture);
-  visitor.add_member("Emit", Emit);
-  visitor.add_object("GlowTexture", GlowTexture);
-  visitor.add_member("Glow", Glow);
-  visitor.add_object("ShinynessTexture", ShinynessTexture);
-  visitor.add_member("Shinyness", Shinyness);
-  visitor.add_member("BlendAdditive", BlendAdditive);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
