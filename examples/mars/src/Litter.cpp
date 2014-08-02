@@ -30,11 +30,11 @@ void Litter::update(double time) {
   if (!assets_loaded_) {
     assets_loaded_ = true;
 
-    auto mat = SpriteMaterial::create();
+    auto mat = Material::create();
     mat->Diffuse = Color(1, 0.8, 0.3, 1.0);
     mat->Emit = 1;
     mat->Glow = 1;
-    SpriteMaterialDatabase::instance()->add("litter", mat);
+    MaterialDatabase::instance()->add("litter", mat);
 
     smoke_ = SceneManager::instance()->get_default()->add<PointParticleSystemComponent>();
     smoke_->Depth = -0.01f;
@@ -50,7 +50,7 @@ void Litter::update(double time) {
 
     auto tex = add<SpriteComponent>();
     tex->Depth = 0.0f;
-    tex->Material = SpriteMaterialDatabase::instance()->get("litter");
+    tex->Material = MaterialDatabase::instance()->get("litter");
 
     auto emitter = add<ParticleEmitterComponent>();
          emitter->Density = 50;

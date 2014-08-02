@@ -7,16 +7,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/SpriteMaterial.hpp>
+#include <swift2d/materials/Material.hpp>
 
 #include <swift2d/geometries/Quad.hpp>
-#include <swift2d/materials/SpriteShaderFactory.hpp>
+#include <swift2d/materials/MaterialShaderFactory.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SpriteMaterial::SpriteMaterial()
+Material::Material()
   : Diffuse(Color(1, 1, 1))
   , Emit(1.0)
   , Glow(0.0)
@@ -52,7 +52,7 @@ SpriteMaterial::SpriteMaterial()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& object_transform,
+void Material::draw_quad(RenderContext const& ctx, math::mat3 const& object_transform,
                                float object_depth, float time) {
 
   if (current_shader_dirty_) {
@@ -61,46 +61,46 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
     int capabilities(0);
 
     if (AnimatedDiffuseTexture()) {
-      capabilities |= SpriteShaderFactory::ANIMATED_DIFFUSE_TEX;
+      capabilities |= MaterialShaderFactory::ANIMATED_DIFFUSE_TEX;
     }
 
     if (DiffuseTexture()) {
-      capabilities |= SpriteShaderFactory::DIFFUSE_TEX;
+      capabilities |= MaterialShaderFactory::DIFFUSE_TEX;
     }
 
     if (AnimatedNormalTexture()) {
-      capabilities |= SpriteShaderFactory::ANIMATED_NORMAL_TEX;
+      capabilities |= MaterialShaderFactory::ANIMATED_NORMAL_TEX;
     }
 
     if (NormalTexture()) {
-      capabilities |= SpriteShaderFactory::NORMAL_TEX;
+      capabilities |= MaterialShaderFactory::NORMAL_TEX;
     }
 
     if (AnimatedEmitTexture()) {
-      capabilities |= SpriteShaderFactory::ANIMATED_EMIT_TEX;
+      capabilities |= MaterialShaderFactory::ANIMATED_EMIT_TEX;
     }
 
     if (EmitTexture()) {
-      capabilities |= SpriteShaderFactory::EMIT_TEX;
+      capabilities |= MaterialShaderFactory::EMIT_TEX;
     }
 
     if (AnimatedGlowTexture()) {
-      capabilities |= SpriteShaderFactory::ANIMATED_GLOW_TEX;
+      capabilities |= MaterialShaderFactory::ANIMATED_GLOW_TEX;
     }
 
     if (GlowTexture()) {
-      capabilities |= SpriteShaderFactory::GLOW_TEX;
+      capabilities |= MaterialShaderFactory::GLOW_TEX;
     }
 
     if (AnimatedShinynessTexture()) {
-      capabilities |= SpriteShaderFactory::ANIMATED_SHINYNESS_TEX;
+      capabilities |= MaterialShaderFactory::ANIMATED_SHINYNESS_TEX;
     }
 
     if (ShinynessTexture()) {
-      capabilities |= SpriteShaderFactory::SHINYNESS_TEX;
+      capabilities |= MaterialShaderFactory::SHINYNESS_TEX;
     }
 
-    current_shader_ = SpriteShaderFactory::instance()->get_shader(capabilities);
+    current_shader_ = MaterialShaderFactory::instance()->get_shader(capabilities);
   }
 
   current_shader_->use(ctx);
@@ -184,7 +184,7 @@ void SpriteMaterial::draw_quad(RenderContext const& ctx, math::mat3 const& objec
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SpriteMaterial::accept(SavableObjectVisitor& visitor) {
+void Material::accept(SavableObjectVisitor& visitor) {
   visitor.add_object("AnimatedDiffuseTexture", AnimatedDiffuseTexture);
   visitor.add_object("DiffuseTexture", DiffuseTexture);
   visitor.add_member("Diffuse", Diffuse);

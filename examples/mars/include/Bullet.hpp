@@ -39,7 +39,7 @@ class Bullet: public SceneObject {
 
     auto tex = add<SpriteComponent>();
          tex->Depth = 0.0f;
-         tex->Material = SpriteMaterialDatabase::instance()->get("bullet");
+         tex->Material = MaterialDatabase::instance()->get("bullet");
          tex->Transform = math::make_scale(1.0f);
 
     auto emitter = add<ParticleEmitterComponent>();

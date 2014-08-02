@@ -12,7 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/DrawableComponent.hpp>
 #include <swift2d/geometries/Quad.hpp>
-#include <swift2d/materials/SpriteMaterial.hpp>
+#include <swift2d/materials/Material.hpp>
 
 namespace swift {
 
@@ -33,8 +33,8 @@ class SpriteComponent : public DrawableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float                  Depth;
-  SpriteMaterialProperty Material;
+  Float            Depth;
+  MaterialProperty Material;
 
   // ----------------------------------------------------- contruction interface
   SpriteComponent();

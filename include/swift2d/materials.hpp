@@ -10,8 +10,6 @@
 #define SWIFT2D_INCLUDE_MATERIALS_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/PointLightMaterial.hpp>
-#include <swift2d/materials/DirectionalLightMaterial.hpp>
-#include <swift2d/materials/SpriteMaterial.hpp>
+#include <swift2d/materials/Material.hpp>
 
 #endif // SWIFT2D_INCLUDE_MATERIALS_HPP

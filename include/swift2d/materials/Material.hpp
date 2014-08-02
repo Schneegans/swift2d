@@ -6,12 +6,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SPRITE_MATERIAL_HPP
-#define SWIFT2D_SPRITE_MATERIAL_HPP
+#ifndef SWIFT2D_MATERIAL_HPP
+#define SWIFT2D_MATERIAL_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/SavableObject.hpp>
-#include <swift2d/materials/SpriteShader.hpp>
+#include <swift2d/materials/MaterialShader.hpp>
 #include <swift2d/utils/Color.hpp>
 #include <swift2d/textures/AnimatedTexture.hpp>
 #include <swift2d/textures/Texture.hpp>
@@ -23,13 +23,13 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class SpriteMaterial;
-typedef std::shared_ptr<SpriteMaterial>       SpriteMaterialPtr;
-typedef std::shared_ptr<const SpriteMaterial> ConstSpriteMaterialPtr;
-typedef Property<SpriteMaterialPtr>           SpriteMaterialProperty;
+class Material;
+typedef std::shared_ptr<Material>       MaterialPtr;
+typedef std::shared_ptr<const Material> ConstMaterialPtr;
+typedef Property<MaterialPtr>           MaterialProperty;
 
 // -----------------------------------------------------------------------------
-class SpriteMaterial : public SavableObject {
+class Material : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -58,21 +58,21 @@ class SpriteMaterial : public SavableObject {
   Bool                    BlendAdditive;
 
   // ----------------------------------------------------- contruction interface
-  SpriteMaterial();
+  Material();
 
   // Creates a new material and returns a shared pointer.
-  static SpriteMaterialPtr create() {
-    return std::make_shared<SpriteMaterial>();
+  static MaterialPtr create() {
+    return std::make_shared<Material>();
   }
 
   // creates a copy from this
-  SpriteMaterialPtr create_copy() const {
-    return std::make_shared<SpriteMaterial>(*this);
+  MaterialPtr create_copy() const {
+    return std::make_shared<Material>(*this);
   }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "SpriteMaterial"; }
+  static  std::string get_type_name_static() { return "Material"; }
 
   // uses the Material on the given context.
   /* virtual */ void draw_quad(RenderContext const& ctx,
@@ -84,12 +84,12 @@ class SpriteMaterial : public SavableObject {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  bool            current_shader_dirty_;
-  SpriteShaderPtr current_shader_;
+  bool              current_shader_dirty_;
+  MaterialShaderPtr current_shader_;
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_SPRITE_MATERIAL_HPP
+#endif // SWIFT2D_MATERIAL_HPP

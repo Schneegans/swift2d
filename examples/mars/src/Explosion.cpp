@@ -39,11 +39,11 @@ void Explosion::update(double time) {
       return tex;
     };
 
-    auto mat = SpriteMaterial::create();
+    auto mat = Material::create();
     mat->AnimatedDiffuseTexture.set(get_texture("explosion.png"));
     mat->Emit = 1.0;
     mat->Glow = 0.0;
-    SpriteMaterialDatabase::instance()->add("explosion", mat);
+    MaterialDatabase::instance()->add("explosion", mat);
   }
 
   if (!initialized_) {
@@ -55,7 +55,7 @@ void Explosion::update(double time) {
     auto tex = add<AnimatedSpriteComponent>();
          tex->Transform = math::make_scale(2);
          tex->Depth = 0.1f;
-         tex->Material.set(SpriteMaterialDatabase::instance()->get("explosion"));
+         tex->Material.set(MaterialDatabase::instance()->get("explosion"));
          tex->Time.set(1, 2);
          tex->Time.set_direction(AnimatedFloat::LINEAR);
 

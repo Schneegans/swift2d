@@ -6,61 +6,59 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_DIRECTIONAL_LIGHT_MATERIAL_HPP
-#define SWIFT2D_DIRECTIONAL_LIGHT_MATERIAL_HPP
+#ifndef SWIFT2D_DIRECTIONAL_LIGHT_COMPONENT_HPP
+#define SWIFT2D_DIRECTIONAL_LIGHT_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/LightMaterial.hpp>
-#include <swift2d/materials/DirectionalLightShader.hpp>
-#include <swift2d/databases/TextureDatabase.hpp>
+#include <swift2d/components/DrawableComponent.hpp>
+#include <swift2d/geometries/Quad.hpp>
 #include <swift2d/textures/Texture.hpp>
 #include <swift2d/utils/Color.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class DirectionalLightMaterial;
-typedef std::shared_ptr<DirectionalLightMaterial>       DirectionalLightMaterialPtr;
-typedef std::shared_ptr<const DirectionalLightMaterial> ConstDirectionalLightMaterialPtr;
-typedef Property<DirectionalLightMaterialPtr>           DirectionalLightMaterialProperty;
+class DirectionalLightComponent;
+typedef std::shared_ptr<DirectionalLightComponent>       DirectionalLightComponentPtr;
+typedef std::shared_ptr<const DirectionalLightComponent> ConstDirectionalLightComponentPtr;
 
 // -----------------------------------------------------------------------------
-class DirectionalLightMaterial : public LightMaterial {
+class DirectionalLightComponent : public DrawableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ---------------------------------------------------------------- properties
+  Float         Depth;
   Vec3          Direction;
   ColorProperty Color;
 
   // ----------------------------------------------------- contruction interface
-  DirectionalLightMaterial(math::vec3 const& dir = math::vec3(0.f, 0.f, -1.f),
-                           swift::Color const& color = swift::Color(1.f, 1.f, 1.f));
+  DirectionalLightComponent();
 
-  // Creates a new material and returns a shared pointer.
+  // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static DirectionalLightMaterialPtr create(Args&& ... a) {
-    return std::make_shared<DirectionalLightMaterial>(a...);
+  static DirectionalLightComponentPtr create(Args&& ... a) {
+    return std::make_shared<DirectionalLightComponent>(a...);
   }
 
   // creates a copy from this
-  DirectionalLightMaterialPtr create_copy() const {
-    return std::make_shared<DirectionalLightMaterial>(*this);
+  DirectionalLightComponentPtr create_copy() const {
+    return std::make_shared<DirectionalLightComponent>(*this);
   }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "DirectionalLightMaterial"; }
+  static  std::string get_type_name_static() { return "DirectionalLightComponent"; }
 
-  // uses the Material on the given context.
-  /* virtual */ void draw_quad(RenderContext const& ctx,
-                               math::mat3 const& object_transform,
-                               float object_depth);
+  void draw(RenderContext const& ctx);
+
+  void serialize(SerializedScenePtr& scene) const;
 
   virtual void accept(SavableObjectVisitor& visitor);
 };
@@ -69,4 +67,4 @@ class DirectionalLightMaterial : public LightMaterial {
 
 }
 
-#endif // SWIFT2D_DIRECTIONAL_LIGHT_MATERIAL_HPP
+#endif  // SWIFT2D_DIRECTIONAL_LIGHT_COMPONENT_HPP

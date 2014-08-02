@@ -44,7 +44,7 @@ void Planet::update(double time) {
       return tex;
     };
 
-    auto mat = SpriteMaterial::create();
+    auto mat = Material::create();
     mat->DiffuseTexture = get_texture(DiffuseTex());
     mat->NormalTexture = get_texture(NormalTex());
     mat->EmitTexture = get_texture(EmitTex());

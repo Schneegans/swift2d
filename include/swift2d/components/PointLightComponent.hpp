@@ -6,71 +6,61 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_POINT_LIGHT_MATERIAL_HPP
-#define SWIFT2D_POINT_LIGHT_MATERIAL_HPP
+#ifndef SWIFT2D_POINT_LIGHT_COMPONENT_HPP
+#define SWIFT2D_POINT_LIGHT_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/LightMaterial.hpp>
-#include <swift2d/materials/PointLightShader.hpp>
-#include <swift2d/databases/TextureDatabase.hpp>
+#include <swift2d/components/DrawableComponent.hpp>
+#include <swift2d/geometries/Quad.hpp>
 #include <swift2d/textures/Texture.hpp>
 #include <swift2d/utils/Color.hpp>
+
+#include <iostream>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class PointLightMaterial;
-typedef std::shared_ptr<PointLightMaterial>       PointLightMaterialPtr;
-typedef std::shared_ptr<const PointLightMaterial> ConstPointLightMaterialPtr;
-typedef Property<PointLightMaterialPtr>           PointLightMaterialProperty;
+class PointLightComponent;
+typedef std::shared_ptr<PointLightComponent>       PointLightComponentPtr;
+typedef std::shared_ptr<const PointLightComponent> ConstPointLightComponentPtr;
 
 // -----------------------------------------------------------------------------
-class PointLightMaterial : public LightMaterial {
+class PointLightComponent : public DrawableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ---------------------------------------------------------------- properties
+  Float           Depth;
   TextureProperty Texture;
   ColorProperty   Color;
 
   // ----------------------------------------------------- contruction interface
-  PointLightMaterial();
+  PointLightComponent();
 
-  // Creates a new material and returns a shared pointer.
-  static PointLightMaterialPtr create() {
-    return std::make_shared<PointLightMaterial>();
-  }
-
-  static PointLightMaterialPtr create_from_file(std::string const& file) {
-    auto mat(std::make_shared<PointLightMaterial>());
-    mat->Texture = Texture::create(file);
-    return mat;
-  }
-
-  static PointLightMaterialPtr create_from_database(std::string const& id) {
-    auto mat(std::make_shared<PointLightMaterial>());
-    mat->Texture = TextureDatabase::instance()->get(id);
-    return mat;
+  // Creates a new component and returns a shared pointer.
+  template <typename... Args>
+  static PointLightComponentPtr create(Args&& ... a) {
+    return std::make_shared<PointLightComponent>(a...);
   }
 
   // creates a copy from this
-  PointLightMaterialPtr create_copy() const {
-    return std::make_shared<PointLightMaterial>(*this);
+  PointLightComponentPtr create_copy() const {
+    return std::make_shared<PointLightComponent>(*this);
   }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "PointLightMaterial"; }
+  static  std::string get_type_name_static() { return "PointLightComponent"; }
 
-  // uses the Material on the given context.
-  /* virtual */ void draw_quad(RenderContext const& ctx,
-                               math::mat3 const& object_transform,
-                               float object_depth);
+  void draw(RenderContext const& ctx);
+
+  void serialize(SerializedScenePtr& scene) const;
 
   virtual void accept(SavableObjectVisitor& visitor);
 };
@@ -79,4 +69,4 @@ class PointLightMaterial : public LightMaterial {
 
 }
 
-#endif // SWIFT2D_POINT_LIGHT_MATERIAL_HPP
+#endif  // SWIFT2D_POINT_LIGHT_COMPONENT_HPP

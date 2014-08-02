@@ -7,13 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/SpriteShader.hpp>
+#include <swift2d/materials/MaterialShader.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SpriteShader::SpriteShader(int capabilities, std::string const& v_source,
+MaterialShader::MaterialShader(int capabilities, std::string const& v_source,
                            std::string const& f_source)
   : Shader(v_source, f_source)
   , projection(get_uniform<math::mat3>("projection"))

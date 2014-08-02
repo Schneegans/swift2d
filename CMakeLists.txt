@@ -26,7 +26,6 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 find_package(GLFW3 REQUIRED)
 
-#pkg_check_modules(GLFW          REQUIRED glfw3)
 pkg_check_modules(GLEW    REQUIRED glew)
 pkg_check_modules(PNG     REQUIRED libpng)
 pkg_check_modules(OPENAL  REQUIRED openal)
@@ -34,7 +33,6 @@ pkg_check_modules(SNDFILE REQUIRED sndfile)
 pkg_check_modules(ALUT    REQUIRED freealut)
 pkg_check_modules(OPENGL  REQUIRED gl)
 # pkg_check_modules(BOX2D   REQUIRED box2d)
-# pkg_check_modules(TAG     REQUIRED taglib)
 
 set(BOOST_ROOT "/opt/boost/boost_1_55_0")
 set(Boost_USE_STATIC_LIBS OFF)
@@ -43,65 +41,65 @@ set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost REQUIRED COMPONENTS thread system filesystem)
 
 set(LIBS
-    ${GLFW_LIBRARIES}
-    ${Boost_LIBRARIES}
-    ${GLEW_LIBRARIES}
-    ${PNG_LIBRARIES}
-    ${OPENAL_LIBRARIES}
-    ${SNDFILE_LIBRARIES}
-    ${ALUT_LIBRARIES}
-    ${OPENGL_LIBRARIES}
-    ${BOX2D_LIBRARIES}
-    miniupnpc
-    awesomium-1-7
-    Xxf86vm
-    Box2D
+  ${GLFW_LIBRARIES}
+  ${Boost_LIBRARIES}
+  ${GLEW_LIBRARIES}
+  ${PNG_LIBRARIES}
+  ${OPENAL_LIBRARIES}
+  ${SNDFILE_LIBRARIES}
+  ${ALUT_LIBRARIES}
+  ${OPENGL_LIBRARIES}
+  ${BOX2D_LIBRARIES}
+  miniupnpc
+  awesomium-1-7
+  Xxf86vm
+  Box2D
 )
 link_libraries(${LIBS})
 
 set(LIB_PATHS
-    ${GLFW_LIBRARY_DIRS}
-    ${Boost_LIBRARY_DIRS}
-    ${GLEW_LIBRARY_DIRS}
-    ${PNG_LIBRARY_DIRS}
-    ${OPENAL_LIBRARY_DIRS}
-    ${SNDFILE_LIBRARY_DIRS}
-    ${ALUT_LIBRARY_DIRS}
-    ${OPENGL_LIBRARY_DIRS}
-    ${BOX2D_LIBRARY_DIRS}
+  ${GLFW_LIBRARY_DIRS}
+  ${Boost_LIBRARY_DIRS}
+  ${GLEW_LIBRARY_DIRS}
+  ${PNG_LIBRARY_DIRS}
+  ${OPENAL_LIBRARY_DIRS}
+  ${SNDFILE_LIBRARY_DIRS}
+  ${ALUT_LIBRARY_DIRS}
+  ${OPENGL_LIBRARY_DIRS}
+  ${BOX2D_LIBRARY_DIRS}
 )
 link_directories(${LIB_PATHS})
 
 set(OWN_INCLUDE_PATHS
-    ${CMAKE_CURRENT_SOURCE_DIR}/build
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party
+  ${CMAKE_CURRENT_SOURCE_DIR}/build
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party
 )
 include_directories(${OWN_INCLUDE_PATHS})
 
 set(INCLUDE_PATHS
-    ${GLFW_INCLUDE_DIRS}
-    ${Boost_INCLUDE_DIRS}
-    ${GLEW_INCLUDE_DIRS}
-    ${PNG_INCLUDE_DIRS}
-    ${OPENAL_INCLUDE_DIRS}
-    ${SNDFILE_INCLUDE_DIRS}
-    ${ALUT_INCLUDE_DIRS}
-    ${OPENGL_INCLUDE_DIRS}
-    ${BOX2D_INCLUDE_DIRS}
+  ${GLFW_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
+  ${GLEW_INCLUDE_DIRS}
+  ${PNG_INCLUDE_DIRS}
+  ${OPENAL_INCLUDE_DIRS}
+  ${SNDFILE_INCLUDE_DIRS}
+  ${ALUT_INCLUDE_DIRS}
+  ${OPENGL_INCLUDE_DIRS}
+  ${BOX2D_INCLUDE_DIRS}
 )
 include_directories(SYSTEM ${INCLUDE_PATHS})
 
 if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "release")
+  set(CMAKE_BUILD_TYPE "release")
 endif()
 
 IF(CMAKE_BUILD_TYPE MATCHES "release")
-    add_definitions(-DOGLPLUS_LOW_PROFILE)
-    set(CMAKE_CXX_FLAGS "-s -Ofast --std=c++0x")
+  add_definitions(-DOGLPLUS_LOW_PROFILE)
+  set(CMAKE_CXX_FLAGS "-s -Ofast --std=c++0x")
 ELSE(CMAKE_BUILD_TYPE MATCHES "release")
-    set(CMAKE_CXX_FLAGS "-g -Wall --std=c++0x")
+  set(CMAKE_CXX_FLAGS "-g -Wall --std=c++0x")
 ENDIF(CMAKE_BUILD_TYPE MATCHES "release")
 
 ################################################################
@@ -117,7 +115,6 @@ add_subdirectory(src)
 # Create examples
 ################################################################
 
-add_subdirectory(examples/simple)
 add_subdirectory(examples/network)
 add_subdirectory(examples/mars)
 

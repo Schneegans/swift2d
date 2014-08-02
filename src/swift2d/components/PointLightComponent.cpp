@@ -7,32 +7,32 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/PointLightMaterial.hpp>
+#include <swift2d/components/PointLightComponent.hpp>
 
+#include <swift2d/materials/PointLightShader.hpp>
 #include <swift2d/geometries/Quad.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-PointLightMaterial::PointLightMaterial()
-  : Color(swift::Color(1.f, 1.f, 1.f)) {}
+PointLightComponent::PointLightComponent()
+  : Depth(0.f)
+  , Color(swift::Color(1.f, 1.f, 1.f)) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void PointLightMaterial::draw_quad(RenderContext const& ctx,
-                               math::mat3 const& object_transform,
-                               float object_depth) {
+void PointLightComponent::draw(RenderContext const& ctx) {
 
   // disable rotation
-  auto transform(math::make_translation(math::get_translation(object_transform)));
-  transform = transform * math::make_scale(math::get_scale(object_transform));
+  auto transform(math::make_translation(math::get_translation(WorldTransform())));
+  transform = transform * math::make_scale(math::get_scale(WorldTransform()));
 
   Texture()->bind(ctx, 0);
   PointLightShader::instance()->use(ctx);
   PointLightShader::instance()->projection.Set(ctx.projection_matrix);
   PointLightShader::instance()->transform.Set(transform);
-  PointLightShader::instance()->depth.Set(object_depth);
+  PointLightShader::instance()->depth.Set(Depth());
   PointLightShader::instance()->parallax.Set(ctx.projection_parallax);
   PointLightShader::instance()->screen_size.Set(ctx.size);
   PointLightShader::instance()->g_buffer_diffuse.Set(1);
@@ -46,8 +46,15 @@ void PointLightMaterial::draw_quad(RenderContext const& ctx,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void PointLightMaterial::accept(SavableObjectVisitor& visitor) {
-  LightMaterial::accept(visitor);
+void PointLightComponent::serialize(SerializedScenePtr& scene) const {
+  scene->lights.insert(std::make_pair(Depth.get(), create_copy()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void PointLightComponent::accept(SavableObjectVisitor& visitor) {
+  DrawableComponent::accept(visitor);
+  visitor.add_member("Depth", Depth);
   visitor.add_object("Texture", Texture);
   visitor.add_member("Color", Color);
 }

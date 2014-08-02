@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SPRITE_SHADER_HPP
-#define SWIFT2D_SPRITE_SHADER_HPP
+#ifndef SWIFT2D_MATERIAL_SHADER_HPP
+#define SWIFT2D_MATERIAL_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Shader.hpp>
@@ -21,12 +21,12 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class SpriteShader;
-typedef std::shared_ptr<SpriteShader>       SpriteShaderPtr;
-typedef std::shared_ptr<const SpriteShader> ConstSpriteShaderPtr;
+class MaterialShader;
+typedef std::shared_ptr<MaterialShader>       MaterialShaderPtr;
+typedef std::shared_ptr<const MaterialShader> ConstMaterialShaderPtr;
 
 // -----------------------------------------------------------------------------
-class SpriteShader : public Shader {
+class MaterialShader : public Shader {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -36,12 +36,12 @@ class SpriteShader : public Shader {
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static SpriteShaderPtr create(Args&& ... a) {
-    return std::make_shared<SpriteShader>(a...);
+  static MaterialShaderPtr create(Args&& ... a) {
+    return std::make_shared<MaterialShader>(a...);
   }
 
-  SpriteShader(int capabilities, std::string const& v_source,
-               std::string const& f_source);
+  MaterialShader(int capabilities, std::string const& v_source,
+                  std::string const& f_source);
 
   // ------------------------------------------------------------------ uniforms
   oglplus::Lazy<oglplus::Uniform<math::mat3>>  projection;
@@ -65,4 +65,4 @@ class SpriteShader : public Shader {
 
 }
 
-#endif // SWIFT2D_SPRITE_SHADER_HPP
+#endif // SWIFT2D_MATERIAL_SHADER_HPP

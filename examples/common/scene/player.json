@@ -48,29 +48,13 @@
             }
         },
         {
-            "Type": "LightComponent",
-            "Enabled": "1",
-            "Transform": "(6 0 0\n 0 6 0\n 0 0 1)",
-            "Depth": "-0.1",
-            "Material":
-            {
-                "Type": "PointLightMaterial",
-                "Texture":
-                {
-                    "Type": "Texture",
-                    "FileName": "images\/light.png"
-                },
-                "Color": "(1 1 1)"
-            }
-        },
-        {
             "Type": "SpriteComponent",
             "Enabled": "1",
             "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
             "Depth": "0",
             "Material":
             {
-                "Type": "SpriteMaterial",
+                "Type": "Material",
                 "DiffuseTexture":
                 {
                     "Type": "Texture",

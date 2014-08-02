@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/materials/SpriteShaderFactory.hpp>
+#include <swift2d/materials/MaterialShaderFactory.hpp>
 
 #include <swift2d/utils/Logger.hpp>
 
@@ -17,7 +17,7 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SpriteShaderPtr SpriteShaderFactory::get_shader(int capabilities) {
+MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
   auto shader(shaders_.find(capabilities));
 
   if (shader != shaders_.end()) {
@@ -131,7 +131,7 @@ SpriteShaderPtr SpriteShaderFactory::get_shader(int capabilities) {
     }
   )";
 
-  auto new_shader = SpriteShader::create(capabilities, v_shader, f_shader.str());
+  auto new_shader = MaterialShader::create(capabilities, v_shader, f_shader.str());
   shaders_[capabilities] = new_shader;
 
   return new_shader;
