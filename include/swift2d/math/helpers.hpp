@@ -12,6 +12,8 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/math/types.hpp>
 
+#include <algorithm>
+
 namespace swift {
 namespace math {
 

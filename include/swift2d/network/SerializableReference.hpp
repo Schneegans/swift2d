@@ -19,7 +19,6 @@
 
 #include <raknet/src/VariableDeltaSerializer.h>
 
-#include <iostream>
 
 namespace swift {
 

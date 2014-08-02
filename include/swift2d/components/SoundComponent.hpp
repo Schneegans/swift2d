@@ -13,7 +13,6 @@
 #include <swift2d/components/TransformableComponent.hpp>
 #include <swift2d/audio/Sound.hpp>
 #include <swift2d/openal.hpp>
-#include <iostream>
 
 namespace swift {
 

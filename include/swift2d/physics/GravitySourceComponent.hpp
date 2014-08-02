@@ -11,7 +11,6 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/TransformableComponent.hpp>
-#include <iostream>
 
 // forward declares ------------------------------------------------------------
 class b2Body;

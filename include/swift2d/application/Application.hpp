@@ -10,7 +10,9 @@
 #define SWIFT2D_APPLICATION_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/swift2d.hpp>
+#include <swift2d/utils/Singleton.hpp>
+
+#include <boost/asio.hpp>
 
 namespace swift {
 

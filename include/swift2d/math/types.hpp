@@ -16,21 +16,21 @@ namespace swift {
 namespace math {
 
 // typedefs  -------------------------------------------------------------------
-typedef oglplus::Mat2f mat2;
-typedef oglplus::Mat3f mat3;
-typedef oglplus::Mat4f mat4;
+typedef oglplus::Matrix<float, 2, 2> mat2;
+typedef oglplus::Matrix<float, 3, 3> mat3;
+typedef oglplus::Matrix<float, 4, 4> mat4;
 
-typedef oglplus::Vec2f vec2;
-typedef oglplus::Vec3f vec3;
-typedef oglplus::Vec4f vec4;
+typedef oglplus::Vector<float, 2> vec2;
+typedef oglplus::Vector<float, 3> vec3;
+typedef oglplus::Vector<float, 4> vec4;
 
-typedef oglplus::Vector<GLint, 2> vec2i;
-typedef oglplus::Vector<GLint, 3> vec3i;
-typedef oglplus::Vector<GLint, 4> vec4i;
+typedef oglplus::Vector<int, 2> vec2i;
+typedef oglplus::Vector<int, 3> vec3i;
+typedef oglplus::Vector<int, 4> vec4i;
 
-typedef oglplus::Vector<GLuint, 2> vec2ui;
-typedef oglplus::Vector<GLuint, 3> vec3ui;
-typedef oglplus::Vector<GLuint, 4> vec4ui;
+typedef oglplus::Vector<unsigned, 2> vec2ui;
+typedef oglplus::Vector<unsigned, 3> vec3ui;
+typedef oglplus::Vector<unsigned, 4> vec4ui;
 
 }
 }

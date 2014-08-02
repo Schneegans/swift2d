@@ -9,7 +9,7 @@
 #ifndef SWIFT2D_LOGGER_HPP
 #define SWIFT2D_LOGGER_HPP
 
-#include <iostream>
+#include <iosfwd>
 
 namespace swift {
 

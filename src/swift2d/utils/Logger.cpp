@@ -10,6 +10,7 @@
 #include <swift2d/utils/Logger.hpp>
 
 #include <sstream>
+#include <iostream>
 #include <boost/iostreams/stream.hpp>
 
 #define PRINT_RED "\x001b[0;31m"

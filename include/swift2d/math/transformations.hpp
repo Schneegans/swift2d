@@ -10,7 +10,6 @@
 #define SWIFT2D_MATH_TRANSFORMATIONS_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/opengl.hpp>
 #include <swift2d/math/types.hpp>
 
 namespace swift {

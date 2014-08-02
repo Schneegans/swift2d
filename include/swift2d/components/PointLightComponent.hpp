@@ -15,8 +15,6 @@
 #include <swift2d/textures/Texture.hpp>
 #include <swift2d/utils/Color.hpp>
 
-#include <iostream>
-
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////

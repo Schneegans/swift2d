@@ -8,6 +8,8 @@
 
 #include <swift2d/utils/Object.hpp>
 
+#include <iostream>
+
 namespace swift {
 
 std::unordered_map<std::string, std::function<ObjectPtr()>> Object::factory_;
