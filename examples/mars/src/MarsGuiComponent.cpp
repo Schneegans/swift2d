@@ -20,7 +20,7 @@ MarsGuiComponent::MarsGuiComponent(
 
   if (hidable) {
     Enabled = false;
-    Active = false;
+    Interactive = false;
   }
 
   on_loaded.connect([&](){
@@ -76,7 +76,7 @@ bool MarsGuiComponent::is_visible() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 void MarsGuiComponent::update(double time) {
-  if (Enabled() && visible_ && Active()) {
+  if (Enabled() && visible_ && Interactive()) {
     swift::GuiComponent::update(time);
   }
 

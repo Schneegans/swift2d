@@ -19,10 +19,10 @@ GuiComponent::GuiComponent()
   , Size(math::vec2i(10,10))
   , Anchor(math::vec2i(0,0))
   , gui_element_(GuiElement::create(this))
-  , Active(true) {
+  , Interactive(true) {
 
-  Active.on_change().connect([&](bool val){
-    gui_element_->set_active(val);
+  Interactive.on_change().connect([&](bool val){
+    gui_element_->set_interactive(val);
   });
 }
 
@@ -71,7 +71,7 @@ void GuiComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Size", Size);
   visitor.add_member("Anchor", Anchor);
   visitor.add_member("Offset", Offset);
-  visitor.add_member("Active", Active);
+  visitor.add_member("Interactive", Interactive);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -72,7 +72,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   math::scale(view_matrix, scene->camera->Size.get());
   window_->get_context().projection_matrix = math::inversed(view_matrix);
   window_->get_context().projection_parallax = scene->camera->Parallax();
-  window_->get_context().upload_budget = 2;
+  window_->get_context().upload_budget = 1;
   window_->get_context().upload_remaining = 0;
 
   // compute gravity

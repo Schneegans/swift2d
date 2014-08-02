@@ -38,7 +38,7 @@ GuiElement::GuiElement(GuiComponent* parent)
   : view_(nullptr)
   , callbacks_(5)
   , parent_(parent)
-  , active_(true) {
+  , interactive_(true) {
 
   view_ = Interface::instance()->create_webview(parent_->Size().x(), parent_->Size().y());
   view_->SetTransparent(true);
@@ -51,7 +51,7 @@ GuiElement::GuiElement(GuiComponent* parent)
   auto window = WindowManager::instance()->get_default();
 
   callbacks_[0] = window->on_mouse_move.connect([&](math::vec2 const& pos) {
-    if (active_) {
+    if (interactive_) {
       auto size(WindowManager::instance()->get_default()->get_context().size);
 
       math::vec2 corner(
@@ -64,13 +64,13 @@ GuiElement::GuiElement(GuiComponent* parent)
   });
 
   callbacks_[1] = window->on_mouse_scroll.connect([&](math::vec2 const& dir) {
-    if (active_) {
+    if (interactive_) {
       view_->InjectMouseWheel(dir.y()*10, dir.x()*10);
     }
   });
 
   callbacks_[2] = window->on_mouse_button_press.connect([&](Button button, int action, int mods) {
-    if (active_) {
+    if (interactive_) {
       if (action == 0) {
         view_->InjectMouseUp(static_cast<Awesomium::MouseButton>(button));
       } else {
@@ -80,13 +80,13 @@ GuiElement::GuiElement(GuiComponent* parent)
   });
 
   callbacks_[3] = window->on_char.connect([&](unsigned c) {
-    if (active_) {
+    if (interactive_) {
       view_->InjectKeyboardEvent(AweKeyEvent(c));
     }
   });
 
   callbacks_[4] = window->on_key_press.connect([&](Key key, int scancode, int action, int mods) {
-    if (active_) {
+    if (interactive_) {
       view_->InjectKeyboardEvent(AweKeyEvent(key, scancode, action, mods));
     }
   });
@@ -132,8 +132,8 @@ void GuiElement::focus() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GuiElement::set_active(bool active) {
-  active_ = active;
+void GuiElement::set_interactive(bool interactive) {
+  interactive_ = interactive;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

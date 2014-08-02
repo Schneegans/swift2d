@@ -133,12 +133,12 @@ void GuiManager::show_track_info(std::string const& title, std::string const& ar
 void GuiManager::show_window(MarsGuiComponentPtr& window) {
   window->show();
   if (open_windows_.size() > 0) {
-    open_windows_.back()->Active = false;
+    open_windows_.back()->Interactive = false;
     window->Depth = open_windows_.back()->Depth() + 1;
   } else {
     window->Depth = 1;
   }
-  window->Active = true;
+  window->Interactive = true;
   open_windows_.push_back(window);
 }
 
@@ -153,7 +153,7 @@ void GuiManager::hide_window(MarsGuiComponentPtr& window) {
     }
   }
   if (open_windows_.size() > 0) {
-    open_windows_.back()->Active = true;
+    open_windows_.back()->Interactive = true;
   }
 }
 

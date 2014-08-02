@@ -15,18 +15,21 @@ class GLSurface : public Awesomium::Surface {
   // ----------------------------------------------------- contruction interface
   GLSurface(int width, int height)
     : tex_(nullptr)
-    , buffer_(new unsigned char[width * height * 4])
-    , needs_update_(false)
+    , buffer_(width * height * 4)
     , width_(width)
-    , height_(height) {}
+    , height_(height)
+    , needs_update_(false) {}
 
   ~GLSurface() {
-    delete   tex_;
-    delete[] buffer_;
+    delete tex_;
   }
 
   // ------------------------------------------------------------ public methods
+
+  //////////////////////////////////////////////////////////////////////////////
+
   void init(RenderContext const& ctx) {
+    std::unique_lock<std::mutex> lock(mutex_);
     tex_ = new oglplus::Texture();
     oglplus::Texture::Active(0);
     ctx.gl.Bound(oglplus::Texture::Target::_2D, *tex_)
@@ -36,9 +39,11 @@ class GLSurface : public Awesomium::Surface {
       .WrapT(oglplus::TextureWrap::ClampToEdge)
       .Image2D(0, oglplus::PixelDataInternalFormat::RGBA, width_, height_,
         0, oglplus::PixelDataFormat::BGRA,
-        oglplus::PixelDataType::UnsignedByte, buffer_
+        oglplus::PixelDataType::UnsignedByte, &buffer_.front()
       );
   }
+
+  //////////////////////////////////////////////////////////////////////////////
 
   bool bind(RenderContext const& ctx, unsigned location) {
 
@@ -55,21 +60,21 @@ class GLSurface : public Awesomium::Surface {
     tex_->Active(location);
     ctx.gl.Bind(ose::_2D(), *tex_);
 
-
     if (needs_update_) {
       std::unique_lock<std::mutex> lock(mutex_);
+      needs_update_ = false;
 
       tex_->SubImage2D(
         oglplus::Texture::Target::_2D, 0, 0, 0, width_, height_,
         oglplus::PixelDataFormat::BGRA, oglplus::PixelDataType::UnsignedByte,
-        buffer_
+        &buffer_.front()
       );
-
-      needs_update_ = false;
     }
 
     return true;
   }
+
+  //////////////////////////////////////////////////////////////////////////////
 
   void Paint(unsigned char* src_buffer, int src_row_span,
              Awesomium::Rect const& src_rect,
@@ -78,13 +83,15 @@ class GLSurface : public Awesomium::Surface {
     std::unique_lock<std::mutex> lock(mutex_);
 
     for (int row = 0; row < dest_rect.height; row++) {
-      memcpy(buffer_ + (row + dest_rect.y) * width_*4 + (dest_rect.x * 4),
+      memcpy(&buffer_.front() + (row + dest_rect.y) * width_*4 + (dest_rect.x * 4),
              src_buffer + (row + src_rect.y) * src_row_span + (src_rect.x * 4),
              dest_rect.width * 4);
     }
 
     needs_update_ = true;
   }
+
+  //////////////////////////////////////////////////////////////////////////////
 
   void Scroll(int dx, int dy, Awesomium::Rect const& clip_rect) {
 
@@ -99,9 +106,9 @@ class GLSurface : public Awesomium::Surface {
       unsigned char* tempBuffer = new unsigned char[(clip_rect.width + dx) * 4];
 
       for (int i = 0; i < clip_rect.height; i++) {
-        memcpy(tempBuffer, buffer_ + (i + clip_rect.y) * width_*4 +
+        memcpy(tempBuffer, &buffer_.front() + (i + clip_rect.y) * width_*4 +
                (clip_rect.x - dx) * 4, (clip_rect.width + dx) * 4);
-        memcpy(buffer_ + (i + clip_rect.y) * width_*4 + (clip_rect.x) * 4,
+        memcpy(&buffer_.front() + (i + clip_rect.y) * width_*4 + (clip_rect.x) * 4,
                tempBuffer, (clip_rect.width + dx) * 4);
       }
 
@@ -112,9 +119,9 @@ class GLSurface : public Awesomium::Surface {
       unsigned char* tempBuffer = new unsigned char[(clip_rect.width - dx) * 4];
 
       for (int i = 0; i < clip_rect.height; i++) {
-        memcpy(tempBuffer, buffer_ + (i + clip_rect.y) * width_*4 +
+        memcpy(tempBuffer, &buffer_.front() + (i + clip_rect.y) * width_*4 +
                (clip_rect.x) * 4, (clip_rect.width - dx) * 4);
-        memcpy(buffer_ + (i + clip_rect.y) * width_*4 + (clip_rect.x + dx) * 4,
+        memcpy(&buffer_.front() + (i + clip_rect.y) * width_*4 + (clip_rect.x + dx) * 4,
                tempBuffer, (clip_rect.width - dx) * 4);
       }
 
@@ -123,14 +130,14 @@ class GLSurface : public Awesomium::Surface {
     } else if (dy < 0 && dx == 0) {
       // Area shifted down by dy
       for (int i = 0; i < clip_rect.height + dy ; i++)
-        memcpy(buffer_ + (i + clip_rect.y) * width_*4 + (clip_rect.x * 4),
-               buffer_ + (i + clip_rect.y - dy) * width_*4 + (clip_rect.x * 4),
+        memcpy(&buffer_.front() + (i + clip_rect.y) * width_*4 + (clip_rect.x * 4),
+               &buffer_.front() + (i + clip_rect.y - dy) * width_*4 + (clip_rect.x * 4),
                clip_rect.width * 4);
     } else if (dy > 0 && dx == 0) {
       // Area shifted up by dy
       for (int i = clip_rect.height - 1; i >= dy; i--)
-        memcpy(buffer_ + (i + clip_rect.y) * width_*4 + (clip_rect.x * 4),
-               buffer_ + (i + clip_rect.y - dy) * width_*4 + (clip_rect.x * 4),
+        memcpy(&buffer_.front() + (i + clip_rect.y) * width_*4 + (clip_rect.x * 4),
+               &buffer_.front() + (i + clip_rect.y - dy) * width_*4 + (clip_rect.x * 4),
                clip_rect.width * 4);
     }
 
@@ -141,9 +148,11 @@ class GLSurface : public Awesomium::Surface {
  // ---------------------------------------------------------- private interface
  private:
   oglplus::Texture* tex_;
-  unsigned char*    buffer_;
-  bool              needs_update_;
-  int               width_;
-  int               height_;
-  std::mutex        mutex_;
+
+  std::vector<unsigned char>  buffer_;
+
+  int        width_;
+  int        height_;
+  std::mutex mutex_;
+  bool       needs_update_;
 };

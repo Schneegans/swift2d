@@ -90,7 +90,6 @@ int main(int argc, char** argv) {
   scene->update(0);
 
   renderer.on_frame.connect([&]() {
-
     renderer.process(scene, camera);
 
     double time(timer.reset());
