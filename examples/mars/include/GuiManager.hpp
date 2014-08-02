@@ -19,6 +19,8 @@ class GuiManager : public swift::Singleton<GuiManager> {
 
   void update(float app_fps, float render_fps);
 
+  void show_gui();
+
   void show_track_info(std::string const& title,
                        std::string const& artist,
                        std::string const& album);
@@ -39,11 +41,13 @@ class GuiManager : public swift::Singleton<GuiManager> {
   MarsGuiComponentPtr options_;
   MarsGuiComponentPtr quit_;
   MarsGuiComponentPtr fps_;
-  MarsGuiComponentPtr mouse_;
   MarsGuiComponentPtr player_left_;
+  swift::GuiComponentPtr mouse_;
 
   std::unordered_map<std::string, std::function<void()>> callbacks_;
   std::vector<MarsGuiComponentPtr> open_windows_;
+
+  int frame_count_;
 };
 
 // -----------------------------------------------------------------------------

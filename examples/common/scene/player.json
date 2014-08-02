@@ -13,14 +13,14 @@
             "EndGlow": "0.0"
 
         },
-        {
-            "Type": "GuiComponent",
-            "Enabled": "1",
-            "Resource": "gui/player_tag.html",
-            "Size": "(100 24)",
-            "Anchor": "(0 1)",
-            "Interactive": "0"
-        },
+        // {
+        //     "Type": "GuiComponent",
+        //     "Enabled": "1",
+        //     "Resource": "gui/player_tag.html",
+        //     "Size": "(100 24)",
+        //     "Anchor": "(0 1)",
+        //     "Interactive": "0"
+        // },
         {
             "Type": "TrailEmitterComponent",
             "Enabled": "1",

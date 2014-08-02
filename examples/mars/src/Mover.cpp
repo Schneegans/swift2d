@@ -71,11 +71,11 @@ void Mover::update(double time) {
     mat = mat*math::make_scale(camera_zoom_);
     camera_->Transform = mat;
 
-    auto name = get_user()->get_component<GuiComponent>();
-    auto ctx_size = w->get_context().size;
-    name->Offset = math::vec2(camera_->world_to_pixel(pos))
-                 - math::vec2(ctx_size.x()*0.5f, ctx_size.y())
-                 + math::vec2(0.0f, 70.0f);
+    // auto name = get_user()->get_component<GuiComponent>();
+    // auto ctx_size = w->get_context().size;
+    // name->Offset = math::vec2(camera_->world_to_pixel(pos))
+    //              - math::vec2(ctx_size.x()*0.5f, ctx_size.y())
+    //              + math::vec2(0.0f, 70.0f);
   }
 
 

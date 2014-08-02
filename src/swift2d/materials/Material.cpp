@@ -157,8 +157,8 @@ void Material::draw_quad_impl(RenderContext const& ctx,
 
 
   if (AnimatedNormalTexture()) {
-    AnimatedNormalTexture()->bind(ctx, 0);
-    current_shader_->normal_tex.Set(0);
+    AnimatedNormalTexture()->bind(ctx, 1);
+    current_shader_->normal_tex.Set(1);
     current_shader_->normal_transform.Set(math::make_rotation(math::get_rotation(object_transform)));
     needs_time = true;
 

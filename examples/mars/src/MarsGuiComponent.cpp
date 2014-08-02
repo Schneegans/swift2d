@@ -13,15 +13,14 @@
 
 MarsGuiComponent::MarsGuiComponent(
   std::unordered_map<std::string, std::function<void()>> const& callbacks,
-  bool hidable)
+  bool hide_top, int overlap)
   : top_(-1.f, 0.f, 0.f, swift::AnimatedFloat::IN_OUT, 1.5f)
-  , hidable_(hidable)
-  , visible_(!hidable) {
+  , hide_top_(hide_top)
+  , visible_(false)
+  , overlap_(overlap) {
 
-  if (hidable) {
-    Enabled = false;
-    Interactive = false;
-  }
+  Enabled = false;
+  Interactive = false;
 
   on_loaded.connect([&](){
     for (auto c: callbacks) {
@@ -56,14 +55,14 @@ void MarsGuiComponent::show() {
     top_.set(Size().y());
   }
 
-  top_.set(50.f, 0.75f);
+  top_.set(overlap_, 0.75f);
   visible_ = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void MarsGuiComponent::hide() {
-  top_.set(Size().y(), 0.75f);
+  top_.set(Size().y(), 0.75);
   visible_ = false;
 }
 
@@ -80,10 +79,14 @@ void MarsGuiComponent::update(double time) {
     swift::GuiComponent::update(time);
   }
 
-  if (hidable_) {
-    top_.update(time);
+  top_.update(time);
+
+  if (hide_top_) {
     Offset = swift::math::vec2(Offset().x(), top_());
+  } else {
+    Offset = swift::math::vec2(Offset().x(), -top_());
   }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////

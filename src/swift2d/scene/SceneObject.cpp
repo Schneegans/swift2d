@@ -22,6 +22,13 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+SceneObject::SceneObject()
+  : Parent(nullptr)
+  , Enabled(true)
+  , remove_flag_(false) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
 SceneObjectPtr SceneObject::create_from_file(std::string const& path) {
   return std::dynamic_pointer_cast<SceneObject>(SavableObject::create_from_file(path));
 }
@@ -150,8 +157,11 @@ void SceneObject::translate(float x, float y) {
 SerializedScenePtr SceneObject::serialize(CameraComponentPtr const& camera) const {
 
   auto scene(SerializedScene::create());
-  scene->camera = camera->create_copy();
-  serialize(scene);
+
+  if (Enabled()) {
+    scene->camera = camera->create_copy();
+    serialize(scene);
+  }
 
   return scene;
 }
@@ -159,14 +169,16 @@ SerializedScenePtr SceneObject::serialize(CameraComponentPtr const& camera) cons
 ////////////////////////////////////////////////////////////////////////////////
 
 void SceneObject::serialize(SerializedScenePtr& scene) const {
-  for (auto const& component: components_) {
-    if (component->Enabled.get()) {
-      component->serialize(scene);
+  if (Enabled()) {
+    for (auto const& component: components_) {
+      if (component->Enabled.get()) {
+        component->serialize(scene);
+      }
     }
-  }
 
-  for (auto const& object: objects_) {
-    object->serialize(scene);
+    for (auto const& object: objects_) {
+      object->serialize(scene);
+    }
   }
 }
 
@@ -174,29 +186,31 @@ void SceneObject::serialize(SerializedScenePtr& scene) const {
 
 void SceneObject::update(double time) {
 
-  if (Parent.get()) {
-    WorldTransform = Parent.get()->WorldTransform.get() * Transform.get();
-  } else {
-    WorldTransform = Transform.get();
-  }
-
-  for (auto current(components_.begin()), next(current);
-       current != components_.end(); current = next) {
-    ++next;
-    if ((*current)->remove_flag_) {
-      components_.erase(current);
-    } else if ((*current)->Enabled.get()) {
-      (*current)->update(time);
-    }
-  }
-
-  for (auto current(objects_.begin()), next(current);
-       current != objects_.end(); current = next) {
-    ++next;
-    if ((*current)->remove_flag_) {
-      objects_.erase(current);
+  if (Enabled()) {
+    if (Parent.get()) {
+      WorldTransform = Parent.get()->WorldTransform.get() * Transform.get();
     } else {
-      (*current)->update(time);
+      WorldTransform = Transform.get();
+    }
+
+    for (auto current(components_.begin()), next(current);
+         current != components_.end(); current = next) {
+      ++next;
+      if ((*current)->remove_flag_) {
+        components_.erase(current);
+      } else if ((*current)->Enabled.get()) {
+        (*current)->update(time);
+      }
+    }
+
+    for (auto current(objects_.begin()), next(current);
+         current != objects_.end(); current = next) {
+      ++next;
+      if ((*current)->remove_flag_) {
+        objects_.erase(current);
+      } else {
+        (*current)->update(time);
+      }
     }
   }
 }
@@ -206,6 +220,7 @@ void SceneObject::update(double time) {
 void SceneObject::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Transform", Transform);
   visitor.add_member("Label",     Label);
+  visitor.add_member("Enabled",   Enabled);
   visitor.add_array("Components", components_);
   visitor.add_array("Objects",    objects_);
 

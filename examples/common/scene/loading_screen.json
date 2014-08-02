@@ -1,0 +1,50 @@
+{
+    "Type": "SceneObject",
+    "Components":
+    [
+        {
+            "Type": "SpriteComponent",
+            "Enabled": "1",
+            "FullScreen": "1",
+            "Material":
+            {
+                "Type": "Material",
+                "Diffuse": "(0 0 0 1)"
+            }
+        },
+        {
+            "Type": "GuiComponent",
+            "Enabled": "1",
+            "Resource": "gui/loading_screen.html",
+            "Size": "(50 72)",
+            "Anchor": "(0 )",
+            "Interactive": "0"
+        }
+    ]
+    // "Objects":
+    // [
+    //     {
+    //         "Type": "SceneObject",
+    //         "Components":
+    //         [
+    //             {
+    //                 "Type": "AnimatedSpriteComponent",
+    //                 "Enabled": "1",
+    //                 "Time": "0.1",
+    //                 "Material":
+    //                 {
+    //                     "Type": "Material",
+    //                     "AnimatedDiffuseTexture":
+    //                     {
+    //                         "Type": "AnimatedTexture",
+    //                         "FileName": "images\/spinner.png",
+    //                         "TilesX": "6",
+    //                         "TilesY": "10"
+    //                     },
+    //                     "Emit": "1"
+    //                 }
+    //             }
+    //         ]
+    //     }
+    // ]
+}

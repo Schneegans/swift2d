@@ -14,7 +14,8 @@ using namespace swift;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GuiManager::GuiManager() {
+GuiManager::GuiManager()
+  : frame_count_(0) {
 
   callbacks_["quit"] = [&](){
     on_quit.emit();
@@ -52,36 +53,7 @@ GuiManager::GuiManager() {
 
   auto scene = SceneManager::instance()->get_default();
 
-  fps_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, false));
-  fps_->Resource = Application::instance()->get_resource("gui", "fps.html");
-  fps_->Size = math::vec2i(200, 55);
-  fps_->Anchor = math::vec2i(0, -1);
-  fps_->Depth = 0;
-  player_left_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, false));
-  player_left_->Resource = Application::instance()->get_resource("gui", "player_left.html");
-  player_left_->Size = math::vec2i(470, 230);
-  player_left_->Anchor = math::vec2i(-1, -1);
-  player_left_->Depth = 0;
-  quit_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, true));
-  quit_->Resource = Application::instance()->get_resource("gui", "quit.html");
-  quit_->Size = math::vec2i(700, 700);
-  quit_->Anchor = math::vec2i(0, 1);
-  options_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, true));
-  options_->Resource = Application::instance()->get_resource("gui", "options.html");
-  options_->Size = math::vec2i(1000, 1000);
-  options_->Anchor = math::vec2i(0, 1);
-  music_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, false));
-  music_->Resource = Application::instance()->get_resource("gui", "music_menu.html");
-  music_->Size = math::vec2i(520, 175);
-  music_->Anchor = math::vec2i(1, 1);
-  music_->Depth = 0;
-  menu_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, false));
-  menu_->Resource = Application::instance()->get_resource("gui", "main_menu.html");
-  menu_->Size = math::vec2i(525, 180);
-  menu_->Anchor = math::vec2i(-1, 1);
-  menu_->Depth = 0;
-
-  mouse_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, false));
+  mouse_ = scene->add(std::make_shared<GuiComponent>());
   mouse_->Resource = Application::instance()->get_resource("gui", "mouse.html");
   mouse_->Size = math::vec2i(50, 50);
   mouse_->Anchor = math::vec2i(-1, -1);
@@ -112,14 +84,73 @@ GuiManager::GuiManager() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void GuiManager::show_gui() {
+  player_left_->show();
+  menu_->show();
+  music_->show();
+  fps_->show();
+
+  menu_->Interactive = true;
+  music_->Interactive = true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void GuiManager::update(float app_fps, float render_fps) {
-  std::stringstream sstr;
-  sstr.precision(1);
-  sstr.setf(std::ios::fixed, std::ios::floatfield);
-  sstr << "FPS: " << app_fps << " / " << render_fps;
-  fps_->call_javascript("set_fps_text", sstr.str());
 
   Interface::instance()->update();
+
+  auto scene = SceneManager::instance()->get_default();
+  ++frame_count_;
+
+  if (frame_count_ == 1) {
+    player_left_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, false, 0));
+    player_left_->Resource = Application::instance()->get_resource("gui", "player_left.html");
+    player_left_->Size = math::vec2i(470, 230);
+    player_left_->Anchor = math::vec2i(-1, -1);
+    player_left_->Depth = 0;
+  }
+  if (frame_count_ == 2) {
+    quit_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, true, 50));
+    quit_->Resource = Application::instance()->get_resource("gui", "quit.html");
+    quit_->Size = math::vec2i(700, 700);
+    quit_->Anchor = math::vec2i(0, 1);
+  }
+  if (frame_count_ == 3) {
+    options_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, true, 50));
+    options_->Resource = Application::instance()->get_resource("gui", "options.html");
+    options_->Size = math::vec2i(1000, 1000);
+    options_->Anchor = math::vec2i(0, 1);
+  }
+  if (frame_count_ == 4) {
+    music_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, true, 0));
+    music_->Resource = Application::instance()->get_resource("gui", "music_menu.html");
+    music_->Size = math::vec2i(520, 175);
+    music_->Anchor = math::vec2i(1, 1);
+    music_->Depth = 0;
+  }
+  if (frame_count_ == 5) {
+    menu_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, true, 0));
+    menu_->Resource = Application::instance()->get_resource("gui", "main_menu.html");
+    menu_->Size = math::vec2i(525, 180);
+    menu_->Anchor = math::vec2i(-1, 1);
+    menu_->Depth = 0;
+  }
+  if (frame_count_ == 6) {
+    fps_ = scene->add(std::make_shared<MarsGuiComponent>(callbacks_, false, 0));
+    fps_->Resource = Application::instance()->get_resource("gui", "fps.html");
+    fps_->Size = math::vec2i(200, 55);
+    fps_->Anchor = math::vec2i(0, -1);
+    fps_->Depth = 0;
+  }
+
+  if (frame_count_ > 6) {
+    std::stringstream sstr;
+    sstr.precision(1);
+    sstr.setf(std::ios::fixed, std::ios::floatfield);
+    sstr << "FPS: " << app_fps << " / " << render_fps;
+    fps_->call_javascript("set_fps_text", sstr.str());
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -42,6 +42,7 @@ class SceneObject : public SavableObject {
   String              Label;
   Mat3                Transform;
   Mat3                WorldTransform;
+  Bool                Enabled;
 
   // ----------------------------------------------------- contruction interface
   static SceneObjectPtr create() {
@@ -50,7 +51,7 @@ class SceneObject : public SavableObject {
 
   static SceneObjectPtr create_from_file(std::string const& path);
 
-  SceneObject() : Parent(nullptr), remove_flag_(false) {}
+  SceneObject();
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }

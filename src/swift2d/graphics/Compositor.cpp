@@ -224,12 +224,4 @@ void Compositor::draw_gui(ConstSerializedScenePtr const& scene, RenderContext co
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Compositor::draw_loading (ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
-  if (ctx.upload_remaining > 0) {
-    std::cout << "loading " << ctx.upload_remaining << std::endl;
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 }

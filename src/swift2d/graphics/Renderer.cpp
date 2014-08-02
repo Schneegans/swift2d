@@ -42,6 +42,7 @@ Renderer::Renderer(PipelinePtr const& pipeline)
     if (started_rendering_) {
       started_rendering_ = false;
       on_frame.emit();
+      pipeline->update();
     }
   });
   ticker_->start();

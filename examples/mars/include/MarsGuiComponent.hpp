@@ -21,7 +21,7 @@ class MarsGuiComponent : public swift::GuiComponent {
  public:
   MarsGuiComponent(
     std::unordered_map<std::string, std::function<void()>> const& callbacks,
-    bool hidable);
+    bool hide_top, int overlap);
 
   void show();
   void hide();
@@ -32,8 +32,9 @@ class MarsGuiComponent : public swift::GuiComponent {
 
  private:
   swift::AnimatedFloat top_;
-  bool hidable_;
+  bool hide_top_;
   bool visible_;
+  int overlap_;
 
 };
 

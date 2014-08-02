@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/events.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
+#include <swift2d/scene/SceneObject.hpp>
 #include <swift2d/graphics/Compositor.hpp>
 
 #include <memory>
@@ -39,6 +40,9 @@ class Pipeline {
  // ----------------------------------------------------------- public interface
  public:
 
+  // ---------------------------------------------------------------- properties
+  Float LoadingProgress;
+
   Pipeline();
   ~Pipeline();
 
@@ -48,6 +52,7 @@ class Pipeline {
 
   void set_output_window(WindowPtr const& window);
 
+  void update();
   void draw(ConstSerializedScenePtr const& scene);
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -57,6 +62,9 @@ class Pipeline {
     math::vec2i old_size_;
 
     Compositor* compositor_;
+
+    int max_load_amount_;
+    int current_load_amount_;
 };
 
 }

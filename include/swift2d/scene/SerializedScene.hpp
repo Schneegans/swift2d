@@ -41,12 +41,6 @@ class SerializedScene {
     return std::make_shared<SerializedScene>();
   }
 
-  enum Target {
-    OBJECTS,
-    LIGHTS,
-    HEAT_OBJECTS
-  };
-
   CameraComponentPtr camera;
   std::multimap<float, DrawableComponentPtr> objects;
   std::multimap<float, DrawableComponentPtr> lights;
