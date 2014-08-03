@@ -5,15 +5,20 @@
     [
 
         {
-            "Type": "PointParticleSystemComponent",
+            "Type": "SpriteParticleSystemComponent",
             "Enabled": "1",
-            "Depth": "-0.02",
-            "Scale": "10",
-            "LinearDamping": "0.1",
-            "StartColor": "(1 1 1 1)",
-            "EndColor": "(1 0.5 0.8 0)",
-            "MaxCount": "100000",
-            "Mass": "-0.5"
+            "Depth": "0.001",
+            "StartScale": "0.25",
+            "EndScale": "2",
+            "LinearDamping": "0.03",
+            "StartColor": "(0.2 0.2 0.2 1)",
+            "EndColor": "(1 1 1 0)",
+            "Mass": "-0.1",
+            "Texture":
+            {
+                "Type": "Texture",
+                "FileName": "images\/smoke.png"
+            }
         },
         {
             "Type": "DirectionalLightComponent",

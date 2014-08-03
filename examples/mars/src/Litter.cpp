@@ -10,7 +10,7 @@
 #include "../include/Litter.hpp"
 
 bool Litter::assets_loaded_ = false;
-PointParticleSystemComponentPtr Litter::smoke_;
+ParticleSystemComponentPtr Litter::smoke_;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -36,13 +36,7 @@ void Litter::update(double time) {
     mat->Glow = 1;
     MaterialDatabase::instance()->add("litter", mat);
 
-    smoke_ = SceneManager::instance()->get_default()->add<PointParticleSystemComponent>();
-    smoke_->Depth = -0.01f;
-    smoke_->Scale = 5;
-    smoke_->LinearDamping = 0.05;
-    smoke_->StartColor = Color(1, 0.8, 0.3, 1.0);
-    smoke_->EndColor = Color(1, 0.5, 0.1, 0.0);
-    smoke_->Mass = 0;
+    // smoke_ = SceneManager::instance()->get_default()->get_component<ParticleSystemComponent>();
   }
 
   if (!initialized_) {
@@ -52,18 +46,18 @@ void Litter::update(double time) {
     tex->Depth = 0.0f;
     tex->Material = MaterialDatabase::instance()->get("litter");
 
-    auto emitter = add<ParticleEmitterComponent>();
-         emitter->Density = 50;
-         emitter->PositionVariance = 1;
-         emitter->Life = 1;
-         emitter->LifeVariance = 0.7;
-    smoke_->add_emitter(emitter.get());
+    // auto emitter = add<ParticleEmitterComponent>();
+    //      emitter->Density = 20;
+    //      emitter->PositionVariance = 1;
+    //      emitter->Life = 1;
+    //      emitter->LifeVariance = 0.7;
+    // smoke_->add_emitter(emitter.get());
 
     auto deleter = add<TimedDeleteBehavior>();
          deleter->Life = math::random::get(1.f, 2.f);
-    deleter->on_delete.connect([=](){
-      smoke_->remove_emitter(emitter.get());
-    });
+    // deleter->on_delete.connect([=](){
+    //   smoke_->remove_emitter(emitter.get());
+    // });
 
     auto shape = CircleCollisionShape::create();
     auto body = add<DynamicBodyComponent>();

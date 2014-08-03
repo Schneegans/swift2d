@@ -50,7 +50,7 @@ void Explosion::update(double time) {
     initialized_ = true;
 
     auto deleter = add<TimedDeleteBehavior>();
-         deleter->Life = 0.69f;
+         deleter->Life = 0.65f;
 
     auto flash = add<PointLightComponent>();
          flash->Texture = TextureDatabase::instance()->get("light");

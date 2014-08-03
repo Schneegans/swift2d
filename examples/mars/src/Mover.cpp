@@ -60,7 +60,7 @@ void Mover::update(double time) {
 
   if (camera_) {
 
-    float target_zoom(speed*0.02 + 0.8);
+    float target_zoom(speed*0.03 + 0.8);
     camera_zoom_ += (target_zoom - camera_zoom_) * time * 0.5;
 
     math::vec2 target_offset(c->get_linear_velocity() * 0.75);

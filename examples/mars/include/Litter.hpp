@@ -24,7 +24,7 @@ class Litter: public SceneObject {
  private:
   bool initialized_;
   static bool assets_loaded_;
-  static PointParticleSystemComponentPtr smoke_;
+  static ParticleSystemComponentPtr smoke_;
 
   math::vec2 dir_;
 };

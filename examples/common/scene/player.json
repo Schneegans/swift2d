@@ -42,16 +42,17 @@
             "Enabled": "1",
             "Friction": "0.2",
             "AngularDamping": "15",
+            "Density": "0.5",
             "Shape":
             {
                 "Type": "CircleCollisionShape",
-                "Radius": "1"
+                "Radius": "1.2"
             }
         },
         {
             "Type": "SpriteComponent",
             "Enabled": "1",
-            "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
+            "Transform": "(1.5 0 0\n 0 1.5 0\n 0 0 1)",
             "Depth": "0",
             "Material":
             {
@@ -59,9 +60,14 @@
                 "DiffuseTexture":
                 {
                     "Type": "Texture",
-                    "FileName": "images\/ship.png"
+                    "FileName": "images\/ship_diffuse.png"
                 },
-                "Emit": "1"
+                "NormalTexture":
+                {
+                    "Type": "Texture",
+                    "FileName": "images\/ship_normal.png"
+                },
+                "Emit": "0.3"
             }
         }
     ],
