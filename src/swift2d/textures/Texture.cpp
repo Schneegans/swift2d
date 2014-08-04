@@ -96,6 +96,7 @@ void Texture::upload_to(RenderContext const& ctx) const {
       delete texture_;
     }
 
+
     auto internal_format(channels_ > 3 ? ogl::InternalFormat::RGBA : ogl::InternalFormat::RGB);
     auto format(channels_ > 3 ? ogl::Format::RGBA : ogl::Format::RGB);
 

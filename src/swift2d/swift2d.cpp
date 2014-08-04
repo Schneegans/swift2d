@@ -93,7 +93,6 @@ namespace {
       ~Swift2DContext() {
         Logger::LOG_MESSAGE << "Shutting down... " << std::endl;
 
-        glfwTerminate();
 
         DefaultAnimatedTexture::destroy_instance();
         DefaultTexture::destroy_instance();
@@ -124,6 +123,7 @@ namespace {
         // Application::destroy_instance();
         // MainLoop::destroy_instance();
 
+        glfwTerminate();
 
         Logger::LOG_MESSAGE << "Bye!" << std::endl;
       }

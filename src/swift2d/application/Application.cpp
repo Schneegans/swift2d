@@ -37,7 +37,7 @@ void Application::init(int argc, char** argv) {
 ////////////////////////////////////////////////////////////////////////////////
 
 std::string Application::get_resource(std::string const& type, std::string const& file) const {
-  return executable_ + "/" + type + "/" + file;
+  return executable_ + "/resources/" + type + "/" + file;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
