@@ -30,8 +30,9 @@ class Singleton {
   // once. This method will create this instance if necessary and return a
   // pointer to it.
   static T* instance() {
-    if (instance_ == nullptr)
+    if (instance_ == nullptr) {
       instance_ = new T;
+    }
 
     return instance_;
   }

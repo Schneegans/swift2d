@@ -21,28 +21,14 @@
 namespace oalplus {
 namespace enums {
 
-#if !OGLPLUS_NO_SCOPED_ENUMS
 template <typename Enum>
 struct EnumBaseType
 {
 	typedef ALenum Type;
 };
-#else
-// No scoped enums -> no enum value names/ranges
-#ifdef OALPLUS_NO_ENUM_VALUE_NAMES
-#undef OALPLUS_NO_ENUM_VALUE_NAMES
-#endif
-#define OALPLUS_NO_ENUM_VALUE_NAMES  1
-
-#ifdef OALPLUS_NO_ENUM_VALUE_RANGES
-#undef OALPLUS_NO_ENUM_VALUE_RANGES
-#endif
-#define OALPLUS_NO_ENUM_VALUE_RANGES 1
-using oglplus::EnumBaseType;
-#endif
 
 template <typename EnumType>
-inline StrLit EnumValueName(EnumType enum_value)
+inline StrCRef EnumValueName(EnumType enum_value)
 {
 #if !OALPLUS_NO_ENUM_VALUE_NAMES
 	typedef typename EnumBaseType<EnumType>::Type BaseType;
@@ -52,7 +38,7 @@ inline StrLit EnumValueName(EnumType enum_value)
 	);
 #else
 	OGLPLUS_FAKE_USE(enum_value);
-	return StrLit();
+	return StrCRef();
 #endif
 }
 

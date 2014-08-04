@@ -69,7 +69,6 @@ void Window::set_active(bool active) {
 void Window::display() {
   if (window_) {
     glfwSwapBuffers(window_);
-    render_context_.gl.Clear().ColorBuffer();
   }
 }
 
@@ -103,10 +102,10 @@ void Window::open() {
 
     render_context_.size = math::vec2i(1000, 1000);
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    // glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     window_ = glfwCreateWindow(
       render_context_.size.x(), render_context_.size.y(),
@@ -127,7 +126,6 @@ void Window::open() {
                       << "." << render_context_.gl.MinorVersion() << std::endl;
 
     render_context_.gl.Disable(oglplus::Capability::DepthTest);
-    render_context_.gl.Disable(oglplus::Capability::CullFace);
     render_context_.gl.Enable(oglplus::Capability::Blend);
     render_context_.gl.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 

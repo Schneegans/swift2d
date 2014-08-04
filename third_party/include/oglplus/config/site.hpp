@@ -1,5 +1,5 @@
 /**
- *  @file oglplus/site_config.hpp
+ *  @file oglplus/config/site.hpp
  *  @brief System configuration options
  *
  *  @author Matus Chochlik
@@ -12,7 +12,7 @@
 #define OGLPLUS_SITE_CONFIG_120305_HPP
 
 #define OGLPLUS_OPENAL_FOUND 1
-#define OGLPLUS_FREEGLUT_FOUND 1
+#define OGLPLUS_FREEGLUT_FOUND 
 #define OGLPLUS_PNG_FOUND 1
 #define OGLPLUS_PANGO_CAIRO_FOUND 1
 
@@ -38,7 +38,7 @@
 #define OGLPLUS_USE_GL3W 0
 #endif
 
-#define OGLPLUS_USE_BOOST_CONFIG 0
+#define OGLPLUS_USE_BOOST_CONFIG 1
 
 #if !OGLPLUS_USE_BOOST_CONFIG
 #ifndef OGLPLUS_NO_SCOPED_ENUMS
@@ -100,11 +100,6 @@
 #ifndef OGLPLUS_NO_LAMBDAS
 #define OGLPLUS_NO_LAMBDAS 0
 #endif
-
-#ifndef OGLPLUS_NO_NULLPTR
-#define OGLPLUS_NO_NULLPTR 0
-#endif
-
 
 #endif // !OGLPLUS_USE_BOOST_CONFIG
 

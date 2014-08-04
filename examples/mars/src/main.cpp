@@ -14,7 +14,7 @@
 #include "../include/AssetManager.hpp"
 #include "../include/MusicManager.hpp"
 #include "../include/Explosion.hpp"
-
+#include <steam/steam_api.h>
 #include <iostream>
 
 using namespace swift;
@@ -70,6 +70,7 @@ int main(int argc, char** argv) {
 
   // initialize Swift2D
   Application::instance()->init(argc, argv);
+  Steam::instance()->init();
 
   Object::init<Mover>();
   Object::init<Bullet>();
@@ -157,7 +158,7 @@ int main(int argc, char** argv) {
 
 
     if (state == LOADING_MUSIC) {
-      MusicManager::instance()->play_next();
+      // MusicManager::instance()->play_next();
       state = HIDING_LOADING_SCREEN;
 
     } else if (state == HIDING_LOADING_SCREEN) {
@@ -193,6 +194,8 @@ int main(int argc, char** argv) {
   });
 
   Application::instance()->start();
+
+  swift::clean_up();
 
   return 0;
 }

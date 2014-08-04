@@ -33,6 +33,7 @@
 #include <swift2d/network.hpp>
 #include <swift2d/audio.hpp>
 #include <swift2d/gui.hpp>
+#include <swift2d/steam/Steam.hpp>
 
 namespace swift {
 
@@ -44,6 +45,7 @@ namespace swift {
  */
 
 void init(int argc, char** argv);
+void clean_up();
 
 }
 

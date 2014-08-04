@@ -29,22 +29,22 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality)
   , final_buffer_  ()
   , post_processor_(nullptr) {
 
-  auto create_texture = [&](
-    oglplus::Texture& tex, int width, int height,
-    oglplus::enums::PixelDataInternalFormat i_format,
-    oglplus::enums::PixelDataFormat         p_format) {
-
-    oglplus::Texture::Active(0);
-    ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
-      .Image2D(0, i_format, width, height,
-        0, p_format, oglplus::PixelDataType::Float, nullptr)
-      .MinFilter(oglplus::TextureMinFilter::Nearest)
-      .MagFilter(oglplus::TextureMagFilter::Nearest)
-      .WrapS(oglplus::TextureWrap::MirroredRepeat)
-      .WrapT(oglplus::TextureWrap::MirroredRepeat);
-  };
-
   if (shading_quality_ > 0) {
+
+    auto create_texture = [&](
+      oglplus::Texture& tex, int width, int height,
+      oglplus::enums::PixelDataInternalFormat i_format,
+      oglplus::enums::PixelDataFormat         p_format) {
+
+      oglplus::Texture::Active(0);
+      ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
+        .Image2D(0, i_format, width, height,
+          0, p_format, oglplus::PixelDataType::Float, nullptr)
+        .MinFilter(oglplus::TextureMinFilter::Nearest)
+        .MagFilter(oglplus::TextureMagFilter::Nearest)
+        .WrapS(oglplus::TextureWrap::MirroredRepeat)
+        .WrapT(oglplus::TextureWrap::MirroredRepeat);
+    };
 
     // create textures for G-Buffer and L-Buffer -------------------------------
     create_texture(
@@ -148,7 +148,7 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
 
   } else {
     oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
-    ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
+    // ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
     ctx.gl.Clear().ColorBuffer();
   }
 

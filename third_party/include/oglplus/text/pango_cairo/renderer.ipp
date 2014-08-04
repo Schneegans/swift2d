@@ -4,7 +4,7 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2010-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2010-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -19,12 +19,12 @@ PangoCairoRenderer::PangoCairoRenderer(
 	const Sequence<ShaderName>& shaders
 ): _parent(parent)
  , _program()
- , _bitmap(_program, "oglpBitmap")
- , _log_coords(_program, "oglpLogCoords")
- , _tex_coords(_program, "oglpTexCoords")
+ , _bitmap(_program)
+ , _log_coords(_program)
+ , _tex_coords(_program)
 {
 	VertexShader vs(ObjectDesc("PangoCairoRenderer - Vertex"));
-	vs.Source(StrLit(
+	vs.Source(StrCRef(
 		"#version 330\n"
 		"uniform vec4 oglpLogCoords;"
 		"uniform float oglpAlignCoef;"
@@ -41,7 +41,7 @@ PangoCairoRenderer::PangoCairoRenderer(
 	_program.AttachShader(vs);
 
 	GeometryShader gs(ObjectDesc("PangoCairoRenderer - Geometry"));
-	gs.Source(StrLit(
+	gs.Source(StrCRef(
 		"#version 330\n"
 		"layout (points) in;"
 		"layout (triangle_strip, max_vertices = 4) out;"
@@ -96,7 +96,7 @@ PangoCairoRenderer::PangoCairoRenderer(
 
 
 	FragmentShader fs(ObjectDesc("PangoCairoRenderer - Fragment"));
-	fs.Source(StrLit(
+	fs.Source(StrCRef(
 		"#version 330\n"
 		"uniform sampler2DRect oglpBitmap;"
 
@@ -136,6 +136,11 @@ PangoCairoRenderer::PangoCairoRenderer(
 	_program.AttachShaders(shaders);
 	_program.Link();
 	_program.Use();
+
+	_bitmap.BindTo("oglpBitmap");
+	_log_coords.BindTo("oglpLogCoords");
+	_tex_coords.BindTo("oglpTexCoords");
+
 	Uniform<GLfloat>(_program, "oglpAlignCoef").Set(0.5f);
 }
 
@@ -149,7 +154,7 @@ PangoCairoDefaultRenderer::PangoCairoDefaultRenderer(
 		pixel_color_fs,
 		GeometryShader(
 		ObjectDesc("PangoCairoRenderer - Layout transform"),
-		StrLit("#version 330\n"
+		StrCRef("#version 330\n"
 		"uniform mat4 "
 		"	oglpProjectionMatrix,"
 		"	oglpCameraMatrix,"

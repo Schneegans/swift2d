@@ -16,7 +16,7 @@
 #include <oglplus/config/compiler.hpp>
 #include <oglplus/config/enums.hpp>
 #include <oglplus/string/def.hpp>
-#include <oglplus/string/literal.hpp>
+#include <oglplus/string/ref.hpp>
 #include <oglplus/detail/enum_class.hpp>
 #include <oglplus/detail/base_range.hpp>
 #include <vector>
@@ -38,7 +38,7 @@ namespace oglplus {
  *  @ingroup enumerations
  *  @see OGLPLUS_NO_ENUM_VALUE_NAMES
  */
-StrLit EnumValueName(Enum enum_value);
+StrCRef EnumValueName(Enum enum_value);
 
 /// Returns a @c Range of values in an @p Enumeration
 /** This template function is available for the enumerated types defined by
@@ -59,32 +59,19 @@ Range<Enum> EnumValueRange(void);
 
 namespace enums {
 
-#if !OGLPLUS_NO_SCOPED_ENUMS
 template <typename Enum>
 struct EnumBaseType
 {
 	typedef GLenum Type;
 };
-#else
-// No scoped enums -> no enum value names/ranges
-#ifdef OGLPLUS_NO_ENUM_VALUE_NAMES
-#undef OGLPLUS_NO_ENUM_VALUE_NAMES
-#endif
-#define OGLPLUS_NO_ENUM_VALUE_NAMES  1
 
-#ifdef OGLPLUS_NO_ENUM_VALUE_RANGES
-#undef OGLPLUS_NO_ENUM_VALUE_RANGES
-#endif
-#define OGLPLUS_NO_ENUM_VALUE_RANGES 1
-#endif
-
-inline StrLit ValueName_(GLenum*, GLenum)
+inline StrCRef ValueName_(GLenum*, GLenum)
 {
-	return StrLit();
+	return StrCRef();
 }
 
 template <typename EnumType>
-inline StrLit EnumValueName(EnumType enum_value)
+inline StrCRef EnumValueName(EnumType enum_value)
 {
 #if !OGLPLUS_NO_ENUM_VALUE_NAMES
 	typedef typename EnumBaseType<EnumType>::Type BaseType;
@@ -94,7 +81,7 @@ inline StrLit EnumValueName(EnumType enum_value)
 	);
 #else
 	OGLPLUS_FAKE_USE(enum_value);
-	return StrLit();
+	return StrCRef();
 #endif
 }
 
@@ -190,18 +177,10 @@ public:
  */
 template <typename Enum>
 class EnumArray
-#if !OGLPLUS_NO_SCOPED_ENUMS
  : public aux::EnumArray<Enum, sizeof(Enum) != sizeof(GLenum)>
-#else
- : public aux::EnumArray<Enum, true>
-#endif
 {
 private:
-#if !OGLPLUS_NO_SCOPED_ENUMS
 	typedef aux::EnumArray<Enum, sizeof(Enum) != sizeof(GLenum)> Base_;
-#else
-	typedef aux::EnumArray<Enum, true> Base_;
-#endif
 public:
 	template <std::size_t N>
 	EnumArray(const Enum (&enums)[N])

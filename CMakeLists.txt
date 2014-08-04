@@ -67,6 +67,7 @@ set(LIB_PATHS
   ${ALUT_LIBRARY_DIRS}
   ${OPENGL_LIBRARY_DIRS}
   ${BOX2D_LIBRARY_DIRS}
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/steam/redistributable_bin/linux64
 )
 link_directories(${LIB_PATHS})
 
