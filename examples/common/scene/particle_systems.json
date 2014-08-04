@@ -1,0 +1,76 @@
+{
+    "Type": "SceneObject",
+    "Transform": "(1 0 0\n 0 1 0\n 0 0 1)",
+    "Components":
+    [
+        {
+            // SMOKE -----------------------------------------------------------
+            "Type": "SpriteParticleSystemComponent",
+            "Enabled": "1",
+            "Depth": "0.001",
+            "StartScale": "0.25",
+            "EndScale": "1",
+            "LinearDamping": "0.05",
+            "StartColor": "(0.2 0.2 0.2 1)",
+            "EndColor": "(1 1 1 0)",
+            "Mass": "-0.1",
+            "Texture":
+            {
+                "Type": "Texture",
+                "FileName": "images\/smoke.png"
+            }
+        },
+        {
+            // THICK SMOKE -----------------------------------------------------
+            "Type": "SpriteParticleSystemComponent",
+            "Enabled": "1",
+            "Depth": "0.001",
+            "StartScale": "0.25",
+            "EndScale": "4",
+            "LinearDamping": "0.03",
+            "StartColor": "(0.2 0.2 0.2 1)",
+            "EndColor": "(1 1 1 0)",
+            "Mass": "-0.05",
+            "Texture":
+            {
+                "Type": "Texture",
+                "FileName": "images\/smoke.png"
+            }
+        },
+        {
+            // FIRE ------------------------------------------------------------
+            "Type": "SpriteParticleSystemComponent",
+            "Enabled": "1",
+            "Depth": "0.003",
+            "StartScale": "0.15",
+            "EndScale": "0.5",
+            "LinearDamping": "0.08",
+            "StartColor": "(1 1 1 0.8)",
+            "EndColor": "(1 0.1 0.1 0)",
+            "Mass": "-0.1",
+            "BlendAdd": "1",
+            "Texture":
+            {
+                "Type": "Texture",
+                "FileName": "images\/fire.png"
+            }
+        },
+        {
+            // HEAT ------------------------------------------------------------
+            "Type": "HeatParticleSystemComponent",
+            "Enabled": "1",
+            "Depth": "0.003",
+            "StartScale": "0.1",
+            "EndScale": "0.4",
+            "LinearDamping": "0.01",
+            "StartOpacity": "0.2",
+            "Mass": "-0.6",
+            "EndOpacity": "0",
+            "Texture":
+            {
+                "Type": "Texture",
+                "FileName": "images\/heat.png"
+            }
+        }
+    ]
+}

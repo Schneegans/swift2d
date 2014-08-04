@@ -25,7 +25,7 @@ class Bullet: public SceneObject {
     position = transform * position;
     float rot = math::get_rotation(transform);
 
-    Transform = math::make_translation(position.x(), position.y()) * math::make_scale(0.5) * math::make_rotation(rot);
+    Transform = math::make_translation(position.x(), position.y()) * math::make_scale(0.3) * math::make_rotation(rot);
 
     auto shape = CircleCollisionShape::create();
     auto body = add<DynamicBodyComponent>();
@@ -61,7 +61,7 @@ class Bullet: public SceneObject {
 
   void update(double time) {
     SceneObject::update(time);
-    get_component<DynamicBodyComponent>()->apply_local_force(math::vec2(5.5f, 0.f));
+    get_component<DynamicBodyComponent>()->apply_local_force(math::vec2(2.f, 0.f));
   }
 
   void shoot(SceneObjectPtr const& owner) {

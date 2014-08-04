@@ -54,11 +54,11 @@ void Explosion::update(double time) {
 
     auto flash = add<PointLightComponent>();
          flash->Texture = TextureDatabase::instance()->get("light");
-         flash->Transform = math::make_scale(5);
+         flash->Transform = math::make_scale(3);
          flash->Color = Color(1, 1, 0.6, 1);
 
     auto tex = add<AnimatedSpriteComponent>();
-         tex->Transform = math::make_scale(1.5);
+         tex->Transform = math::make_scale(1);
          tex->Depth = 0.1f;
          tex->Material.set(MaterialDatabase::instance()->get("explosion"));
          tex->Time.set(1, 0.7);
@@ -68,7 +68,7 @@ void Explosion::update(double time) {
            flash->Color = Color(c.r(), c.g(), c.b(), 0.7-val);
          });
 
-    for (int i(0); i<20; ++i) {
+    for (int i(0); i<10; ++i) {
       float r(math::random::get(0.0f, 2*M_PI));
       float s(0.05);
       math::vec2 dir(sin(r)*s, cos(r)*s);

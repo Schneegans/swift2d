@@ -80,9 +80,9 @@ void Planet::update(double time) {
         dirt->spawn_once({
           1.f, 0.5f,                    // life
           rot, 1.f,                     // direction
-          speed, 1.5f,                    // velocity
+          speed, speed*0.9f,            // velocity
           0.05f,                        // position
-          100.f,                        // count
+          50.f,                         // count
           math::make_translation(pos),  // world transform
           nullptr                       // one time emitter
         });
