@@ -73,8 +73,9 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
       uniform sampler3D normal_tex;
       uniform mat3 normal_transform;
       vec4 get_normal() {
-        vec4 result = texture(normal_tex, tex_coords, time);
-        result.xy   = (normal_transform * vec3(result.xy-0.5, 0.0)).xy+0.5;
+        vec4 result = texture(normal_tex, tex_coords, time) - vec4(0.5, 0.5, 0.5, 0);
+        result.xy   = (normal_transform * vec3(result.xy, 0.0)).xy;
+        // result.xyz  = normalize(result.xyz);
         return result;
       }
     )";
@@ -83,15 +84,16 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
       uniform sampler2D normal_tex;
       uniform mat3 normal_transform;
       vec4 get_normal() {
-        vec4 result = texture2D(normal_tex, tex_coords);
-        result.xy   = (normal_transform * vec3(result.xy-0.5, 0.0)).xy+0.5;
+        vec4 result = texture2D(normal_tex, tex_coords) - vec4(0.5, 0.5, 0.5, 0);
+        result.xy   = (normal_transform * vec3(result.xy, 0.0)).xy;
+        // result.xyz  = normalize(result.xyz);
         return result;
       }
     )";
   } else {
     f_shader << R"(
       vec4 get_normal() {
-        return vec4(0.5, 0.5, 0, 0);
+        return vec4(0, 0, -1, 0);
       }
     )";
   }

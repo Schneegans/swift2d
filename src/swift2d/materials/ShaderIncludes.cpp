@@ -59,7 +59,7 @@ ShaderIncludes::ShaderIncludes() {
 
     void write_gbuffer(vec4 color, vec4 normal, float emit, float glow, float shinyness) {
       fragColor   = color;
-      fragNormal  = normal;
+      fragNormal  = vec4(normal.xyz*0.5 + 0.5, normal.a);
       fragLight   = vec4(emit, shinyness, glow, color.a);
     }
 
@@ -83,7 +83,7 @@ ShaderIncludes::ShaderIncludes() {
     uniform sampler2D g_buffer_light;
 
     vec3 get_normal() {
-      return texture2D(g_buffer_normal, gl_FragCoord.xy/screen_size).rgb;
+      return texture2D(g_buffer_normal, gl_FragCoord.xy/screen_size).rgb * 2 - 1;
     }
 
     vec3 get_diffuse() {
@@ -98,11 +98,12 @@ ShaderIncludes::ShaderIncludes() {
 
   add_include("get_lit_surface_color", R"(
     vec3 get_lit_surface_color(vec3 dir, vec4 color, float attenuation) {
-      vec3  normal      = normalize(get_normal() - 0.5);
+      vec3  normal      = normalize(get_normal());
       vec3  light_info  = get_light_info();
       float gloss       = light_info.g;
-      float specular    = pow(max(0, reflect(dir, normal).z), gloss*100 + 1) * gloss;
-      float diffuse     = max(0, dot(dir, normal));
+      float specular    = pow(dot(normal, normalize(dir + vec3(0, 0, -1))), gloss*100 + 1) * gloss;
+      // float specular    = pow(reflect(dir, normal).z, gloss*100 + 1) * gloss;
+      float diffuse     = dot(dir, normal);
       vec3  light       = (diffuse*get_diffuse() + specular) * color.rgb * color.a;
       return (1.0-light_info.r) * attenuation * light;
     }

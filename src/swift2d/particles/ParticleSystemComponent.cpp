@@ -61,11 +61,14 @@ void ParticleSystemComponent::draw_particles(RenderContext const& ctx) {
 
 void ParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
   serialized_emitters_.clear();
+  serialized_emitters_.resize(emitters_.size() + once_emitters_.size());
+
+  int i(0);
   for (auto const& emitter: emitters_) {
-    serialized_emitters_.push_back(emitter->make_serialized_emitter());
+    serialized_emitters_[i++] = emitter->make_serialized_emitter();
   }
   for (auto const& emitter: once_emitters_) {
-    serialized_emitters_.push_back(emitter);
+    serialized_emitters_[i++] = emitter;
   }
   once_emitters_.clear();
 }
@@ -74,11 +77,11 @@ void ParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
 
 void ParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   DrawableComponent::accept(visitor);
-  visitor.add_member("MaxCount", MaxCount);
-  visitor.add_member("Depth", Depth);
-  visitor.add_member("Mass", Mass);
-  visitor.add_member("LinearDamping", LinearDamping);
-  visitor.add_member("AngularDamping", AngularDamping);
+  visitor.add_member("MaxCount",        MaxCount);
+  visitor.add_member("Depth",           Depth);
+  visitor.add_member("Mass",            Mass);
+  visitor.add_member("LinearDamping",   LinearDamping);
+  visitor.add_member("AngularDamping",  AngularDamping);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

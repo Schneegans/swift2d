@@ -27,14 +27,14 @@ ParticleEmitterComponent::ParticleEmitterComponent()
 
 void ParticleEmitterComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
-  visitor.add_member("Life", Life);
-  visitor.add_member("LifeVariance", LifeVariance);
-  visitor.add_member("Direction", Direction);
+  visitor.add_member("Life",              Life);
+  visitor.add_member("LifeVariance",      LifeVariance);
+  visitor.add_member("Direction",         Direction);
   visitor.add_member("DirectionVariance", DirectionVariance);
-  visitor.add_member("Velocity", Velocity);
-  visitor.add_member("VelocityVariance", VelocityVariance);
-  visitor.add_member("PositionVariance", PositionVariance);
-  visitor.add_member("Density", Density);
+  visitor.add_member("Velocity",          Velocity);
+  visitor.add_member("VelocityVariance",  VelocityVariance);
+  visitor.add_member("PositionVariance",  PositionVariance);
+  visitor.add_member("Density",           Density);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,15 +42,15 @@ void ParticleEmitterComponent::accept(SavableObjectVisitor& visitor) {
 SerializedEmitter ParticleEmitterComponent::make_serialized_emitter() const {
   SerializedEmitter result;
 
-  result.Life = Life();
-  result.LifeVariance = LifeVariance();
-  result.Direction = Direction();
-  result.DirectionVariance = DirectionVariance();
-  result.Velocity = Velocity();
-  result.VelocityVariance = VelocityVariance();
-  result.Density = Density();
-  result.PositionVariance = PositionVariance();
-  result.WorldTransform = WorldTransform();
+  result.Life               = Life();
+  result.LifeVariance       = LifeVariance();
+  result.Direction          = Direction();
+  result.DirectionVariance  = DirectionVariance();
+  result.Velocity           = Velocity();
+  result.VelocityVariance   = VelocityVariance();
+  result.Density            = Density();
+  result.PositionVariance   = PositionVariance();
+  result.WorldTransform     = WorldTransform();
   result.Self = this;
 
   return result;

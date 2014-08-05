@@ -151,10 +151,6 @@ void ParticleSystem::update_particles(
 
         ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       }
-
-      if (emitter.Self) {
-        last_transforms_[emitter.Self] = emitter.WorldTransform;
-      }
     }
 
     // update existing particles -----------------------------------------------
