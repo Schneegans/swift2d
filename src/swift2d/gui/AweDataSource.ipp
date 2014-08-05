@@ -21,7 +21,7 @@ class AweDataSource : public Awesomium::DataSource {
     std::string absolute_path(Awesomium::ToString(path));
 
     if (absolute_path[0] != '/') {
-      absolute_path = Application::instance()->make_absolute(absolute_path);
+      absolute_path = Swift2D::instance()->make_absolute(absolute_path);
     }
 
     TextFile file(absolute_path);

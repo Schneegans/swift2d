@@ -10,7 +10,7 @@
 #include <swift2d/graphics/PostProcessor.hpp>
 
 #include <swift2d/geometries/Quad.hpp>
-#include <swift2d/application/Application.hpp>
+#include <swift2d/Swift2D.hpp>
 
 namespace swift {
 
@@ -113,7 +113,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
   , streak_effect_(ctx)
   , ghost_effect_(ctx)
   , heat_effect_(ctx, shading_quality_)
-  , dirt_(Application::instance()->get_resource("images", "dirt.jpg")) {
+  , dirt_(Swift2D::instance()->get_resource("images", "dirt.jpg")) {
 
   auto create_texture = [&](
     oglplus::Texture& tex, int width, int height,

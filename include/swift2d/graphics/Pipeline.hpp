@@ -41,8 +41,6 @@ class Pipeline {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float LoadingProgress;
-
   Pipeline();
   ~Pipeline();
 

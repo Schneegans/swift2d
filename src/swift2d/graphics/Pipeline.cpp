@@ -9,6 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/Pipeline.hpp>
 
+#include <swift2d/Swift2D.hpp>
 #include <swift2d/components/DrawableComponent.hpp>
 #include <swift2d/components/CameraComponent.hpp>
 #include <swift2d/graphics/Window.hpp>
@@ -26,8 +27,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Pipeline::Pipeline()
-  : LoadingProgress(0.f)
-  , old_size_(-1, -1)
+  : old_size_(-1, -1)
   , compositor_(nullptr)
   , max_load_amount_(-1)
   , current_load_amount_(0) {}
@@ -50,9 +50,9 @@ void Pipeline::set_output_window(WindowPtr const& window) {
 void Pipeline::update() {
 
   if (max_load_amount_ == -1) {
-    LoadingProgress = 1.f;
+    Swift2D::instance()->LoadingProgress = 1.f;
   } else {
-    LoadingProgress = 1.f - 1.0f * current_load_amount_ / max_load_amount_;
+    Swift2D::instance()->LoadingProgress = 1.f - 1.0f * current_load_amount_ / max_load_amount_;
   }
 }
 

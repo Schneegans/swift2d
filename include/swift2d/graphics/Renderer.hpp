@@ -40,18 +40,13 @@ class Renderer {
  // ----------------------------------------------------------- public interface
  public:
 
-  Signal<> on_frame;
-
-  Renderer(PipelinePtr const& pipeline);
+  Renderer(Pipeline& pipeline);
   virtual ~Renderer();
 
   void process(SceneObjectPtr const& scene,
                CameraComponentPtr const& camera);
 
   void stop();
-
-  FPSCounter AppFPS;
-  FPSCounter RenderFPS;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

@@ -6,7 +6,7 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <swift2d/swift2d.hpp>
+#include <swift2d/Swift2D.hpp>
 #include "SpaceScene.hpp"
 #include "Player.hpp"
 
@@ -16,7 +16,7 @@ using namespace swift;
 int main(int argc, char** argv) {
 
   // initialize Swift2D
-  Application::instance()->init(argc, argv);
+  Swift2D::instance()->init(argc, argv);
   Network::instance()->connect("myTestGame");
 
   // scene ---------------------------------------------------------------------
@@ -30,47 +30,38 @@ int main(int argc, char** argv) {
 
   // rendering pipeline --------------------------------------------------------
   auto window = WindowManager::instance()->get_default();
-  auto pipeline = Pipeline::create();
-  pipeline->set_output_window(window);
-
-  Renderer renderer(pipeline);
 
   // main loop -----------------------------------------------------------------
   Timer timer;
   timer.start();
-
-  auto ticker(Ticker::create(1.0 / 60.0));
-  ticker->on_tick.connect([&]() {
+  Swift2D::instance()->on_frame.connect([&]() {
     double time(timer.get_elapsed());
     timer.reset();
 
     window->process_input();
     Network::instance()->update();
     scene->update(time);
-    renderer.process(scene, camera);
+    Swift2D::instance()->display(scene, camera);
   });
 
-  ticker->start();
-
   window->on_close.connect([&](){
-    renderer.stop();
-    Application::instance()->stop();
+    Swift2D::instance()->stop();
   });
 
   window->on_key_press.connect([&](Key key, int scancode, int action, int mods) {
     if (action != 1) {
       switch(key) {
         case Key::ESCAPE:
-          renderer.stop();
-          Application::instance()->stop();
+          Swift2D::instance()->stop();
           break;
       }
     }
   });
 
-  Application::instance()->start();
+  Swift2D::instance()->start();
 
   Network::instance()->disconnect();
+  Swift2D::instance()->clean_up();
 
   return 0;
 }

@@ -9,6 +9,7 @@
 // class header
 #include <swift2d/graphics/Renderer.hpp>
 
+#include <swift2d/Swift2D.hpp>
 #include <swift2d/scene.hpp>
 #include <swift2d/graphics/Pipeline.hpp>
 #include <swift2d/utils/Logger.hpp>
@@ -25,24 +26,19 @@ Renderer::~Renderer() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Renderer::Renderer(PipelinePtr const& pipeline)
+Renderer::Renderer(Pipeline& pipeline)
   : rendered_scene_()
   , updating_scene_()
   , updated_scene_()
-  , AppFPS(20)
-  , RenderFPS(20)
   , running_(true)
   , started_rendering_(true) {
-
-  AppFPS.start();
-  RenderFPS.start();
 
   ticker_ = Ticker::create(1.0 / 1000.0);
   ticker_->on_tick.connect([&]() {
     if (started_rendering_) {
       started_rendering_ = false;
-      on_frame.emit();
-      pipeline->update();
+      Swift2D::instance()->on_frame.emit();
+      pipeline.update();
     }
   });
   ticker_->start();
@@ -57,8 +53,8 @@ Renderer::Renderer(PipelinePtr const& pipeline)
           started_rendering_ = true;
         }
 
-        RenderFPS.step();
-        pipeline->draw(rendered_scene_);
+        Swift2D::instance()->RenderFPS.step();
+        pipeline.draw(rendered_scene_);
       } else {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
       }
@@ -69,7 +65,7 @@ Renderer::Renderer(PipelinePtr const& pipeline)
 ////////////////////////////////////////////////////////////////////////////////
 
 void Renderer::process(SceneObjectPtr const& scene, CameraComponentPtr const& camera) {
-  AppFPS.step();
+  Swift2D::instance()->AppFPS.step();
 
   updating_scene_ = scene->serialize(camera);
 

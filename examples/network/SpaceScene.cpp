@@ -15,30 +15,30 @@ using namespace swift;
 
 swift::SceneObjectPtr SpaceScene::create() {
 
-  TextureDatabase::instance()->add("smoke", Texture::create(Application::instance()->get_resource("images", "smoke.png")));
-  TextureDatabase::instance()->add("fire",  Texture::create(Application::instance()->get_resource("images", "fire.png")));
-  TextureDatabase::instance()->add("light",  Texture::create(Application::instance()->get_resource("images", "light.png")));
+  TextureDatabase::instance()->add("smoke", Texture::create(Swift2D::instance()->get_resource("images", "smoke.png")));
+  TextureDatabase::instance()->add("fire",  Texture::create(Swift2D::instance()->get_resource("images", "fire.png")));
+  TextureDatabase::instance()->add("light",  Texture::create(Swift2D::instance()->get_resource("images", "light.png")));
 
   auto mat = Material::create();
-  mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "bg.jpg"));
+  mat->DiffuseTexture = Texture::create(Swift2D::instance()->get_resource("images", "bg.jpg"));
   MaterialDatabase::instance()->add("background", mat);
 
   mat = Material::create();
-  mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "ship.jpg"));
+  mat->DiffuseTexture = Texture::create(Swift2D::instance()->get_resource("images", "ship.jpg"));
   MaterialDatabase::instance()->add("ship", mat);
 
   mat = Material::create();
-  mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "bullet.jpg"));
+  mat->DiffuseTexture = Texture::create(Swift2D::instance()->get_resource("images", "bullet.jpg"));
   MaterialDatabase::instance()->add("bullet", mat);
 
   mat = Material::create();
-  mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "planet_diffuse2.png"));
-  mat->NormalTexture = Texture::create(Application::instance()->get_resource("images", "planet_normal2.png"));
+  mat->DiffuseTexture = Texture::create(Swift2D::instance()->get_resource("images", "planet_diffuse2.png"));
+  mat->NormalTexture = Texture::create(Swift2D::instance()->get_resource("images", "planet_normal2.png"));
   MaterialDatabase::instance()->add("planet1", mat);
 
   mat = Material::create();
-  mat->DiffuseTexture = Texture::create(Application::instance()->get_resource("images", "planet_diffuse.png"));
-  mat->NormalTexture = Texture::create(Application::instance()->get_resource("images", "planet_normal.png"));
+  mat->DiffuseTexture = Texture::create(Swift2D::instance()->get_resource("images", "planet_diffuse.png"));
+  mat->NormalTexture = Texture::create(Swift2D::instance()->get_resource("images", "planet_normal.png"));
   MaterialDatabase::instance()->add("planet2", mat);
 
   // example scene setup -------------------------------------------------------

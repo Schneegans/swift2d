@@ -10,7 +10,7 @@
 #define MOVER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/swift2d.hpp>
+#include <swift2d/Swift2D.hpp>
 
 using namespace swift;
 
