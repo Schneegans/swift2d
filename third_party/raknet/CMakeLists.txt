@@ -2,10 +2,11 @@ set(CMAKE_CXX_FLAGS_RELEASE "-s -w -O4 -fPIC")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -fPIC")
 
 INCLUDE_DIRECTORIES(
-  src/
+  src
+  ../steam
 )
 
-FILE(GLOB RAKNET_SRC
+FILE(GLOB_RECURSE RAKNET_SRC
   src/*.cpp
 )
 

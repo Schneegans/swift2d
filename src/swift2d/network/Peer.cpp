@@ -29,13 +29,13 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Peer::Peer()
-  : peer_(RakNet::RakPeerInterface::GetInstance())
-  , graph_(RakNet::ConnectionGraph2::GetInstance())
-  , mesh_(RakNet::FullyConnectedMesh2::GetInstance())
-  , npt_(RakNet::NatPunchthroughClient::GetInstance())
+  : peer_             (RakNet::RakPeerInterface::GetInstance())
+  , graph_            (RakNet::ConnectionGraph2::GetInstance())
+  , mesh_             (RakNet::FullyConnectedMesh2::GetInstance())
+  , npt_              (RakNet::NatPunchthroughClient::GetInstance())
   , nat_type_detector_(RakNet::NatTypeDetectionClient::GetInstance())
-  , id_manager_(new RakNet::NetworkIDManager())
-  , replica_(new ReplicationManager()) {
+  , id_manager_       (new RakNet::NetworkIDManager())
+  , replica_          (new ReplicationManager()) {
 
   peer_->AttachPlugin(mesh_);
   peer_->AttachPlugin(graph_);
@@ -111,7 +111,8 @@ void Peer::start_join(uint64_t guid) {
 void Peer::join(uint64_t guid, std::string const& nat_server) {
   DataStructures::List<RakNet::SystemAddress> addresses;
   DataStructures::List<RakNet::RakNetGUID> guids;
-  mesh_->GetVerifiedJoinRequiredProcessingList(RakNet::RakNetGUID(guid), addresses, guids);
+  DataStructures::List<RakNet::BitStream*> userData;
+  mesh_->GetVerifiedJoinRequiredProcessingList(RakNet::RakNetGUID(guid), addresses, guids, userData);
   for (unsigned int i=0; i < guids.Size(); i++) {
     // if (guids[i].g != get_guid()) {
       npt_->OpenNAT(guids[i], RakNet::SystemAddress(nat_server.c_str()));
