@@ -12,6 +12,8 @@
 #include <swift2d/network/ReplicationManager.hpp>
 #include <swift2d/utils/Logger.hpp>
 #include <swift2d/math/operators.hpp>
+#include <swift2d/steam/SteamOnceCallback.hpp>
+#include <swift2d/steam/SteamCallback.hpp>
 
 #include <raknet/src/MessageIdentifiers.h>
 #include <raknet/src/RakNetTypes.h>
@@ -29,9 +31,75 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SteamNetwork::SteamNetwork() {
+SteamNetwork::SteamNetwork()
+  : current_room_(0) {
 
   Logger::LOG_MESSAGE << "I'm " << peer_.get_guid() << std::endl;
+
+  chat_update_ = new SteamCallback<LobbyChatUpdate_t>([](LobbyChatUpdate_t* result) {
+
+    std::string who   (SteamFriends()->GetFriendPersonaName(result->m_ulSteamIDUserChanged));
+    int         what  (result->m_rgfChatMemberStateChange);
+
+    if (what == k_EChatMemberStateChangeEntered) {
+      Logger::LOG_MESSAGE << who << " entered the room" << std::endl;
+    }
+
+    if (what == k_EChatMemberStateChangeLeft) {
+      Logger::LOG_MESSAGE << who << " left the room" << std::endl;
+    }
+
+    if (what == k_EChatMemberStateChangeDisconnected) {
+      Logger::LOG_MESSAGE << who << " disconnected" << std::endl;
+    }
+
+    if (what == k_EChatMemberStateChangeKicked) {
+      Logger::LOG_MESSAGE << who << " was kicked" << std::endl;
+    }
+
+    if (what == k_EChatMemberStateChangeBanned) {
+      Logger::LOG_MESSAGE << who << " was banned" << std::endl;
+    }
+
+  });
+
+  chat_message_ = new SteamCallback<LobbyChatMsg_t>([this](LobbyChatMsg_t* result) {
+
+    CSteamID speaker;
+    EChatEntryType entryType;
+    char data[2048];
+    int cubData=sizeof(data);
+    int length = SteamMatchmaking()->GetLobbyChatEntry(
+      result->m_ulSteamIDLobby,
+      result->m_iChatID, &speaker, data, cubData, &entryType);
+
+    if (entryType == k_EChatEntryTypeChatMsg) {
+      auto message = std::string(data, length);
+
+      SteamNetwork::on_chat_message.emit(
+        SteamFriends()->GetFriendPersonaName(speaker), message
+      );
+    }
+  });
+
+  lobby_enter_ = new SteamCallback<LobbyEnter_t>([this](LobbyEnter_t* result) {
+    Logger::LOG_WARNING << "joined " << result->m_ulSteamIDLobby << std::endl;
+    current_room_ = result->m_ulSteamIDLobby;
+
+    int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
+    for (int i(0); i<user_count; ++i) {
+      auto user = SteamMatchmaking()->GetLobbyMemberByIndex(current_room_, i);
+      Logger::LOG_WARNING << "room mate " << i << " " << SteamFriends()->GetFriendPersonaName(user) << std::endl;
+    }
+  });
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SteamNetwork::~SteamNetwork() {
+  delete chat_update_;
+  delete chat_message_;
+  delete lobby_enter_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -102,6 +170,8 @@ SteamNetwork::SteamNetwork() {
 
 void SteamNetwork::update() {
 
+  SteamAPI_RunCallbacks();
+
   // auto register_new_peer = [&](RakNet::RakNetGUID guid){
   //   RakNet::Connection_RM3 *connection = peer_.replica_->AllocConnection(peer_.peer_->GetSystemAddressFromGuid(guid), guid);
   //   if (peer_.replica_->PushConnection(connection) == false) {
@@ -121,6 +191,7 @@ void SteamNetwork::update() {
 
       // ##################### BASIC PACKETS ###################################
       // -----------------------------------------------------------------------
+
       // case ID_CONNECTION_REQUEST_ACCEPTED:
       //   if (phase_ == CONNECTING_TO_SERVER) {
 
@@ -187,55 +258,79 @@ void SteamNetwork::update() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void SteamNetwork::update_room_list() {
-  RakNet::Lobby2Message* logoffMsg = peer_.steam_messages_->Alloc(RakNet::L2MID_Console_SearchRooms);
-  peer_.steam_->SendMsg(logoffMsg);
-  peer_.steam_messages_->Dealloc(logoffMsg);
+  SteamOnceCallback<LobbyMatchList_t>::set(
+    SteamMatchmaking()->RequestLobbyList(),
+    [](LobbyMatchList_t *result, bool f) {
+
+    std::unordered_map<uint64_t, std::string> rooms;
+    for (int i(0); i<result->m_nLobbiesMatching; ++i) {
+      CSteamID id = SteamMatchmaking()->GetLobbyByIndex(i);
+      rooms[id.ConvertToUint64()] = std::string(SteamMatchmaking()->GetLobbyData(id, "name"));
+    }
+    SteamNetwork::instance()->on_updated_room_list.emit(rooms);
+  });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void SteamNetwork::create_room(std::string const& name) {
-  if (peer_.steam_->GetRoomID() != 0) {
-    Logger::LOG_WARNING << "Already in a room" << std::endl;
-    return;
-  }
+  if (current_room_ == 0) {
 
-  auto msg = (RakNet::Console_CreateRoom_Steam*) peer_.steam_messages_->Alloc(RakNet::L2MID_Console_CreateRoom);
-  msg->roomName=name.c_str();
-  msg->publicSlots=8;
-  peer_.steam_->SendMsg(msg);
-  peer_.steam_messages_->Dealloc(msg);
+    SteamOnceCallback<LobbyCreated_t>::set(
+    SteamMatchmaking()->CreateLobby(k_ELobbyTypePublic, 8),
+    [this, name](LobbyCreated_t *result, bool f) {
+
+      if (result->m_eResult == k_EResultOK) {
+        Logger::LOG_WARNING << "created " << result->m_ulSteamIDLobby << std::endl;
+        current_room_ = result->m_ulSteamIDLobby;
+
+        SteamMatchmaking()->SetLobbyData(current_room_, "name", name.c_str());
+      } else {
+        Logger::LOG_WARNING << "failed to create lobby" << std::endl;
+      }
+    });
+
+  } else {
+    Logger::LOG_WARNING << "Already in a room" << std::endl;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void SteamNetwork::join_room(uint64_t id) {
-
-  std::cout << id << std::endl;
-
-  if (peer_.steam_->GetRoomID() != 0) {
+  if (current_room_ == 0) {
+    SteamMatchmaking()->JoinLobby(id);
+  } else {
     Logger::LOG_WARNING << "Already in a room" << std::endl;
-    return;
   }
-
-  auto msg = (RakNet::Console_JoinRoom_Steam*) peer_.steam_messages_->Alloc(RakNet::L2MID_Console_JoinRoom);
-  msg->roomId = id;
-  peer_.steam_->SendMsg(msg);
-  peer_.steam_messages_->Dealloc(msg);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void SteamNetwork::leave_room() {
-  if (peer_.steam_->GetRoomID() == 0) {
-    Logger::LOG_WARNING << "Not in a room" << std::endl;
-    return;
-  }
+  if (current_room_ != 0) {
 
-  auto msg = (RakNet::Console_LeaveRoom_Steam*) peer_.steam_messages_->Alloc(RakNet::L2MID_Console_LeaveRoom);
-  msg->roomId = peer_.steam_->GetRoomID();
-  peer_.steam_->SendMsg(msg);
-  peer_.steam_messages_->Dealloc(msg);
+    Logger::LOG_WARNING << "left " << current_room_ << std::endl;
+    SteamMatchmaking()->LeaveLobby(current_room_);
+    current_room_ = 0;
+
+  } else {
+    Logger::LOG_WARNING << "Not in a room" << std::endl;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void SteamNetwork::send_chat_message(std::string const& message) {
+  if (current_room_ != 0) {
+
+    if (!SteamMatchmaking()->SendLobbyChatMsg(current_room_, message.c_str(), message.length()+1)) {
+      Logger::LOG_WARNING << "failed to send message" << std::endl;
+    }
+
+  } else {
+    Logger::LOG_WARNING << "Not in a room" << std::endl;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

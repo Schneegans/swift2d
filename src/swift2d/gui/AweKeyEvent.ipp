@@ -176,9 +176,15 @@ class AweKeyEvent : public Awesomium::WebKeyboardEvent {
       awe_mods |= Awesomium::WebKeyboardEvent::kModIsAutorepeat;
     }
 
-    type = awe_type;
-    modifiers = awe_mods;
-    virtual_key_code = key_awe;
-    native_key_code = static_cast<int>(key);
+    type                = awe_type;
+    modifiers           = awe_mods;
+    virtual_key_code    = key_awe;
+    native_key_code     = static_cast<int>(key);
+    is_system_key       = false;
+
+    char* buf = new char[20];
+    Awesomium::GetKeyIdentifierFromVirtualKeyCode(key_awe, &buf);
+    strcpy(key_identifier, buf);
+    delete[] buf;
   }
 };
