@@ -40,8 +40,8 @@ class GuiComponent : public DrawableComponent {
   Bool   Interactive;
 
   // ------------------------------------------------------------------- signals
-  Signal<std::string> on_javascript_callback;
-  Signal<>            on_loaded;
+  Signal<std::string, std::vector<std::string>> on_javascript_callback;
+  Signal<>                                      on_loaded;
 
   // ---------------------------------------------------- construction interface
   GuiComponent();
@@ -61,6 +61,7 @@ class GuiComponent : public DrawableComponent {
 
   void reload();
 
+  void call_javascript(std::string const& method);
   void call_javascript(std::string const& method, std::string const& arg);
   void call_javascript(std::string const& method, std::vector<std::string> const& args);
   void add_javascript_callback(std::string const& callback);

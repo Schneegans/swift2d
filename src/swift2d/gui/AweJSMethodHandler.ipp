@@ -19,14 +19,20 @@ class AweJSMethodHandler : public Awesomium::JSMethodHandler {
   // ------------------------------------------------------------ public methods
   void OnMethodCall(
     Awesomium::WebView* caller, unsigned int remote_object_id,
-    const Awesomium::WebString& method_name, const Awesomium::JSArray& args) {
+    Awesomium::WebString const& method_name, Awesomium::JSArray const& jargs) {
 
-    parent_->on_javascript_callback.emit(Awesomium::ToString(method_name));
+    std::vector<std::string> args;
+
+    for (int i(0); i<jargs.size(); ++i) {
+      args.push_back(Awesomium::ToString(jargs.At(i).ToString()));
+    }
+
+    parent_->on_javascript_callback.emit(Awesomium::ToString(method_name), args);
   }
 
   Awesomium::JSValue OnMethodCallWithReturnValue(
     Awesomium::WebView* caller, unsigned int remote_object_id,
-    const Awesomium::WebString& method_name, const Awesomium::JSArray& args) {
+    Awesomium::WebString const& method_name, Awesomium::JSArray const& args) {
 
   }
 

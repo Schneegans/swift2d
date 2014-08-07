@@ -34,6 +34,12 @@ void GuiComponent::reload() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void GuiComponent::call_javascript(std::string const& method) {
+  gui_element_->call_javascript(method, {});
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void GuiComponent::call_javascript(std::string const& method, std::string const& arg) {
   gui_element_->call_javascript(method, {arg});
 }

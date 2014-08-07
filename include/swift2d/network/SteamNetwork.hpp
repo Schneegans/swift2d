@@ -15,7 +15,8 @@
 #include <swift2d/network/SteamPeer.hpp>
 #include <swift2d/network/NetworkObjectBase.hpp>
 #include <swift2d/network/ReplicationManager.hpp>
-#include <swift2d/network/HttpConnection.hpp>
+
+#include <unordered_map>
 
 namespace RakNet {
   class RakPeerInterface;
@@ -32,48 +33,34 @@ class SteamNetwork : public Singleton<SteamNetwork> {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-  enum Phase {
-    CONNECTING_TO_SERVER,
-    DETECT_NAT_TYPE,
-    OPENING_UPNP,
-    SEARCHING_FOR_OTHER_INSTANCES,
-    CONNECTING_TO_HOST,
-    STARTING_NEW_INSTANCE,
-    HOSTING_INSTANCE,
-    CONNECTING_TO_PEERS,
-    PARTICIPATING
-  };
 
-  void connect(std::string const& game_ID);
-  void disconnect();
+  Signal<std::unordered_map<uint64_t, std::string>> on_updated_room_list;
+
   void update();
 
-  template<typename T> void register_type(RakNet::RakString const& type) {
-    peer_.replica_->register_object(type, [](){ return new T(); });
-  };
+  void update_room_list();
+  void create_room(std::string const& name);
+  void join_room(uint64_t id);
+  void leave_room();
 
-  void distribute_object(NetworkObjectBase* object);
+  // template<typename T> void register_type(RakNet::RakString const& type) {
+  //   peer_.replica_->register_object(type, [](){ return new T(); });
+  // };
 
-  bool is_host() const;
+  // void distribute_object(NetworkObjectBase* object);
+
+  // bool is_host() const;
 
   friend class Singleton<SteamNetwork>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void enter_phase(Phase phase);
-
   SteamNetwork();
   ~SteamNetwork() {}
 
-  SteamPeer       peer_;
-  HttpConnection  http_;
-
-  Phase           phase_;
-  std::string     game_ID_;
-
-  Timer           update_timer_;
-  uint64_t        host_guid_;
+  SteamPeer  peer_;
+  uint64_t   host_guid_;
 };
 
 }

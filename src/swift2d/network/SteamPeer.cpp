@@ -9,11 +9,10 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/network/SteamPeer.hpp>
 
-#include <swift2d/network/Network.hpp>
+#include <swift2d/network/SteamNetwork.hpp>
 #include <swift2d/network/ReplicationManager.hpp>
 #include <swift2d/utils/Logger.hpp>
 
-// #include <raknet/src/Lobby2Message_Steam.h>
 #include <raknet/src/ConnectionGraph2.h>
 #include <raknet/src/FullyConnectedMesh2.h>
 #include <raknet/src/RakPeerInterface.h>
@@ -49,21 +48,32 @@ SteamPeer::SteamPeer()
   replica_->SetNetworkIDManager(id_manager_);
   replica_->SetAutoManageConnections(false,true);
 
-  mesh_->SetAutoparticipateConnections(false);
+  // mesh_->SetAutoparticipateConnections(false);
   mesh_->SetConnectOnNewRemoteConnection(false, "");
 
   RakNet::SocketDescriptor sd;
   sd.socketFamily=AF_INET;
   sd.port=0;
 
-  RakNet::StartupResult sr = peer_->Startup(8,&sd,1);
+  RakNet::StartupResult sr = peer_->Startup(32,&sd,1);
 
   if (sr != RakNet::RAKNET_STARTED) {
     Logger::LOG_ERROR << "Failed to start peer!" << std::endl;
   }
 
-  peer_->SetMaximumIncomingConnections(8);
+  peer_->SetMaximumIncomingConnections(32);
   peer_->SetTimeoutTime(1000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+
+  RakNet::Lobby2Message* msg = steam_messages_->Alloc(RakNet::L2MID_Client_Login);
+  steam_->SendMsg(msg);
+  if (msg->resultCode != RakNet::L2RC_PROCESSING &&
+      msg->resultCode != RakNet::L2RC_SUCCESS) {
+
+    Logger::LOG_ERROR << "Steam must be running to play this game (SteamAPI_Init() failed)." << std::endl;
+    Logger::LOG_ERROR << "If this fails, steam_appid.txt was probably not in the working directory." << std::endl;
+  }
+
+  steam_messages_->Dealloc(msg);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -111,13 +121,15 @@ void SteamPeer::MessageResult(RakNet::Notification_Console_MemberJoinedRoom *mes
 ////////////////////////////////////////////////////////////////////////////////
 
 void SteamPeer::MessageResult(RakNet::Console_SearchRooms *message) {
-    RakNet::Console_SearchRooms_Steam *msgSteam = (RakNet::Console_SearchRooms_Steam *) message;
-    RakNet::RakString msg;
-    msgSteam->DebugMsg(msg);
-    Logger::LOG_MESSAGE << msg.C_String() << std::endl;
-    if (msgSteam->roomIds.GetSize()>0) {
-      last_room_=msgSteam->roomIds[0];
-    }
+  RakNet::Console_SearchRooms_Steam *msg = (RakNet::Console_SearchRooms_Steam *) message;
+
+  std::unordered_map<uint64_t, std::string> rooms;
+
+  for (int i(0); i<msg->roomIds.GetSize(); ++i) {
+    rooms[msg->roomIds[i]] = msg->roomNames[i];
+  }
+
+  SteamNetwork::instance()->on_updated_room_list.emit(rooms);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -125,7 +137,7 @@ void SteamPeer::MessageResult(RakNet::Console_SearchRooms *message) {
 void SteamPeer::ExecuteDefaultResult(RakNet::Lobby2Message *message) {
   RakNet::RakString out;
   message->DebugMsg(out);
-  Logger::LOG_MESSAGE << out.C_String() << std::endl;
+  Logger::LOG_MESSAGE << "ExecuteDefaultResult: " << out.C_String() << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

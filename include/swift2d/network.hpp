@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/network/Network.hpp>
+#include <swift2d/network/SteamNetwork.hpp>
 #include <swift2d/network/NetworkObject.hpp>
 
 #endif // SWIFT2D_INCLUDE_NETWORK_HPP

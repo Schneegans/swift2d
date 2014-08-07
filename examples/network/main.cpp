@@ -17,7 +17,6 @@ int main(int argc, char** argv) {
 
   // initialize Swift2D
   Swift2D::instance()->init(argc, argv);
-  Network::instance()->connect("myTestGame");
 
   // scene ---------------------------------------------------------------------
   auto scene = SpaceScene::create();
@@ -25,8 +24,8 @@ int main(int argc, char** argv) {
   camera->Size = math::vec2(2.f, 2.f);
 
   // player --------------------------------------------------------------------
-  Player::init();
-  Player player(true);
+  // Player::init();
+  // Player player(true);
 
   // rendering pipeline --------------------------------------------------------
   auto window = WindowManager::instance()->get_default();
@@ -39,7 +38,7 @@ int main(int argc, char** argv) {
     timer.reset();
 
     window->process_input();
-    Network::instance()->update();
+    SteamNetwork::instance()->update();
     scene->update(time);
     Swift2D::instance()->display(scene, camera);
   });
@@ -59,10 +58,7 @@ int main(int argc, char** argv) {
   });
 
   Swift2D::instance()->start();
-
-  Network::instance()->disconnect();
   Swift2D::instance()->clean_up();
 
   return 0;
 }
-
