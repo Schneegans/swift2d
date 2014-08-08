@@ -17,6 +17,7 @@
 struct LobbyChatUpdate_t;
 struct LobbyChatMsg_t;
 struct LobbyEnter_t;
+struct PersonaStateChange_t;
 
 namespace swift {
 
@@ -42,17 +43,22 @@ class Steam : public Singleton<Steam> {
   };
 
   Signal<std::unordered_map<uint64_t, std::string>> on_updated_room_list;
-  Signal<MessageType, std::string, std::string>     on_message;
+  Signal<MessageType, uint64_t, std::string>     on_message;
 
   void init();
   void update();
 
   void update_room_list();
   void create_room(std::string const& name);
-  void join_room(uint64_t id);
+  void join_room(uint64_t room_id);
   void leave_room();
 
   void send_chat_message(std::string const& message);
+
+  uint64_t    get_id();
+  std::string get_name();
+  std::string get_name(uint64_t steam_id);
+  std::string get_avatar(uint64_t steam_id);
 
   friend class Singleton<Steam>;
 
@@ -63,11 +69,16 @@ class Steam : public Singleton<Steam> {
   Steam();
   ~Steam();
 
+  void save_avatar(uint64_t steam_id);
+
   uint64_t current_room_;
 
-  SteamCallback<LobbyChatUpdate_t>* chat_update_;
-  SteamCallback<LobbyChatMsg_t>*    chat_message_;
-  SteamCallback<LobbyEnter_t>*      lobby_enter_;
+  SteamCallback<LobbyChatUpdate_t>*     chat_update_;
+  SteamCallback<LobbyChatMsg_t>*        chat_message_;
+  SteamCallback<LobbyEnter_t>*          lobby_enter_;
+  SteamCallback<PersonaStateChange_t>*  persona_change_;
+
+  std::unordered_map<uint64_t, std::string> avatar_cache_;
 };
 
 }

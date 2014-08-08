@@ -59,6 +59,18 @@ void Swift2D::init(int argc, char** argv) {
 
   executable_ = boost::filesystem::system_complete(argv[0]).normalize().remove_filename().string();
 
+  if (executable_ == "") {
+    Logger::LOG_ERROR << "Failed to get executable path!" << std::endl;
+    return;
+  }
+
+  // create tmp directory ------------------------------------------------------
+  boost::filesystem::path dir(executable_ + "/tmp");
+  if (!boost::filesystem::create_directory(dir)) {
+    Logger::LOG_ERROR << "Failed to create temporary directory!" << std::endl;
+    return;
+  }
+
   // register all objects ------------------------------------------------------
   Object::init<AnimatedSpriteComponent>();
   Object::init<AnimatedTexture>();
@@ -169,9 +181,23 @@ void Swift2D::clean_up() {
 
   glfwTerminate();
 
+  // delete tmp directory ------------------------------------------------------
+  boost::filesystem::path dir(executable_ + "/tmp");
+  if (!boost::filesystem::remove_all(dir)) {
+    Logger::LOG_ERROR << "Failed to delete temporary directory!" << std::endl;
+    return;
+  }
+
   Logger::LOG_MESSAGE << "Bye!" << std::endl;
 
   delete this;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::string Swift2D::get_tmp_file(std::string const& suffix) const {
+  boost::filesystem::path temp = boost::filesystem::unique_path();
+  return executable_ + "/tmp/" + temp.native() + "." + suffix;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

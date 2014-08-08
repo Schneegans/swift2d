@@ -66,6 +66,7 @@ class Swift2D : public Singleton<Swift2D> {
 
   void display(SceneObjectPtr const& scene, CameraComponentPtr const& camera);
 
+  std::string get_tmp_file(std::string const& suffix = "tmp") const;
   std::string get_resource(std::string const& type, std::string const& file) const;
   std::string make_absolute(std::string const& file) const;
 

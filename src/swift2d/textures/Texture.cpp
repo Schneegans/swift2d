@@ -13,7 +13,13 @@
 #include <swift2d/Swift2D.hpp>
 #include <oglplus/images/png.hpp>
 #include <oglplus/images/newton.hpp>
+
+#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image/stb_image_write.h>
+
 #include <thread>
 
 namespace swift {

@@ -9,9 +9,12 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/steam/Steam.hpp>
 
+#include <swift2d/Swift2D.hpp>
 #include <swift2d/steam/SteamOnceCallback.hpp>
 #include <swift2d/steam/SteamCallback.hpp>
 #include <swift2d/utils/Logger.hpp>
+
+#include <stb_image/stb_image_write.h>
 
 #include <iostream>
 #include <steam/steam_api.h>
@@ -26,7 +29,6 @@ Steam::Steam()
   // on chat update ------------------------------------------------------------
   chat_update_ = new SteamCallback<LobbyChatUpdate_t>([this](LobbyChatUpdate_t* result) {
 
-    std::string who(SteamFriends()->GetFriendPersonaName(result->m_ulSteamIDUserChanged));
     std::string what;
 
     if (result->m_rgfChatMemberStateChange == k_EChatMemberStateChangeEntered) {
@@ -49,7 +51,7 @@ Steam::Steam()
       what = "was banned";
     }
 
-    on_message.emit(MessageType::CHAT_UPDATE, who, what);
+    on_message.emit(MessageType::CHAT_UPDATE, result->m_ulSteamIDUserChanged, what);
 
   });
 
@@ -64,12 +66,7 @@ Steam::Steam()
 
     if (type == k_EChatEntryTypeChatMsg) {
       auto message = std::string(data, length);
-
-      on_message.emit(
-        MessageType::CHAT,
-        SteamFriends()->GetFriendPersonaName(speaker),
-        message
-      );
+      on_message.emit(MessageType::CHAT, speaker.ConvertToUint64(), message);
     }
   });
 
@@ -78,12 +75,32 @@ Steam::Steam()
     current_room_ = result->m_ulSteamIDLobby;
     std::string name(SteamMatchmaking()->GetLobbyData(current_room_, "name"));
 
-    on_message.emit(MessageType::JOIN, SteamFriends()->GetPersonaName(), "joined " + name);
+    on_message.emit(MessageType::JOIN, get_id(), "joined " + name);
 
     int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
     for (int i(0); i<user_count; ++i) {
       auto user = SteamMatchmaking()->GetLobbyMemberByIndex(current_room_, i);
-      Steam::on_message.emit(MessageType::CHAT_UPDATE, SteamFriends()->GetFriendPersonaName(user), "is in this room");
+      on_message.emit(MessageType::CHAT_UPDATE, user.ConvertToUint64(), "is in this room");
+    }
+  });
+
+  // persona state change ------------------------------------------------------
+  persona_change_ = new SteamCallback<PersonaStateChange_t>([this](PersonaStateChange_t* result) {
+
+    // save avatar
+    if (result->m_nChangeFlags == k_EPersonaChangeAvatar) {
+
+      auto avatar(avatar_cache_.find(result->m_ulSteamID));
+      std::string file;
+
+      if (avatar == avatar_cache_.end()) {
+        file = Swift2D::instance()->get_tmp_file("png");
+        avatar_cache_[result->m_ulSteamID] = file;
+      } else {
+        file = avatar->second;
+      }
+
+      save_avatar(result->m_ulSteamID);
     }
   });
 }
@@ -176,7 +193,7 @@ void Steam::leave_room() {
   if (current_room_ != 0) {
 
     std::string name(SteamMatchmaking()->GetLobbyData(current_room_, "name"));
-    on_message.emit(MessageType::LEAVE, SteamFriends()->GetPersonaName(), "left " + name);
+    on_message.emit(MessageType::LEAVE, get_id(), "left " + name);
 
     SteamMatchmaking()->LeaveLobby(current_room_);
     current_room_ = 0;
@@ -197,6 +214,62 @@ void Steam::send_chat_message(std::string const& message) {
 
   } else {
     Logger::LOG_WARNING << "Not in a room" << std::endl;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+uint64_t Steam::get_id() {
+  return SteamUser()->GetSteamID().ConvertToUint64();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::string Steam::get_name() {
+  return SteamFriends()->GetPersonaName();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::string Steam::get_name(uint64_t steam_id) {
+  return SteamFriends()->GetFriendPersonaName(steam_id);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::string Steam::get_avatar(uint64_t steam_id) {
+  auto avatar(avatar_cache_.find(steam_id));
+  if (avatar != avatar_cache_.end()) {
+    return avatar->second;
+  }
+
+  SteamFriends()->RequestUserInformation(steam_id, false);
+
+  std::string file(Swift2D::instance()->get_tmp_file("png"));
+  avatar_cache_[steam_id] = file;
+
+  save_avatar(steam_id);
+
+  return file;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Steam::save_avatar(uint64_t steam_id) {
+  int avatar_id = SteamFriends()->GetSmallFriendAvatar(steam_id);
+
+  uint32 width;
+  uint32 height;
+
+  SteamUtils()->GetImageSize(avatar_id, &width, &height);
+
+  int data_length = width*height*4*sizeof(uint8);
+  uint8 data[data_length];
+
+  if (!SteamUtils()->GetImageRGBA(avatar_id, data, data_length)) {
+    Logger::LOG_WARNING << "Failed to get avatar image!" << std::endl;
+  } else {
+    stbi_write_png(avatar_cache_[steam_id].c_str(), width, height, 4, data, width*4*sizeof(uint8));
   }
 }
 
