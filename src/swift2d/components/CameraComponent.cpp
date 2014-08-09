@@ -23,7 +23,7 @@ CameraComponent::CameraComponent()
 math::vec2 CameraComponent::pixel_to_world(math::vec2 const& pixel_pos) const {
   auto w = WindowManager::instance()->get_default();
   if (w->get_context().ready) {
-    math::vec2 scaled = (pixel_pos / math::vec2(w->get_context().size));
+    math::vec2 scaled = (pixel_pos / math::vec2(w->get_context().window_size));
     math::vec3 tmp = WorldTransform() * math::vec3(scaled.x(), scaled.y(), 1.f);
     return math::vec2(tmp.x(), tmp.y());
   }
@@ -35,7 +35,7 @@ math::vec2 CameraComponent::pixel_to_world(math::vec2 const& pixel_pos) const {
 math::vec2 CameraComponent::world_to_pixel(math::vec2 const& world_pos) const {
   auto w = WindowManager::instance()->get_default();
   math::vec3 tmp = math::inversed(WorldTransform()) * math::vec3(world_pos.x(), world_pos.y(), 1.f);
-  return tmp.xy() * math::vec2(w->get_context().size) / (2.0f*Size()) + math::vec2(w->get_context().size)*0.5f;
+  return tmp.xy() * math::vec2(w->get_context().window_size) / (2.0f*Size()) + math::vec2(w->get_context().window_size)*0.5f;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

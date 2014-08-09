@@ -31,7 +31,7 @@ class PostProcessor {
  public:
 
   // ----------------------------------------------------- contruction interface
-  PostProcessor(RenderContext const& ctx, int shading_quality);
+  PostProcessor(RenderContext const& ctx, int shading_quality, bool super_sampling);
 
   // ------------------------------------------------------------ public methods
   void process(ConstSerializedScenePtr const& scene, RenderContext const& ctx,
@@ -43,7 +43,8 @@ class PostProcessor {
  private:
   void generate_threshold_buffer(RenderContext const& ctx);
 
-  int shading_quality_;
+  int  shading_quality_;
+  bool super_sampling_;
 
   Shader               post_fx_shader_;
 

@@ -24,7 +24,7 @@ class Compositor {
  public:
 
   // ---------------------------------------------------- construction interface
-  Compositor(RenderContext const& ctx, int shading_quality);
+  Compositor(RenderContext const& ctx, int shading_quality, bool super_sampling);
   ~Compositor();
 
   // ------------------------------------------------------------ public methods
@@ -36,7 +36,8 @@ class Compositor {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  int shading_quality_;
+  int  shading_quality_;
+  bool super_sampling_;
 
   oglplus::Framebuffer  fbo_;
   oglplus::Texture      g_buffer_diffuse_;
@@ -44,7 +45,7 @@ class Compositor {
   oglplus::Texture      g_buffer_light_;
   oglplus::Texture      final_buffer_;
 
-  Shader*        shader_;
+  Shader*        background_shader_;
   PostProcessor* post_processor_;
 };
 

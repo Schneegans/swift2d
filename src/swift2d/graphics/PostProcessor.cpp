@@ -16,8 +16,9 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
+PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality, bool super_sampling)
   : shading_quality_(shading_quality)
+  , super_sampling_(super_sampling)
   , post_fx_shader_(R"(
       // vertex shader ---------------------------------------------------------
       @include "fullscreen_quad_vertext_shader"
@@ -131,7 +132,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality)
   };
 
   // threshold members ---------------------------------------------------------
-  auto size(ctx.size/6);
+  auto size(ctx.g_buffer_size/6);
 
   create_texture(
     threshold_buffer_, size.x(), size.y(),
@@ -172,7 +173,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
   // ghosts
   ghost_effect_.process(ctx, threshold_buffer_);
 
-  ctx.gl.Viewport(ctx.size.x(), ctx.size.y());
+  ctx.gl.Viewport(ctx.window_size.x(), ctx.window_size.y());
   oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
   ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
 
@@ -198,7 +199,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
   dirt_.bind(ctx, start);
   post_fx_shader_.set_uniform("dirt_tex", start);
 
-  post_fx_shader_.set_uniform("screen_size", ctx.size);
+  post_fx_shader_.set_uniform("screen_size", ctx.window_size);
 
   Quad::instance()->draw(ctx);
 
@@ -209,7 +210,9 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
 void PostProcessor::generate_threshold_buffer(RenderContext const& ctx) {
 
-  ctx.gl.Viewport(ctx.size.x()/6, ctx.size.y()/6);
+  auto size(ctx.g_buffer_size);
+
+  ctx.gl.Viewport(size.x()/6, size.y()/6);
 
   threshold_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
   ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
@@ -217,7 +220,7 @@ void PostProcessor::generate_threshold_buffer(RenderContext const& ctx) {
   threshold_shader_.use(ctx);
   threshold_shader_.set_uniform("g_buffer_diffuse", 0);
   threshold_shader_.set_uniform("g_buffer_light", 1);
-  threshold_shader_.set_uniform("screen_size", ctx.size/6);
+  threshold_shader_.set_uniform("screen_size", size/6);
 
   Quad::instance()->draw(ctx);
 }

@@ -33,7 +33,7 @@ void LightParticleSystemComponent::draw(RenderContext const& ctx) {
   shader->scale.            Set(math::vec2(StartScale(), EndScale()));
   shader->start_color.      Set(StartColor().vec4());
   shader->end_color.        Set(EndColor().vec4());
-  shader->screen_size.      Set(ctx.size);
+  shader->screen_size.      Set(ctx.g_buffer_size);
   shader->g_buffer_diffuse. Set(1);
   shader->g_buffer_normal.  Set(2);
   shader->g_buffer_light.   Set(3);

@@ -39,6 +39,8 @@ class Pipeline {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  Int  ShadingQuality;
+  Bool SuperSampling;
 
   // ---------------------------------------------------------------- properties
   Pipeline();
@@ -63,6 +65,8 @@ class Pipeline {
 
     int max_load_amount_;
     int current_load_amount_;
+
+    bool needs_reload_;
 };
 
 }

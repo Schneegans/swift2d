@@ -24,7 +24,8 @@ struct RenderContext {
 
   oglplus::Context gl;
 
-  math::vec2i size;
+  math::vec2i window_size;
+  math::vec2i g_buffer_size;
   math::mat3  projection_matrix;
   float       projection_parallax;
   bool        ready;

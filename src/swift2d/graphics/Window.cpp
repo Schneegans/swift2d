@@ -90,7 +90,7 @@ math::vec2 Window::get_cursor_pos() const {
   }
   double x, y;
   glfwGetCursorPos(window_, &x, &y);
-  int height(render_context_.size.y());
+  int height(render_context_.window_size.y());
   return math::vec2(x, height-y);
 }
 
@@ -100,7 +100,7 @@ void Window::open() {
 
   if (!window_) {
 
-    render_context_.size = math::vec2i(1000, 1000);
+    render_context_.window_size = math::vec2i(1000, 1000);
 
     // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     // glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -108,7 +108,7 @@ void Window::open() {
     // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     window_ = glfwCreateWindow(
-      render_context_.size.x(), render_context_.size.y(),
+      render_context_.window_size.x(), render_context_.window_size.y(),
       "Hello World",
       Fullscreen.get() ? glfwGetPrimaryMonitor() : nullptr,
       nullptr);
@@ -136,7 +136,7 @@ void Window::open() {
     });
 
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
-      WindowManager::instance()->glfw_windows[w]->get_context().size = math::vec2i(width, height);
+      WindowManager::instance()->glfw_windows[w]->get_context().window_size = math::vec2i(width, height);
       WindowManager::instance()->glfw_windows[w]->on_resize.emit(math::vec2i(width, height));
     });
 
@@ -146,7 +146,7 @@ void Window::open() {
 
     glfwSetCursorPosCallback(window_, [](GLFWwindow* w, double x, double y) {
       auto window(WindowManager::instance()->glfw_windows[w]);
-      int height(window->get_context().size.y());
+      int height(window->get_context().window_size.y());
       window->on_mouse_move.emit(math::vec2(x, height - y));
     });
 

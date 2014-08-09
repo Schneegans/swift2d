@@ -76,7 +76,7 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
       .WrapT(ogl::TextureWrap::ClampToBorder);
   };
 
-  auto size(ctx.size/6);
+  auto size(ctx.g_buffer_size/6);
 
   create_texture(
     streak_buffer_tmp_, size.x(), size.y(),
@@ -177,7 +177,7 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
 
 void StreakEffect::process(RenderContext const& ctx, ogl::Texture const& threshold_buffer_) {
 
-  ctx.gl.Viewport(ctx.size.x()/6, ctx.size.y()/6);
+  ctx.gl.Viewport(ctx.g_buffer_size.x()/6, ctx.g_buffer_size.y()/6);
 
   streak_fbo_.Bind(ogl::Framebuffer::Target::Draw);
   const float DEC = 0.96;
@@ -201,31 +201,31 @@ void StreakEffect::process(RenderContext const& ctx, ogl::Texture const& thresho
     Quad::instance()->draw(ctx);
   };
 
-  math::vec2 step(0.9*4.0/ctx.size.x(), 0.0);
+  math::vec2 step(0.9*4.0/ctx.g_buffer_size.x(), 0.0);
   pass(step*35, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_1_);
   pass(step*12, streak_buffer_tmp_, ogl::FramebufferColorAttachment::_1, streak_colors_2_);
   pass(step*5,  streak_buffer_1_,   ogl::FramebufferColorAttachment::_0, streak_colors_3_);
   pass(step*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_1, streak_colors_3_);
 
-  step = math::vec2(-0.9*4.0/ctx.size.x(), 0.0);
+  step = math::vec2(-0.9*4.0/ctx.g_buffer_size.x(), 0.0);
   pass(step*35, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_1_);
   pass(step*12, streak_buffer_tmp_, ogl::FramebufferColorAttachment::_2, streak_colors_2_);
   pass(step*5,  streak_buffer_2_,   ogl::FramebufferColorAttachment::_0, streak_colors_3_);
   pass(step*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_2, streak_colors_3_);
 
-  step = math::vec2(-0.7*4.0/ctx.size.x(), -0.9*4.0/ctx.size.y());
+  step = math::vec2(-0.7*4.0/ctx.g_buffer_size.x(), -0.9*4.0/ctx.g_buffer_size.y());
   pass(step*5, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
   pass(step*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_3, streak_colors_3_);
 
-  step = math::vec2(0.7*4.0/ctx.size.x(), -0.9*4.0/ctx.size.y());
+  step = math::vec2(0.7*4.0/ctx.g_buffer_size.x(), -0.9*4.0/ctx.g_buffer_size.y());
   pass(step*5, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
   pass(step*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_4, streak_colors_3_);
 
-  step = math::vec2(-0.7*4.0/ctx.size.x(), 0.9*4.0/ctx.size.y());
+  step = math::vec2(-0.7*4.0/ctx.g_buffer_size.x(), 0.9*4.0/ctx.g_buffer_size.y());
   pass(step*5, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
   pass(step*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_5, streak_colors_3_);
 
-  step = math::vec2(0.7*4.0/ctx.size.x(), 0.9*4.0/ctx.size.y());
+  step = math::vec2(0.7*4.0/ctx.g_buffer_size.x(), 0.9*4.0/ctx.g_buffer_size.y());
   pass(step*5, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
   pass(step*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_6, streak_colors_3_);
 }

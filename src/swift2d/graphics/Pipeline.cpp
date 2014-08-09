@@ -27,10 +27,20 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Pipeline::Pipeline()
-  : old_size_(-1, -1)
+  : ShadingQuality(5)
+  , SuperSampling(false)
   , compositor_(nullptr)
   , max_load_amount_(-1)
-  , current_load_amount_(0) {}
+  , current_load_amount_(0)
+  , needs_reload_(true) {
+
+  ShadingQuality.on_change().connect([this](int){
+    needs_reload_ = true;
+  });
+  SuperSampling.on_change().connect([this](bool){
+    needs_reload_ = true;
+  });
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -43,6 +53,10 @@ Pipeline::~Pipeline() {
 
 void Pipeline::set_output_window(WindowPtr const& window) {
   window_ = window;
+
+  window_->on_resize.connect([this](math::vec2i){
+    needs_reload_ = true;
+  });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,9 +80,12 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   }
 
   // update window size
-  if (old_size_ != window_->get_context().size) {
-    old_size_ = window_->get_context().size;
-
+  if (needs_reload_) {
+    if (SuperSampling()) {
+      window_->get_context().g_buffer_size = window_->get_context().window_size / 2;
+    } else {
+      window_->get_context().g_buffer_size = window_->get_context().window_size;
+    }
     Physics::instance()->create_gravity_map(window_->get_context());
 
     if (compositor_) {
@@ -76,11 +93,13 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
       compositor_ = nullptr;
     }
 
-    compositor_ = new Compositor(window_->get_context(), 5);
+    compositor_ = new Compositor(
+      window_->get_context(), ShadingQuality(), SuperSampling()
+    );
+    needs_reload_ = false;
   }
 
   auto& ctx(window_->get_context());
-  ctx.gl.Viewport(old_size_.x(), old_size_.y());
 
   // setup projection matrix
   math::mat3 view_matrix(scene->camera->WorldTransform.get());
@@ -109,9 +128,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   if (ctx.upload_remaining > max_load_amount_) {
     max_load_amount_ = ctx.upload_remaining;
   }
-
   current_load_amount_ = ctx.upload_remaining;
-
   if (current_load_amount_ == 0) {
     max_load_amount_ = -1;
   }

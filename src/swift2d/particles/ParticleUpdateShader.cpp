@@ -105,7 +105,7 @@ ParticleUpdateShader::ParticleUpdateShader()
 
             out_position = varying_position[0] + varying_velocity[0] * time.x / 1000;
             out_life     = vec2(varying_life[0].x + time.x/varying_life[0].y, varying_life[0].y);
-            out_velocity = (varying_velocity[0] + gravity)*(1.0 - dynamics.y);
+            out_velocity = (varying_velocity[0] + gravity*time.x*0.1) - 0.1 * varying_velocity[0] * dynamics.y * time.x;
 
             EmitVertex(); EndPrimitive();
           }

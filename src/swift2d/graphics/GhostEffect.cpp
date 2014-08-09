@@ -129,7 +129,7 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
       .WrapT(ogl::TextureWrap::ClampToBorder);
   };
 
-  auto size(ctx.size/6);
+  auto size(ctx.g_buffer_size/6);
 
   create_texture(
     buffer_tmp_, size.x(), size.y(),
@@ -176,7 +176,7 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
 
 void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshold_buffer_) {
 
-  ctx.gl.Viewport(ctx.size.x()/6, ctx.size.y()/6);
+  ctx.gl.Viewport(ctx.g_buffer_size.x()/6, ctx.g_buffer_size.y()/6);
 
   fbo_.Bind(ogl::Framebuffer::Target::Draw);
 
@@ -194,7 +194,7 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
     Quad::instance()->draw(ctx);
   };
 
-  math::vec2 radius(2.0/(ctx.size.x()/6), 2.0/(ctx.size.y()/6));
+  math::vec2 radius(2.0/(ctx.g_buffer_size.x()/6), 2.0/(ctx.g_buffer_size.y()/6));
 
   blur_pass(math::vec2(radius.x()/2, 0), threshold_buffer_, ogl::FramebufferColorAttachment::_0);
   blur_pass(math::vec2(radius.x(), 0),   buffer_tmp_,       ogl::FramebufferColorAttachment::_1);

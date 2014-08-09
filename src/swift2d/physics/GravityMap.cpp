@@ -63,7 +63,7 @@ GravityMap::GravityMap(RenderContext const& ctx)
   };
 
   create_texture(
-    gravity_map_, ctx.size.x()/16, ctx.size.y()/16,
+    gravity_map_, ctx.window_size.x()/16, ctx.window_size.y()/16,
     oglplus::PixelDataInternalFormat::RG,
     oglplus::PixelDataFormat::RG
   );
@@ -80,7 +80,7 @@ void GravityMap::process(ConstSerializedScenePtr const& scene, RenderContext con
   ctx.gl.Disable(oglplus::Capability::Blend);
   gravity_shader_.use(ctx);
   gravity_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
-  ctx.gl.Viewport(ctx.size.x()/16, ctx.size.y()/16);
+  ctx.gl.Viewport(ctx.window_size.x()/16, ctx.window_size.y()/16);
 
   std::vector<math::vec3> sources;
 
@@ -94,7 +94,7 @@ void GravityMap::process(ConstSerializedScenePtr const& scene, RenderContext con
 
   gravity_shader_.set_uniform_array("gravity_sources", sources);
   gravity_shader_.set_uniform("gravity_source_count", (int)sources.size());
-  gravity_shader_.set_uniform("screen_size", ctx.size/16);
+  gravity_shader_.set_uniform("screen_size", ctx.window_size/16);
 
   Quad::instance()->draw(ctx);
   ctx.gl.Enable(oglplus::Capability::Blend);

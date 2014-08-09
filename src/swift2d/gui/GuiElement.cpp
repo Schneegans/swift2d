@@ -52,7 +52,7 @@ GuiElement::GuiElement(GuiComponent* parent)
 
   callbacks_[0] = window->on_mouse_move.connect([&](math::vec2 const& pos) {
     if (interactive_) {
-      auto size(WindowManager::instance()->get_default()->get_context().size);
+      auto size(WindowManager::instance()->get_default()->get_context().window_size);
 
       math::vec2 corner(
         (size.x() - parent_->Size().x() + parent_->Anchor().x() * (size.x() - parent_->Size().x()))*0.5 + parent_->Offset().x(),
@@ -173,13 +173,13 @@ void GuiElement::draw(RenderContext const& ctx) {
     GuiShader::instance()->use(ctx);
 
     math::vec2 size(
-      1.0 * parent_->Size().x() / ctx.size.x(),
-      1.0 * parent_->Size().y() / ctx.size.y()
+      1.0 * parent_->Size().x() / ctx.window_size.x(),
+      1.0 * parent_->Size().y() / ctx.window_size.y()
     );
 
     math::vec2 offset(
-      (2.0 * parent_->Offset().x() + parent_->Anchor().x() * (ctx.size.x() - parent_->Size().x()))/ctx.size.x(),
-      (2.0 * parent_->Offset().y() + parent_->Anchor().y() * (ctx.size.y() - parent_->Size().y()))/ctx.size.y()
+      (2.0 * parent_->Offset().x() + parent_->Anchor().x() * (ctx.window_size.x() - parent_->Size().x()))/ctx.window_size.x(),
+      (2.0 * parent_->Offset().y() + parent_->Anchor().y() * (ctx.window_size.y() - parent_->Size().y()))/ctx.window_size.y()
     );
 
     GuiShader::instance()->size.Set(size);

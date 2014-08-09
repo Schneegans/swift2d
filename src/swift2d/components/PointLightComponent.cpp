@@ -34,7 +34,7 @@ void PointLightComponent::draw(RenderContext const& ctx) {
   PointLightShader::instance()->transform.Set(transform);
   PointLightShader::instance()->depth.Set(Depth());
   PointLightShader::instance()->parallax.Set(ctx.projection_parallax);
-  PointLightShader::instance()->screen_size.Set(ctx.size);
+  PointLightShader::instance()->screen_size.Set(ctx.g_buffer_size);
   PointLightShader::instance()->g_buffer_diffuse.Set(1);
   PointLightShader::instance()->g_buffer_normal.Set(2);
   PointLightShader::instance()->g_buffer_light.Set(3);
