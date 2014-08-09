@@ -42,7 +42,13 @@ class Steam : public Singleton<Steam> {
     ERROR         = 5
   };
 
-  Signal<std::unordered_map<uint64_t, std::string>> on_updated_room_list;
+  struct RoomData {
+    std::string name;
+    int         max_players;
+    int         current_players;
+  };
+
+  Signal<std::unordered_map<uint64_t, RoomData>> on_updated_room_list;
   Signal<MessageType, uint64_t, std::string>     on_message;
 
   void init();

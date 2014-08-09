@@ -145,10 +145,16 @@ void Steam::update_room_list() {
     SteamMatchmaking()->RequestLobbyList(),
     [](LobbyMatchList_t *result, bool f) {
 
-    std::unordered_map<uint64_t, std::string> rooms;
+    std::unordered_map<uint64_t, RoomData> rooms;
     for (int i(0); i<result->m_nLobbiesMatching; ++i) {
       CSteamID id = SteamMatchmaking()->GetLobbyByIndex(i);
-      rooms[id.ConvertToUint64()] = std::string(SteamMatchmaking()->GetLobbyData(id, "name"));
+
+      RoomData data;
+      data.name             = std::string(SteamMatchmaking()->GetLobbyData(id, "name"));
+      data.max_players      = SteamMatchmaking()->GetLobbyMemberLimit(id);
+      data.current_players  = SteamMatchmaking()->GetNumLobbyMembers(id);
+
+      rooms[id.ConvertToUint64()] = data;
     }
     Steam::instance()->on_updated_room_list.emit(rooms);
   });
