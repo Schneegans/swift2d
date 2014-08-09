@@ -46,7 +46,8 @@ class AnimatedProperty: public Property<T> {
     , end_()
     , state_(0.0)
     , duration_(0)
-    , exp_(0.0) {}
+    , exp_(0.0)
+    , delay_(0.0) {}
 
   AnimatedProperty(T const& value)
     : Property<T>(value)
@@ -55,7 +56,8 @@ class AnimatedProperty: public Property<T> {
     , end_(value)
     , state_(-1.0)
     , duration_(0)
-    , exp_(0.0) {}
+    , exp_(0.0)
+    , delay_(0.0) {}
 
   AnimatedProperty(T const& start, T const& end, double duration = 1.0,
                    Direction direction = IN_OUT, Loop loop = NONE,
@@ -67,14 +69,16 @@ class AnimatedProperty: public Property<T> {
     , end_(end)
     , state_(0.0)
     , duration_(duration)
-    , exp_(exponent) {}
+    , exp_(exponent)
+    , delay_(0.0) {}
 
   // ------------------------------------------------------------ public methods
-  void set(T const& value, double duration) {
+  void set(T const& value, double duration, double delay = 0.0) {
     start_ = this->get();
     end_ = value;
     duration_ = duration;
     state_ = 0.0;
+    delay_ = delay;
   }
 
   void set(T const& value) {
@@ -82,6 +86,7 @@ class AnimatedProperty: public Property<T> {
     end_ = value;
     duration_ = 0.0;
     state_ = -1.0;
+    delay_ = 0.0;
     Property<T>::set(value);
   }
 
@@ -95,24 +100,29 @@ class AnimatedProperty: public Property<T> {
 
   void update(double time) {
     if (state_ < 1 && state_ >= 0.0) {
-      state_ += time / duration_;
+      if (delay_ > 0) {
+        delay_ -= time;
+      } else {
 
-      switch (direction_) {
-        case LINEAR:
-          Property<T>::set(updateLinear(state_, start_, end_));
-          break;
-        case IN:
-          Property<T>::set(updateEaseIn(state_, start_, end_));
-          return;
-        case OUT:
-          Property<T>::set(updateEaseOut(state_, start_, end_));
-          return;
-        case IN_OUT:
-          Property<T>::set(updateEaseInOut(state_, start_, end_));
-          return;
-        case OUT_IN:
-          Property<T>::set(updateEaseOutIn(state_, start_, end_));
-          return;
+        state_ += time / duration_;
+
+        switch (direction_) {
+          case LINEAR:
+            Property<T>::set(updateLinear(state_, start_, end_));
+            break;
+          case IN:
+            Property<T>::set(updateEaseIn(state_, start_, end_));
+            return;
+          case OUT:
+            Property<T>::set(updateEaseOut(state_, start_, end_));
+            return;
+          case IN_OUT:
+            Property<T>::set(updateEaseInOut(state_, start_, end_));
+            return;
+          case OUT_IN:
+            Property<T>::set(updateEaseOutIn(state_, start_, end_));
+            return;
+        }
       }
     } else if (state_ != -1.0) {
       Property<T>::set(end_);
@@ -168,7 +178,7 @@ class AnimatedProperty: public Property<T> {
 
   T start_, end_;
   double state_;
-  double duration_, exp_;
+  double duration_, exp_, delay_;
 };
 
 }
