@@ -21,6 +21,8 @@ Window::Window()
   : VSync(false)
   , Open(false)
   , Fullscreen(false)
+  , ShadingQuality(5)
+  , SuperSampling(false)
   , window_(nullptr)
   , joystick_axis_cache_(static_cast<int>(JoystickId::JOYSTICK_NUM),
                          std::vector<float>(
@@ -28,14 +30,22 @@ Window::Window()
   , joystick_button_cache_(static_cast<int>(JoystickId::JOYSTICK_NUM),
                            std::vector<int>(
                            static_cast<int>(
-                           JoystickButtonId::JOYSTICK_BUTTON_NUM))) {
+                           JoystickButtonId::JOYSTICK_BUTTON_NUM)))
+  , vsync_dirty_(true)
+  , fullscreen_dirty_(false)
+  , init_glew_(true) {
 
-  Open.on_change().connect([&](bool val) {
-    if (val) {
-      open();
-    } else {
-      close();
-    }
+  Open.on_change().connect([this](bool val) {
+    if (val) open();
+    else     close();
+  });
+
+  VSync.on_change().connect([this](bool) {
+    vsync_dirty_ = true;
+  });
+
+  Fullscreen.on_change().connect([this](bool) {
+    fullscreen_dirty_ = true;
   });
 }
 
@@ -67,8 +77,21 @@ void Window::set_active(bool active) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Window::display() {
+
+  if (vsync_dirty_) {
+    vsync_dirty_ = false;
+    glfwSwapInterval(VSync() ? 1 : 0);
+  }
+
   if (window_) {
     glfwSwapBuffers(window_);
+  }
+
+  if (fullscreen_dirty_) {
+    fullscreen_dirty_ = false;
+
+    close();
+    open();
   }
 }
 
@@ -100,8 +123,17 @@ void Window::open() {
 
   if (!window_) {
 
-    render_context_.window_size = math::vec2i(1000, 1000);
+    if (Fullscreen()) {
+      auto desktop_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+      int desktop_height = desktop_mode->height;
+      int desktop_width = desktop_mode->width;
 
+      render_context_.window_size = math::vec2i(desktop_width, desktop_height);
+    } else {
+      render_context_.window_size = math::vec2i(1024, 768);
+    }
+
+    // glfwWindowHint(GLFW_DECORATED, false);
     // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     // glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -109,27 +141,13 @@ void Window::open() {
 
     window_ = glfwCreateWindow(
       render_context_.window_size.x(), render_context_.window_size.y(),
-      "Hello World",
-      Fullscreen.get() ? glfwGetPrimaryMonitor() : nullptr,
-      nullptr);
+      Title().c_str(), Fullscreen() ? glfwGetPrimaryMonitor() : nullptr, nullptr);
 
     WindowManager::instance()->glfw_windows[window_] = this;
 
     set_active(true);
 
-    // init glew... seems a bit hacky, but works this way
-    glewExperimental = GL_TRUE;
-    glewInit(); glGetError();
-
-    Logger::LOG_TRACE << "Created OpenGL context with version "
-                      << render_context_.gl.MajorVersion()
-                      << "." << render_context_.gl.MinorVersion() << std::endl;
-
     render_context_.gl.Disable(oglplus::Capability::DepthTest);
-    render_context_.gl.Enable(oglplus::Capability::Blend);
-    render_context_.gl.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-    render_context_.ready = true;
 
     glfwSetWindowCloseCallback(window_, [](GLFWwindow* w) {
       WindowManager::instance()->glfw_windows[w]->on_close.emit();
@@ -162,19 +180,22 @@ void Window::open() {
       WindowManager::instance()->glfw_windows[w]->on_char.emit(c);
     });
 
-    // apply vsync -------------------------------------------------------------
-    auto on_vsync_change = [&](bool val) {
-      glfwSwapInterval(val ? 1 : 0);
-    };
-    on_vsync_change(VSync.get());
-    VSync.on_change().connect(on_vsync_change);
-
     // hide cursor -------------------------------------------------------------
     auto on_hide_cursor_change = [&](bool val) {
       glfwSetInputMode(window_, GLFW_CURSOR, val ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
     };
     on_hide_cursor_change(HideCursor.get());
     HideCursor.on_change().connect(on_hide_cursor_change);
+  }
+
+  if (init_glew_) {
+    init_glew_ = false;
+
+    // init glew... seems a bit hacky, but works this way
+    glewExperimental = GL_TRUE;
+    glewInit(); glGetError();
+
+    render_context_.ready = true;
   }
 }
 
@@ -183,6 +204,7 @@ void Window::open() {
 void Window::close() {
   if (window_) {
     glfwDestroyWindow(window_);
+    WindowManager::instance()->glfw_windows.erase(window_);
     window_ = nullptr;
   }
 }

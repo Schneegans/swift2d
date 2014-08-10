@@ -65,11 +65,7 @@ void Swift2D::init(int argc, char** argv) {
   }
 
   // create tmp directory ------------------------------------------------------
-  boost::filesystem::path dir(executable_ + "/tmp");
-  if (!boost::filesystem::create_directory(dir)) {
-    Logger::LOG_ERROR << "Failed to create temporary directory!" << std::endl;
-    return;
-  }
+  boost::filesystem::create_directory(executable_ + "/tmp");
 
   // register all objects ------------------------------------------------------
   Object::init<AnimatedSpriteComponent>();
@@ -182,8 +178,7 @@ void Swift2D::clean_up() {
   glfwTerminate();
 
   // delete tmp directory ------------------------------------------------------
-  boost::filesystem::path dir(executable_ + "/tmp");
-  if (!boost::filesystem::remove_all(dir)) {
+  if (!boost::filesystem::remove_all(executable_ + "/tmp")) {
     Logger::LOG_ERROR << "Failed to delete temporary directory!" << std::endl;
     return;
   }

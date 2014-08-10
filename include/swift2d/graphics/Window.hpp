@@ -44,6 +44,10 @@ class Window {
   Bool VSync;
   Bool Fullscreen;
   Bool HideCursor;
+  String Title;
+
+  Int  ShadingQuality;
+  Bool SuperSampling;
 
   // ------------------------------------------------------------------- signals
   Signal<>                                    on_close;
@@ -83,13 +87,20 @@ class Window {
   void open();
   void close();
 
+  void create_glfw_window();
+
   void update_joysticks();
 
   RenderContext render_context_;
-  GLFWwindow* window_;
+  GLFWwindow*   window_;
 
   std::vector<std::vector<float>> joystick_axis_cache_;
-  std::vector<std::vector<int>> joystick_button_cache_;
+  std::vector<std::vector<int>>   joystick_button_cache_;
+
+  bool vsync_dirty_;
+  bool fullscreen_dirty_;
+
+  bool init_glew_;
 };
 
 }

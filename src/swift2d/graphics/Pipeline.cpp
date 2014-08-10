@@ -27,20 +27,10 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Pipeline::Pipeline()
-  : ShadingQuality(5)
-  , SuperSampling(false)
-  , compositor_(nullptr)
+  : compositor_(nullptr)
   , max_load_amount_(-1)
   , current_load_amount_(0)
-  , needs_reload_(true) {
-
-  ShadingQuality.on_change().connect([this](int){
-    needs_reload_ = true;
-  });
-  SuperSampling.on_change().connect([this](bool){
-    needs_reload_ = true;
-  });
-}
+  , needs_reload_(true) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -55,6 +45,16 @@ void Pipeline::set_output_window(WindowPtr const& window) {
   window_ = window;
 
   window_->on_resize.connect([this](math::vec2i){
+    needs_reload_ = true;
+  });
+
+  window_->ShadingQuality.on_change().connect([this](int) {
+    needs_reload_ = true;
+  });
+  window_->SuperSampling.on_change().connect([this](bool) {
+    needs_reload_ = true;
+  });
+  window_->Fullscreen.on_change().connect([this](bool) {
     needs_reload_ = true;
   });
 }
@@ -81,7 +81,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   // update window size
   if (needs_reload_) {
-    if (SuperSampling()) {
+    if (window_->SuperSampling()) {
       window_->get_context().g_buffer_size = window_->get_context().window_size / 2;
     } else {
       window_->get_context().g_buffer_size = window_->get_context().window_size;
@@ -94,7 +94,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
     }
 
     compositor_ = new Compositor(
-      window_->get_context(), ShadingQuality(), SuperSampling()
+      window_->get_context(), window_->ShadingQuality(), window_->SuperSampling()
     );
     needs_reload_ = false;
   }

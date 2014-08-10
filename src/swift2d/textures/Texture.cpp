@@ -54,7 +54,6 @@ Texture::Texture(std::string const& file_name)
   , height_(0)
   , channels_(0) {
 
-
   FileName.on_change().connect([&](std::string const& path){
     needs_update_ = true;
   });
