@@ -36,11 +36,12 @@ LightParticleShader::LightParticleShader()
       @include "version"
 
       in float age;
-      in vec2  tex_coords;
+      in vec2  texcoords;
 
       uniform sampler2D diffuse;
       uniform vec4      start_color;
       uniform vec4      end_color;
+      uniform ivec2     screen_size;
 
       @include "gbuffer_input"
       @include "get_lit_surface_color"
@@ -50,11 +51,11 @@ LightParticleShader::LightParticleShader()
       void main(void) {
         vec4  c = mix(start_color, end_color, age);
 
-        vec4 light        = texture2D(diffuse, tex_coords);
+        vec4 light        = texture2D(diffuse, texcoords);
         vec3 light_dir    = normalize(light.rgb - 0.5);
         float attenuation = light.a * c.a;
 
-        fragColor = get_lit_surface_color(light_dir, c, attenuation);
+        fragColor = get_lit_surface_color(gl_FragCoord.xy/screen_size, light_dir, c, attenuation);
       }
     )",
 
@@ -71,7 +72,7 @@ LightParticleShader::LightParticleShader()
       uniform vec2  scale;
 
       out float age;
-      out vec2  tex_coords;
+      out vec2  texcoords;
 
       @include "emit_quad"
 

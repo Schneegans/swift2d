@@ -24,9 +24,11 @@ GravityMap::GravityMap(RenderContext const& ctx)
       // fragment shader -----------------------------------------------------
       @include "version"
 
-      uniform vec3 gravity_sources[20];
-      uniform int  gravity_source_count;
+      uniform vec3  gravity_sources[20];
+      uniform int   gravity_source_count;
       uniform ivec2 screen_size;
+
+      in vec2 texcoords;
 
       layout (location = 0) out vec2 fragColor;
 
@@ -34,7 +36,7 @@ GravityMap::GravityMap(RenderContext const& ctx)
 
         fragColor = vec2(0.5);
 
-        vec2 pos = (gl_FragCoord.xy/screen_size - vec2(0.5))*2.0;
+        vec2 pos = (texcoords - vec2(0.5))*2.0;
 
         for (int i=0; i<gravity_source_count; i += 1) {
           vec2 dir = (gravity_sources[i].xy - pos);

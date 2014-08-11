@@ -26,7 +26,6 @@ DirectionalLightComponent::DirectionalLightComponent()
 
 void DirectionalLightComponent::draw(RenderContext const& ctx) {
   DirectionalLightShader::instance()->use(ctx);
-  DirectionalLightShader::instance()->screen_size.Set(ctx.g_buffer_size);
   DirectionalLightShader::instance()->g_buffer_diffuse.Set(1);
   DirectionalLightShader::instance()->g_buffer_normal.Set(2);
   DirectionalLightShader::instance()->g_buffer_light.Set(3);

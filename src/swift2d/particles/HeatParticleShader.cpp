@@ -37,7 +37,7 @@ HeatParticleShader::HeatParticleShader()
       @include "version"
 
       in float age;
-      in vec2  tex_coords;
+      in vec2  texcoords;
 
       uniform sampler2D diffuse;
       uniform vec2      opacity;
@@ -46,7 +46,7 @@ HeatParticleShader::HeatParticleShader()
 
       void main(void) {
         float o = mix(opacity.x, opacity.y, age);
-        fragColor = texture2D(diffuse, tex_coords) * vec4(1, 1, 1, o);
+        fragColor = texture2D(diffuse, texcoords) * vec4(1, 1, 1, o);
       }
     )",
 
@@ -64,7 +64,7 @@ HeatParticleShader::HeatParticleShader()
       uniform vec2 scale;
 
       out float age;
-      out vec2  tex_coords;
+      out vec2  texcoords;
 
       @include "emit_quad"
 

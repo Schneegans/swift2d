@@ -37,7 +37,7 @@ SpriteParticleShader::SpriteParticleShader()
       @include "version"
 
       in float age;
-      in vec2  tex_coords;
+      in vec2  texcoords;
 
       uniform sampler2D diffuse;
       uniform vec4      start_color;
@@ -50,7 +50,7 @@ SpriteParticleShader::SpriteParticleShader()
         vec4  c = mix(start_color, end_color, age);
         float g = mix(glow.x,      glow.y,    age);
 
-        write_gbuffer(texture2D(diffuse, tex_coords) * c, g);
+        write_gbuffer(texture2D(diffuse, texcoords) * c, g);
       }
     )",
 
@@ -68,7 +68,7 @@ SpriteParticleShader::SpriteParticleShader()
       uniform vec2  scale;
 
       out float age;
-      out vec2  tex_coords;
+      out vec2  texcoords;
 
       @include "emit_quad"
 

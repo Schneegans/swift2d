@@ -33,7 +33,7 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
 
   f_shader << R"(
     @include "version"
-    in vec2 tex_coords;
+    in vec2 texcoords;
     @include "write_gbuffer"
 
     uniform float time;
@@ -44,7 +44,7 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
       uniform sampler3D diffuse_tex;
       uniform vec4 diffuse;
       vec4 get_diffuse() {
-        vec4 result = texture(diffuse_tex, vec3(tex_coords, time));
+        vec4 result = texture(diffuse_tex, vec3(texcoords, time));
         result *= diffuse;
         return result;
       }
@@ -54,7 +54,7 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
       uniform sampler2D diffuse_tex;
       uniform vec4 diffuse;
       vec4 get_diffuse() {
-        vec4 result = texture2D(diffuse_tex, tex_coords);
+        vec4 result = texture2D(diffuse_tex, texcoords);
         result *= diffuse;
         return result;
       }
@@ -73,7 +73,7 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
       uniform sampler3D normal_tex;
       uniform mat3 normal_transform;
       vec4 get_normal() {
-        vec4 result = texture(normal_tex, tex_coords, time) - vec4(0.5, 0.5, 0.5, 0);
+        vec4 result = texture(normal_tex, texcoords, time) - vec4(0.5, 0.5, 0.5, 0);
         result.xy   = (normal_transform * vec3(result.xy, 0.0)).xy;
         // result.xyz  = normalize(result.xyz);
         return result;
@@ -84,7 +84,7 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
       uniform sampler2D normal_tex;
       uniform mat3 normal_transform;
       vec4 get_normal() {
-        vec4 result = texture2D(normal_tex, tex_coords) - vec4(0.5, 0.5, 0.5, 0);
+        vec4 result = texture2D(normal_tex, texcoords) - vec4(0.5, 0.5, 0.5, 0);
         result.xy   = (normal_transform * vec3(result.xy, 0.0)).xy;
         // result.xyz  = normalize(result.xyz);
         return result;
@@ -103,14 +103,14 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
       f_shader << "uniform sampler3D " << name << "_tex;"          << std::endl;
       f_shader << "uniform float " << name << ";"                  << std::endl;
       f_shader << "float get_" << name << "() {"                   << std::endl;
-      f_shader << "  return texture(" << name << "_tex, tex_coords, time).r * "
+      f_shader << "  return texture(" << name << "_tex, texcoords, time).r * "
                                       << name << ";"               << std::endl;
       f_shader << "}"                                              << std::endl;
     } else if (capabilities & cap) {
       f_shader << "uniform sampler2D " << name << "_tex;"          << std::endl;
       f_shader << "uniform float " << name << ";"                  << std::endl;
       f_shader << "float get_" << name << "() {"                   << std::endl;
-      f_shader << "  return texture2D(" << name << "_tex, tex_coords).r * "
+      f_shader << "  return texture2D(" << name << "_tex, texcoords).r * "
                                         << name << ";"             << std::endl;
       f_shader << "}"                                              << std::endl;
     } else {

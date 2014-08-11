@@ -103,10 +103,12 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality, bool super
 
           @include "gbuffer_input"
 
+          in vec2 texcoords;
+
           layout (location = 0) out vec3 fragColor;
 
           void main(void){
-            fragColor = get_light_info().r * get_diffuse();
+            fragColor = get_light_info(texcoords).r * get_diffuse(texcoords);
           }
       )");
 
@@ -123,10 +125,12 @@ Compositor::Compositor(RenderContext const& ctx, int shading_quality, bool super
 
           @include "gbuffer_input"
 
+          in vec2 texcoords;
+
           layout (location = 0) out vec3 fragColor;
 
           void main(void){
-            fragColor = get_diffuse();
+            fragColor = get_diffuse(texcoords);
           }
       )");
     }
@@ -221,7 +225,6 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
     g_buffer_diffuse_.Bind(oglplus::Texture::Target::_2D);
 
     background_shader_->use(ctx);
-    background_shader_->set_uniform("screen_size", ctx.window_size);
     background_shader_->set_uniform("g_buffer_diffuse", 1);
     Quad::instance()->draw(ctx);
 
@@ -254,7 +257,6 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
     g_buffer_light_.Bind(oglplus::Texture::Target::_2D);
 
     background_shader_->use(ctx);
-    background_shader_->set_uniform("screen_size", size);
     background_shader_->set_uniform("g_buffer_diffuse", 1);
     background_shader_->set_uniform("g_buffer_light", 3);
     Quad::instance()->draw(ctx);

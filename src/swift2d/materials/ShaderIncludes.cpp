@@ -29,11 +29,11 @@ ShaderIncludes::ShaderIncludes() {
     uniform float parallax;
 
     // varyings
-    out vec2 tex_coords;
+    out vec2 texcoords;
 
     void main(void) {
       vec3 pos    = projection * transform * vec3(position, 1.0) * pow(parallax, depth);
-      tex_coords  = vec2(position.x + 1.0, 1.0 - position.y) * 0.5;
+      texcoords   = vec2(position.x + 1.0, 1.0 - position.y) * 0.5;
       gl_Position = vec4(pos.xy, 0.0, 1.0);
     }
   )");
@@ -43,7 +43,11 @@ ShaderIncludes::ShaderIncludes() {
 
     layout(location=0) in vec2 position;
 
+    // varyings
+    out vec2 texcoords;
+
     void main(void){
+      texcoords   = vec2(position.x + 1.0, position.y + 1.0) * 0.5;
       gl_Position = vec4(position, 0.0, 1.0);
     }
   )");
@@ -77,34 +81,33 @@ ShaderIncludes::ShaderIncludes() {
   )");
 
   add_include("gbuffer_input", R"(
-    uniform ivec2     screen_size;
     uniform sampler2D g_buffer_diffuse;
     uniform sampler2D g_buffer_normal;
     uniform sampler2D g_buffer_light;
 
-    vec3 get_normal() {
-      return texture2D(g_buffer_normal, gl_FragCoord.xy/screen_size).rgb * 2 - 1;
+    vec3 get_normal(vec2 texcoords) {
+      return texture2D(g_buffer_normal, texcoords).rgb * 2 - 1;
     }
 
-    vec3 get_diffuse() {
-      return texture2D(g_buffer_diffuse, gl_FragCoord.xy/screen_size).rgb;
+    vec3 get_diffuse(vec2 texcoords) {
+      return texture2D(g_buffer_diffuse, texcoords).rgb;
     }
 
-    vec3 get_light_info() {
-      return texture2D(g_buffer_light, gl_FragCoord.xy/screen_size).rgb;
+    vec3 get_light_info(vec2 texcoords) {
+      return texture2D(g_buffer_light, texcoords).rgb;
     }
 
   )");
 
   add_include("get_lit_surface_color", R"(
-    vec3 get_lit_surface_color(vec3 dir, vec4 color, float attenuation) {
-      vec3  normal      = normalize(get_normal());
-      vec3  light_info  = get_light_info();
+    vec3 get_lit_surface_color(vec2 texcoords, vec3 dir, vec4 color, float attenuation) {
+      vec3  normal      = normalize(get_normal(texcoords));
+      vec3  light_info  = get_light_info(texcoords);
       float gloss       = light_info.g;
       float specular    = pow(dot(normal, normalize(dir + vec3(0, 0, -1))), gloss*100 + 1) * gloss;
       // float specular    = pow(reflect(dir, normal).z, gloss*100 + 1) * gloss;
       float diffuse     = dot(dir, normal);
-      vec3  light       = (diffuse*get_diffuse() + specular) * color.rgb * color.a;
+      vec3  light       = (diffuse*get_diffuse(texcoords) + specular) * color.rgb * color.a;
       return (1.0-light_info.r) * attenuation * light;
     }
   )");
@@ -129,7 +132,7 @@ ShaderIncludes::ShaderIncludes() {
 
           gl_Position = vec4(pos, 0.0, 1.0);
           age         = varying_age[0];
-          tex_coords  = vec2(-xo[i], yo[j]) + 0.5;
+          texcoords   = vec2(-xo[i], yo[j]) + 0.5;
 
           EmitVertex();
         }
@@ -150,7 +153,7 @@ ShaderIncludes::ShaderIncludes() {
 
           gl_Position = vec4(pos, 0.0, 1.0);
           age         = varying_age[0];
-          tex_coords  = vec2(-xo[i], yo[j]) + 0.5;
+          texcoords   = vec2(-xo[i], yo[j]) + 0.5;
 
           EmitVertex();
         }

@@ -29,6 +29,7 @@ PointLightShader::PointLightShader()
       // uniforms
       uniform sampler2D light_tex;
       uniform vec4      light_color;
+      uniform ivec2     screen_size;
 
       @include "gbuffer_input"
       @include "get_lit_surface_color"
@@ -40,7 +41,7 @@ PointLightShader::PointLightShader()
         vec3 light_dir    = normalize(light.rgb - 0.5);
         float attenuation = light.a;
 
-        fragColor = get_lit_surface_color(light_dir, light_color, attenuation);
+        fragColor = get_lit_surface_color(gl_FragCoord.xy/screen_size, light_dir, light_color, attenuation);
       }
     )"
   )

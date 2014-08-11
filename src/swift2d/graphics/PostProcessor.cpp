@@ -38,12 +38,25 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality, bool
       uniform sampler2D heat_buffer;
       uniform sampler2D dirt_tex;
       uniform bool      use_heat;
-      uniform ivec2     screen_size;
+
+      // varyings
+      in vec2 texcoords;
 
       layout (location = 0) out vec3 fragColor;
 
+      float get_vignette() {
+
+        float coverage = 0.5;
+        float softness = 0.5;
+
+        // inigo quilez's great vigneting effect!
+        float a = -coverage/softness;
+        float b = 1.0/softness;
+        vec2 q = texcoords;
+        return min(1, a + b*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.1 ));
+      }
+
       void main(void) {
-        vec2 texcoords = gl_FragCoord.xy/screen_size;
         vec3 glow      = texture2D(glow_buffer_1, texcoords).rgb
                        + texture2D(glow_buffer_2, texcoords).rgb
                        + texture2D(glow_buffer_3, texcoords).rgb
@@ -55,13 +68,14 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality, bool
 
         vec3 dirt = texture2D(dirt_tex, texcoords).rgb;
 
+        vec2 shifted_texcoords = texcoords;
         if (use_heat) {
           vec2 offset = (texture2D(heat_buffer, texcoords).rg - 0.5) * 0.2;
-          texcoords   += offset;
+          shifted_texcoords   += offset;
         }
 
-        fragColor = texture2D(g_buffer_shaded, texcoords).rgb;
-        fragColor = fragColor + (glow + 0.05) * dirt;
+        fragColor = texture2D(g_buffer_shaded, shifted_texcoords).rgb;
+        fragColor = (fragColor + (glow + 0.05) * dirt) * get_vignette();
       }
     )")
   , threshold_shader_(R"(
@@ -198,8 +212,6 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
   dirt_.bind(ctx, start);
   post_fx_shader_.set_uniform("dirt_tex", start);
-
-  post_fx_shader_.set_uniform("screen_size", ctx.window_size);
 
   Quad::instance()->draw(ctx);
 
