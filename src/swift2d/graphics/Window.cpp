@@ -22,7 +22,7 @@ Window::Window()
   , Open(false)
   , Fullscreen(false)
   , ShadingQuality(5)
-  , SuperSampling(false)
+  , SubSampling(false)
   , window_(nullptr)
   , joystick_axis_cache_(static_cast<int>(JoystickId::JOYSTICK_NUM),
                          std::vector<float>(
@@ -87,12 +87,12 @@ void Window::display() {
     glfwSwapBuffers(window_);
   }
 
-  if (fullscreen_dirty_) {
-    fullscreen_dirty_ = false;
+  // if (fullscreen_dirty_) {
+  //   fullscreen_dirty_ = false;
 
-    close();
-    open();
-  }
+  //   close();
+  //   open();
+  // }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -148,6 +148,7 @@ void Window::open() {
     set_active(true);
 
     render_context_.gl.Disable(oglplus::Capability::DepthTest);
+    render_context_.gl.DepthMask(false);
 
     glfwSetWindowCloseCallback(window_, [](GLFWwindow* w) {
       WindowManager::instance()->glfw_windows[w]->on_close.emit();

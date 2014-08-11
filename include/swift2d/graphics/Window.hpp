@@ -47,7 +47,7 @@ class Window {
   String Title;
 
   Int  ShadingQuality;
-  Bool SuperSampling;
+  Bool SubSampling;
 
   // ------------------------------------------------------------------- signals
   Signal<>                                    on_close;

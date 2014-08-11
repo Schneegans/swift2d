@@ -51,7 +51,7 @@ void Pipeline::set_output_window(WindowPtr const& window) {
   window_->ShadingQuality.on_change().connect([this](int) {
     needs_reload_ = true;
   });
-  window_->SuperSampling.on_change().connect([this](bool) {
+  window_->SubSampling.on_change().connect([this](bool) {
     needs_reload_ = true;
   });
   window_->Fullscreen.on_change().connect([this](bool) {
@@ -81,7 +81,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   // update window size
   if (needs_reload_) {
-    if (window_->SuperSampling()) {
+    if (window_->SubSampling()) {
       window_->get_context().g_buffer_size = window_->get_context().window_size / 2;
     } else {
       window_->get_context().g_buffer_size = window_->get_context().window_size;
@@ -94,7 +94,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
     }
 
     compositor_ = new Compositor(
-      window_->get_context(), window_->ShadingQuality(), window_->SuperSampling()
+      window_->get_context(), window_->ShadingQuality(), window_->SubSampling()
     );
     needs_reload_ = false;
   }

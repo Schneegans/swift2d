@@ -101,13 +101,16 @@ ParticleUpdateShader::ParticleUpdateShader()
           if (varying_life[0].x < 1) {
 
             vec2 texcoords = ((projection * vec3(varying_position[0], 1)).xy + 1.0) * 0.5;
-            vec2 gravity = (texture2D(gravity_map, texcoords).rg - 0.5) * dynamics.x;
 
-            out_position = varying_position[0] + varying_velocity[0] * time.x / 1000;
-            out_life     = vec2(varying_life[0].x + time.x/varying_life[0].y, varying_life[0].y);
-            out_velocity = (varying_velocity[0] + gravity*time.x*0.1) - 0.1 * varying_velocity[0] * dynamics.y * time.x;
+            if (texcoords.x > 0 && texcoords.y > 0 && texcoords.x < 1 && texcoords.y < 1) {
+              vec2 gravity = (texture2D(gravity_map, texcoords).rg - 0.5) * dynamics.x;
 
-            EmitVertex(); EndPrimitive();
+              out_position = varying_position[0] + varying_velocity[0] * time.x / 1000;
+              out_life     = vec2(varying_life[0].x + time.x/varying_life[0].y, varying_life[0].y);
+              out_velocity = (varying_velocity[0] + gravity*time.x*0.1) - 0.1 * varying_velocity[0] * dynamics.y * time.x;
+
+              EmitVertex(); EndPrimitive();
+            }
           }
         }
       }

@@ -24,7 +24,7 @@ PointLightShader::PointLightShader()
       @include "version"
 
       // varyings
-      in vec2 tex_coords;
+      in vec2 texcoords;
 
       // uniforms
       uniform sampler2D light_tex;
@@ -37,7 +37,7 @@ PointLightShader::PointLightShader()
       layout (location = 0) out vec3 fragColor;
 
       void main(void){
-        vec4 light        = texture2D(light_tex, tex_coords);
+        vec4 light        = texture2D(light_tex, texcoords);
         vec3 light_dir    = normalize(light.rgb - 0.5);
         float attenuation = light.a;
 
