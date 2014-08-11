@@ -48,6 +48,11 @@ GuiElement::GuiElement(GuiComponent* parent)
   view_->set_process_listener(new AweProcessListener());
   view_->set_js_method_handler(new AweJSMethodHandler(parent_));
 
+  js_window_ = new Awesomium::JSValue();
+  *js_window_ = view_->ExecuteJavascriptWithResult(
+    Awesomium::WSLit("window"), Awesomium::WSLit("")
+  );
+
   auto window = WindowManager::instance()->get_default();
 
   callbacks_[0] = window->on_mouse_move.connect([&](math::vec2 const& pos) {
@@ -116,6 +121,8 @@ GuiElement::~GuiElement() {
   window->on_mouse_button_press.disconnect(callbacks_[2]);
   window->on_char.disconnect(callbacks_[3]);
   window->on_key_press.disconnect(callbacks_[4]);
+
+  delete js_window_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -139,18 +146,12 @@ void GuiElement::set_interactive(bool interactive) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void GuiElement::call_javascript(std::string const& method, std::vector<std::string> const& args) {
-  Awesomium::JSValue window = view_->ExecuteJavascriptWithResult(
-    Awesomium::WSLit("window"), Awesomium::WSLit("")
-  );
-
-  if (window.IsObject()) {
-    Awesomium::JSArray j_args;
-    for (auto const& arg: args) {
-      j_args.Push(Awesomium::JSValue(Awesomium::ToWebString(arg)));
-    }
-
-    window.ToObject().Invoke(Awesomium::ToWebString(method), j_args);
+  Awesomium::JSArray j_args;
+  for (auto const& arg: args) {
+    j_args.Push(Awesomium::JSValue(Awesomium::ToWebString(arg)));
   }
+
+  js_window_->ToObject().Invoke(Awesomium::ToWebString(method), j_args);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

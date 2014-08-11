@@ -75,7 +75,7 @@ Steam::Steam()
     current_room_ = result->m_ulSteamIDLobby;
     std::string name(SteamMatchmaking()->GetLobbyData(current_room_, "name"));
 
-    on_message.emit(MessageType::JOIN, get_id(), "joined " + name);
+    on_message.emit(MessageType::JOIN, get_user_id(), "joined " + name);
 
     int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
     for (int i(0); i<user_count; ++i) {
@@ -140,6 +140,12 @@ void Steam::update() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+uint64_t Steam::get_room_id() {
+  return current_room_;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Steam::update_room_list() {
   SteamOnceCallback<LobbyMatchList_t>::set(
     SteamMatchmaking()->RequestLobbyList(),
@@ -199,7 +205,7 @@ void Steam::leave_room() {
   if (current_room_ != 0) {
 
     std::string name(SteamMatchmaking()->GetLobbyData(current_room_, "name"));
-    on_message.emit(MessageType::LEAVE, get_id(), "left " + name);
+    on_message.emit(MessageType::LEAVE, get_user_id(), "left " + name);
 
     SteamMatchmaking()->LeaveLobby(current_room_);
     current_room_ = 0;
@@ -225,25 +231,25 @@ void Steam::send_chat_message(std::string const& message) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-uint64_t Steam::get_id() {
+uint64_t Steam::get_user_id() {
   return SteamUser()->GetSteamID().ConvertToUint64();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::string Steam::get_name() {
+std::string Steam::get_user_name() {
   return SteamFriends()->GetPersonaName();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::string Steam::get_name(uint64_t steam_id) {
+std::string Steam::get_user_name(uint64_t steam_id) {
   return SteamFriends()->GetFriendPersonaName(steam_id);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::string Steam::get_avatar(uint64_t steam_id) {
+std::string Steam::get_user_avatar(uint64_t steam_id) {
   auto avatar(avatar_cache_.find(steam_id));
   if (avatar != avatar_cache_.end()) {
     return avatar->second;

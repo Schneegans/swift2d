@@ -54,17 +54,18 @@ class Steam : public Singleton<Steam> {
   void init();
   void update();
 
-  void update_room_list();
-  void create_room(std::string const& name);
-  void join_room(uint64_t room_id);
-  void leave_room();
+  uint64_t  get_room_id();
+  void      update_room_list();
+  void      create_room(std::string const& name);
+  void      join_room(uint64_t room_id);
+  void      leave_room();
 
   void send_chat_message(std::string const& message);
 
-  uint64_t    get_id();
-  std::string get_name();
-  std::string get_name(uint64_t steam_id);
-  std::string get_avatar(uint64_t steam_id);
+  uint64_t    get_user_id();
+  std::string get_user_name();
+  std::string get_user_name(uint64_t steam_id);
+  std::string get_user_avatar(uint64_t steam_id);
 
   friend class Singleton<Steam>;
 

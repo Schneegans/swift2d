@@ -15,6 +15,7 @@
 // forward declares ------------------------------------------------------------
 namespace Awesomium {
   class WebView;
+  class JSValue;
 }
 
 namespace swift {
@@ -61,6 +62,7 @@ class GuiElement {
  // ---------------------------------------------------------- private interface
  private:
   Awesomium::WebView* view_;
+  Awesomium::JSValue* js_window_;
   std::vector<int>    callbacks_;
   GuiComponent*       parent_;
   bool                interactive_;
