@@ -23,7 +23,6 @@ HeatEffect::HeatEffect(RenderContext const& ctx, int shading_quality) {
       oglplus::enums::PixelDataInternalFormat i_format,
       oglplus::enums::PixelDataFormat         p_format) {
 
-      oglplus::Texture::Active(0);
       ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
         .Image2D(0, i_format, width, height,
           0, p_format, oglplus::PixelDataType::Float, nullptr)

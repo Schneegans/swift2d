@@ -119,7 +119,6 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
     ogl::enums::PixelDataInternalFormat i_format,
     ogl::enums::PixelDataFormat         p_format) {
 
-    ogl::Texture::Active(0);
     ctx.gl.Bound(ogl::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
         0, p_format, ogl::PixelDataType::Float, nullptr)
