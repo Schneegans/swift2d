@@ -125,6 +125,21 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality, bool
         fragColor = pow(glow * color / 16.0, vec3(2));
       }
     )")
+  , g_buffer_shaded_(post_fx_shader_.get_uniform<int>("g_buffer_shaded"))
+  , glow_buffer_1_(post_fx_shader_.get_uniform<int>("glow_buffer_1"))
+  , glow_buffer_2_(post_fx_shader_.get_uniform<int>("glow_buffer_2"))
+  , glow_buffer_3_(post_fx_shader_.get_uniform<int>("glow_buffer_3"))
+  , glow_buffer_4_(post_fx_shader_.get_uniform<int>("glow_buffer_4"))
+  , glow_buffer_5_(post_fx_shader_.get_uniform<int>("glow_buffer_5"))
+  , glow_buffer_6_(post_fx_shader_.get_uniform<int>("glow_buffer_6"))
+  , glow_buffer_7_(post_fx_shader_.get_uniform<int>("glow_buffer_7"))
+  , glow_buffer_8_(post_fx_shader_.get_uniform<int>("glow_buffer_8"))
+  , heat_buffer_(post_fx_shader_.get_uniform<int>("heat_buffer"))
+  , dirt_tex_(post_fx_shader_.get_uniform<int>("dirt_tex"))
+  , use_heat_(post_fx_shader_.get_uniform<int>("use_heat"))
+  , screen_size_(threshold_shader_.get_uniform<math::vec2i>("screen_size"))
+  , g_buffer_diffuse_(threshold_shader_.get_uniform<int>("g_buffer_diffuse"))
+  , g_buffer_light_(threshold_shader_.get_uniform<int>("g_buffer_light"))
   , streak_effect_(ctx)
   , ghost_effect_(ctx)
   , heat_effect_(ctx, shading_quality_)
@@ -191,26 +206,31 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
   ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
 
   post_fx_shader_.use(ctx);
-  post_fx_shader_.set_uniform("g_buffer_shaded", 0);
+  g_buffer_shaded_.Set(0);
 
   int start(1);
   start = streak_effect_.bind_buffers(start, ctx);
   start = ghost_effect_.bind_buffers(start, ctx);
 
-  for (int i(1); i<start; ++i) {
-    post_fx_shader_.set_uniform("glow_buffer_" + std::to_string(i), i);
-  }
+  glow_buffer_1_.Set(1);
+  glow_buffer_2_.Set(2);
+  glow_buffer_3_.Set(3);
+  glow_buffer_4_.Set(4);
+  glow_buffer_5_.Set(5);
+  glow_buffer_6_.Set(6);
+  glow_buffer_7_.Set(7);
+  glow_buffer_8_.Set(8);
 
   if (shading_quality_ > 2) {
-    post_fx_shader_.set_uniform("heat_buffer", start);
+    heat_buffer_.Set(start);
     start = heat_effect_.bind_buffers(start, ctx);
-    post_fx_shader_.set_uniform("use_heat", 1);
+    use_heat_.Set(1);
   } else {
-    post_fx_shader_.set_uniform("use_heat", 0);
+    use_heat_.Set(0);
   }
 
   dirt_.bind(ctx, start);
-  post_fx_shader_.set_uniform("dirt_tex", start);
+  dirt_tex_.Set(start);
 
   Quad::instance()->draw(ctx);
 
@@ -229,9 +249,9 @@ void PostProcessor::generate_threshold_buffer(RenderContext const& ctx) {
   ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
 
   threshold_shader_.use(ctx);
-  threshold_shader_.set_uniform("g_buffer_diffuse", 0);
-  threshold_shader_.set_uniform("g_buffer_light", 1);
-  threshold_shader_.set_uniform("screen_size", size/6);
+  g_buffer_diffuse_.Set(0);
+  g_buffer_light_.Set(1);
+  screen_size_.Set(size/6);
 
   Quad::instance()->draw(ctx);
 }

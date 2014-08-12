@@ -10,7 +10,6 @@
 #define SWIFT2D_OPENGL_HPP
 
 // oglplus configuration -------------------------------------------------------
-// no gl checks at all
 #define OGLPLUS_LOW_PROFILE 1
 
 // includes  -------------------------------------------------------------------

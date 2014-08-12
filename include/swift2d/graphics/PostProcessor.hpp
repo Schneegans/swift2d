@@ -47,8 +47,24 @@ class PostProcessor {
   bool super_sampling_;
 
   Shader               post_fx_shader_;
-
   Shader               threshold_shader_;
+
+  oglplus::Lazy<oglplus::Uniform<int>> g_buffer_shaded_;
+  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_1_;
+  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_2_;
+  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_3_;
+  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_4_;
+  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_5_;
+  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_6_;
+  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_7_;
+  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_8_;
+  oglplus::Lazy<oglplus::Uniform<int>> heat_buffer_;
+  oglplus::Lazy<oglplus::Uniform<int>> dirt_tex_;
+  oglplus::Lazy<oglplus::Uniform<int>> use_heat_;
+  oglplus::Lazy<oglplus::Uniform<math::vec2i>> screen_size_;
+  oglplus::Lazy<oglplus::Uniform<int>> g_buffer_diffuse_;
+  oglplus::Lazy<oglplus::Uniform<int>> g_buffer_light_;
+
   oglplus::Framebuffer threshold_fbo_;
   oglplus::Texture     threshold_buffer_;
 
