@@ -36,7 +36,15 @@ class StreakEffect {
  // ---------------------------------------------------------- private interface
  private:
 
-  Shader               streak_shader_;
+  Shader streak_shader_;
+
+  oglplus::Lazy<oglplus::Uniform<math::vec2>> step_;
+  oglplus::Lazy<oglplus::Uniform<int>>        input_tex_;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>> color1_;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>> color2_;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>> color3_;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>> color4_;
+
   oglplus::Framebuffer streak_fbo_;
   oglplus::Texture     streak_buffer_tmp_;
   oglplus::Texture     streak_buffer_1_;

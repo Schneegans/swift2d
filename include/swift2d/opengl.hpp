@@ -9,6 +9,10 @@
 #ifndef SWIFT2D_OPENGL_HPP
 #define SWIFT2D_OPENGL_HPP
 
+// oglplus configuration -------------------------------------------------------
+// no gl checks at all
+#define OGLPLUS_LOW_PROFILE 1
+
 // includes  -------------------------------------------------------------------
 #include <GL/glew.h>
 #include <oglplus/all.hpp>

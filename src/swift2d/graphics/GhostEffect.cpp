@@ -112,7 +112,17 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
                 + texture2D(input_tex2, texcoord3).rgb * color3 * fac3.x * fac3.y
                 + texture2D(input_tex3, texcoord4).rgb * color4 * fac4.x * fac4.y;
     }
-  )") {
+  )")
+  , step_(blur_shader_.get_uniform<math::vec2>("step"))
+  , input_tex_(blur_shader_.get_uniform<int>("input_tex"))
+  , scalar_(ghost_shader_.get_uniform<math::vec4>("scalar"))
+  , input_tex_1_(ghost_shader_.get_uniform<int>("input_tex1"))
+  , input_tex_2_(ghost_shader_.get_uniform<int>("input_tex2"))
+  , input_tex_3_(ghost_shader_.get_uniform<int>("input_tex3"))
+  , color1_(ghost_shader_.get_uniform<math::vec3>("color1"))
+  , color2_(ghost_shader_.get_uniform<math::vec3>("color2"))
+  , color3_(ghost_shader_.get_uniform<math::vec3>("color3"))
+  , color4_(ghost_shader_.get_uniform<math::vec3>("color4")) {
 
   auto create_texture = [&](
     ogl::Texture& tex, int width, int height,
@@ -181,7 +191,7 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
 
   // blurring ------------------------------------------------------------------
   blur_shader_.use(ctx);
-  blur_shader_.set_uniform("input_tex", 4);
+  input_tex_.Set(4);
   ogl::Texture::Active(4);
 
   auto blur_pass = [&](math::vec2 const& step, ogl::Texture const& input,
@@ -189,7 +199,7 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
 
     ctx.gl.DrawBuffer(output);
     ctx.gl.Bind(ose::_2D(), input);
-    blur_shader_.set_uniform("step", step);
+    step_.Set(step);
     Quad::instance()->draw(ctx);
   };
 
@@ -207,21 +217,21 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
 
   ogl::Texture::Active(4);
   ctx.gl.Bind(ose::_2D(), blur_buffer_);
-  ghost_shader_.set_uniform("input_tex1", 4);
+  input_tex_1_.Set(4);
 
   ogl::Texture::Active(5);
   ctx.gl.Bind(ose::_2D(), blur_buffer_);
-  ghost_shader_.set_uniform("input_tex2", 5);
+  input_tex_2_.Set(5);
 
   ogl::Texture::Active(6);
   ctx.gl.Bind(ose::_2D(), blur_buffer_);
-  ghost_shader_.set_uniform("input_tex3", 6);
+  input_tex_3_.Set(6);
 
-  ghost_shader_.set_uniform("scalar", math::vec4(-4.0, 3.0, -2.0, 0.3));
-  ghost_shader_.set_uniform("color1", math::vec3(0.8, 0.5, 0.5));
-  ghost_shader_.set_uniform("color2", math::vec3(1.0, 0.2, 0.6));
-  ghost_shader_.set_uniform("color3", math::vec3(0.1, 0.1, 0.4));
-  ghost_shader_.set_uniform("color4", math::vec3(0.0, 0.0, 0.5));
+  scalar_.Set(math::vec4(-4.0, 3.0, -2.0, 0.3));
+  color1_.Set(math::vec3(0.8, 0.5, 0.5));
+  color2_.Set(math::vec3(1.0, 0.2, 0.6));
+  color3_.Set(math::vec3(0.1, 0.1, 0.4));
+  color4_.Set(math::vec3(0.0, 0.0, 0.5));
 
   Quad::instance()->draw(ctx);
 
@@ -231,21 +241,21 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
 
   ogl::Texture::Active(4);
   ctx.gl.Bind(ose::_2D(), ghost_buffer_1_);
-  ghost_shader_.set_uniform("input_tex1", 4);
+  input_tex_1_.Set(4);
 
   ogl::Texture::Active(5);
   ctx.gl.Bind(ose::_2D(), ghost_buffer_1_);
-  ghost_shader_.set_uniform("input_tex2", 5);
+  input_tex_2_.Set(5);
 
   ogl::Texture::Active(6);
   ctx.gl.Bind(ose::_2D(), blur_buffer_);
-  ghost_shader_.set_uniform("input_tex3", 6);
+  input_tex_3_.Set(6);
 
-  ghost_shader_.set_uniform("scalar", math::vec4(3.6, 2.0, 0.9, -0.55));
-  ghost_shader_.set_uniform("color1", math::vec3(0.6, 0.2, 0.2));
-  ghost_shader_.set_uniform("color2", math::vec3(0.2, 0.06, 0.6));
-  ghost_shader_.set_uniform("color3", math::vec3(0.15, 0.00, 0.1));
-  ghost_shader_.set_uniform("color4", math::vec3(0.06, 0.00, 0.55));
+  scalar_.Set(math::vec4(3.6, 2.0, 0.9, -0.55));
+  color1_.Set(math::vec3(0.6, 0.2, 0.2));
+  color2_.Set(math::vec3(0.2, 0.06, 0.6));
+  color3_.Set(math::vec3(0.15, 0.00, 0.1));
+  color4_.Set(math::vec3(0.06, 0.00, 0.55));
 
   Quad::instance()->draw(ctx);
 }

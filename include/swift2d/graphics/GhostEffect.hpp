@@ -39,6 +39,17 @@ class GhostEffect {
   Shader               blur_shader_;
   Shader               ghost_shader_;
 
+  oglplus::Lazy<oglplus::Uniform<math::vec2>> step_;
+  oglplus::Lazy<oglplus::Uniform<int>>        input_tex_;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>> scalar_;
+  oglplus::Lazy<oglplus::Uniform<int>>        input_tex_1_;
+  oglplus::Lazy<oglplus::Uniform<int>>        input_tex_2_;
+  oglplus::Lazy<oglplus::Uniform<int>>        input_tex_3_;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>> color1_;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>> color2_;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>> color3_;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>> color4_;
+
   oglplus::Framebuffer fbo_;
   oglplus::Texture     buffer_tmp_;
   oglplus::Texture     blur_buffer_;
