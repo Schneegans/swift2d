@@ -26,9 +26,10 @@ typedef std::shared_ptr<const ParticleEmitterComponent> ConstParticleEmitterComp
 typedef Property<ParticleEmitterComponentPtr>           ParticleEmitterComponentProperty;
 
 struct SerializedEmitter {
-  float Life,       LifeVariance;
-  float Direction,  DirectionVariance;
-  float Velocity,   VelocityVariance;
+  float Life,             LifeVariance;
+  float Direction,        DirectionVariance;
+  float Velocity,         VelocityVariance;
+  float AngularVelocity,  AngularVelocityVariance;
   float PositionVariance;
   float Density;
   math::mat3 WorldTransform;
@@ -51,6 +52,9 @@ class ParticleEmitterComponent : public TransformableComponent {
 
   Float Velocity;
   Float VelocityVariance;
+
+  Float AngularVelocity;
+  Float AngularVelocityVariance;
 
   Float PositionVariance;
 

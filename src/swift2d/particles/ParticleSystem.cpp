@@ -25,6 +25,7 @@ struct Particle {
   math::vec2 pos;
   math::vec2 vel;
   math::vec2 life;
+  math::vec2 rot;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,6 +63,7 @@ void ParticleSystem::upload_to(RenderContext const& ctx) {
     ogl::VertexArrayAttrib(0).Pointer(2, t, false, s, (void const*) 0);
     ogl::VertexArrayAttrib(1).Pointer(2, t, false, s, (void const*) 8);
     ogl::VertexArrayAttrib(2).Pointer(2, t, false, s, (void const*)16);
+    ogl::VertexArrayAttrib(3).Pointer(2, t, false, s, (void const*)24);
   }
 }
 
@@ -89,6 +91,7 @@ void ParticleSystem::update_particles(
       data.front().pos  = math::vec2(0.f, 0.f);
       data.front().vel  = math::vec2(0.f, 0.f);
       data.front().life = math::vec2(0.f, 0.f);
+      data.front().rot  = math::vec2(0.f, 0.f);
       ogl::Buffer::Data(ose::Array(), data, ose::DynamicDraw());
     }
 
@@ -114,6 +117,7 @@ void ParticleSystem::update_particles(
   ogl::VertexArrayAttrib(0).Enable();
   ogl::VertexArrayAttrib(1).Enable();
   ogl::VertexArrayAttrib(2).Enable();
+  ogl::VertexArrayAttrib(3).Enable();
 
   transform_feedbacks_[current_tf()].BeginPoints();
   {
@@ -134,9 +138,10 @@ void ParticleSystem::update_particles(
 
       if (spawn_count > 0) {
         math::vec2 time       (frame_time * 1000.0, total_time_ * 1000.0);
-        math::vec2 life       (emitter.Life,        emitter.LifeVariance);
-        math::vec2 direction  (emitter.Direction,   emitter.DirectionVariance);
-        math::vec2 velocity   (emitter.Velocity,    emitter.VelocityVariance);
+        math::vec2 life       (emitter.Life,            emitter.LifeVariance);
+        math::vec2 direction  (emitter.Direction,       emitter.DirectionVariance);
+        math::vec2 velocity   (emitter.Velocity,        emitter.VelocityVariance);
+        math::vec2 rotation   (emitter.AngularVelocity, emitter.AngularVelocityVariance);
         NoiseTexture::instance()->bind(ctx, 0);
 
         shader->noise_tex.        Set(0);
@@ -148,6 +153,7 @@ void ParticleSystem::update_particles(
         shader->life.             Set(life);
         shader->direction.        Set(direction);
         shader->velocity.         Set(velocity);
+        shader->rotation.         Set(rotation);
 
         ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       }
@@ -174,6 +180,7 @@ void ParticleSystem::update_particles(
   ogl::VertexArrayAttrib(0).Disable();
   ogl::VertexArrayAttrib(1).Disable();
   ogl::VertexArrayAttrib(2).Disable();
+  ogl::VertexArrayAttrib(3).Disable();
 
   ctx.gl.Disable(ogl::Capability::RasterizerDiscard);
 }
@@ -187,6 +194,7 @@ void ParticleSystem::draw_particles(RenderContext const& ctx) {
   ogl::VertexArrayAttrib(0).Enable();
   ogl::VertexArrayAttrib(1).Enable();
   ogl::VertexArrayAttrib(2).Enable();
+  ogl::VertexArrayAttrib(3).Enable();
 
   ctx.gl.DrawTransformFeedback(
     ogl::PrimitiveType::Points, transform_feedbacks_[current_tf()]
@@ -195,6 +203,7 @@ void ParticleSystem::draw_particles(RenderContext const& ctx) {
   ogl::VertexArrayAttrib(0).Disable();
   ogl::VertexArrayAttrib(1).Disable();
   ogl::VertexArrayAttrib(2).Disable();
+  ogl::VertexArrayAttrib(3).Disable();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

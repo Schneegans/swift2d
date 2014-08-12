@@ -19,18 +19,21 @@ ParticleUpdateShader::ParticleUpdateShader()
       // vertex shader ---------------------------------------------------------
       @include "version"
 
-      layout(location=0) in vec2  position;
-      layout(location=1) in vec2  velocity;
-      layout(location=2) in vec2  life;
+      layout(location=0) in vec2 position;
+      layout(location=1) in vec2 velocity;
+      layout(location=2) in vec2 life;
+      layout(location=3) in vec2 rotation;
 
       out vec2 varying_position;
       out vec2 varying_velocity;
       out vec2 varying_life;
+      out vec2 varying_rotation;
 
       void main(void) {
-        varying_position = position;
-        varying_velocity = velocity;
-        varying_life = life;
+        varying_position  = position;
+        varying_velocity  = velocity;
+        varying_life      = life;
+        varying_rotation  = rotation;
       }
     )",
     "", // empty fragment shader
@@ -45,6 +48,7 @@ ParticleUpdateShader::ParticleUpdateShader()
       in vec2  varying_position[];
       in vec2  varying_velocity[];
       in vec2  varying_life[];
+      in vec2  varying_rotation[];
 
       // general uniforms
       uniform vec2      time;         // x: frame time  y: total time [millisec]
@@ -56,6 +60,7 @@ ParticleUpdateShader::ParticleUpdateShader()
       uniform vec2      life;         // x: life        y: life variance   [sec]
       uniform vec2      direction;    // x: direction   y: direction variance
       uniform vec2      velocity;     // x: velocity    y: velocity variance
+      uniform vec2      rotation;     // x: rotation    y: rotation variance
       uniform float     position_variance;
 
       // update uniforms
@@ -66,6 +71,7 @@ ParticleUpdateShader::ParticleUpdateShader()
       out vec2 out_position;
       out vec2 out_velocity;
       out vec2 out_life;
+      out vec2 out_rotation;
 
       vec3 get_random(float seed) {
         seed = mod(seed, 10);
@@ -86,10 +92,12 @@ ParticleUpdateShader::ParticleUpdateShader()
             float l = life.x      + random.x * life.y;
             float d = direction.x + random.y * direction.y;
             float v = velocity.x  + random.z * velocity.y;
+            float r = rotation.x  + random.z * rotation.y;
 
             out_position = (transform * vec3(random.xy*position_variance, 1)).xy;
             out_life     = vec2(0, l*1000.0);
             out_velocity = (transform * vec3(cos(d), sin(d), 0)).xy * v;
+            out_rotation = vec2(0, r);
 
             EmitVertex(); EndPrimitive();
           }
@@ -110,6 +118,7 @@ ParticleUpdateShader::ParticleUpdateShader()
               out_position = varying_position[0] + varying_velocity[0] * time.x / 1000;
               out_life     = vec2(varying_life[0].x + time.x/varying_life[0].y, varying_life[0].y);
               out_velocity = (varying_velocity[0] + gravity*time.x*0.1) - 0.1 * varying_velocity[0] * dynamics.y * time.x;
+              out_rotation = vec2(varying_rotation[0].x + varying_rotation[0].y * time.x / 1000, varying_rotation[0].y - 0.01 * varying_rotation[0].y * dynamics.z * time.x);
 
               EmitVertex(); EndPrimitive();
             }
@@ -117,7 +126,7 @@ ParticleUpdateShader::ParticleUpdateShader()
         }
       }
     )",
-    {"out_position", "out_velocity", "out_life"}
+    {"out_position", "out_velocity", "out_life", "out_rotation"}
   )
   , time(get_uniform<math::vec2>("time"))
   , noise_tex(get_uniform<int>("noise_tex"))
@@ -126,6 +135,7 @@ ParticleUpdateShader::ParticleUpdateShader()
   , life(get_uniform<math::vec2>("life"))
   , direction(get_uniform<math::vec2>("direction"))
   , velocity(get_uniform<math::vec2>("velocity"))
+  , rotation(get_uniform<math::vec2>("rotation"))
   , position_variance(get_uniform<float>("position_variance"))
   , gravity_map(get_uniform<int>("gravity_map"))
   , projection(get_uniform<math::mat3>("projection"))

@@ -34,6 +34,7 @@ class ParticleUpdateShader : public Shader,
   oglplus::Lazy<oglplus::Uniform<math::vec2>>   life;
   oglplus::Lazy<oglplus::Uniform<math::vec2>>   direction;
   oglplus::Lazy<oglplus::Uniform<math::vec2>>   velocity;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>   rotation;
   oglplus::Lazy<oglplus::Uniform<float>>        position_variance;
   oglplus::Lazy<oglplus::Uniform<int>>          gravity_map;
   oglplus::Lazy<oglplus::Uniform<math::mat3>>   projection;

@@ -22,12 +22,15 @@ SpriteParticleShader::SpriteParticleShader()
       layout(location=0) in vec2 position;
       layout(location=1) in vec2 velocity;
       layout(location=2) in vec2 life;
+      layout(location=3) in vec2 rotation;
 
       out float varying_age;
+      out float varying_rotation;
 
       void main(void) {
-        gl_Position = vec4(position, 0.0, 1.0);
-        varying_age = life.x;
+        gl_Position       = vec4(position, 0.0, 1.0);
+        varying_age       = life.x;
+        varying_rotation  = rotation.x;
       }
     )",
 
@@ -63,6 +66,7 @@ SpriteParticleShader::SpriteParticleShader()
       layout(triangle_strip, max_vertices = 4) out;
 
       in float varying_age[];
+      in float varying_rotation[];
 
       uniform mat3  projection;
       uniform vec2  scale;
@@ -74,7 +78,7 @@ SpriteParticleShader::SpriteParticleShader()
 
       void main(void) {
         float scale = mix(scale.x, scale.y, varying_age[0]);
-        emit_quad(gl_in[0].gl_Position.xy, scale);
+        emit_quad(gl_in[0].gl_Position.xy, scale, varying_rotation[0]);
       }
     )",
     {}
