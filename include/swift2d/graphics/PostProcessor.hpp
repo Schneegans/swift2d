@@ -15,6 +15,7 @@
 #include <swift2d/graphics/StreakEffect.hpp>
 #include <swift2d/graphics/GhostEffect.hpp>
 #include <swift2d/graphics/HeatEffect.hpp>
+#include <swift2d/graphics/GBuffer.hpp>
 #include <swift2d/textures/Texture.hpp>
 
 namespace swift {
@@ -31,23 +32,19 @@ class PostProcessor {
  public:
 
   // ----------------------------------------------------- contruction interface
-  PostProcessor(RenderContext const& ctx, int shading_quality, bool super_sampling);
+  PostProcessor(RenderContext const& ctx);
 
   // ------------------------------------------------------------ public methods
   void process(ConstSerializedScenePtr const& scene, RenderContext const& ctx,
-               oglplus::Texture const& final_buffer,
-               oglplus::Texture const& g_buffer_light);
+               GBuffer* g_buffer);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   void generate_threshold_buffer(RenderContext const& ctx);
 
-  int  shading_quality_;
-  bool super_sampling_;
-
-  Shader               post_fx_shader_;
-  Shader               threshold_shader_;
+  Shader post_fx_shader_;
+  Shader threshold_shader_;
 
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_shaded_;
   oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_1_;

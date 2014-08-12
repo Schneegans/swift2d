@@ -37,6 +37,12 @@ Pipeline::Pipeline()
 Pipeline::~Pipeline() {
   if (compositor_) delete compositor_;
   Physics::instance()->clear_gravity_map(window_->get_context());
+
+  for (auto sub_sampler: sub_samplers_) {
+    if (sub_sampler) {
+      delete sub_sampler;
+    }
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,9 +57,11 @@ void Pipeline::set_output_window(WindowPtr const& window) {
   window_->ShadingQuality.on_change().connect([this](int) {
     needs_reload_ = true;
   });
+
   window_->SubSampling.on_change().connect([this](bool) {
     needs_reload_ = true;
   });
+
   window_->Fullscreen.on_change().connect([this](bool) {
     needs_reload_ = true;
   });
@@ -81,6 +89,11 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   // update window size
   if (needs_reload_) {
+
+    window_->get_context().pipeline = this;
+    window_->get_context().shading_quality = window_->ShadingQuality();
+    window_->get_context().sub_sampling = window_->SubSampling();
+
     if (window_->SubSampling()) {
       window_->get_context().g_buffer_size = window_->get_context().window_size / 2;
     } else {
@@ -93,9 +106,16 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
       compositor_ = nullptr;
     }
 
-    compositor_ = new Compositor(
-      window_->get_context(), window_->ShadingQuality(), window_->SubSampling()
-    );
+    compositor_ = new Compositor(window_->get_context());
+
+    for (auto sub_sampler: sub_samplers_) {
+      if (sub_sampler) {
+        delete sub_sampler;
+      }
+    }
+
+    sub_samplers_.clear();
+
     needs_reload_ = false;
   }
 
@@ -135,6 +155,25 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   // finish frame
   window_->display();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SubSampler* Pipeline::get_sub_sampler(int level) {
+
+  int index = level - 2;
+
+  if (sub_samplers_.size() > index && sub_samplers_[index] != nullptr) {
+    return sub_samplers_[index];
+  }
+
+  if (sub_samplers_.size() <= index) {
+    sub_samplers_.resize(index+1);
+  }
+
+  sub_samplers_[index] = new SubSampler(window_->get_context(), level);
+
+  return sub_samplers_[index];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -13,6 +13,7 @@
 #include <swift2d/particles/ParticleSystemComponent.hpp>
 #include <swift2d/textures/Texture.hpp>
 #include <swift2d/utils/Color.hpp>
+#include <swift2d/graphics/SubSampler.hpp>
 
 namespace swift {
 
@@ -37,6 +38,7 @@ class SpriteParticleSystemComponent : public ParticleSystemComponent {
   Float           StartGlow,  EndGlow;
   ColorProperty   StartColor, EndColor;
   Bool            BlendAdd;
+  Int             SubSamplingLevel;
   TextureProperty Texture;
 
   // ----------------------------------------------------- contruction interface

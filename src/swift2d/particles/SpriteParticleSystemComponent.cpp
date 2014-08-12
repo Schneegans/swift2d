@@ -10,6 +10,7 @@
 #include <swift2d/particles/SpriteParticleSystemComponent.hpp>
 
 #include <swift2d/particles/SpriteParticleShader.hpp>
+#include <swift2d/graphics/Pipeline.hpp>
 
 namespace swift {
 
@@ -19,15 +20,18 @@ SpriteParticleSystemComponent::SpriteParticleSystemComponent()
   : StartScale(1.f),               EndScale(1.f)
   , StartGlow(0.f),                EndGlow(0.f)
   , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 0))
-  , BlendAdd(false) {}
+  , BlendAdd(false)
+  , SubSamplingLevel(1) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void SpriteParticleSystemComponent::draw(RenderContext const& ctx) {
   ParticleSystemComponent::update_particles(ctx);
 
-  if (BlendAdd()) {
-    ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
+  if (SubSamplingLevel() > 1) {
+    ctx.pipeline->get_sub_sampler(SubSamplingLevel())->bind(ctx, BlendAdd());
+  } else if (BlendAdd()) {
+    ctx.gl.BlendFunc(ose::SrcAlpha(), ose::One());
   }
 
   Texture()->bind(ctx, 0);
@@ -43,8 +47,10 @@ void SpriteParticleSystemComponent::draw(RenderContext const& ctx) {
 
   ParticleSystemComponent::draw_particles(ctx);
 
-  if (BlendAdd()) {
-    ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
+  if (SubSamplingLevel() > 1) {
+    ctx.pipeline->get_sub_sampler(SubSamplingLevel())->draw(ctx, BlendAdd());
+  } else if (BlendAdd()) {
+    ctx.gl.BlendFunc(ose::SrcAlpha(), ose::OneMinusSrcAlpha());
   }
 }
 
@@ -66,6 +72,7 @@ void SpriteParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("StartColor",  StartColor);
   visitor.add_member("EndColor",    EndColor);
   visitor.add_member("BlendAdd",    BlendAdd);
+  visitor.add_member("SubSamplingLevel", SubSamplingLevel);
   visitor.add_object("Texture",     Texture);
 }
 

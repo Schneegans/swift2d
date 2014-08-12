@@ -16,10 +16,8 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality, bool super_sampling)
-  : shading_quality_(shading_quality)
-  , super_sampling_(super_sampling)
-  , post_fx_shader_(R"(
+PostProcessor::PostProcessor(RenderContext const& ctx)
+  : post_fx_shader_(R"(
       // vertex shader ---------------------------------------------------------
       @include "fullscreen_quad_vertext_shader"
     )", R"(
@@ -142,7 +140,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality, bool
   , g_buffer_light_(threshold_shader_.get_uniform<int>("g_buffer_light"))
   , streak_effect_(ctx)
   , ghost_effect_(ctx)
-  , heat_effect_(ctx, shading_quality_)
+  , heat_effect_(ctx)
   , dirt_(Swift2D::instance()->get_resource("images", "dirt.jpg")) {
 
   auto create_texture = [&](
@@ -177,20 +175,16 @@ PostProcessor::PostProcessor(RenderContext const& ctx, int shading_quality, bool
 ////////////////////////////////////////////////////////////////////////////////
 
 void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext const& ctx,
-                            oglplus::Texture const& final_buffer,
-                            oglplus::Texture const& g_buffer_light) {
+                            GBuffer* g_buffer) {
 
-  if (shading_quality_ > 2 && scene->heat_objects.size() > 0) {
+  if (ctx.shading_quality > 2 && scene->heat_objects.size() > 0) {
     heat_effect_.process(scene, ctx);
   }
 
   ctx.gl.Disable(oglplus::Capability::Blend);
 
-  oglplus::Texture::Active(0);
-  final_buffer.Bind(oglplus::Texture::Target::_2D);
-
-  oglplus::Texture::Active(1);
-  g_buffer_light.Bind(oglplus::Texture::Target::_2D);
+  g_buffer->bind_final(0);
+  g_buffer->bind_light(1);
 
   // thresholding
   generate_threshold_buffer(ctx);
@@ -203,7 +197,6 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
   ctx.gl.Viewport(ctx.window_size.x(), ctx.window_size.y());
   oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
-  ctx.gl.DrawBuffer(oglplus::ColorBuffer::BackLeft);
 
   post_fx_shader_.use(ctx);
   g_buffer_shaded_.Set(0);
@@ -221,7 +214,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
   glow_buffer_7_.Set(7);
   glow_buffer_8_.Set(8);
 
-  if (shading_quality_ > 2) {
+  if (ctx.shading_quality > 2) {
     heat_buffer_.Set(start);
     start = heat_effect_.bind_buffers(start, ctx);
     use_heat_.Set(1);

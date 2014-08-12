@@ -35,25 +35,12 @@ ParticleSystem::ParticleSystem(int max_count)
   , particle_buffers_()
   , ping_(true)
   , total_time_(0.0)
-  , update_max_count_(max_count)
-  , sub_sample_level_(1)
-  , update_sub_sample_level_(false)
-  , sub_sample_fbo_(nullptr)
-  , sub_sample_buffer_(nullptr) {}
+  , update_max_count_(max_count) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void ParticleSystem::set_max_count(int max_count) {
   update_max_count_ = max_count;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void ParticleSystem::set_sub_sample_level(int level) {
-  if (level != sub_sample_level_) {
-    sub_sample_level_ = level;
-    update_sub_sample_level_ = true;
-  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -194,47 +181,6 @@ void ParticleSystem::update_particles(
 ////////////////////////////////////////////////////////////////////////////////
 
 void ParticleSystem::draw_particles(RenderContext const& ctx) {
-
-  // if (sub_sample_level_ > 1) {
-
-  //   if (update_sub_sample_level_) {
-
-  //     if (sub_sample_buffer_) {
-  //       delete sub_sample_buffer_;
-  //     }
-  //     sub_sample_buffer_ = new ogl::Texture();
-
-  //     oglplus::Texture::Active(0);
-  //     ctx.gl.Bound(oglplus::Texture::Target::_2D, sub_sample_buffer_)
-  //       .Image2D(0, oglplus::PixelDataInternalFormat::RGBA,
-  //                ctx.g_buffer_size().x()/sub_sample_level_,
-  //                ctx.g_buffer_size().y()/sub_sample_level_,
-  //                0, oglplus::PixelDataFormat::RGBA,
-  //                oglplus::PixelDataType::UnsignedByte, nullptr)
-  //       .MinFilter(oglplus::TextureMinFilter::Linear)
-  //       .MagFilter(oglplus::TextureMagFilter::Linear)
-  //       .WrapS(oglplus::TextureWrap::Clamp)
-  //       .WrapT(oglplus::TextureWrap::Clamp);
-
-  //     if (sub_sample_fbo_) {
-  //       delete sub_sample_fbo_;
-  //     }
-  //     sub_sample_fbo_ = new ogl::Framebuffer();
-
-  //     sub_sample_fbo_->Bind(oglplus::Framebuffer::Target::Draw);
-  //     oglplus::Framebuffer::AttachColorTexture(
-  //       oglplus::Framebuffer::Target::Draw, 0, sub_sample_buffer_, 0
-  //     );
-
-  //     update_sub_sample_level_ = false;
-
-  //   } else {
-  //     sub_sample_fbo_->Bind(oglplus::Framebuffer::Target::Draw);
-  //   }
-
-  //   ctx.gl.Viewport(ctx.g_buffer_size.x()/sub_sample_level_, ctx.g_buffer_size.y()/sub_sample_level_);
-  // }
-
 
   particle_vaos_[current_tf()].Bind();
 

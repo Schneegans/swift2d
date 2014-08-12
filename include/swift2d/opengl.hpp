@@ -10,7 +10,7 @@
 #define SWIFT2D_OPENGL_HPP
 
 // oglplus configuration -------------------------------------------------------
-#define OGLPLUS_LOW_PROFILE 1
+// #define OGLPLUS_LOW_PROFILE 1
 
 // includes  -------------------------------------------------------------------
 #include <GL/glew.h>

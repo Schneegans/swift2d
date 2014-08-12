@@ -6,41 +6,41 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_RENDER_CONTEXT_HPP
-#define SWIFT2D_RENDER_CONTEXT_HPP
+#ifndef SWIFT2D_SUB_SAMPLER_HPP
+#define SWIFT2D_SUB_SAMPLER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/opengl.hpp>
-#include <swift2d/math.hpp>
+#include <swift2d/graphics/GBuffer.hpp>
+#include <swift2d/materials/Shader.hpp>
 
 namespace swift {
 
-class Pipeline;
-
 ////////////////////////////////////////////////////////////////////////////////
-// Stores all relevant information on a OpenGL context.                       //
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-struct RenderContext {
+class SubSampler {
 
-  oglplus::Context gl;
+ ///////////////////////////////////////////////////////////////////////////////
+ // ----------------------------------------------------------- public interface
+ public:
 
-  math::vec2i window_size;
-  math::vec2i g_buffer_size;
-  math::mat3  projection_matrix;
-  float       projection_parallax;
-  bool        ready;
+  // ----------------------------------------------------- contruction interface
+  SubSampler(RenderContext const& ctx, int level);
 
-  int  shading_quality;
-  bool sub_sampling;
+  void bind(RenderContext const& context, bool additive);
+  void draw(RenderContext const& context, bool additive);
 
-  mutable int upload_budget;
-  mutable int upload_remaining;
+ ///////////////////////////////////////////////////////////////////////////////
+ // ---------------------------------------------------------- private interface
+ private:
+  Shader shader_;
+  int    level_;
 
-  Pipeline* pipeline;
+  oglplus::Reference<ogl::Framebuffer> original_framebuffer_;
+  GBuffer g_buffer_;
 };
 
 }
 
-#endif // SWIFT2D_RENDER_CONTEXT_HPP
+#endif // SWIFT2D_SUB_SAMPLER_HPP

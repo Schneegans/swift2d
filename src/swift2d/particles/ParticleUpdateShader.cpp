@@ -102,7 +102,9 @@ ParticleUpdateShader::ParticleUpdateShader()
 
             vec2 texcoords = ((projection * vec3(varying_position[0], 1)).xy + 1.0) * 0.5;
 
-            if (texcoords.x > 0 && texcoords.y > 0 && texcoords.x < 1 && texcoords.y < 1) {
+            float clip_dist = 0.3;
+
+            if (texcoords.x > -clip_dist && texcoords.y > -clip_dist && texcoords.x < 1+clip_dist && texcoords.y < 1+clip_dist) {
               vec2 gravity = (texture2D(gravity_map, texcoords).rg - 0.5) * dynamics.x;
 
               out_position = varying_position[0] + varying_velocity[0] * time.x / 1000;

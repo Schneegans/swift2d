@@ -14,6 +14,7 @@
 #include <swift2d/scene/SerializedScene.hpp>
 #include <swift2d/scene/SceneObject.hpp>
 #include <swift2d/graphics/Compositor.hpp>
+#include <swift2d/graphics/SubSampler.hpp>
 
 #include <memory>
 #include <vector>
@@ -53,6 +54,8 @@ class Pipeline {
   void update();
   void draw(ConstSerializedScenePtr const& scene);
 
+  SubSampler* get_sub_sampler(int level);
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
@@ -65,6 +68,8 @@ class Pipeline {
     int current_load_amount_;
 
     bool needs_reload_;
+
+    std::vector<SubSampler*> sub_samplers_;
 };
 
 }

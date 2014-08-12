@@ -45,7 +45,6 @@ class ParticleSystem {
 
   // ------------------------------------------------------------ public methods
   void set_max_count(int max_count);
-  void set_sub_sample_level(int level);
 
   void update_particles(
     std::vector<SerializedEmitter> const& emitters,
@@ -70,11 +69,6 @@ class ParticleSystem {
   bool   ping_;
   double total_time_;
   int    update_max_count_;
-
-  int                   sub_sample_level_;
-  bool                  update_sub_sample_level_;
-  oglplus::Framebuffer* sub_sample_fbo_;
-  oglplus::Texture*     sub_sample_buffer_;
 
   Timer timer_;
 };

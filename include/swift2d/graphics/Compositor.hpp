@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/PostProcessor.hpp>
+#include <swift2d/graphics/GBuffer.hpp>
 #include <swift2d/materials/Shader.hpp>
 #include <swift2d/properties.hpp>
 
@@ -24,7 +25,7 @@ class Compositor {
  public:
 
   // ---------------------------------------------------- construction interface
-  Compositor(RenderContext const& ctx, int shading_quality, bool super_sampling);
+  Compositor(RenderContext const& ctx);
   ~Compositor();
 
   // ------------------------------------------------------------ public methods
@@ -36,15 +37,7 @@ class Compositor {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  int  shading_quality_;
-  bool super_sampling_;
-
-  oglplus::Framebuffer  fbo_;
-  oglplus::Texture      g_buffer_diffuse_;
-  oglplus::Texture      g_buffer_normal_;
-  oglplus::Texture      g_buffer_light_;
-  oglplus::Texture      final_buffer_;
-
+  GBuffer*       g_buffer_;
   Shader*        background_shader_;
   PostProcessor* post_processor_;
 };
