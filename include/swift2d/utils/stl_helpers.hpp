@@ -18,6 +18,16 @@ namespace std {
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
+T from_string(std::string const& v) {
+  std::istringstream iss(v);
+  T result;
+  iss >> result;
+  return result;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename T>
 std::ostream& operator<<(std::ostream& os, std::vector<T> const& v) {
 
   typename std::vector<T>::const_iterator i(v.begin());
