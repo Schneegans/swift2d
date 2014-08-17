@@ -6,40 +6,45 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_COLLISION_SHAPE_HPP
-#define SWIFT2D_COLLISION_SHAPE_HPP
+#ifndef SWIFT2D_SAVABLE_OBJECT_HPP
+#define SWIFT2D_SAVABLE_OBJECT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/objects/SavableObject.hpp>
+#include <swift2d/objects/Object.hpp>
 #include <swift2d/properties.hpp>
 
-// forward declares ------------------------------------------------------------
-class b2Shape;
+#include <memory>
+#include <functional>
+#include <unordered_map>
 
 namespace swift {
 
+// forward declares ------------------------------------------------------------
+class SavableObjectVisitor;
+
 ////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class CollisionShape;
-typedef std::shared_ptr<CollisionShape>       CollisionShapePtr;
-typedef std::shared_ptr<const CollisionShape> ConstCollisionShapePtr;
-typedef Property<CollisionShapePtr>           CollisionShapeProperty;
+class SavableObject;
+typedef std::shared_ptr<SavableObject>       SavableObjectPtr;
+typedef std::shared_ptr<const SavableObject> ConstSavableObjectPtr;
+typedef Property<SavableObjectPtr>           SavableObjectProperty;
 
 // -----------------------------------------------------------------------------
-class CollisionShape : public SavableObject {
+class SavableObject : public Object {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ------------------------------------------------------------ public methods
-  virtual b2Shape* get_shape(math::mat3 const& body_transform) const = 0;
-};
+  void save_to_file(std::string const& path);
+  static SavableObjectPtr create_from_file(std::string const& path);
 
-// -----------------------------------------------------------------------------
+  virtual void accept(SavableObjectVisitor& to) {};
+};
 
 }
 
-#endif  // SWIFT2D_COLLISION_SHAPE_HPP
+#endif  // SWIFT2D_SAVABLE_OBJECT_HPP

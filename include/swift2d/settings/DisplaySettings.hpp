@@ -6,45 +6,50 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SAVABLE_OBJECT_HPP
-#define SWIFT2D_SAVABLE_OBJECT_HPP
+#ifndef SWIFT2D_DISPLAY_SETTINGS_HPP
+#define SWIFT2D_DISPLAY_SETTINGS_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/utils/Object.hpp>
-#include <swift2d/properties.hpp>
-
-#include <memory>
-#include <functional>
-#include <unordered_map>
+#include <swift2d/objects/SavableObject.hpp>
 
 namespace swift {
 
-// forward declares ------------------------------------------------------------
-class SavableObjectVisitor;
-
 ////////////////////////////////////////////////////////////////////////////////
-//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class SavableObject;
-typedef std::shared_ptr<SavableObject>       SavableObjectPtr;
-typedef std::shared_ptr<const SavableObject> ConstSavableObjectPtr;
-typedef Property<SavableObjectPtr>           SavableObjectProperty;
+class DisplaySettings;
+typedef std::shared_ptr<DisplaySettings>       DisplaySettingsPtr;
+typedef std::shared_ptr<const DisplaySettings> ConstDisplaySettingsPtr;
 
 // -----------------------------------------------------------------------------
-class SavableObject : public Object {
+class DisplaySettings: public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  Bool  VSync;
+  Bool  Fullscreen;
+  Int   ShadingQuality;
+  Bool  SubSampling;
+  Float Gamma;
 
-  void save_to_file(std::string const& path);
-  static SavableObjectPtr create_from_file(std::string const& path);
+  // ----------------------------------------------------- contruction interface
+  template <typename... Args>
+  static DisplaySettingsPtr create(Args&& ... a) {
+    return std::make_shared<DisplaySettings>(a...);
+  }
 
-  virtual void accept(SavableObjectVisitor& to) {};
+  DisplaySettings();
+
+  void accept(SavableObjectVisitor& to);
+
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "DisplaySettings"; }
 };
+
+// -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_SAVABLE_OBJECT_HPP
+#endif // SWIFT2D_DISPLAY_SETTINGS_HPP

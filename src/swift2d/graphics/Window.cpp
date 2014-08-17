@@ -10,6 +10,7 @@
 #include <swift2d/graphics/Window.hpp>
 #include <swift2d/graphics/WindowManager.hpp>
 #include <swift2d/utils/Logger.hpp>
+#include <swift2d/settings.hpp>
 
 #include <GLFW/glfw3.h>
 
@@ -18,11 +19,11 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Window::Window()
-  : VSync(false)
-  , Open(false)
+  : Open(false)
   , Fullscreen(false)
   , ShadingQuality(5)
   , SubSampling(false)
+  , Gamma(1.0)
   , window_(nullptr)
   , joystick_axis_cache_(static_cast<int>(JoystickId::JOYSTICK_NUM),
                          std::vector<float>(
@@ -40,7 +41,7 @@ Window::Window()
     else     close();
   });
 
-  VSync.on_change().connect([this](bool) {
+  Settings::instance()->display().VSync.on_change().connect([this](bool) {
     vsync_dirty_ = true;
   });
 
@@ -80,7 +81,7 @@ void Window::display() {
 
   if (vsync_dirty_) {
     vsync_dirty_ = false;
-    glfwSwapInterval(VSync() ? 1 : 0);
+    glfwSwapInterval(Settings::instance()->display().VSync() ? 1 : 0);
   }
 
   if (window_) {

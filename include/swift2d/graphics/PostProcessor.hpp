@@ -58,6 +58,7 @@ class PostProcessor {
   oglplus::Lazy<oglplus::Uniform<int>> heat_buffer_;
   oglplus::Lazy<oglplus::Uniform<int>> dirt_tex_;
   oglplus::Lazy<oglplus::Uniform<int>> use_heat_;
+  oglplus::Lazy<oglplus::Uniform<float>> gamma_;
   oglplus::Lazy<oglplus::Uniform<math::vec2i>> screen_size_;
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_diffuse_;
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_light_;

@@ -42,14 +42,11 @@ Swift2D::Swift2D()
   , RenderFPS(20)
   , pipeline_()
   , renderer_(pipeline_)
-  , window_(WindowManager::instance()->get_default())
+  , window_()
   , executable_()
   , signals_(MainLoop::instance()->get_io_service(), SIGINT, SIGTERM)
   , audio_device_()
-  , audio_context_(audio_device_) {
-
-  pipeline_.set_output_window(window_);
-}
+  , audio_context_(audio_device_) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -68,6 +65,7 @@ void Swift2D::init(int argc, char** argv) {
   boost::filesystem::create_directory(executable_ + "/tmp");
 
   // register all objects ------------------------------------------------------
+  Object::init<DisplaySettings>();
   Object::init<AnimatedSpriteComponent>();
   Object::init<AnimatedTexture>();
   Object::init<BoxCollisionShape>();
@@ -101,6 +99,9 @@ void Swift2D::init(int argc, char** argv) {
   Object::init<TrailEmitterComponent>();
   Object::init<TrailSystemComponent>();
 
+  window_ = WindowManager::instance()->get_default();
+  pipeline_.set_output_window(window_);
+
   // init glfw -----------------------------------------------------------------
   if (!glfwInit()) {
     Logger::LOG_ERROR << "Failed to initialize glfw3!" << std::endl;
@@ -110,6 +111,7 @@ void Swift2D::init(int argc, char** argv) {
     Logger::LOG_ERROR << "glfw3 error: " << description << std::endl;
   });
 
+  // init ctrl.c signal handler ------------------------------------------------
   signals_.async_wait([this](boost::system::error_code const& error,
                           int signal_number){
     if (!error) {
@@ -167,6 +169,7 @@ void Swift2D::clean_up() {
   TrailShader::destroy_instance();
   TrailUpdateShader::destroy_instance();
   Steam::destroy_instance();
+  Settings::destroy_instance();
 
   // SceneManager::destroy_instance();
   // Physics::destroy_instance();

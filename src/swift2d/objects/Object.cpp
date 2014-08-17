@@ -6,7 +6,7 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <swift2d/utils/Object.hpp>
+#include <swift2d/objects/Object.hpp>
 
 #include <iostream>
 

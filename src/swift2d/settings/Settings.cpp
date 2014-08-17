@@ -6,7 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <swift2d/utils/SavableObject.hpp>
+// includes  -------------------------------------------------------------------
+#include <swift2d/settings/Settings.hpp>
 
 #include <swift2d/objects/SavableObjectVisitor.hpp>
 
@@ -14,18 +15,35 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SavableObject::save_to_file(std::string const& path) {
-  SavableObjectVisitor visitor(get_type_name());
-  accept(visitor);
-  visitor.write_json(path);
+DisplaySettings& Settings::display() {
+  return display_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SavableObjectPtr SavableObject::create_from_file(std::string const& path) {
-  SavableObjectVisitor visitor;
-  visitor.read_json(path);
-  return visitor.to_object();
+Settings::Settings() {
+  load();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Settings::~Settings() {
+  save();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Settings::load() {
+  auto d(DisplaySettings::create_from_file("display_settings.json"));
+  if (d) {
+    display_ = *std::dynamic_pointer_cast<DisplaySettings>(d);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Settings::save() {
+  display_.save_to_file("display_settings.json");
 }
 
 ////////////////////////////////////////////////////////////////////////////////

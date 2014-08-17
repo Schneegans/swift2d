@@ -36,6 +36,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       uniform sampler2D heat_buffer;
       uniform sampler2D dirt_tex;
       uniform bool      use_heat;
+      uniform float     gamma;
 
       // varyings
       in vec2 texcoords;
@@ -74,6 +75,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
         fragColor = texture2D(g_buffer_shaded, shifted_texcoords).rgb;
         fragColor = (fragColor + (glow + 0.05) * dirt) * get_vignette();
+        fragColor = pow(fragColor, 1.0/vec3(gamma));
       }
     )")
   , threshold_shader_(R"(
@@ -135,6 +137,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   , heat_buffer_(post_fx_shader_.get_uniform<int>("heat_buffer"))
   , dirt_tex_(post_fx_shader_.get_uniform<int>("dirt_tex"))
   , use_heat_(post_fx_shader_.get_uniform<int>("use_heat"))
+  , gamma_(post_fx_shader_.get_uniform<float>("gamma"))
   , screen_size_(threshold_shader_.get_uniform<math::vec2i>("screen_size"))
   , g_buffer_diffuse_(threshold_shader_.get_uniform<int>("g_buffer_diffuse"))
   , g_buffer_light_(threshold_shader_.get_uniform<int>("g_buffer_light"))
@@ -221,6 +224,8 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
   } else {
     use_heat_.Set(0);
   }
+
+  gamma_.Set(WindowManager::instance()->get_default()->Gamma());
 
   dirt_.bind(ctx, start);
   dirt_tex_.Set(start);

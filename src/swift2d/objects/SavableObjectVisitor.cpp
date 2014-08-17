@@ -8,7 +8,7 @@
 
 #include <swift2d/objects/SavableObjectVisitor.hpp>
 
-#include <swift2d/utils/SavableObject.hpp>
+#include <swift2d/objects/SavableObject.hpp>
 
 namespace swift {
 
@@ -31,13 +31,15 @@ void SavableObjectVisitor::write_json(std::string const& path) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void SavableObjectVisitor::read_json(std::string const& path) {
-  boost::property_tree::read_json(path, json_);
+  try {
+    boost::property_tree::read_json(path, json_);
 
-  loaded_object_ = std::dynamic_pointer_cast<SavableObject>(
-    Object::create(json_.get<std::string>("Type"))
-  );
+    loaded_object_ = std::dynamic_pointer_cast<SavableObject>(
+      Object::create(json_.get<std::string>("Type"))
+    );
 
-  loaded_object_->accept(*this);
+    loaded_object_->accept(*this);
+  } catch(...) {}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

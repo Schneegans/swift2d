@@ -6,40 +6,39 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_COLLISION_SHAPE_HPP
-#define SWIFT2D_COLLISION_SHAPE_HPP
+#ifndef SWIFT2D_SETTINGS_HPP
+#define SWIFT2D_SETTINGS_HPP
 
 // includes  -------------------------------------------------------------------
+#include <swift2d/settings/DisplaySettings.hpp>
+#include <swift2d/utils/Singleton.hpp>
 #include <swift2d/objects/SavableObject.hpp>
-#include <swift2d/properties.hpp>
-
-// forward declares ------------------------------------------------------------
-class b2Shape;
 
 namespace swift {
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-// shared pointer type definition ----------------------------------------------
-class CollisionShape;
-typedef std::shared_ptr<CollisionShape>       CollisionShapePtr;
-typedef std::shared_ptr<const CollisionShape> ConstCollisionShapePtr;
-typedef Property<CollisionShapePtr>           CollisionShapeProperty;
-
 // -----------------------------------------------------------------------------
-class CollisionShape : public SavableObject {
+class Settings: public Singleton<Settings> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ------------------------------------------------------------ public methods
-  virtual b2Shape* get_shape(math::mat3 const& body_transform) const = 0;
+  DisplaySettings& display();
+
+  friend class Singleton<Settings>;
+
+ private:
+  void load();
+  void save();
+
+  Settings();
+  ~Settings();
+
+  DisplaySettings display_;
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_COLLISION_SHAPE_HPP
+#endif // SWIFT2D_SETTINGS_HPP

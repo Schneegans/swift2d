@@ -10,6 +10,7 @@
 #define SWIFT2D_SWIFT2D_HPP
 
 // includes  -------------------------------------------------------------------
+#include <swift2d/settings.hpp>
 #include <swift2d/utils/Logger.hpp>
 #include <swift2d/utils/stl_helpers.hpp>
 #include <swift2d/math.hpp>

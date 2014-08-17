@@ -10,7 +10,7 @@
 #define SWIFT2D_MATERIAL_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/utils/SavableObject.hpp>
+#include <swift2d/objects/SavableObject.hpp>
 #include <swift2d/materials/MaterialShader.hpp>
 #include <swift2d/utils/Color.hpp>
 #include <swift2d/textures/AnimatedTexture.hpp>

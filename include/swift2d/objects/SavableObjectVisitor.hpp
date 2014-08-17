@@ -10,7 +10,7 @@
 #define SWIFT2D_SAVABLE_OBJECT_VISITOR_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/utils/SavableObject.hpp>
+#include <swift2d/objects/SavableObject.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>

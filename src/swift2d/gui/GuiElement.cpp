@@ -145,7 +145,7 @@ void GuiElement::set_interactive(bool interactive) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GuiElement::call_javascript(std::string const& method, std::vector<std::string> const& args) {
+void GuiElement::call_javascript(std::string const& method, std::vector<std::string> const& args) const {
   Awesomium::JSArray j_args;
   for (auto const& arg: args) {
     j_args.Push(Awesomium::JSValue(Awesomium::ToWebString(arg)));

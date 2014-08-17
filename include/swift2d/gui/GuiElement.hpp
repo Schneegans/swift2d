@@ -53,7 +53,7 @@ class GuiElement {
   void focus();
   void set_interactive(bool interactive);
 
-  void call_javascript(std::string const& method, std::vector<std::string> const& args);
+  void call_javascript(std::string const& method, std::vector<std::string> const& args) const;
   void add_javascript_callback(std::string const& callback);
 
   void draw(RenderContext const& ctx);

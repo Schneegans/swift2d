@@ -41,13 +41,13 @@ class Window {
 
   // ---------------------------------------------------------------- properties
   Bool Open;
-  Bool VSync;
   Bool Fullscreen;
   Bool HideCursor;
   String Title;
 
-  Int  ShadingQuality;
-  Bool SubSampling;
+  Int   ShadingQuality;
+  Bool  SubSampling;
+  Float Gamma;
 
   // ------------------------------------------------------------------- signals
   Signal<>                                    on_close;

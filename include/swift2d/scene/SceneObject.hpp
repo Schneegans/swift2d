@@ -11,7 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
-#include <swift2d/utils/SavableObject.hpp>
+#include <swift2d/objects/SavableObject.hpp>
 
 #include <unordered_set>
 #include <vector>
