@@ -126,7 +126,7 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
 
     background_shader_->use(ctx);
     background_shader_->set_uniform("g_buffer_diffuse", 1);
-    Quad::instance()->draw(ctx);
+    Quad::get().draw(ctx);
 
     ctx.gl.Enable(oglplus::Capability::Blend);
 
@@ -141,7 +141,7 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
     background_shader_->use(ctx);
     background_shader_->set_uniform("g_buffer_diffuse", 1);
     background_shader_->set_uniform("g_buffer_light", 3);
-    Quad::instance()->draw(ctx);
+    Quad::get().draw(ctx);
 
     for (auto& light: scene->lights) {
       light.second->draw(ctx);

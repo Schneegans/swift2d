@@ -94,7 +94,7 @@ Steam::Steam()
       std::string file;
 
       if (avatar == avatar_cache_.end()) {
-        file = Swift2D::instance()->get_tmp_file("png");
+        file = Swift2D::get().get_tmp_file("png");
         avatar_cache_[result->m_ulSteamID] = file;
       } else {
         file = avatar->second;
@@ -162,7 +162,7 @@ void Steam::update_room_list() {
 
       rooms[id.ConvertToUint64()] = data;
     }
-    Steam::instance()->on_updated_room_list.emit(rooms);
+    Steam::get().on_updated_room_list.emit(rooms);
   });
 }
 
@@ -257,7 +257,7 @@ std::string Steam::get_user_avatar(uint64_t steam_id) {
 
   SteamFriends()->RequestUserInformation(steam_id, false);
 
-  std::string file(Swift2D::instance()->get_tmp_file("png"));
+  std::string file(Swift2D::get().get_tmp_file("png"));
   avatar_cache_[steam_id] = file;
 
   save_avatar(steam_id);

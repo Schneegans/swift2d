@@ -23,7 +23,7 @@ class Settings: public Singleton<Settings> {
  // ----------------------------------------------------------- public interface
  public:
 
-  DisplaySettings& display();
+  DisplaySettings Display;
 
   friend class Singleton<Settings>;
 
@@ -34,7 +34,6 @@ class Settings: public Singleton<Settings> {
   Settings();
   ~Settings();
 
-  DisplaySettings display_;
 };
 
 // -----------------------------------------------------------------------------

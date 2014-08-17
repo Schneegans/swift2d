@@ -55,7 +55,7 @@ void AnimatedTexture::bind(RenderContext const& ctx, unsigned location) const {
     ctx.gl.Bind(ose::_3D(), *texture_);
   } else {
     upload_to(ctx);
-    DefaultAnimatedTexture::instance()->bind(ctx, location);
+    DefaultAnimatedTexture::get().bind(ctx, location);
   }
 }
 

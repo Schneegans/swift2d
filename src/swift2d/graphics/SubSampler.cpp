@@ -75,7 +75,7 @@ void SubSampler::draw(RenderContext const& ctx, bool additive) {
   shader_.set_uniform("g_buffer_diffuse", 10);
   shader_.set_uniform("g_buffer_light", 11);
 
-  Quad::instance()->draw(ctx);
+  Quad::get().draw(ctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

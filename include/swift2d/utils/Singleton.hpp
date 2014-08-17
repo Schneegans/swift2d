@@ -28,13 +28,13 @@ class Singleton {
 
   // Gets the instance. Singletons are classes, which are only instanciated
   // once. This method will create this instance if necessary and return a
-  // pointer to it.
-  static T* instance() {
+  // reference to it.
+  static T& get() {
     if (instance_ == nullptr) {
       instance_ = new T;
     }
 
-    return instance_;
+    return *instance_;
   }
 
   // Deletes the instance of this Singleton. The instance of this singleton will

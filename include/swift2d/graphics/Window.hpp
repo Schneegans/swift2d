@@ -41,7 +41,6 @@ class Window {
 
   // ---------------------------------------------------------------- properties
   Bool   Open;
-  Bool   Fullscreen;
   Bool   HideCursor;
   String Title;
 

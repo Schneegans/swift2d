@@ -29,19 +29,19 @@ void PointLightComponent::draw(RenderContext const& ctx) {
   transform = transform * math::make_scale(math::get_scale(WorldTransform()));
 
   Texture()->bind(ctx, 0);
-  PointLightShader::instance()->use(ctx);
-  PointLightShader::instance()->projection.Set(ctx.projection_matrix);
-  PointLightShader::instance()->transform.Set(transform);
-  PointLightShader::instance()->depth.Set(Depth());
-  PointLightShader::instance()->parallax.Set(ctx.projection_parallax);
-  PointLightShader::instance()->screen_size.Set(ctx.g_buffer_size);
-  PointLightShader::instance()->g_buffer_diffuse.Set(1);
-  PointLightShader::instance()->g_buffer_normal.Set(2);
-  PointLightShader::instance()->g_buffer_light.Set(3);
-  PointLightShader::instance()->light_tex.Set(0);
-  PointLightShader::instance()->light_color.Set(Color().vec4());
+  PointLightShader::get().use(ctx);
+  PointLightShader::get().projection.Set(ctx.projection_matrix);
+  PointLightShader::get().transform.Set(transform);
+  PointLightShader::get().depth.Set(Depth());
+  PointLightShader::get().parallax.Set(ctx.projection_parallax);
+  PointLightShader::get().screen_size.Set(ctx.g_buffer_size);
+  PointLightShader::get().g_buffer_diffuse.Set(1);
+  PointLightShader::get().g_buffer_normal.Set(2);
+  PointLightShader::get().g_buffer_light.Set(3);
+  PointLightShader::get().light_tex.Set(0);
+  PointLightShader::get().light_color.Set(Color().vec4());
 
-  Quad::instance()->draw(ctx);
+  Quad::get().draw(ctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

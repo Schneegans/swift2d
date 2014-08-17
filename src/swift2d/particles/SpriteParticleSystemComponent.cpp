@@ -36,14 +36,14 @@ void SpriteParticleSystemComponent::draw(RenderContext const& ctx) {
 
   Texture()->bind(ctx, 0);
 
-  auto shader(SpriteParticleShader::instance());
-  shader->use(ctx);
-  shader->projection. Set(ctx.projection_matrix);
-  shader->diffuse.    Set(0);
-  shader->scale.      Set(math::vec2(StartScale(), EndScale()));
-  shader->glow.       Set(math::vec2(StartGlow(), EndGlow()));
-  shader->start_color.Set(StartColor().vec4());
-  shader->end_color.  Set(EndColor().vec4());
+  auto& shader(SpriteParticleShader::get());
+  shader.use(ctx);
+  shader.projection. Set(ctx.projection_matrix);
+  shader.diffuse.    Set(0);
+  shader.scale.      Set(math::vec2(StartScale(), EndScale()));
+  shader.glow.       Set(math::vec2(StartGlow(), EndGlow()));
+  shader.start_color.Set(StartColor().vec4());
+  shader.end_color.  Set(EndColor().vec4());
 
   ParticleSystemComponent::draw_particles(ctx);
 

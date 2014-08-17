@@ -25,9 +25,9 @@ Shader::Shader(std::string const& v_source,
   , g_source_(g_source)
   , transform_feedback_varyings_(transform_feedback_varyings) {
 
-  ShaderIncludes::instance()->process(v_source_);
-  ShaderIncludes::instance()->process(f_source_);
-  ShaderIncludes::instance()->process(g_source_);
+  ShaderIncludes::get().process(v_source_);
+  ShaderIncludes::get().process(f_source_);
+  ShaderIncludes::get().process(g_source_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

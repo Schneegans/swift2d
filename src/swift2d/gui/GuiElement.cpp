@@ -40,7 +40,7 @@ GuiElement::GuiElement(GuiComponent* parent)
   , parent_(parent)
   , interactive_(true) {
 
-  view_ = Interface::instance()->create_webview(parent_->Size().x(), parent_->Size().y());
+  view_ = Interface::get().create_webview(parent_->Size().x(), parent_->Size().y());
   view_->SetTransparent(true);
   view_->Focus();
   view_->set_view_listener(new AweViewListener());
@@ -53,11 +53,11 @@ GuiElement::GuiElement(GuiComponent* parent)
     Awesomium::WSLit("window"), Awesomium::WSLit("")
   );
 
-  auto window = WindowManager::instance()->get_default();
+  auto window = WindowManager::get().get_default();
 
   callbacks_[0] = window->on_mouse_move.connect([&](math::vec2 const& pos) {
     if (interactive_) {
-      auto size(WindowManager::instance()->get_default()->get_context().window_size);
+      auto size(WindowManager::get().get_default()->get_context().window_size);
 
       math::vec2 corner(
         (size.x() - parent_->Size().x() + parent_->Anchor().x() * (size.x() - parent_->Size().x()))*0.5 + parent_->Offset().x(),
@@ -115,7 +115,7 @@ GuiElement::~GuiElement() {
   delete static_cast<AweJSMethodHandler*>(view_->js_method_handler());
   view_->Destroy();
 
-  auto window = WindowManager::instance()->get_default();
+  auto window = WindowManager::get().get_default();
   window->on_mouse_move.disconnect(callbacks_[0]);
   window->on_mouse_scroll.disconnect(callbacks_[1]);
   window->on_mouse_button_press.disconnect(callbacks_[2]);
@@ -170,8 +170,8 @@ void GuiElement::add_javascript_callback(std::string const& callback) {
 
 void GuiElement::draw(RenderContext const& ctx) {
 
-  if (Interface::instance()->bind(view_, ctx, 0)) {
-    GuiShader::instance()->use(ctx);
+  if (Interface::get().bind(view_, ctx, 0)) {
+    GuiShader::get().use(ctx);
 
     math::vec2 size(
       1.0 * parent_->Size().x() / ctx.window_size.x(),
@@ -183,10 +183,10 @@ void GuiElement::draw(RenderContext const& ctx) {
       (2.0 * parent_->Offset().y() + parent_->Anchor().y() * (ctx.window_size.y() - parent_->Size().y()))/ctx.window_size.y()
     );
 
-    GuiShader::instance()->size.Set(size);
-    GuiShader::instance()->offset.Set(offset);
-    GuiShader::instance()->diffuse.Set(0);
-    Quad::instance()->draw(ctx);
+    GuiShader::get().size.Set(size);
+    GuiShader::get().offset.Set(offset);
+    GuiShader::get().diffuse.Set(0);
+    Quad::get().draw(ctx);
   }
 }
 

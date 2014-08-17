@@ -15,12 +15,6 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-DisplaySettings& Settings::display() {
-  return display_;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 Settings::Settings() {
   load();
 }
@@ -36,14 +30,14 @@ Settings::~Settings() {
 void Settings::load() {
   auto d(DisplaySettings::create_from_file("display_settings.json"));
   if (d) {
-    display_ = *std::dynamic_pointer_cast<DisplaySettings>(d);
+    Display = *std::dynamic_pointer_cast<DisplaySettings>(d);
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Settings::save() {
-  display_.save_to_file("display_settings.json");
+  Display.save_to_file("display_settings.json");
 }
 
 ////////////////////////////////////////////////////////////////////////////////

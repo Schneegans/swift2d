@@ -30,7 +30,7 @@ class NetworkObject: public NetworkObjectBase {
     if (!initialized_) {
       initialized_ = true;
       type_name_ = RakNet::RakString(type_name.c_str());
-      swift::Network::instance()->register_type<T>(type_name_);
+      swift::Network::get().register_type<T>(type_name_);
     }
   }
 
@@ -39,7 +39,7 @@ class NetworkObject: public NetworkObjectBase {
   };
 
   void distribute() {
-    Network::instance()->distribute_object(this);
+    Network::get().distribute_object(this);
   }
 
 

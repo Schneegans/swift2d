@@ -97,7 +97,7 @@ void GravityMap::process(ConstSerializedScenePtr const& scene, RenderContext con
   gravity_shader_.set_uniform("gravity_source_count", (int)sources.size());
   gravity_shader_.set_uniform("screen_size", ctx.window_size/16);
 
-  Quad::instance()->draw(ctx);
+  Quad::get().draw(ctx);
 
   ctx.gl.Enable(oglplus::Capability::Blend);
 }

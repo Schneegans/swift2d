@@ -144,7 +144,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   , streak_effect_(ctx)
   , ghost_effect_(ctx)
   , heat_effect_(ctx)
-  , dirt_(Swift2D::instance()->get_resource("images", "dirt.jpg")) {
+  , dirt_(Swift2D::get().get_resource("images", "dirt.jpg")) {
 
   auto create_texture = [&](
     oglplus::Texture& tex, int width, int height,
@@ -225,12 +225,12 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     use_heat_.Set(0);
   }
 
-  gamma_.Set(Settings::instance()->display().Gamma());
+  gamma_.Set(Settings::get().Display.Gamma());
 
   dirt_.bind(ctx, start);
   dirt_tex_.Set(start);
 
-  Quad::instance()->draw(ctx);
+  Quad::get().draw(ctx);
 
   ctx.gl.Enable(oglplus::Capability::Blend);
 }
@@ -251,7 +251,7 @@ void PostProcessor::generate_threshold_buffer(RenderContext const& ctx) {
   g_buffer_light_.Set(1);
   screen_size_.Set(size/6);
 
-  Quad::instance()->draw(ctx);
+  Quad::get().draw(ctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -25,14 +25,14 @@ DirectionalLightComponent::DirectionalLightComponent()
 ////////////////////////////////////////////////////////////////////////////////
 
 void DirectionalLightComponent::draw(RenderContext const& ctx) {
-  DirectionalLightShader::instance()->use(ctx);
-  DirectionalLightShader::instance()->g_buffer_diffuse.Set(1);
-  DirectionalLightShader::instance()->g_buffer_normal.Set(2);
-  DirectionalLightShader::instance()->g_buffer_light.Set(3);
-  DirectionalLightShader::instance()->light_dir.Set(math::normalized(Direction()));
-  DirectionalLightShader::instance()->light_color.Set(Color().vec4());
+  DirectionalLightShader::get().use(ctx);
+  DirectionalLightShader::get().g_buffer_diffuse.Set(1);
+  DirectionalLightShader::get().g_buffer_normal.Set(2);
+  DirectionalLightShader::get().g_buffer_light.Set(3);
+  DirectionalLightShader::get().light_dir.Set(math::normalized(Direction()));
+  DirectionalLightShader::get().light_color.Set(Color().vec4());
 
-  Quad::instance()->draw(ctx);
+  Quad::get().draw(ctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

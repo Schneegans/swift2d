@@ -18,13 +18,13 @@ namespace swift {
 GravitySourceComponent::GravitySourceComponent()
   : Density(10.f) {
 
-  Physics::instance()->add(this);
+  Physics::get().add(this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 GravitySourceComponent::~GravitySourceComponent() {
-  Physics::instance()->remove(this);
+  Physics::get().remove(this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

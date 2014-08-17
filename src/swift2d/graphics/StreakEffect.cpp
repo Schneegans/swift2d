@@ -204,7 +204,7 @@ void StreakEffect::process(RenderContext const& ctx, ogl::Texture const& thresho
 
     step_.Set(step_dir);
 
-    Quad::instance()->draw(ctx);
+    Quad::get().draw(ctx);
   };
 
   math::vec2 step_dir(0.9*4.0/ctx.g_buffer_size.x(), 0.0);

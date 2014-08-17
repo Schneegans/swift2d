@@ -106,8 +106,8 @@ void TrailSystem::update_trails(
   transform_feedbacks_[current_tf()].Bind();
   trail_buffers_      [current_tf()].BindBase(ose::TransformFeedback(), 0);
 
-  auto shader(TrailUpdateShader::instance());
-  shader->use(ctx);
+  auto& shader(TrailUpdateShader::get());
+  shader.use(ctx);
 
   ogl::VertexArrayAttrib(0).Enable();
   ogl::VertexArrayAttrib(1).Enable();
@@ -126,14 +126,14 @@ void TrailSystem::update_trails(
       trails_to_spawn_[emitter.Self] -= spawn_count;
 
       if (spawn_count > 0) {
-        math::vec2 time           (frame_time * 1000.0, total_time_ * 1000.0);
-        float life                (emitter.Life);
+        math::vec2 time      (frame_time * 1000.0, total_time_ * 1000.0);
+        float life           (emitter.Life);
 
-        shader->spawn_count.      Set(spawn_count);
-        shader->transform.        Set(emitter.WorldTransform);
+        shader.spawn_count. Set(spawn_count);
+        shader.transform.   Set(emitter.WorldTransform);
 
-        shader->time.             Set(time);
-        shader->life.             Set(life);
+        shader.time.        Set(time);
+        shader.life.        Set(life);
 
         ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       }
@@ -142,7 +142,7 @@ void TrailSystem::update_trails(
 
     // update existing particles -----------------------------------------------
     if (!first_draw) {
-      shader->spawn_count.        Set(-1);
+      shader.spawn_count.        Set(-1);
 
       ctx.gl.DrawTransformFeedback(
         ogl::PrimitiveType::Points, transform_feedbacks_[current_vb()]

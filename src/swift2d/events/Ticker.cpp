@@ -15,7 +15,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Ticker::Ticker(double tick_time)
-  : timer_(MainLoop::instance()->get_io_service(), boost::posix_time::microseconds(1000000.0*tick_time))
+  : timer_(MainLoop::get().get_io_service(), boost::posix_time::microseconds(1000000.0*tick_time))
   , tick_time_(tick_time)
   , active_(false) {}
 

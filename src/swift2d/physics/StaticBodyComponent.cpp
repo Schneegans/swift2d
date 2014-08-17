@@ -29,7 +29,7 @@ StaticBodyComponent::StaticBodyComponent()
 
 StaticBodyComponent::~StaticBodyComponent() {
   if (body_) {
-    Physics::instance()->remove(body_);
+    Physics::get().remove(body_);
   }
 }
 
@@ -37,7 +37,7 @@ StaticBodyComponent::~StaticBodyComponent() {
 
 void StaticBodyComponent::update(double time) {
   if (!body_) {
-    body_ = Physics::instance()->add(this);
+    body_ = Physics::get().add(this);
 
     Shape.on_change().connect([&](CollisionShapePtr const&){
       Logger::LOG_WARNING << "Updating collision shapes is not implmented yet!"

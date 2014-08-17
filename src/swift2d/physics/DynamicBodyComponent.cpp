@@ -31,7 +31,7 @@ DynamicBodyComponent::DynamicBodyComponent()
 
 DynamicBodyComponent::~DynamicBodyComponent() {
   if (body_) {
-    Physics::instance()->remove(body_);
+    Physics::get().remove(body_);
   }
 }
 
@@ -139,7 +139,7 @@ void DynamicBodyComponent::accept(SavableObjectVisitor& visitor) {
 
 void DynamicBodyComponent::init() {
   if (!body_) {
-    body_ = Physics::instance()->add(this);
+    body_ = Physics::get().add(this);
 
     Shape.on_change().connect([&](CollisionShapePtr const&){
       Logger::LOG_WARNING << "Updating collision shapes is not implmented yet!"

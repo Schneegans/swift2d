@@ -54,7 +54,7 @@ class Database {
   }
 
   // Gets an entry from the Database
-  mapped_type get(key_type const& k) {
+  mapped_type lookup(key_type const& k) {
     auto result(data_.find(k));
 
     if (result == data_.end()) {

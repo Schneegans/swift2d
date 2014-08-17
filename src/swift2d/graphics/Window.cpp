@@ -20,7 +20,6 @@ namespace swift {
 
 Window::Window()
   : Open(false)
-  , Fullscreen(false)
   , window_(nullptr)
   , joystick_axis_cache_(static_cast<int>(JoystickId::JOYSTICK_NUM),
                          std::vector<float>(
@@ -38,11 +37,11 @@ Window::Window()
     else     close();
   });
 
-  Settings::instance()->display().VSync.on_change().connect([this](bool) {
+  Settings::get().Display.VSync.on_change().connect([this](bool) {
     vsync_dirty_ = true;
   });
 
-  Fullscreen.on_change().connect([this](bool) {
+  Settings::get().Display.Fullscreen.on_change().connect([this](bool) {
     fullscreen_dirty_ = true;
   });
 }
@@ -78,7 +77,7 @@ void Window::display() {
 
   if (vsync_dirty_) {
     vsync_dirty_ = false;
-    glfwSwapInterval(Settings::instance()->display().VSync() ? 1 : 0);
+    glfwSwapInterval(Settings::get().Display.VSync() ? 1 : 0);
   }
 
   if (window_) {
@@ -121,7 +120,9 @@ void Window::open() {
 
   if (!window_) {
 
-    if (Fullscreen()) {
+    bool fullscreen = Settings::get().Display.Fullscreen();
+
+    if (fullscreen) {
       auto desktop_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
       int desktop_height = desktop_mode->height;
       int desktop_width = desktop_mode->width;
@@ -139,9 +140,9 @@ void Window::open() {
 
     window_ = glfwCreateWindow(
       render_context_.window_size.x(), render_context_.window_size.y(),
-      Title().c_str(), Fullscreen() ? glfwGetPrimaryMonitor() : nullptr, nullptr);
+      Title().c_str(), fullscreen ? glfwGetPrimaryMonitor() : nullptr, nullptr);
 
-    WindowManager::instance()->glfw_windows[window_] = this;
+    WindowManager::get().glfw_windows[window_] = this;
 
     set_active(true);
 
@@ -149,34 +150,34 @@ void Window::open() {
     render_context_.gl.DepthMask(false);
 
     glfwSetWindowCloseCallback(window_, [](GLFWwindow* w) {
-      WindowManager::instance()->glfw_windows[w]->on_close.emit();
+      WindowManager::get().glfw_windows[w]->on_close.emit();
     });
 
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
-      WindowManager::instance()->glfw_windows[w]->get_context().window_size = math::vec2i(width, height);
-      WindowManager::instance()->glfw_windows[w]->on_resize.emit(math::vec2i(width, height));
+      WindowManager::get().glfw_windows[w]->get_context().window_size = math::vec2i(width, height);
+      WindowManager::get().glfw_windows[w]->on_resize.emit(math::vec2i(width, height));
     });
 
     glfwSetKeyCallback(window_, [](GLFWwindow* w, int key, int scancode, int action, int mods) {
-      WindowManager::instance()->glfw_windows[w]->on_key_press.emit(static_cast<Key>(key), scancode, action, mods);
+      WindowManager::get().glfw_windows[w]->on_key_press.emit(static_cast<Key>(key), scancode, action, mods);
     });
 
     glfwSetCursorPosCallback(window_, [](GLFWwindow* w, double x, double y) {
-      auto window(WindowManager::instance()->glfw_windows[w]);
+      auto window(WindowManager::get().glfw_windows[w]);
       int height(window->get_context().window_size.y());
       window->on_mouse_move.emit(math::vec2(x, height - y));
     });
 
     glfwSetMouseButtonCallback(window_, [](GLFWwindow* w, int button, int action, int mods) {
-      WindowManager::instance()->glfw_windows[w]->on_mouse_button_press.emit(static_cast<Button>(button), action, mods);
+      WindowManager::get().glfw_windows[w]->on_mouse_button_press.emit(static_cast<Button>(button), action, mods);
     });
 
     glfwSetScrollCallback(window_, [](GLFWwindow* w, double x, double y) {
-      WindowManager::instance()->glfw_windows[w]->on_mouse_scroll.emit(math::vec2(x, y));
+      WindowManager::get().glfw_windows[w]->on_mouse_scroll.emit(math::vec2(x, y));
     });
 
     glfwSetCharCallback(window_, [](GLFWwindow* w, unsigned c) {
-      WindowManager::instance()->glfw_windows[w]->on_char.emit(c);
+      WindowManager::get().glfw_windows[w]->on_char.emit(c);
     });
 
     // hide cursor -------------------------------------------------------------
@@ -203,7 +204,7 @@ void Window::open() {
 void Window::close() {
   if (window_) {
     glfwDestroyWindow(window_);
-    WindowManager::instance()->glfw_windows.erase(window_);
+    WindowManager::get().glfw_windows.erase(window_);
     window_ = nullptr;
   }
 }

@@ -32,10 +32,13 @@ Pipeline::Pipeline()
   , current_load_amount_(0)
   , needs_reload_(true) {
 
-  Settings::instance()->display().ShadingQuality.on_change().connect([this](int) {
+  Settings::get().Display.ShadingQuality.on_change().connect([this](int) {
     needs_reload_ = true;
   });
-  Settings::instance()->display().SubSampling.on_change().connect([this](bool) {
+  Settings::get().Display.SubSampling.on_change().connect([this](bool) {
+    needs_reload_ = true;
+  });
+  Settings::get().Display.Fullscreen.on_change().connect([this](bool) {
     needs_reload_ = true;
   });
 }
@@ -44,7 +47,7 @@ Pipeline::Pipeline()
 
 Pipeline::~Pipeline() {
   if (compositor_) delete compositor_;
-  Physics::instance()->clear_gravity_map(window_->get_context());
+  Physics::get().clear_gravity_map(window_->get_context());
 
   for (auto sub_sampler: sub_samplers_) {
     if (sub_sampler) {
@@ -61,10 +64,6 @@ void Pipeline::set_output_window(WindowPtr const& window) {
   window_->on_resize.connect([this](math::vec2i){
     needs_reload_ = true;
   });
-
-  window_->Fullscreen.on_change().connect([this](bool) {
-    needs_reload_ = true;
-  });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,9 +71,9 @@ void Pipeline::set_output_window(WindowPtr const& window) {
 void Pipeline::update() {
 
   if (max_load_amount_ == -1) {
-    Swift2D::instance()->LoadingProgress = 1.f;
+    Swift2D::get().LoadingProgress = 1.f;
   } else {
-    Swift2D::instance()->LoadingProgress = 1.f - 1.0f * current_load_amount_ / max_load_amount_;
+    Swift2D::get().LoadingProgress = 1.f - 1.0f * current_load_amount_ / max_load_amount_;
   }
 }
 
@@ -91,15 +90,15 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   if (needs_reload_) {
 
     window_->get_context().pipeline = this;
-    window_->get_context().shading_quality = Settings::instance()->display().ShadingQuality();
-    window_->get_context().sub_sampling = Settings::instance()->display().SubSampling();
+    window_->get_context().shading_quality = Settings::get().Display.ShadingQuality();
+    window_->get_context().sub_sampling = Settings::get().Display.SubSampling();
 
     if (window_->get_context().sub_sampling) {
       window_->get_context().g_buffer_size = window_->get_context().window_size / 2;
     } else {
       window_->get_context().g_buffer_size = window_->get_context().window_size;
     }
-    Physics::instance()->create_gravity_map(window_->get_context());
+    Physics::get().create_gravity_map(window_->get_context());
 
     if (compositor_) {
       delete compositor_;
@@ -130,7 +129,7 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   ctx.upload_remaining = 0;
 
   // compute gravity
-  Physics::instance()->update_gravity_map(scene, ctx);
+  Physics::get().update_gravity_map(scene, ctx);
 
   // draw opaque objects
   compositor_->draw_objects(scene, ctx);

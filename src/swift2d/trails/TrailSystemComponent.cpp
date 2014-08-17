@@ -52,12 +52,12 @@ void TrailSystemComponent::draw(RenderContext const& ctx) {
   ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
   // }
 
-  auto shader(TrailShader::instance());
-  shader->use(ctx);
-  shader->projection. Set(ctx.projection_matrix);
-  shader->start_color.Set(StartColor().vec4());
-  shader->end_color.  Set(EndColor().vec4());
-  shader->glow.       Set(math::vec2(StartGlow(), EndGlow()));
+  auto& shader(TrailShader::get());
+  shader.use(ctx);
+  shader.projection. Set(ctx.projection_matrix);
+  shader.start_color.Set(StartColor().vec4());
+  shader.end_color.  Set(EndColor().vec4());
+  shader.glow.       Set(math::vec2(StartGlow(), EndGlow()));
 
   trail_system_->draw_trails(ctx);
 

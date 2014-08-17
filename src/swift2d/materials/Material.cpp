@@ -133,7 +133,7 @@ void Material::draw_quad_impl(RenderContext const& ctx,
       capabilities |= MaterialShaderFactory::SHINYNESS_TEX;
     }
 
-    current_shader_ = MaterialShaderFactory::instance()->get_shader(capabilities);
+    current_shader_ = MaterialShaderFactory::get().get_shader(capabilities);
   }
 
   current_shader_->use(ctx);
@@ -207,10 +207,10 @@ void Material::draw_quad_impl(RenderContext const& ctx,
 
   if (BlendAdditive()) {
     ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::One);
-    Quad::instance()->draw(ctx);
+    Quad::get().draw(ctx);
     ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::OneMinusSrcAlpha);
   } else {
-    Quad::instance()->draw(ctx);
+    Quad::get().draw(ctx);
   }
 }
 

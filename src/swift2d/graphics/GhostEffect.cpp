@@ -200,7 +200,7 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
     ctx.gl.DrawBuffer(output);
     ctx.gl.Bind(ose::_2D(), input);
     step_.Set(step);
-    Quad::instance()->draw(ctx);
+    Quad::get().draw(ctx);
   };
 
   math::vec2 radius(2.0/(ctx.g_buffer_size.x()/6), 2.0/(ctx.g_buffer_size.y()/6));
@@ -233,7 +233,7 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
   color3_.Set(math::vec3(0.1, 0.1, 0.4));
   color4_.Set(math::vec3(0.0, 0.0, 0.5));
 
-  Quad::instance()->draw(ctx);
+  Quad::get().draw(ctx);
 
 
 
@@ -257,7 +257,7 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
   color3_.Set(math::vec3(0.15, 0.00, 0.1));
   color4_.Set(math::vec3(0.06, 0.00, 0.55));
 
-  Quad::instance()->draw(ctx);
+  Quad::get().draw(ctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

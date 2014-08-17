@@ -74,7 +74,7 @@ void Texture::bind(RenderContext const& ctx, unsigned location) const {
     ctx.gl.Bind(ose::_2D(), *texture_);
   } else {
     upload_to(ctx);
-    DefaultTexture::instance()->bind(ctx, location);
+    DefaultTexture::get().bind(ctx, location);
   }
 }
 
@@ -131,7 +131,7 @@ void Texture::load_texture_data() const {
     loading_ = true;
 
     if (f[0] != '/') {
-      f = Swift2D::instance()->make_absolute(f);
+      f = Swift2D::get().make_absolute(f);
     }
 
     std::thread load([this, f](){

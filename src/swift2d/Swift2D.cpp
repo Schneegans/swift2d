@@ -44,7 +44,7 @@ Swift2D::Swift2D()
   , renderer_()
   , window_()
   , executable_()
-  , signals_(MainLoop::instance()->get_io_service(), SIGINT, SIGTERM)
+  , signals_(MainLoop::get().get_io_service(), SIGINT, SIGTERM)
   , audio_device_()
   , audio_context_(audio_device_) {}
 
@@ -101,7 +101,7 @@ void Swift2D::init(int argc, char** argv) {
 
   pipeline_ = Pipeline::create();
   renderer_ = Renderer::create(*pipeline_);
-  window_   = WindowManager::instance()->get_default();
+  window_   = WindowManager::get().get_default();
   pipeline_->set_output_window(window_);
 
   // init glfw -----------------------------------------------------------------
@@ -130,14 +130,14 @@ void Swift2D::start() {
   AppFPS.start();
   RenderFPS.start();
 
-  MainLoop::instance()->start();
+  MainLoop::get().start();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Swift2D::stop() {
   renderer_->stop();
-  MainLoop::instance()->stop();
+  MainLoop::get().stop();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
