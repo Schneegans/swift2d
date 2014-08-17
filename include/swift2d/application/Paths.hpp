@@ -6,12 +6,13 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SCENE_MANAGER_HPP
-#define SWIFT2D_SCENE_MANAGER_HPP
+#ifndef SWIFT2D_PATHS_HPP
+#define SWIFT2D_PATHS_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Singleton.hpp>
-#include <swift2d/scene/SceneObject.hpp>
+
+#include <string>
 
 namespace swift {
 
@@ -19,26 +20,32 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class SceneManager : public Singleton<SceneManager> {
+class Paths : public Singleton<Paths> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  SceneObjectPtr const& get_default() const { return default_; }
+  // ------------------------------------------------------------ public methods
+  void init(int argc, char** argv);
+  void clean_up();
 
-  friend class Singleton<SceneManager>;
+  std::string tmp_file(std::string const& suffix = "tmp") const;
+  std::string resource(std::string const& type, std::string const& file) const;
+  std::string make_absolute(std::string const& file) const;
+
+  friend class Singleton<Paths>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  // this class is a Singleton --- private c'tor and d'tor
+  Paths();
+  ~Paths() {}
 
-  SceneManager(): default_(SceneObject::create()) {}
-  ~SceneManager() {}
-
-  SceneObjectPtr default_;
+  std::string executable_;
 };
 
 }
 
-#endif  // SWIFT2D_SCENE_MANAGER_HPP
+#endif  // SWIFT2D_PATHS_HPP

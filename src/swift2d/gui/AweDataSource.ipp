@@ -22,7 +22,7 @@ class AweDataSource : public Awesomium::DataSource {
 
     // make absolute
     if (absolute_path[0] != '/') {
-      absolute_path = Swift2D::get().make_absolute(absolute_path);
+      absolute_path = Paths::get().make_absolute(absolute_path);
     }
 
     // strip parameters

@@ -9,7 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/steam/Steam.hpp>
 
-#include <swift2d/Swift2D.hpp>
+#include <swift2d/application/Paths.hpp>
 #include <swift2d/steam/SteamOnceCallback.hpp>
 #include <swift2d/steam/SteamCallback.hpp>
 #include <swift2d/utils/Logger.hpp>
@@ -24,7 +24,11 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Steam::Steam()
-  : current_room_(0) {
+  : current_room_(0)
+  , chat_update_(nullptr)
+  , chat_message_(nullptr)
+  , lobby_enter_(nullptr)
+  , persona_change_(nullptr) {
 
   // on chat update ------------------------------------------------------------
   chat_update_ = new SteamCallback<LobbyChatUpdate_t>([this](LobbyChatUpdate_t* result) {
@@ -94,7 +98,7 @@ Steam::Steam()
       std::string file;
 
       if (avatar == avatar_cache_.end()) {
-        file = Swift2D::get().get_tmp_file("png");
+        file = Paths::get().tmp_file("png");
         avatar_cache_[result->m_ulSteamID] = file;
       } else {
         file = avatar->second;
@@ -108,26 +112,22 @@ Steam::Steam()
 ////////////////////////////////////////////////////////////////////////////////
 
 Steam::~Steam() {
-  Logger::LOG_MESSAGE << "Shutting down steam connection." << std::endl;
   SteamAPI_Shutdown();
 
-  delete chat_update_;
-  delete chat_message_;
-  delete lobby_enter_;
+  if(chat_update_)    delete chat_update_;
+  if(chat_message_)   delete chat_message_;
+  if(lobby_enter_)    delete lobby_enter_;
+  if(persona_change_) delete persona_change_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Steam::init() {
-  if (SteamAPI_Init()) {
-    Logger::LOG_MESSAGE << "Initialized Steam." << std::endl;
-  } else {
+  if (!SteamAPI_Init()) {
     Logger::LOG_WARNING << "Failed to initialized Steam!" << std::endl;
   }
 
-  if (SteamAPI_IsSteamRunning()) {
-    Logger::LOG_MESSAGE << "Steam is running. Logged in as " << SteamFriends()->GetPersonaName() << "." << std::endl;
-  } else {
+  if (!SteamAPI_IsSteamRunning()) {
     Logger::LOG_WARNING << "Steam is not running." << std::endl;
   }
 }
@@ -257,7 +257,7 @@ std::string Steam::get_user_avatar(uint64_t steam_id) {
 
   SteamFriends()->RequestUserInformation(steam_id, false);
 
-  std::string file(Swift2D::get().get_tmp_file("png"));
+  std::string file(Paths::get().tmp_file("png"));
   avatar_cache_[steam_id] = file;
 
   save_avatar(steam_id);

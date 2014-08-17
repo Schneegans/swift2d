@@ -9,10 +9,11 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/Pipeline.hpp>
 
-#include <swift2d/Swift2D.hpp>
+#include <swift2d/application/Application.hpp>
 #include <swift2d/components/DrawableComponent.hpp>
 #include <swift2d/components/CameraComponent.hpp>
 #include <swift2d/graphics/Window.hpp>
+#include <swift2d/settings/Settings.hpp>
 #include <swift2d/utils/Logger.hpp>
 #include <swift2d/physics.hpp>
 
@@ -71,9 +72,9 @@ void Pipeline::set_output_window(WindowPtr const& window) {
 void Pipeline::update() {
 
   if (max_load_amount_ == -1) {
-    Swift2D::get().LoadingProgress = 1.f;
+    Application::get().LoadingProgress = 1.f;
   } else {
-    Swift2D::get().LoadingProgress = 1.f - 1.0f * current_load_amount_ / max_load_amount_;
+    Application::get().LoadingProgress = 1.f - 1.0f * current_load_amount_ / max_load_amount_;
   }
 }
 

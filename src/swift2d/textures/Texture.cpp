@@ -10,7 +10,7 @@
 #include <swift2d/textures/Texture.hpp>
 
 #include <swift2d/textures/DefaultTexture.hpp>
-#include <swift2d/Swift2D.hpp>
+#include <swift2d/application/Paths.hpp>
 #include <oglplus/images/png.hpp>
 #include <oglplus/images/newton.hpp>
 
@@ -131,7 +131,7 @@ void Texture::load_texture_data() const {
     loading_ = true;
 
     if (f[0] != '/') {
-      f = Swift2D::get().make_absolute(f);
+      f = Paths::get().make_absolute(f);
     }
 
     std::thread load([this, f](){

@@ -9,8 +9,9 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/PostProcessor.hpp>
 
+#include <swift2d/settings/Settings.hpp>
 #include <swift2d/geometries/Quad.hpp>
-#include <swift2d/Swift2D.hpp>
+#include <swift2d/application/Paths.hpp>
 
 namespace swift {
 
@@ -144,7 +145,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   , streak_effect_(ctx)
   , ghost_effect_(ctx)
   , heat_effect_(ctx)
-  , dirt_(Swift2D::get().get_resource("images", "dirt.jpg")) {
+  , dirt_(Paths::get().resource("images", "dirt.jpg")) {
 
   auto create_texture = [&](
     oglplus::Texture& tex, int width, int height,

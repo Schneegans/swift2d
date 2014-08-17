@@ -9,7 +9,7 @@
 // class header
 #include <swift2d/graphics/Renderer.hpp>
 
-#include <swift2d/Swift2D.hpp>
+#include <swift2d/application/Application.hpp>
 #include <swift2d/scene.hpp>
 #include <swift2d/graphics/Pipeline.hpp>
 #include <swift2d/utils/Logger.hpp>
@@ -37,7 +37,7 @@ Renderer::Renderer(Pipeline& pipeline)
   ticker_->on_tick.connect([&]() {
     if (started_rendering_) {
       started_rendering_ = false;
-      Swift2D::get().on_frame.emit();
+      Application::get().on_frame.emit();
       pipeline.update();
     }
   });
@@ -53,7 +53,7 @@ Renderer::Renderer(Pipeline& pipeline)
           started_rendering_ = true;
         }
 
-        Swift2D::get().RenderFPS.step();
+        Application::get().RenderFPS.step();
         pipeline.draw(rendered_scene_);
       } else {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -65,7 +65,7 @@ Renderer::Renderer(Pipeline& pipeline)
 ////////////////////////////////////////////////////////////////////////////////
 
 void Renderer::process(SceneObjectPtr const& scene, CameraComponentPtr const& camera) {
-  Swift2D::get().AppFPS.step();
+  Application::get().AppFPS.step();
 
   updating_scene_ = scene->serialize(camera);
 
