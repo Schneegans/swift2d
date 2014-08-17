@@ -28,6 +28,9 @@ typedef std::shared_ptr<Pipeline> PipelinePtr;
 class SceneObject;
 typedef std::shared_ptr<SceneObject> SceneObjectPtr;
 
+class Renderer;
+typedef std::shared_ptr<Renderer> RendererPtr;
+
 ////////////////////////////////////////////////////////////////////////////////
 // Manages the rendering on multiple contexts.                                //
 // This class is used to provide a renderer frontend interface to the user.   //
@@ -42,6 +45,10 @@ class Renderer {
 
   Renderer(Pipeline& pipeline);
   virtual ~Renderer();
+
+  static RendererPtr create(Pipeline& pipeline) {
+    return std::make_shared<Renderer>(pipeline);
+  }
 
   void process(SceneObjectPtr const& scene,
                CameraComponentPtr const& camera);

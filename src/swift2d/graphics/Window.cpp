@@ -21,9 +21,6 @@ namespace swift {
 Window::Window()
   : Open(false)
   , Fullscreen(false)
-  , ShadingQuality(5)
-  , SubSampling(false)
-  , Gamma(1.0)
   , window_(nullptr)
   , joystick_axis_cache_(static_cast<int>(JoystickId::JOYSTICK_NUM),
                          std::vector<float>(

@@ -41,7 +41,7 @@ Swift2D::Swift2D()
   , AppFPS(20)
   , RenderFPS(20)
   , pipeline_()
-  , renderer_(pipeline_)
+  , renderer_()
   , window_()
   , executable_()
   , signals_(MainLoop::instance()->get_io_service(), SIGINT, SIGTERM)
@@ -99,8 +99,10 @@ void Swift2D::init(int argc, char** argv) {
   Object::init<TrailEmitterComponent>();
   Object::init<TrailSystemComponent>();
 
-  window_ = WindowManager::instance()->get_default();
-  pipeline_.set_output_window(window_);
+  pipeline_ = Pipeline::create();
+  renderer_ = Renderer::create(*pipeline_);
+  window_   = WindowManager::instance()->get_default();
+  pipeline_->set_output_window(window_);
 
   // init glfw -----------------------------------------------------------------
   if (!glfwInit()) {
@@ -134,14 +136,14 @@ void Swift2D::start() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Swift2D::stop() {
-  renderer_.stop();
+  renderer_->stop();
   MainLoop::instance()->stop();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Swift2D::display(SceneObjectPtr const& scene, CameraComponentPtr const& camera) {
-  renderer_.process(scene, camera);
+  renderer_->process(scene, camera);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

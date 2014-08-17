@@ -80,8 +80,8 @@ class Swift2D : public Singleton<Swift2D> {
   Swift2D();
   ~Swift2D() {}
 
-  Pipeline pipeline_;
-  Renderer renderer_;
+  PipelinePtr pipeline_;
+  RendererPtr renderer_;
   WindowPtr window_;
 
   std::string executable_;

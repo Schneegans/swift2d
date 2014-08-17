@@ -225,7 +225,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     use_heat_.Set(0);
   }
 
-  gamma_.Set(WindowManager::instance()->get_default()->Gamma());
+  gamma_.Set(Settings::instance()->display().Gamma());
 
   dirt_.bind(ctx, start);
   dirt_tex_.Set(start);

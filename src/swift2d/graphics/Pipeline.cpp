@@ -30,7 +30,15 @@ Pipeline::Pipeline()
   : compositor_(nullptr)
   , max_load_amount_(-1)
   , current_load_amount_(0)
-  , needs_reload_(true) {}
+  , needs_reload_(true) {
+
+  Settings::instance()->display().ShadingQuality.on_change().connect([this](int) {
+    needs_reload_ = true;
+  });
+  Settings::instance()->display().SubSampling.on_change().connect([this](bool) {
+    needs_reload_ = true;
+  });
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -51,14 +59,6 @@ void Pipeline::set_output_window(WindowPtr const& window) {
   window_ = window;
 
   window_->on_resize.connect([this](math::vec2i){
-    needs_reload_ = true;
-  });
-
-  window_->ShadingQuality.on_change().connect([this](int) {
-    needs_reload_ = true;
-  });
-
-  window_->SubSampling.on_change().connect([this](bool) {
     needs_reload_ = true;
   });
 
@@ -91,10 +91,10 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   if (needs_reload_) {
 
     window_->get_context().pipeline = this;
-    window_->get_context().shading_quality = window_->ShadingQuality();
-    window_->get_context().sub_sampling = window_->SubSampling();
+    window_->get_context().shading_quality = Settings::instance()->display().ShadingQuality();
+    window_->get_context().sub_sampling = Settings::instance()->display().SubSampling();
 
-    if (window_->SubSampling()) {
+    if (window_->get_context().sub_sampling) {
       window_->get_context().g_buffer_size = window_->get_context().window_size / 2;
     } else {
       window_->get_context().g_buffer_size = window_->get_context().window_size;

@@ -40,14 +40,10 @@ class Window {
  public:
 
   // ---------------------------------------------------------------- properties
-  Bool Open;
-  Bool Fullscreen;
-  Bool HideCursor;
+  Bool   Open;
+  Bool   Fullscreen;
+  Bool   HideCursor;
   String Title;
-
-  Int   ShadingQuality;
-  Bool  SubSampling;
-  Float Gamma;
 
   // ------------------------------------------------------------------- signals
   Signal<>                                    on_close;
