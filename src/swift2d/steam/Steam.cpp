@@ -122,14 +122,21 @@ Steam::~Steam() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Steam::init() {
-  if (!SteamAPI_Init()) {
-    Logger::LOG_WARNING << "Failed to initialized Steam!" << std::endl;
-  }
+bool Steam::init() {
 
   if (!SteamAPI_IsSteamRunning()) {
     Logger::LOG_WARNING << "Steam is not running." << std::endl;
+    Logger::LOG_WARNING << "Please start Steam before running the game." << std::endl;
+    return false;
   }
+
+  if (!SteamAPI_Init()) {
+    Logger::LOG_WARNING << "Failed to initialized Steam!" << std::endl;
+    return false;
+  }
+
+
+  return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -51,7 +51,7 @@ class Steam : public Singleton<Steam> {
   Signal<std::unordered_map<uint64_t, RoomData>> on_updated_room_list;
   Signal<MessageType, uint64_t, std::string>     on_message;
 
-  void init();
+  bool init();
   void update();
 
   uint64_t  get_room_id();
