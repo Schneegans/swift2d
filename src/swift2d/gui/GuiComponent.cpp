@@ -9,6 +9,8 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/gui/GuiComponent.hpp>
 
+#include <swift2d/graphics/WindowManager.hpp>
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,8 +23,18 @@ GuiComponent::GuiComponent()
   , gui_element_(GuiElement::create(this))
   , Interactive(true) {
 
-  Interactive.on_change().connect([&](bool val){
+  Interactive.on_change().connect([this](bool val){
     gui_element_->set_interactive(val);
+  });
+
+  Offset.on_change().connect([this](math::vec2 const& val) {
+    auto pos = WindowManager::get().get_default()->get_cursor_pos();
+    gui_element_->update_mouse_position(pos);
+  });
+
+  Anchor.on_change().connect([this](math::vec2 const& val) {
+    auto pos = WindowManager::get().get_default()->get_cursor_pos();
+    gui_element_->update_mouse_position(pos);
   });
 }
 

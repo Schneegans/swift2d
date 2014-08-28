@@ -56,16 +56,7 @@ GuiElement::GuiElement(GuiComponent* parent)
   auto window = WindowManager::get().get_default();
 
   callbacks_[0] = window->on_mouse_move.connect([&](math::vec2 const& pos) {
-    if (interactive_) {
-      auto size(WindowManager::get().get_default()->get_context().window_size);
-
-      math::vec2 corner(
-        (size.x() - parent_->Size().x() + parent_->Anchor().x() * (size.x() - parent_->Size().x()))*0.5 + parent_->Offset().x(),
-        (size.y() - parent_->Size().y() - parent_->Anchor().y() * (size.y() - parent_->Size().y()))*0.5 - parent_->Offset().y()
-      );
-
-      view_->InjectMouseMove(pos.x() - corner.x(), size.y() - pos.y() - corner.y());
-    }
+    update_mouse_position(pos);
   });
 
   callbacks_[1] = window->on_mouse_scroll.connect([&](math::vec2 const& dir) {
@@ -141,6 +132,26 @@ void GuiElement::focus() {
 
 void GuiElement::set_interactive(bool interactive) {
   interactive_ = interactive;
+
+  if (interactive_) {
+    auto pos = WindowManager::get().get_default()->get_cursor_pos();
+    update_mouse_position(pos);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void GuiElement::update_mouse_position(math::vec2 const& pos) const {
+  if (interactive_) {
+    auto size(WindowManager::get().get_default()->get_context().window_size);
+
+    math::vec2 corner(
+      (size.x() - parent_->Size().x() + parent_->Anchor().x() * (size.x() - parent_->Size().x()))*0.5 + parent_->Offset().x(),
+      (size.y() - parent_->Size().y() - parent_->Anchor().y() * (size.y() - parent_->Size().y()))*0.5 - parent_->Offset().y()
+    );
+
+    view_->InjectMouseMove(pos.x() - corner.x(), size.y() - pos.y() - corner.y());
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -53,6 +53,8 @@ class GuiElement {
   void focus();
   void set_interactive(bool interactive);
 
+  void update_mouse_position(math::vec2 const& pos) const;
+
   void call_javascript(std::string const& method, std::vector<std::string> const& args) const;
   void add_javascript_callback(std::string const& callback);
 
