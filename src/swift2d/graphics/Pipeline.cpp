@@ -90,9 +90,9 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   // update window size
   if (needs_reload_) {
 
-    window_->get_context().pipeline = this;
+    window_->get_context().pipeline        = this;
     window_->get_context().shading_quality = Settings::get().Display.ShadingQuality();
-    window_->get_context().sub_sampling = Settings::get().Display.SubSampling();
+    window_->get_context().sub_sampling    = Settings::get().Display.SubSampling();
 
     if (window_->get_context().sub_sampling) {
       window_->get_context().g_buffer_size = window_->get_context().window_size / 2;
@@ -124,10 +124,10 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   // setup projection matrix
   math::mat3 view_matrix(scene->camera->WorldTransform.get());
   math::scale(view_matrix, scene->camera->Size.get());
-  ctx.projection_matrix = math::inversed(view_matrix);
+  ctx.projection_matrix   = math::inversed(view_matrix);
   ctx.projection_parallax = scene->camera->Parallax();
-  ctx.upload_budget = 1;
-  ctx.upload_remaining = 0;
+  ctx.upload_budget       = 1;
+  ctx.upload_remaining    = 0;
 
   // compute gravity
   Physics::get().update_gravity_map(scene, ctx);

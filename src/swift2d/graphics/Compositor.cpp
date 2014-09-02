@@ -20,12 +20,12 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Compositor::Compositor(RenderContext const& ctx)
-  : g_buffer_(nullptr)
+  : g_buffer_         (nullptr)
   , background_shader_(nullptr)
-  , post_processor_(nullptr) {
+  , post_processor_   (nullptr) {
 
 
-  if (ctx.shading_quality == 0 && ctx.sub_sampling) {
+  if (ctx.shading_quality == 0) {
 
     g_buffer_ = new GBuffer(ctx, false);
 
@@ -42,6 +42,8 @@ Compositor::Compositor(RenderContext const& ctx)
 
         in vec2 texcoords;
 
+        @include "get_vignette"
+
         layout (location = 0) out vec3 fragColor;
 
         void main(void){
@@ -49,7 +51,7 @@ Compositor::Compositor(RenderContext const& ctx)
         }
     )");
 
-  } else if (ctx.shading_quality > 0) {
+  } else {
 
     g_buffer_ = new GBuffer(ctx, true);
 
@@ -76,8 +78,6 @@ Compositor::Compositor(RenderContext const& ctx)
     if (ctx.shading_quality > 1) {
       post_processor_ = new PostProcessor(ctx);
     }
-  } else {
-    g_buffer_ = new GBuffer(ctx, false);
   }
 }
 
@@ -115,7 +115,7 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
     oglplus::BlendFunction::OneMinusSrcColor
   );
 
-  if (ctx.shading_quality == 0 && ctx.sub_sampling) {
+  if (ctx.shading_quality == 0) {
 
     oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
 

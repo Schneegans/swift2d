@@ -16,6 +16,12 @@ namespace swift {
 
 ShaderIncludes::ShaderIncludes() {
 
+  // ---------------------------------------------------------------------------
+  add_include("version", R"(
+    #version 330
+  )");
+
+  // ---------------------------------------------------------------------------
   add_include("quad_vertext_shader", R"(
     @include "version"
 
@@ -38,6 +44,7 @@ ShaderIncludes::ShaderIncludes() {
     }
   )");
 
+  // ---------------------------------------------------------------------------
   add_include("fullscreen_quad_vertext_shader", R"(
     @include "version"
 
@@ -52,10 +59,7 @@ ShaderIncludes::ShaderIncludes() {
     }
   )");
 
-  add_include("version", R"(
-    #version 330
-  )");
-
+  // ---------------------------------------------------------------------------
   add_include("write_gbuffer", R"(
     layout (location = 0) out vec4 fragColor;
     layout (location = 1) out vec4 fragNormal;
@@ -80,6 +84,7 @@ ShaderIncludes::ShaderIncludes() {
     }
   )");
 
+  // ---------------------------------------------------------------------------
   add_include("gbuffer_input", R"(
     uniform sampler2D g_buffer_diffuse;
     uniform sampler2D g_buffer_normal;
@@ -99,6 +104,7 @@ ShaderIncludes::ShaderIncludes() {
 
   )");
 
+  // ---------------------------------------------------------------------------
   add_include("get_lit_surface_color", R"(
     vec3 get_lit_surface_color(vec2 texcoords, vec3 dir, vec4 color, float attenuation) {
       vec3  normal      = normalize(get_normal(texcoords));
@@ -112,6 +118,7 @@ ShaderIncludes::ShaderIncludes() {
     }
   )");
 
+  // ---------------------------------------------------------------------------
   add_include("emit_quad", R"(
     void emit_quad(vec2 position, float scale, float rotation) {
       const float yo[2] = float[2](0.5, -0.5);
@@ -159,6 +166,20 @@ ShaderIncludes::ShaderIncludes() {
         }
       }
       EndPrimitive();
+    }
+  )");
+
+  // ---------------------------------------------------------------------------
+  add_include("get_vignette", R"(
+    float get_vignette() {
+      float coverage = 0.5;
+      float softness = 0.5;
+
+      // inigo quilez's great vigneting effect!
+      float a = -coverage/softness;
+      float b = 1.0/softness;
+      vec2 q = texcoords;
+      return min(1, a + b*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.1 ));
     }
   )");
 }

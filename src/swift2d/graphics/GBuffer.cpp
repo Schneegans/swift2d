@@ -17,79 +17,76 @@ GBuffer::GBuffer(RenderContext const& ctx, bool final_buffer, bool diffuse_alpha
                  int sub_sample_level)
   : sub_sample_level_(sub_sample_level) {
 
-  if (ctx.shading_quality > 0 || ctx.sub_sampling || sub_sample_level_ > 1) {
+  auto create_texture = [&](
+    oglplus::Texture& tex, int width, int height,
+    oglplus::enums::PixelDataInternalFormat i_format,
+    oglplus::enums::PixelDataFormat         p_format) {
 
-    auto create_texture = [&](
-      oglplus::Texture& tex, int width, int height,
-      oglplus::enums::PixelDataInternalFormat i_format,
-      oglplus::enums::PixelDataFormat         p_format) {
+    ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
+      .Image2D(0, i_format, width, height,
+        0, p_format, oglplus::PixelDataType::Float, nullptr)
+      .MinFilter((ctx.sub_sampling || sub_sample_level_ > 1) ? oglplus::TextureMinFilter::Linear : oglplus::TextureMinFilter::Nearest)
+      .MagFilter((ctx.sub_sampling || sub_sample_level_ > 1) ? oglplus::TextureMagFilter::Linear : oglplus::TextureMagFilter::Nearest)
+      .WrapS(oglplus::TextureWrap::MirroredRepeat)
+      .WrapT(oglplus::TextureWrap::MirroredRepeat);
+  };
 
-      ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
-        .Image2D(0, i_format, width, height,
-          0, p_format, oglplus::PixelDataType::Float, nullptr)
-        .MinFilter((ctx.sub_sampling || sub_sample_level_ > 1) ? oglplus::TextureMinFilter::Linear : oglplus::TextureMinFilter::Nearest)
-        .MagFilter((ctx.sub_sampling || sub_sample_level_ > 1) ? oglplus::TextureMagFilter::Linear : oglplus::TextureMagFilter::Nearest)
-        .WrapS(oglplus::TextureWrap::MirroredRepeat)
-        .WrapT(oglplus::TextureWrap::MirroredRepeat);
-    };
+  // create textures for G-Buffer and L-Buffer -------------------------------
+  auto size(ctx.g_buffer_size/sub_sample_level);
 
-    // create textures for G-Buffer and L-Buffer -------------------------------
-    auto size(ctx.g_buffer_size/sub_sample_level);
+  if (diffuse_alpha) {
+    create_texture(
+      diffuse_, size.x(), size.y(),
+      oglplus::PixelDataInternalFormat::RGBA,
+      oglplus::PixelDataFormat::RGBA
+    );
+  } else {
+    create_texture(
+      diffuse_, size.x(), size.y(),
+      oglplus::PixelDataInternalFormat::RGB,
+      oglplus::PixelDataFormat::RGB
+    );
+  }
 
-    if (diffuse_alpha) {
-      create_texture(
-        diffuse_, size.x(), size.y(),
-        oglplus::PixelDataInternalFormat::RGBA,
-        oglplus::PixelDataFormat::RGBA
-      );
-    } else {
-      create_texture(
-        diffuse_, size.x(), size.y(),
-        oglplus::PixelDataInternalFormat::RGB,
-        oglplus::PixelDataFormat::RGB
-      );
-    }
-
-    if (ctx.shading_quality > 0) {
-      create_texture(
-        normal_, size.x(), size.y(),
-        oglplus::PixelDataInternalFormat::RGB,
-        oglplus::PixelDataFormat::RGB
-      );
-      create_texture(
-        light_, size.x(), size.y(),
-        oglplus::PixelDataInternalFormat::RGB,
-        oglplus::PixelDataFormat::RGB
-      );
-
-      if (final_buffer) {
-        create_texture(
-          final_, size.x(), size.y(),
-          oglplus::PixelDataInternalFormat::RGB,
-          oglplus::PixelDataFormat::RGB
-        );
-      }
-    }
-
-    // create framebuffer object -----------------------------------------------
-    fbo_.Bind(oglplus::Framebuffer::Target::Draw);
-
-    oglplus::Framebuffer::AttachColorTexture(
-      oglplus::Framebuffer::Target::Draw, 0, diffuse_, 0
+  if (ctx.shading_quality > 0) {
+    create_texture(
+      normal_, size.x(), size.y(),
+      oglplus::PixelDataInternalFormat::RGB,
+      oglplus::PixelDataFormat::RGB
+    );
+    create_texture(
+      light_, size.x(), size.y(),
+      oglplus::PixelDataInternalFormat::RGB,
+      oglplus::PixelDataFormat::RGB
     );
 
-    if (ctx.shading_quality > 0) {
-      oglplus::Framebuffer::AttachColorTexture(
-        oglplus::Framebuffer::Target::Draw, 1, normal_, 0
+    if (final_buffer) {
+      create_texture(
+        final_, size.x(), size.y(),
+        oglplus::PixelDataInternalFormat::RGB,
+        oglplus::PixelDataFormat::RGB
       );
+    }
+  }
+
+  // create framebuffer object -----------------------------------------------
+  fbo_.Bind(oglplus::Framebuffer::Target::Draw);
+
+  oglplus::Framebuffer::AttachColorTexture(
+    oglplus::Framebuffer::Target::Draw, 0, diffuse_, 0
+  );
+
+  if (ctx.shading_quality > 0) {
+    oglplus::Framebuffer::AttachColorTexture(
+      oglplus::Framebuffer::Target::Draw, 1, normal_, 0
+    );
+    oglplus::Framebuffer::AttachColorTexture(
+      oglplus::Framebuffer::Target::Draw, 2, light_, 0
+    );
+    if (final_buffer) {
       oglplus::Framebuffer::AttachColorTexture(
-        oglplus::Framebuffer::Target::Draw, 2, light_, 0
+        oglplus::Framebuffer::Target::Draw, 3, final_, 0
       );
-      if (final_buffer) {
-        oglplus::Framebuffer::AttachColorTexture(
-          oglplus::Framebuffer::Target::Draw, 3, final_, 0
-        );
-      }
     }
   }
 }
@@ -101,44 +98,37 @@ void GBuffer::bind_for_drawing(RenderContext const& ctx) {
   auto size(ctx.g_buffer_size/sub_sample_level_);
   ctx.gl.Viewport(size.x(), size.y());
 
-  if (ctx.shading_quality == 0 && !ctx.sub_sampling && sub_sample_level_ == 1) {
-    oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
-    ctx.gl.Clear().ColorBuffer();
+  if (ctx.shading_quality == 0) {
+
+    fbo_.Bind(oglplus::Framebuffer::Target::Draw);
+
+    oglplus::Context::ColorBuffer draw_buffs[1] =  {
+      oglplus::FramebufferColorAttachment::_0
+    };
+    ctx.gl.DrawBuffers(draw_buffs);
+
+    GLfloat clear0[4] = {0.f, 0.f, 0.f, 0.f};
+    ctx.gl.ClearColorBuffer(0, clear0);
 
   } else {
 
-    if (ctx.shading_quality == 0 && (ctx.sub_sampling || sub_sample_level_ > 1)) {
+    fbo_.Bind(oglplus::Framebuffer::Target::Draw);
 
-      fbo_.Bind(oglplus::Framebuffer::Target::Draw);
+    oglplus::Context::ColorBuffer draw_buffs[3] =  {
+      oglplus::FramebufferColorAttachment::_0,
+      oglplus::FramebufferColorAttachment::_1,
+      oglplus::FramebufferColorAttachment::_2
+    };
+    ctx.gl.DrawBuffers(draw_buffs);
 
-      oglplus::Context::ColorBuffer draw_buffs[1] =  {
-        oglplus::FramebufferColorAttachment::_0
-      };
-      ctx.gl.DrawBuffers(draw_buffs);
+    GLfloat clear0[4] = {0.f, 0.f, 0.f, 0.f};
+    ctx.gl.ClearColorBuffer(0, clear0);
 
-      GLfloat clear0[4] = {0.f, 0.f, 0.f, 0.f};
-      ctx.gl.ClearColorBuffer(0, clear0);
+    GLfloat clear1[3] = {0.5f, 0.5f, 0.f};
+    ctx.gl.ClearColorBuffer(1, clear1);
 
-    } else if (ctx.shading_quality > 0) {
-
-      fbo_.Bind(oglplus::Framebuffer::Target::Draw);
-
-      oglplus::Context::ColorBuffer draw_buffs[3] =  {
-        oglplus::FramebufferColorAttachment::_0,
-        oglplus::FramebufferColorAttachment::_1,
-        oglplus::FramebufferColorAttachment::_2
-      };
-      ctx.gl.DrawBuffers(draw_buffs);
-
-      GLfloat clear0[4] = {0.f, 0.f, 0.f, 0.f};
-      ctx.gl.ClearColorBuffer(0, clear0);
-
-      GLfloat clear1[3] = {0.5f, 0.5f, 0.f};
-      ctx.gl.ClearColorBuffer(1, clear1);
-
-      GLfloat clear2[3] = {1.f, 1.f, 0.f};
-      ctx.gl.ClearColorBuffer(2, clear2);
-    }
+    GLfloat clear2[3] = {1.f, 1.f, 0.f};
+    ctx.gl.ClearColorBuffer(2, clear2);
   }
 }
 

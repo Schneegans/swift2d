@@ -44,17 +44,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
       layout (location = 0) out vec3 fragColor;
 
-      float get_vignette() {
-
-        float coverage = 0.5;
-        float softness = 0.5;
-
-        // inigo quilez's great vigneting effect!
-        float a = -coverage/softness;
-        float b = 1.0/softness;
-        vec2 q = texcoords;
-        return min(1, a + b*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.1 ));
-      }
+      @include "get_vignette"
 
       void main(void) {
         vec3 glow      = texture2D(glow_buffer_1, texcoords).rgb
