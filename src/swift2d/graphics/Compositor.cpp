@@ -20,41 +20,11 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Compositor::Compositor(RenderContext const& ctx)
-  : g_buffer_         (nullptr)
+  : g_buffer_         (new GBuffer(ctx, ctx.shading_quality > 0))
   , background_shader_(nullptr)
-  , post_processor_   (nullptr) {
+  , post_processor_   (new PostProcessor(ctx)) {
 
-
-  if (ctx.shading_quality == 0) {
-
-    g_buffer_ = new GBuffer(ctx, false);
-
-    background_shader_ = new Shader(
-      R"(
-        // vertex shader -------------------------------------------------------
-        @include "fullscreen_quad_vertext_shader"
-      )",
-      R"(
-        // fragment shader -----------------------------------------------------
-        @include "version"
-
-        @include "gbuffer_input"
-
-        in vec2 texcoords;
-
-        @include "get_vignette"
-
-        layout (location = 0) out vec3 fragColor;
-
-        void main(void){
-          fragColor = get_diffuse(texcoords);
-        }
-    )");
-
-  } else {
-
-    g_buffer_ = new GBuffer(ctx, true);
-
+  if (ctx.shading_quality > 0) {
     background_shader_ = new Shader(
       R"(
         // vertex shader -------------------------------------------------------
@@ -74,19 +44,15 @@ Compositor::Compositor(RenderContext const& ctx)
           fragColor = get_light_info(texcoords).r * get_diffuse(texcoords);
         }
     )");
-
-    if (ctx.shading_quality > 1) {
-      post_processor_ = new PostProcessor(ctx);
-    }
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 Compositor::~Compositor() {
-  if(post_processor_)     delete post_processor_;
-  if(background_shader_)  delete background_shader_;
-  if(g_buffer_)           delete g_buffer_;
+  if (post_processor_)     delete post_processor_;
+  if (background_shader_)  delete background_shader_;
+  if (g_buffer_)           delete g_buffer_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -110,27 +76,11 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
 void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
                              RenderContext const& ctx) {
 
-  ctx.gl.BlendFunc(
-    oglplus::BlendFunction::One,
-    oglplus::BlendFunction::OneMinusSrcColor
-  );
-
-  if (ctx.shading_quality == 0) {
-
-    oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
-
-    ctx.gl.Viewport(ctx.window_size.x(), ctx.window_size.y());
-    ctx.gl.Disable(oglplus::Capability::Blend);
-
-    g_buffer_->bind_diffuse(1);
-
-    background_shader_->use(ctx);
-    background_shader_->set_uniform("g_buffer_diffuse", 1);
-    Quad::get().draw(ctx);
-
-    ctx.gl.Enable(oglplus::Capability::Blend);
-
-  } else if (ctx.shading_quality > 0) {
+  if (ctx.shading_quality > 0) {
+    ctx.gl.BlendFunc(
+      oglplus::BlendFunction::One,
+      oglplus::BlendFunction::OneMinusSrcColor
+    );
 
     g_buffer_->bind_final_buffer_for_drawing(ctx);
 
@@ -152,10 +102,7 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
 ////////////////////////////////////////////////////////////////////////////////
 
 void Compositor::post_process(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
-
-  if (ctx.shading_quality > 1) {
-    post_processor_->process(scene, ctx, g_buffer_);
-  }
+  post_processor_->process(scene, ctx, g_buffer_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

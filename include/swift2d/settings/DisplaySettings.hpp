@@ -30,6 +30,11 @@ class DisplaySettings: public SavableObject {
  public:
   Bool  VSync;
   Bool  Fullscreen;
+
+  // 0: no eye candy
+  // 1: lighting
+  // 2: blur + lens flares
+  // 3: heat
   Int   ShadingQuality;
   Bool  SubSampling;
   Float Gamma;

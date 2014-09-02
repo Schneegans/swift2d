@@ -18,7 +18,30 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 PostProcessor::PostProcessor(RenderContext const& ctx)
-  : post_fx_shader_(R"(
+  : no_post_fx_shader_(
+      R"(
+        // vertex shader -------------------------------------------------------
+        @include "fullscreen_quad_vertext_shader"
+      )",
+      R"(
+        // fragment shader -----------------------------------------------------
+        @include "version"
+
+        @include "gbuffer_input"
+
+        in vec2 texcoords;
+        uniform float gamma;
+
+        @include "get_vignette"
+
+        layout (location = 0) out vec3 fragColor;
+
+        void main(void){
+          fragColor = get_vignette() * get_diffuse(texcoords);
+          fragColor = pow(fragColor, 1.0/vec3(gamma));
+        }
+    )")
+  , post_fx_shader_(R"(
       // vertex shader ---------------------------------------------------------
       @include "fullscreen_quad_vertext_shader"
     )", R"(
@@ -129,6 +152,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   , dirt_tex_(post_fx_shader_.get_uniform<int>("dirt_tex"))
   , use_heat_(post_fx_shader_.get_uniform<int>("use_heat"))
   , gamma_(post_fx_shader_.get_uniform<float>("gamma"))
+  , no_post_fx_gamma_(no_post_fx_shader_.get_uniform<float>("gamma"))
   , screen_size_(threshold_shader_.get_uniform<math::vec2i>("screen_size"))
   , g_buffer_diffuse_(threshold_shader_.get_uniform<int>("g_buffer_diffuse"))
   , g_buffer_light_(threshold_shader_.get_uniform<int>("g_buffer_light"))
@@ -171,59 +195,81 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext const& ctx,
                             GBuffer* g_buffer) {
 
-  if (ctx.shading_quality > 2 && scene->heat_objects.size() > 0) {
-    heat_effect_.process(scene, ctx);
-  }
+  if (ctx.shading_quality <= 1) {
 
-  ctx.gl.Disable(oglplus::Capability::Blend);
+    ctx.gl.Disable(oglplus::Capability::Blend);
 
-  g_buffer->bind_final(0);
-  g_buffer->bind_light(1);
+    ctx.gl.Viewport(ctx.window_size.x(), ctx.window_size.y());
+    oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
 
-  // thresholding
-  generate_threshold_buffer(ctx);
+    if (ctx.shading_quality == 0) {
+      g_buffer->bind_diffuse(1);
+    } else {
+      g_buffer->bind_final(1);
+    }
+    no_post_fx_shader_.use(ctx);
+    no_post_fx_shader_.set_uniform("g_buffer_diffuse", 1);
+    no_post_fx_gamma_.Set(Settings::get().Display.Gamma());
+    Quad::get().draw(ctx);
 
-  // streaks
-  streak_effect_.process(ctx, threshold_buffer_);
+    ctx.gl.Enable(oglplus::Capability::Blend);
 
-  // ghosts
-  ghost_effect_.process(ctx, threshold_buffer_);
-
-  ctx.gl.Viewport(ctx.window_size.x(), ctx.window_size.y());
-  oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
-
-  post_fx_shader_.use(ctx);
-  g_buffer_shaded_.Set(0);
-
-  int start(1);
-  start = streak_effect_.bind_buffers(start, ctx);
-  start = ghost_effect_.bind_buffers(start, ctx);
-
-  glow_buffer_1_.Set(1);
-  glow_buffer_2_.Set(2);
-  glow_buffer_3_.Set(3);
-  glow_buffer_4_.Set(4);
-  glow_buffer_5_.Set(5);
-  glow_buffer_6_.Set(6);
-  glow_buffer_7_.Set(7);
-  glow_buffer_8_.Set(8);
-
-  if (ctx.shading_quality > 2) {
-    heat_buffer_.Set(start);
-    start = heat_effect_.bind_buffers(start, ctx);
-    use_heat_.Set(1);
   } else {
-    use_heat_.Set(0);
+
+    if (ctx.shading_quality > 2 && scene->heat_objects.size() > 0) {
+      heat_effect_.process(scene, ctx);
+    }
+
+    ctx.gl.Disable(oglplus::Capability::Blend);
+
+    g_buffer->bind_final(0);
+    g_buffer->bind_light(1);
+
+    // thresholding
+    generate_threshold_buffer(ctx);
+
+    // streaks
+    streak_effect_.process(ctx, threshold_buffer_);
+
+    // ghosts
+    ghost_effect_.process(ctx, threshold_buffer_);
+
+    ctx.gl.Viewport(ctx.window_size.x(), ctx.window_size.y());
+    oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
+
+    post_fx_shader_.use(ctx);
+    g_buffer_shaded_.Set(0);
+
+    int start(1);
+    start = streak_effect_.bind_buffers(start, ctx);
+    start = ghost_effect_.bind_buffers(start, ctx);
+
+    glow_buffer_1_.Set(1);
+    glow_buffer_2_.Set(2);
+    glow_buffer_3_.Set(3);
+    glow_buffer_4_.Set(4);
+    glow_buffer_5_.Set(5);
+    glow_buffer_6_.Set(6);
+    glow_buffer_7_.Set(7);
+    glow_buffer_8_.Set(8);
+
+    if (ctx.shading_quality > 2) {
+      heat_buffer_.Set(start);
+      start = heat_effect_.bind_buffers(start, ctx);
+      use_heat_.Set(1);
+    } else {
+      use_heat_.Set(0);
+    }
+
+    gamma_.Set(Settings::get().Display.Gamma());
+
+    dirt_.bind(ctx, start);
+    dirt_tex_.Set(start);
+
+    Quad::get().draw(ctx);
+
+    ctx.gl.Enable(oglplus::Capability::Blend);
   }
-
-  gamma_.Set(Settings::get().Display.Gamma());
-
-  dirt_.bind(ctx, start);
-  dirt_tex_.Set(start);
-
-  Quad::get().draw(ctx);
-
-  ctx.gl.Enable(oglplus::Capability::Blend);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

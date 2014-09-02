@@ -135,13 +135,7 @@ void GBuffer::bind_for_drawing(RenderContext const& ctx) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void GBuffer::bind_final_buffer_for_drawing(RenderContext const& ctx) {
-  if (ctx.shading_quality > 1) {
-    ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_3);
-  } else {
-    ctx.gl.Viewport(ctx.window_size.x(), ctx.window_size.y());
-    oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
-  }
-
+  ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_3);
   GLfloat clear[3] = {0.f, 0.f, 0.f};
   ctx.gl.ClearColorBuffer(0, clear);
 }
