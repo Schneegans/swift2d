@@ -39,6 +39,11 @@ int main(int argc, char** argv) {
       Steam::get().create_room("ichmachemaleinfachnureinenraumauf");
   });
 
+  Steam::get().on_message.connect(
+    [](Steam::MessageType type, uint64_t user_id, std::string const& join_message) {
+      std::cout << join_message << std::endl;
+  });
+
   // scene ---------------------------------------------------------------------
   auto scene = SpaceScene::create();
   auto camera = scene->add<CameraComponent>();
