@@ -19,6 +19,26 @@ int main(int argc, char** argv) {
   Application::get().init(argc, argv);
   Network::get().connect("TestGame");
 
+  if (!Steam::get().init()) {
+    Application::get().clean_up();
+    return 1;
+  }
+
+  Steam::get().update_room_list();
+
+
+  Steam::get().on_updated_room_list.connect(
+    [](std::unordered_map<uint64_t, Steam::RoomData> const& rooms) {
+      for (auto const& room : rooms) {
+        if (room.second.name == "ichmachemaleinfachnureinenraumauf") {
+          Steam::get().join_room(room.first);
+          return;
+        }
+      }
+
+      Steam::get().create_room("ichmachemaleinfachnureinenraumauf");
+  });
+
   // scene ---------------------------------------------------------------------
   auto scene = SpaceScene::create();
   auto camera = scene->add<CameraComponent>();
@@ -35,6 +55,8 @@ int main(int argc, char** argv) {
   Timer timer;
   timer.start();
   Application::get().on_frame.connect([&]() {
+    Steam::get().update();
+
     double time(timer.get_elapsed());
     timer.reset();
 
