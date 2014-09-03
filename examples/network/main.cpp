@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
       uint32 actual_size;
       CSteamID sender;
       SteamNetworking()->ReadP2PPacket(&(*result.begin()), size, &actual_size, &sender);
-      std::cout << "Got message: " << result << std::endl;
+      std::cout << std::endl << "Got message: " << result << std::endl;
 
       P2PSessionState_t state;
       if (SteamNetworking()->GetP2PSessionState(sender, &state)) {
@@ -90,11 +90,10 @@ int main(int argc, char** argv) {
 
         std::string a = std::to_string((state.m_nRemoteIP >> 24) & 255);
         std::string b = std::to_string((state.m_nRemoteIP >> 16) & 255);
-        std::string c = std::to_string((state.m_nRemoteIP >> 8) & 255);
-        std::string d = std::to_string(state.m_nRemoteIP & 255);
+        std::string c = std::to_string((state.m_nRemoteIP >> 8)  & 255);
+        std::string d = std::to_string(state.m_nRemoteIP         & 255);
 
-        std::cout << std::endl
-                  << "    From " << Steam::get().get_user_name(sender.ConvertToUint64())
+        std::cout << "    From " << Steam::get().get_user_name(sender.ConvertToUint64())
                   << " (" << a << "." << b << "." << c << "." << d << ":"
                   << std::to_string(state.m_nRemotePort) << ")" << std::endl;
 
