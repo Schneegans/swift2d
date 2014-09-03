@@ -73,7 +73,35 @@ int main(int argc, char** argv) {
       uint32 actual_size;
       CSteamID sender;
       SteamNetworking()->ReadP2PPacket(&(*result.begin()), size, &actual_size, &sender);
-      std::cout << "Got message: " << result << " from " << Steam::get().get_user_name(sender.ConvertToUint64()) << std::endl;
+      std::cout << "Got message: " << result << std::endl;
+
+      P2PSessionState_t state;
+      if (SteamNetworking()->GetP2PSessionState(sender, &state)) {
+        // std::cout << "  m_bConnectionActive: " << std::to_string(state.m_bConnectionActive) << std::endl;
+        // std::cout << "  m_bConnecting: " << std::to_string(state.m_bConnecting) << std::endl;
+        // std::cout << "  m_eP2PSessionError: " << std::to_string(state.m_eP2PSessionError) << std::endl;
+        // std::cout << "  m_bUsingRelay: " << std::to_string(state.m_bUsingRelay) << std::endl;
+        // std::cout << "  m_nBytesQueuedForSend: " << std::to_string(state.m_nBytesQueuedForSend) << std::endl;
+        // std::cout << "  m_nPacketsQueuedForSend: " << std::to_string(state.m_nPacketsQueuedForSend) << std::endl;
+        // std::cout << "  m_nRemoteIP: " << std::to_string(state.m_nRemoteIP) << std::endl;
+        // std::cout << "  m_nRemotePort: " << std::to_string(state.m_nRemotePort) << std::endl;
+
+        std::string a = std::to_string((state.m_nRemoteIP >> 24) & 255);
+        std::string b = std::to_string((state.m_nRemoteIP >> 16) & 255);
+        std::string c = std::to_string((state.m_nRemoteIP >> 8) & 255);
+        std::string d = std::to_string(state.m_nRemoteIP & 255);
+
+        std::cout << std::endl
+                  << "    From " << Steam::get().get_user_name(sender.ConvertToUint64())
+                  << " (" << a << "." << b << "." << c << "." << d << ":"
+                  << std::to_string(state.m_nRemotePort) << ")" << std::endl;
+
+        if (state.m_bUsingRelay) {
+          std::cout << "    Message has been relayed." << std::endl;
+        } else {
+          std::cout << "    Message has not been relayed." << std::endl;
+        }
+      }
     }
 
     double time(timer.get_elapsed());

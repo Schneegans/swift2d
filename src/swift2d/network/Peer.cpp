@@ -59,6 +59,16 @@ Peer::Peer()
     Logger::LOG_ERROR << "Failed to start peer!" << std::endl;
   }
 
+
+
+
+  // RakNet::SystemAddress target;
+  // target.FromString("192.168.0.103");
+  // std::cout << "############## " << peer_->GetExternalID(target).ToString() << std::endl;
+
+
+
+
   peer_->SetMaximumIncomingConnections(8);
   peer_->SetTimeoutTime(1000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 }

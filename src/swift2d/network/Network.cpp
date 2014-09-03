@@ -293,6 +293,10 @@ bool Network::is_host() const {
   return peer_.mesh_->IsConnectedHost();
 }
 
+void Network::connect2(std::string const& ip, unsigned short port) {
+  peer_.connect(ip, port);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void Network::enter_phase(Phase phase) {
