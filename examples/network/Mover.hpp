@@ -10,7 +10,7 @@
 #define MOVER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/Swift2D.hpp>
+#include <swift2d/swift2d.hpp>
 
 using namespace swift;
 
@@ -25,7 +25,7 @@ class Mover : public MoveBehavior {
  public:
 
   Mover() {
-    auto window = WindowManager::instance()->get_default();
+    auto window = WindowManager::get().get_default();
     connection_ = window->on_key_press.connect([&](Key key, int scancode, int action, int mods){
       if (action == 0) {
         if (key == Key::W) LinearSpeed.set(0);
@@ -42,7 +42,7 @@ class Mover : public MoveBehavior {
   }
 
   ~Mover() {
-    auto window = WindowManager::instance()->get_default();
+    auto window = WindowManager::get().get_default();
     window->on_key_press.disconnect(connection_);
   }
 

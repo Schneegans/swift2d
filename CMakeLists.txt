@@ -116,7 +116,7 @@ add_subdirectory(src)
 # Create examples
 ################################################################
 
-#add_subdirectory(examples/network)
+add_subdirectory(examples/network)
 
 ################################################################
 # Summary

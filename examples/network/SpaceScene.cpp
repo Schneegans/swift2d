@@ -15,34 +15,34 @@ using namespace swift;
 
 swift::SceneObjectPtr SpaceScene::create() {
 
-  TextureDatabase::instance()->add("smoke", Texture::create(Swift2D::instance()->get_resource("images", "smoke.png")));
-  TextureDatabase::instance()->add("fire",  Texture::create(Swift2D::instance()->get_resource("images", "fire.png")));
-  TextureDatabase::instance()->add("light",  Texture::create(Swift2D::instance()->get_resource("images", "light.png")));
+  TextureDatabase::get().add("smoke", Texture::create(Paths::get().resource("images", "smoke.png")));
+  TextureDatabase::get().add("fire",  Texture::create(Paths::get().resource("images", "fire.png")));
+  TextureDatabase::get().add("light",  Texture::create(Paths::get().resource("images", "light.png")));
 
   auto mat = Material::create();
-  mat->DiffuseTexture = Texture::create(Swift2D::instance()->get_resource("images", "bg.jpg"));
-  MaterialDatabase::instance()->add("background", mat);
+  mat->DiffuseTexture = Texture::create(Paths::get().resource("images", "bg.jpg"));
+  MaterialDatabase::get().add("background", mat);
 
   mat = Material::create();
-  mat->DiffuseTexture = Texture::create(Swift2D::instance()->get_resource("images", "ship.jpg"));
-  MaterialDatabase::instance()->add("ship", mat);
+  mat->DiffuseTexture = Texture::create(Paths::get().resource("images", "ship.jpg"));
+  MaterialDatabase::get().add("ship", mat);
 
   mat = Material::create();
-  mat->DiffuseTexture = Texture::create(Swift2D::instance()->get_resource("images", "bullet.jpg"));
-  MaterialDatabase::instance()->add("bullet", mat);
+  mat->DiffuseTexture = Texture::create(Paths::get().resource("images", "bullet.jpg"));
+  MaterialDatabase::get().add("bullet", mat);
 
   mat = Material::create();
-  mat->DiffuseTexture = Texture::create(Swift2D::instance()->get_resource("images", "planet_diffuse2.png"));
-  mat->NormalTexture = Texture::create(Swift2D::instance()->get_resource("images", "planet_normal2.png"));
-  MaterialDatabase::instance()->add("planet1", mat);
+  mat->DiffuseTexture = Texture::create(Paths::get().resource("images", "planet_diffuse2.png"));
+  mat->NormalTexture = Texture::create(Paths::get().resource("images", "planet_normal2.png"));
+  MaterialDatabase::get().add("planet1", mat);
 
   mat = Material::create();
-  mat->DiffuseTexture = Texture::create(Swift2D::instance()->get_resource("images", "planet_diffuse.png"));
-  mat->NormalTexture = Texture::create(Swift2D::instance()->get_resource("images", "planet_normal.png"));
-  MaterialDatabase::instance()->add("planet2", mat);
+  mat->DiffuseTexture = Texture::create(Paths::get().resource("images", "planet_diffuse.png"));
+  mat->NormalTexture = Texture::create(Paths::get().resource("images", "planet_normal.png"));
+  MaterialDatabase::get().add("planet2", mat);
 
   // example scene setup -------------------------------------------------------
-  auto scene = SceneManager::instance()->get_default();
+  auto scene = SceneManager::get().get_default();
 
   auto field = scene->add<CircularShape>();
        field->Transform = math::make_scale(4);
@@ -53,7 +53,7 @@ swift::SceneObjectPtr SpaceScene::create() {
 
   auto bg = scene->add<SpriteComponent>();
        bg->Depth = -1000.0f;
-       bg->Material = MaterialDatabase::instance()->get("background");
+       bg->Material = MaterialDatabase::get().lookup("background");
        bg->Transform = math::make_scale(2.f);
 
   // planet
@@ -61,13 +61,13 @@ swift::SceneObjectPtr SpaceScene::create() {
        planet1->Transform = math::make_translation(-0.9, -0.5);
   auto sprite2 = planet1->add<SpriteComponent>();
        sprite2->Depth = 0.0f;
-       sprite2->Material = MaterialDatabase::instance()->get("planet1");
+       sprite2->Material = MaterialDatabase::get().lookup("planet1");
 
   auto planet2 = scene->add_object();
        planet2->Transform = math::make_translation(-1.2, 1.0);
   auto sprite3 = planet2->add<SpriteComponent>();
        sprite3->Depth = 0.0f;
-       sprite3->Material = MaterialDatabase::instance()->get("planet2");
+       sprite3->Material = MaterialDatabase::get().lookup("planet2");
 
   return scene;
 }

@@ -31,7 +31,7 @@ class Player : public NetworkObject<Player> {
   Player(bool is_local = false)
     : update_ticker_(Ticker::create(5.0)) {
 
-    auto scene = SceneManager::instance()->get_default();
+    auto scene = SceneManager::get().get_default();
     player_ = scene->add_object();
     player_->Transform = math::make_scale(0.1);
 
@@ -49,7 +49,7 @@ class Player : public NetworkObject<Player> {
     // appearance --------------------------------------------------------------
     auto ship = player_->add<SpriteComponent>();
     ship->Depth = 1.0f;
-    ship->Material = MaterialDatabase::instance()->get("ship");
+    ship->Material = MaterialDatabase::get().lookup("ship");
 
     mover->LinearSpeed.on_change().connect([&](float val){
       if (val > 0) {
@@ -98,7 +98,7 @@ class Player : public NetworkObject<Player> {
 
   ~Player() {
     update_ticker_->stop();
-    SceneManager::instance()->get_default()->remove(player_);
+    SceneManager::get().get_default()->remove(player_);
   }
 
  private:
