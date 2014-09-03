@@ -27,7 +27,7 @@
 #include <sstream>
 
 
-#define USE_NAT_TYPE_DETECTION  false
+#define USE_NAT_TYPE_DETECTION  true
 #define USE_UPNP                false
 
 namespace swift {

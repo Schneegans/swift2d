@@ -10,6 +10,8 @@
 #include "SpaceScene.hpp"
 #include "Player.hpp"
 
+#include <steam/steam_api.h>
+
 using namespace swift;
 
 // main ------------------------------------------------------------------------
@@ -42,6 +44,9 @@ int main(int argc, char** argv) {
   Steam::get().on_message.connect(
     [](Steam::MessageType type, uint64_t user_id, std::string const& join_message) {
       std::cout << join_message << std::endl;
+
+      std::string huhu("huhu");
+      SteamNetworking()->SendP2PPacket(user_id, huhu.c_str(), huhu.length(), k_EP2PSendReliable);
   });
 
   // scene ---------------------------------------------------------------------
@@ -61,6 +66,15 @@ int main(int argc, char** argv) {
   timer.start();
   Application::get().on_frame.connect([&]() {
     Steam::get().update();
+
+    uint32 size;
+    if (SteamNetworking()->IsP2PPacketAvailable(&size)) {
+      std::string result(size, ' ');
+      uint32 actual_size;
+      CSteamID sender;
+      SteamNetworking()->ReadP2PPacket(&(*result.begin()), size, &actual_size, &sender);
+      std::cout << "Got message: " << result << " from " << Steam::get().get_user_name(sender.ConvertToUint64()) << std::endl;
+    }
 
     double time(timer.get_elapsed());
     timer.reset();
