@@ -41,10 +41,12 @@ int main(int argc, char** argv) {
       Steam::get().create_room("ichmachemaleinfachnureinenraumauf");
   });
 
-  Steam::get().on_message.connect(
-    [](Steam::MessageType type, uint64_t user_id, std::string const& join_message) {
-      std::cout << join_message << std::endl;
+  std::set<uint64_t> user_ids;
 
+  Steam::get().on_message.connect(
+    [&](Steam::MessageType type, uint64_t user_id, std::string const& join_message) {
+      std::cout << join_message << std::endl;
+      user_ids.insert(user_id);
       std::string huhu("huhu");
       SteamNetworking()->SendP2PPacket(user_id, huhu.c_str(), huhu.length(), k_EP2PSendReliable);
   });
@@ -122,6 +124,12 @@ int main(int argc, char** argv) {
       switch(key) {
         case Key::ESCAPE:
           Application::get().stop();
+          break;
+        case Key::ENTER:
+          for (auto user_id : user_ids) {
+            std::string msg("Huhu, ich habe Enter gedrückt!");
+            SteamNetworking()->SendP2PPacket(user_id, msg.c_str(), msg.length(), k_EP2PSendReliable);
+          }
           break;
       }
     }
