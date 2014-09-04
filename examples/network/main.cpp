@@ -79,23 +79,16 @@ int main(int argc, char** argv) {
 
       P2PSessionState_t state;
       if (SteamNetworking()->GetP2PSessionState(sender, &state)) {
-        // std::cout << "  m_bConnectionActive: " << std::to_string(state.m_bConnectionActive) << std::endl;
-        // std::cout << "  m_bConnecting: " << std::to_string(state.m_bConnecting) << std::endl;
-        // std::cout << "  m_eP2PSessionError: " << std::to_string(state.m_eP2PSessionError) << std::endl;
-        // std::cout << "  m_bUsingRelay: " << std::to_string(state.m_bUsingRelay) << std::endl;
-        // std::cout << "  m_nBytesQueuedForSend: " << std::to_string(state.m_nBytesQueuedForSend) << std::endl;
-        // std::cout << "  m_nPacketsQueuedForSend: " << std::to_string(state.m_nPacketsQueuedForSend) << std::endl;
-        // std::cout << "  m_nRemoteIP: " << std::to_string(state.m_nRemoteIP) << std::endl;
-        // std::cout << "  m_nRemotePort: " << std::to_string(state.m_nRemotePort) << std::endl;
-
         std::string a = std::to_string((state.m_nRemoteIP >> 24) & 255);
         std::string b = std::to_string((state.m_nRemoteIP >> 16) & 255);
         std::string c = std::to_string((state.m_nRemoteIP >> 8)  & 255);
         std::string d = std::to_string(state.m_nRemoteIP         & 255);
 
+        std::string ip = a + "." + b + "." + c + "." + d;
+        std::string port = std::to_string(state.m_nRemotePort);
+
         std::cout << "    From " << Steam::get().get_user_name(sender.ConvertToUint64())
-                  << " (" << a << "." << b << "." << c << "." << d << ":"
-                  << std::to_string(state.m_nRemotePort) << ")" << std::endl;
+                  << " (" << ip << ":" << port << ")" << std::endl;
 
         if (state.m_bUsingRelay) {
           std::cout << "    Message has been relayed." << std::endl;
@@ -135,6 +128,9 @@ int main(int argc, char** argv) {
   });
 
   Application::get().start();
+
+  Network::get().disconnect();
+
   Application::get().clean_up();
 
   return 0;

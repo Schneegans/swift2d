@@ -39,7 +39,7 @@ Network::Network()
 
   update_timer_.start();
 
-  Logger::LOG_MESSAGE << "I'm " << peer_.get_guid() << std::endl;
+  Logger::LOG_MESSAGE << "I'm " << get_own_id() << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -49,6 +49,12 @@ void Network::disconnect() {
     Logger::LOG_MESSAGE << "Unregistering game." << std::endl;
     unregister_game();
   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+uint64_t Network::get_own_id() {
+  return peer_.get_guid();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -291,10 +297,6 @@ void Network::distribute_object(NetworkObjectBase* object) {
 
 bool Network::is_host() const {
   return peer_.mesh_->IsConnectedHost();
-}
-
-void Network::connect2(std::string const& ip, unsigned short port) {
-  peer_.connect(ip, port);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

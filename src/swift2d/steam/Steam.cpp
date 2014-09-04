@@ -9,6 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/steam/Steam.hpp>
 
+#include <swift2d/network/Network.hpp>
 #include <swift2d/application/Paths.hpp>
 #include <swift2d/steam/SteamOnceCallback.hpp>
 #include <swift2d/steam/SteamCallback.hpp>
@@ -78,8 +79,9 @@ Steam::Steam()
   lobby_enter_ = new SteamCallback<LobbyEnter_t>([this](LobbyEnter_t* result) {
     current_room_ = result->m_ulSteamIDLobby;
     std::string name(SteamMatchmaking()->GetLobbyData(current_room_, "name"));
+    std::string host(SteamMatchmaking()->GetLobbyData(current_room_, "host"));
 
-    on_message.emit(MessageType::JOIN, get_user_id(), "joined " + name);
+    on_message.emit(MessageType::JOIN, get_user_id(), "joined " + name + " by " + host);
 
     int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
     for (int i(0); i<user_count; ++i) {
@@ -179,14 +181,15 @@ void Steam::create_room(std::string const& name) {
   if (current_room_ == 0) {
 
     SteamOnceCallback<LobbyCreated_t>::set(
-    SteamMatchmaking()->CreateLobby(k_ELobbyTypePublic, 8),
-    [this, name](LobbyCreated_t *result, bool f) {
+      SteamMatchmaking()->CreateLobby(k_ELobbyTypePublic, 8),
+      [this, name](LobbyCreated_t *result, bool f) {
 
       if (result->m_eResult == k_EResultOK) {
         Logger::LOG_WARNING << "created " << result->m_ulSteamIDLobby << std::endl;
         current_room_ = result->m_ulSteamIDLobby;
 
         SteamMatchmaking()->SetLobbyData(current_room_, "name", name.c_str());
+        SteamMatchmaking()->SetLobbyData(current_room_, "host", std::to_string(Network::get().get_own_id()).c_str());
       } else {
         Logger::LOG_WARNING << "failed to create lobby" << std::endl;
       }

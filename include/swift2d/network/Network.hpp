@@ -49,10 +49,9 @@ class Network : public Singleton<Network> {
     REQUEST_JOIN
   };
 
-  // Signal<RakNet::Packet*> on_packet_received;
+  uint64_t get_own_id();
 
   void connect(std::string const& game_ID);
-  void connect2(std::string const& ip, unsigned short port);
   void disconnect();
   void update();
 
