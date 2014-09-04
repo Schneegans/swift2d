@@ -28,12 +28,12 @@ GuiComponent::GuiComponent()
   });
 
   Offset.on_change().connect([this](math::vec2 const& val) {
-    auto pos = WindowManager::get().get_default()->get_cursor_pos();
+    auto pos = WindowManager::get().current()->get_cursor_pos();
     gui_element_->update_mouse_position(pos);
   });
 
   Anchor.on_change().connect([this](math::vec2 const& val) {
-    auto pos = WindowManager::get().get_default()->get_cursor_pos();
+    auto pos = WindowManager::get().current()->get_cursor_pos();
     gui_element_->update_mouse_position(pos);
   });
 }

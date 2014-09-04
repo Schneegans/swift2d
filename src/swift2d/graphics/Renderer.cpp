@@ -12,6 +12,7 @@
 #include <swift2d/application/Application.hpp>
 #include <swift2d/scene.hpp>
 #include <swift2d/graphics/Pipeline.hpp>
+#include <swift2d/graphics/WindowManager.hpp>
 #include <swift2d/utils/Logger.hpp>
 #include <thread>
 #include <memory>
@@ -37,7 +38,16 @@ Renderer::Renderer(Pipeline& pipeline)
   ticker_->on_tick.connect([&]() {
     if (started_rendering_) {
       started_rendering_ = false;
+      updating_scene_ = SceneManager::get().current_scene()->serialize(SceneManager::get().current_camera());
+      {
+        std::unique_lock<std::mutex> lock(mutex_);
+        updated_scene_ = updating_scene_;
+      }
+
+      Application::get().AppFPS.step();
       Application::get().on_frame.emit();
+      WindowManager::get().current()->process_input();
+
       pipeline.update();
     }
   });
@@ -45,8 +55,13 @@ Renderer::Renderer(Pipeline& pipeline)
 
   forever_ = boost::thread([&]() {
 
+    // Timer timer;
+    // timer.start();
+
     while (running_) {
       if (updated_scene_) {
+        // ticker_->set_tick_time(timer.reset());
+        // std::cout << ticker_->get_tick_time() << std::endl;
         {
           std::unique_lock<std::mutex> lock(mutex_);
           rendered_scene_ = updated_scene_;
@@ -60,17 +75,6 @@ Renderer::Renderer(Pipeline& pipeline)
       }
     }
   });
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Renderer::process(SceneObjectPtr const& scene, CameraComponentPtr const& camera) {
-  Application::get().AppFPS.step();
-
-  updating_scene_ = scene->serialize(camera);
-
-  std::unique_lock<std::mutex> lock(mutex_);
-  updated_scene_ = updating_scene_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

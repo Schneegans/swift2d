@@ -53,7 +53,7 @@ GuiElement::GuiElement(GuiComponent* parent)
     Awesomium::WSLit("window"), Awesomium::WSLit("")
   );
 
-  auto window = WindowManager::get().get_default();
+  auto window = WindowManager::get().current();
 
   callbacks_[0] = window->on_mouse_move.connect([&](math::vec2 const& pos) {
     update_mouse_position(pos);
@@ -106,7 +106,7 @@ GuiElement::~GuiElement() {
   delete static_cast<AweJSMethodHandler*>(view_->js_method_handler());
   view_->Destroy();
 
-  auto window = WindowManager::get().get_default();
+  auto window = WindowManager::get().current();
   window->on_mouse_move.disconnect(callbacks_[0]);
   window->on_mouse_scroll.disconnect(callbacks_[1]);
   window->on_mouse_button_press.disconnect(callbacks_[2]);
@@ -134,7 +134,7 @@ void GuiElement::set_interactive(bool interactive) {
   interactive_ = interactive;
 
   if (interactive_) {
-    auto pos = WindowManager::get().get_default()->get_cursor_pos();
+    auto pos = WindowManager::get().current()->get_cursor_pos();
     update_mouse_position(pos);
   }
 }
@@ -143,7 +143,7 @@ void GuiElement::set_interactive(bool interactive) {
 
 void GuiElement::update_mouse_position(math::vec2 const& pos) const {
   if (interactive_) {
-    auto size(WindowManager::get().get_default()->get_context().window_size);
+    auto size(WindowManager::get().current()->get_context().window_size);
 
     math::vec2 corner(
       (size.x() - parent_->Size().x() + parent_->Anchor().x() * (size.x() - parent_->Size().x()))*0.5 + parent_->Offset().x(),

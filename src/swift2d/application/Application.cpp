@@ -25,7 +25,6 @@ Application::Application()
   , RenderFPS(20)
   , pipeline_()
   , renderer_()
-  , window_()
   , signals_(MainLoop::get().get_io_service(), SIGINT, SIGTERM) {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,16 +42,15 @@ void Application::init(int argc, char** argv) {
       stop();
     }
   });
-
-  pipeline_ = Pipeline::create();
-  renderer_ = Renderer::create(*pipeline_);
-  window_   = WindowManager::get().get_default();
-  pipeline_->set_output_window(window_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Application::start() {
+  pipeline_ = Pipeline::create();
+  renderer_ = Renderer::create(*pipeline_);
+  pipeline_->set_output_window(WindowManager::get().current());
+
   AppFPS.start();
   RenderFPS.start();
 
@@ -64,12 +62,6 @@ void Application::start() {
 void Application::stop() {
   renderer_->stop();
   MainLoop::get().stop();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Application::display(SceneObjectPtr const& scene, CameraComponentPtr const& camera) {
-  renderer_->process(scene, camera);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

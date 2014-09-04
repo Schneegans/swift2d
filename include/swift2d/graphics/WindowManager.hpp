@@ -24,7 +24,7 @@ class WindowManager : public Singleton<WindowManager> {
  // ----------------------------------------------------------- public interface
  public:
 
-  WindowPtr const& get_default() const { return default_; }
+  WindowPtr const& current() const { return current_; }
 
   friend class Singleton<WindowManager>;
   friend class Window;
@@ -33,11 +33,11 @@ class WindowManager : public Singleton<WindowManager> {
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  WindowManager() : default_(Window::create()) {}
+  WindowManager() : current_(Window::create()) {}
   ~WindowManager() {}
 
   std::unordered_map<GLFWwindow*, Window*> glfw_windows;
-  WindowPtr default_;
+  WindowPtr current_;
 };
 
 }

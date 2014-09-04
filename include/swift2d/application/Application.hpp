@@ -45,8 +45,6 @@ class Application : public Singleton<Application> {
   void stop();
   void clean_up();
 
-  void display(SceneObjectPtr const& scene, CameraComponentPtr const& camera);
-
   friend class Singleton<Application>;
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -58,7 +56,6 @@ class Application : public Singleton<Application> {
 
   PipelinePtr pipeline_;
   RendererPtr renderer_;
-  WindowPtr   window_;
 
   boost::asio::signal_set signals_;
 };

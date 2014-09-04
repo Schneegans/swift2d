@@ -52,16 +52,13 @@ int main(int argc, char** argv) {
   });
 
   // scene ---------------------------------------------------------------------
-  auto scene = SpaceScene::create();
-  auto camera = scene->add<CameraComponent>();
+  auto scene = SceneManager::get().current_scene();
+  auto camera = SceneManager::get().current_camera();
   camera->Size = math::vec2(2.f, 2.f);
 
   // player --------------------------------------------------------------------
   Player::init();
   Player player(true);
-
-  // rendering pipeline --------------------------------------------------------
-  auto window = WindowManager::get().get_default();
 
   // main loop -----------------------------------------------------------------
   Timer timer;
@@ -101,12 +98,11 @@ int main(int argc, char** argv) {
     double time(timer.get_elapsed());
     timer.reset();
 
-    window->process_input();
     Network::get().update();
     scene->update(time);
-    Application::get().display(scene, camera);
   });
 
+  auto window = WindowManager::get().current();
   window->on_close.connect([&](){
     Application::get().stop();
   });
