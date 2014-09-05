@@ -52,8 +52,8 @@ int main(int argc, char** argv) {
   });
 
   // scene ---------------------------------------------------------------------
-  auto scene = SceneManager::get().current_scene();
-  auto camera = SceneManager::get().current_camera();
+  auto scene = SpaceScene::create();
+  auto camera = SceneManager::get().current()->Camera;
   camera->Size = math::vec2(2.f, 2.f);
 
   // player --------------------------------------------------------------------
@@ -61,9 +61,7 @@ int main(int argc, char** argv) {
   Player player(true);
 
   // main loop -----------------------------------------------------------------
-  Timer timer;
-  timer.start();
-  Application::get().on_frame.connect([&]() {
+  Application::get().on_frame.connect([&](double frame_time) {
     Steam::get().update();
 
     uint32 size;
@@ -95,11 +93,8 @@ int main(int argc, char** argv) {
       }
     }
 
-    double time(timer.get_elapsed());
-    timer.reset();
-
     Network::get().update();
-    scene->update(time);
+    scene->update(frame_time);
   });
 
   auto window = WindowManager::get().current();

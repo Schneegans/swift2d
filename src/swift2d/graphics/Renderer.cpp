@@ -34,34 +34,34 @@ Renderer::Renderer(Pipeline& pipeline)
   , running_(true)
   , started_rendering_(true) {
 
+
   ticker_ = Ticker::create(1.0 / 1000.0);
   ticker_->on_tick.connect([&]() {
     if (started_rendering_) {
+      if (!timer_.is_running()) {
+        timer_.start();
+      }
+
       started_rendering_ = false;
-      updating_scene_ = SceneManager::get().current_scene()->serialize(SceneManager::get().current_camera());
+      updating_scene_ = SceneManager::get().current()->Root->serialize(SceneManager::get().current()->Camera);
       {
         std::unique_lock<std::mutex> lock(mutex_);
         updated_scene_ = updating_scene_;
       }
-
       Application::get().AppFPS.step();
-      Application::get().on_frame.emit();
+      Application::get().on_frame.emit(timer_.reset());
       WindowManager::get().current()->process_input();
 
       pipeline.update();
+
     }
   });
   ticker_->start();
 
   forever_ = boost::thread([&]() {
 
-    // Timer timer;
-    // timer.start();
-
     while (running_) {
       if (updated_scene_) {
-        // ticker_->set_tick_time(timer.reset());
-        // std::cout << ticker_->get_tick_time() << std::endl;
         {
           std::unique_lock<std::mutex> lock(mutex_);
           rendered_scene_ = updated_scene_;

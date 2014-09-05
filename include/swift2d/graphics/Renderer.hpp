@@ -64,6 +64,7 @@ class Renderer {
   ConstSerializedScenePtr updated_scene_;
 
   TickerPtr ticker_;
+  Timer     timer_;
 
   boost::thread forever_;
   std::mutex mutex_;

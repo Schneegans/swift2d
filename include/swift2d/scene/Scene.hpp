@@ -6,39 +6,49 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SCENE_MANAGER_HPP
-#define SWIFT2D_SCENE_MANAGER_HPP
+#ifndef SWIFT2D_SCENE_HPP
+#define SWIFT2D_SCENE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/utils/Singleton.hpp>
-#include <swift2d/scene/Scene.hpp>
+#include <swift2d/scene/SceneObject.hpp>
+#include <swift2d/components/CameraComponent.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
+// shared pointer type definition ----------------------------------------------
+class Scene;
+typedef std::shared_ptr<Scene>       ScenePtr;
+typedef std::shared_ptr<const Scene> ConstScenePtr;
+
 // -----------------------------------------------------------------------------
-class SceneManager : public Singleton<SceneManager> {
+class Scene {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  ScenePtr const& current()                const { return current_; }
-  void            current(ScenePtr const& scene) { current_ = scene; }
+  // ---------------------------------------------------------------- properties
+  SceneObjectPtr     Root;
+  CameraComponentPtr Camera;
 
-  friend class Singleton<SceneManager>;
+  // ----------------------------------------------------- contruction interface
+  static ScenePtr create() {
+    return std::make_shared<Scene>();
+  }
 
- ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
- private:
-  SceneManager() : current_(Scene::create()) {}
-  ~SceneManager() {}
+  Scene()
+    : Root(SceneObject::create())
+    , Camera(CameraComponent::create()) {
 
-  ScenePtr current_;
+    Root->add(Camera);
+  }
+
 };
 
 }
 
-#endif  // SWIFT2D_SCENE_MANAGER_HPP
+#endif  // SWIFT2D_SCENE_HPP

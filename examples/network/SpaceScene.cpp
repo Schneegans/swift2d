@@ -42,7 +42,7 @@ swift::SceneObjectPtr SpaceScene::create() {
   MaterialDatabase::get().add("planet2", mat);
 
   // example scene setup -------------------------------------------------------
-  auto scene = SceneManager::get().current_scene();
+  auto scene = SceneManager::get().current()->Root;
 
   auto field = scene->add<CircularShape>();
        field->Transform = math::make_scale(4);

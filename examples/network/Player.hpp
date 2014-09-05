@@ -31,7 +31,7 @@ class Player : public NetworkObject<Player> {
   Player(bool is_local = false)
     : update_ticker_(Ticker::create(5.0)) {
 
-    auto scene = SceneManager::get().current_scene();
+    auto scene = SceneManager::get().current()->Root;
     player_ = scene->add_object();
     player_->Transform = math::make_scale(0.1);
 
@@ -98,7 +98,7 @@ class Player : public NetworkObject<Player> {
 
   ~Player() {
     update_ticker_->stop();
-    SceneManager::get().current_scene()->remove(player_);
+    SceneManager::get().current()->Root->remove(player_);
   }
 
  private:

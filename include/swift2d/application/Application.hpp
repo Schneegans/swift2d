@@ -32,7 +32,7 @@ class Application : public Singleton<Application> {
  public:
 
   // ------------------------------------------------------------------- signals
-  Signal<> on_frame;
+  Signal<double> on_frame;
 
   // ---------------------------------------------------------------- properties
   Float      LoadingProgress;

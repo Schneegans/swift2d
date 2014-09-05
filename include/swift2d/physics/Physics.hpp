@@ -38,7 +38,6 @@ class Physics : public Singleton<Physics> {
 
   void update(double time);
 
-
   b2Body* add(DynamicBodyComponent* body);
   b2Body* add(StaticBodyComponent* body);
   void    add(GravitySourceComponent* source);
