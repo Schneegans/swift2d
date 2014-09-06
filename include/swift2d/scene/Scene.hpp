@@ -12,6 +12,8 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/scene/SceneObject.hpp>
 #include <swift2d/components/CameraComponent.hpp>
+#include <swift2d/scene/SerializedScene.hpp>
+#include <swift2d/utils/Color.hpp>
 
 namespace swift {
 
@@ -35,18 +37,20 @@ class Scene {
   SceneObjectPtr     Root;
   CameraComponentPtr Camera;
 
+  ColorProperty      VignetteColor;
+  Float              VignetteSoftness;
+  Float              VignetteCoverage;
+
   // ----------------------------------------------------- contruction interface
   static ScenePtr create() {
     return std::make_shared<Scene>();
   }
 
-  Scene()
-    : Root(SceneObject::create())
-    , Camera(CameraComponent::create()) {
+  Scene();
 
-    Root->add(Camera);
-  }
-
+  // calls serialize() on all enabled components and objects --- a new
+  // SerializedScene is created
+  virtual SerializedScenePtr serialize() const;
 };
 
 }

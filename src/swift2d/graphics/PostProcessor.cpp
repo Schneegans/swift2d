@@ -18,33 +18,28 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 PostProcessor::PostProcessor(RenderContext const& ctx)
-  : no_post_fx_shader_(
-      R"(
-        // vertex shader -------------------------------------------------------
-        @include "fullscreen_quad_vertext_shader"
-      )",
-      R"(
-        // fragment shader -----------------------------------------------------
-        @include "version"
-
-        @include "gbuffer_input"
-
-        in vec2 texcoords;
-        uniform float gamma;
-
-        @include "get_vignette"
-
-        layout (location = 0) out vec3 fragColor;
-
-        void main(void){
-          fragColor = get_vignette() * get_diffuse(texcoords);
-          fragColor = pow(fragColor, 1.0/vec3(gamma));
-        }
-    )")
-  , post_fx_shader_(R"(
+  : post_fx_shader_(R"(
       // vertex shader ---------------------------------------------------------
       @include "fullscreen_quad_vertext_shader"
-    )", R"(
+    )",
+    ctx.shading_quality <= 1 ?
+    R"(
+      // fragment shader -----------------------------------------------------
+      @include "version"
+
+      in vec2 texcoords;
+      uniform sampler2D g_buffer_shaded;
+      uniform float gamma;
+
+      @include "get_vignette"
+
+      layout (location = 0) out vec3 fragColor;
+
+      void main(void){
+        fragColor = get_vignette() * texture2D(g_buffer_shaded, texcoords).rgb;
+        fragColor = pow(fragColor, 1.0/vec3(gamma));
+      }
+    )" : R"(
       // fragment shader -------------------------------------------------------
       @include "version"
 
@@ -152,7 +147,8 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   , dirt_tex_(post_fx_shader_.get_uniform<int>("dirt_tex"))
   , use_heat_(post_fx_shader_.get_uniform<int>("use_heat"))
   , gamma_(post_fx_shader_.get_uniform<float>("gamma"))
-  , no_post_fx_gamma_(no_post_fx_shader_.get_uniform<float>("gamma"))
+  , vignette_softness_(post_fx_shader_.get_uniform<float>("vignette_softness"))
+  , vignette_coverage_(post_fx_shader_.get_uniform<float>("vignette_coverage"))
   , screen_size_(threshold_shader_.get_uniform<math::vec2i>("screen_size"))
   , g_buffer_diffuse_(threshold_shader_.get_uniform<int>("g_buffer_diffuse"))
   , g_buffer_light_(threshold_shader_.get_uniform<int>("g_buffer_light"))
@@ -195,6 +191,10 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext const& ctx,
                             GBuffer* g_buffer) {
 
+  post_fx_shader_.use(ctx);
+  vignette_softness_.Set(scene->vignette_softness);
+  vignette_coverage_.Set(scene->vignette_coverage);
+
   if (ctx.shading_quality <= 1) {
 
     ctx.gl.Disable(oglplus::Capability::Blend);
@@ -207,9 +207,8 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     } else {
       g_buffer->bind_final(1);
     }
-    no_post_fx_shader_.use(ctx);
-    no_post_fx_shader_.set_uniform("g_buffer_diffuse", 1);
-    no_post_fx_gamma_.Set(Settings::get().Display.Gamma());
+    post_fx_shader_.set_uniform("g_buffer_shaded", 1);
+    gamma_.Set(Settings::get().Display.Gamma());
     Quad::get().draw(ctx);
 
     ctx.gl.Enable(oglplus::Capability::Blend);

@@ -154,20 +154,6 @@ void SceneObject::translate(float x, float y) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SerializedScenePtr SceneObject::serialize(CameraComponentPtr const& camera) const {
-
-  auto scene(SerializedScene::create());
-
-  if (Enabled()) {
-    scene->camera = camera->create_copy();
-    serialize(scene);
-  }
-
-  return scene;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void SceneObject::serialize(SerializedScenePtr& scene) const {
   if (Enabled()) {
     for (auto const& component: components_) {

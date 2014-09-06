@@ -9,6 +9,8 @@
 #ifndef SWIFT2D_SERIALIZED_SCENE_HPP
 #define SWIFT2D_SERIALIZED_SCENE_HPP
 
+#include <swift2d/utils/Color.hpp>
+
 #include <memory>
 #include <vector>
 #include <map>
@@ -41,11 +43,16 @@ class SerializedScene {
     return std::make_shared<SerializedScene>();
   }
 
-  CameraComponentPtr camera;
   std::multimap<float, DrawableComponentPtr> objects;
   std::multimap<float, DrawableComponentPtr> lights;
   std::multimap<float, DrawableComponentPtr> heat_objects;
   std::multimap<float, DrawableComponentPtr> gui_elements;
+
+  CameraComponentPtr camera;
+
+  Color vignette_color;
+  float vignette_softness;
+  float vignette_coverage;
 
   std::vector<GravitySourceComponentPtr> gravity_sources;
 

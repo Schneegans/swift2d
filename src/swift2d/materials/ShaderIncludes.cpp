@@ -171,13 +171,14 @@ ShaderIncludes::ShaderIncludes() {
 
   // ---------------------------------------------------------------------------
   add_include("get_vignette", R"(
-    float get_vignette() {
-      float coverage = 0.5;
-      float softness = 0.5;
 
+    uniform float vignette_coverage;
+    uniform float vignette_softness;
+
+    float get_vignette() {
       // inigo quilez's great vigneting effect!
-      float a = -coverage/softness;
-      float b = 1.0/softness;
+      float a = -vignette_coverage/vignette_softness;
+      float b = 1.0/vignette_softness;
       vec2 q = texcoords;
       return min(1, a + b*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.1 ));
     }

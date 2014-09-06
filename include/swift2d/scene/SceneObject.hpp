@@ -156,10 +156,6 @@ class SceneObject : public SavableObject {
   // SerializedScene is extended
   virtual void serialize(SerializedScenePtr& scene) const;
 
-  // calls serialize() on all enabled components and objects --- a new
-  // SerializedScene is create
-  virtual SerializedScenePtr serialize(CameraComponentPtr const& camera) const;
-
   // calls update() on all components and objects
   virtual void update(double time);
 

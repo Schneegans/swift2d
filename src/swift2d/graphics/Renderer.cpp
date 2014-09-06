@@ -34,7 +34,6 @@ Renderer::Renderer(Pipeline& pipeline)
   , running_(true)
   , started_rendering_(true) {
 
-
   ticker_ = Ticker::create(1.0 / 1000.0);
   ticker_->on_tick.connect([&]() {
     if (started_rendering_) {
@@ -43,7 +42,7 @@ Renderer::Renderer(Pipeline& pipeline)
       }
 
       started_rendering_ = false;
-      updating_scene_ = SceneManager::get().current()->Root->serialize(SceneManager::get().current()->Camera);
+      updating_scene_ = SceneManager::get().current()->serialize();
       {
         std::unique_lock<std::mutex> lock(mutex_);
         updated_scene_ = updating_scene_;
@@ -53,13 +52,11 @@ Renderer::Renderer(Pipeline& pipeline)
       WindowManager::get().current()->process_input();
 
       pipeline.update();
-
     }
   });
   ticker_->start();
 
   forever_ = boost::thread([&]() {
-
     while (running_) {
       if (updated_scene_) {
         {

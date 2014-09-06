@@ -43,7 +43,6 @@ class PostProcessor {
  private:
   void generate_threshold_buffer(RenderContext const& ctx);
 
-  Shader no_post_fx_shader_;
   Shader post_fx_shader_;
   Shader threshold_shader_;
 
@@ -60,7 +59,8 @@ class PostProcessor {
   oglplus::Lazy<oglplus::Uniform<int>> dirt_tex_;
   oglplus::Lazy<oglplus::Uniform<int>> use_heat_;
   oglplus::Lazy<oglplus::Uniform<float>> gamma_;
-  oglplus::Lazy<oglplus::Uniform<float>> no_post_fx_gamma_;
+  oglplus::Lazy<oglplus::Uniform<float>> vignette_softness_;
+  oglplus::Lazy<oglplus::Uniform<float>> vignette_coverage_;
   oglplus::Lazy<oglplus::Uniform<math::vec2i>> screen_size_;
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_diffuse_;
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_light_;
