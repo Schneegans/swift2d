@@ -57,8 +57,10 @@ class PostProcessor {
   oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_8_;
   oglplus::Lazy<oglplus::Uniform<int>> heat_buffer_;
   oglplus::Lazy<oglplus::Uniform<int>> dirt_tex_;
+  oglplus::Lazy<oglplus::Uniform<float>> dirt_opacity_;
   oglplus::Lazy<oglplus::Uniform<int>> use_heat_;
   oglplus::Lazy<oglplus::Uniform<float>> gamma_;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>> vignette_color_;
   oglplus::Lazy<oglplus::Uniform<float>> vignette_softness_;
   oglplus::Lazy<oglplus::Uniform<float>> vignette_coverage_;
   oglplus::Lazy<oglplus::Uniform<math::vec2i>> screen_size_;

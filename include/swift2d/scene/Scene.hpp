@@ -41,6 +41,8 @@ class Scene {
   Float              VignetteSoftness;
   Float              VignetteCoverage;
 
+  Float              DirtOpacity;
+
   // ----------------------------------------------------- contruction interface
   static ScenePtr create() {
     return std::make_shared<Scene>();

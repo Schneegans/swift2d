@@ -172,6 +172,7 @@ ShaderIncludes::ShaderIncludes() {
   // ---------------------------------------------------------------------------
   add_include("get_vignette", R"(
 
+    uniform vec4  vignette_color;
     uniform float vignette_coverage;
     uniform float vignette_softness;
 
@@ -180,7 +181,7 @@ ShaderIncludes::ShaderIncludes() {
       float a = -vignette_coverage/vignette_softness;
       float b = 1.0/vignette_softness;
       vec2 q = texcoords;
-      return min(1, a + b*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.1 ));
+      return clamp(a + b*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.1 ), 0, 1) * vignette_color.a + (1-vignette_color.a);
     }
   )");
 }

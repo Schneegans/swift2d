@@ -36,7 +36,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       layout (location = 0) out vec3 fragColor;
 
       void main(void){
-        fragColor = get_vignette() * texture2D(g_buffer_shaded, texcoords).rgb;
+        fragColor = mix(vignette_color.rgb, texture2D(g_buffer_shaded, texcoords).rgb, get_vignette());
         fragColor = pow(fragColor, 1.0/vec3(gamma));
       }
     )" : R"(
@@ -54,6 +54,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       uniform sampler2D glow_buffer_8;
       uniform sampler2D heat_buffer;
       uniform sampler2D dirt_tex;
+      uniform float     dirt_opacity;
       uniform bool      use_heat;
       uniform float     gamma;
 
@@ -83,7 +84,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
         }
 
         fragColor = texture2D(g_buffer_shaded, shifted_texcoords).rgb;
-        fragColor = (fragColor + (glow + 0.05) * dirt) * get_vignette();
+        fragColor = mix(vignette_color.rgb, (fragColor + (glow + 0.2) * dirt * dirt_opacity), get_vignette());
         fragColor = pow(fragColor, 1.0/vec3(gamma));
       }
     )")
@@ -145,8 +146,10 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   , glow_buffer_8_(post_fx_shader_.get_uniform<int>("glow_buffer_8"))
   , heat_buffer_(post_fx_shader_.get_uniform<int>("heat_buffer"))
   , dirt_tex_(post_fx_shader_.get_uniform<int>("dirt_tex"))
+  , dirt_opacity_(post_fx_shader_.get_uniform<float>("dirt_opacity"))
   , use_heat_(post_fx_shader_.get_uniform<int>("use_heat"))
   , gamma_(post_fx_shader_.get_uniform<float>("gamma"))
+  , vignette_color_(post_fx_shader_.get_uniform<math::vec4>("vignette_color"))
   , vignette_softness_(post_fx_shader_.get_uniform<float>("vignette_softness"))
   , vignette_coverage_(post_fx_shader_.get_uniform<float>("vignette_coverage"))
   , screen_size_(threshold_shader_.get_uniform<math::vec2i>("screen_size"))
@@ -194,6 +197,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
   post_fx_shader_.use(ctx);
   vignette_softness_.Set(scene->vignette_softness);
   vignette_coverage_.Set(scene->vignette_coverage);
+  vignette_color_.Set(scene->vignette_color);
 
   if (ctx.shading_quality <= 1) {
 
@@ -264,6 +268,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
     dirt_.bind(ctx, start);
     dirt_tex_.Set(start);
+    dirt_opacity_.Set(scene->dirt_opacity);
 
     Quad::get().draw(ctx);
 

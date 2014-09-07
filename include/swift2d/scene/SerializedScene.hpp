@@ -50,9 +50,10 @@ class SerializedScene {
 
   CameraComponentPtr camera;
 
-  Color vignette_color;
-  float vignette_softness;
-  float vignette_coverage;
+  math::vec4  vignette_color;
+  float       vignette_softness;
+  float       vignette_coverage;
+  float       dirt_opacity;
 
   std::vector<GravitySourceComponentPtr> gravity_sources;
 
