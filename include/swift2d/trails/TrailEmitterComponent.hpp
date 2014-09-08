@@ -30,6 +30,9 @@ struct SerializedTrailEmitter {
   float Density;
 
   math::mat3 WorldTransform;
+  math::mat3 Prev1WorldTransform;
+  math::mat3 Prev2WorldTransform;
+  math::mat3 Prev3WorldTransform;
   TrailEmitterComponent const* Self;
 };
 
@@ -52,9 +55,20 @@ class TrailEmitterComponent : public TransformableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "TrailEmitterComponent"; }
 
+  virtual void update(double time);
+
   virtual void accept(SavableObjectVisitor& visitor);
 
   SerializedTrailEmitter make_serialized_emitter() const;
+
+ private:
+
+  math::mat3 prev_1_world_transform_;
+  math::mat3 prev_2_world_transform_;
+  math::mat3 prev_3_world_transform_;
+
+  bool first_frame_;
+
 };
 
 }

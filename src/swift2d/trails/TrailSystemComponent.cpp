@@ -55,6 +55,7 @@ void TrailSystemComponent::draw(RenderContext const& ctx) {
   auto& shader(TrailShader::get());
   shader.use(ctx);
   shader.projection. Set(ctx.projection_matrix);
+  shader.width.      Set(Width());
   shader.start_color.Set(StartColor().vec4());
   shader.end_color.  Set(EndColor().vec4());
   shader.glow.       Set(math::vec2(StartGlow(), EndGlow()));
