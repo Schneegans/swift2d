@@ -84,7 +84,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
         }
 
         fragColor = texture2D(g_buffer_shaded, shifted_texcoords).rgb;
-        fragColor = mix(vignette_color.rgb, (fragColor + (glow + 0.2) * dirt * dirt_opacity), get_vignette());
+        fragColor = mix(vignette_color.rgb, (fragColor + (glow + 0.1) * dirt * dirt_opacity), get_vignette());
         fragColor = pow(fragColor, 1.0/vec3(gamma));
       }
     )")

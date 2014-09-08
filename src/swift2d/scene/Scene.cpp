@@ -19,7 +19,7 @@ Scene::Scene()
   , VignetteColor(Color(0, 0, 0, 1))
   , VignetteSoftness(0.5)
   , VignetteCoverage(0.5)
-  , DirtOpacity(1.0) {
+  , DirtOpacity(0.5) {
 
   Root->add(Camera);
 }
