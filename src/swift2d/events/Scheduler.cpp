@@ -14,7 +14,7 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Scheduler::execute_delayed(std::function<void()> callback, double delay) {
+void Scheduler::execute_delayed(double delay, std::function<void()> callback) {
 
   boost::asio::deadline_timer* timer = new boost::asio::deadline_timer(MainLoop::get().get_io_service(), boost::posix_time::microseconds(1000000.0 * delay));
 

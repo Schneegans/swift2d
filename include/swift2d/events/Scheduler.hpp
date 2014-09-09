@@ -23,7 +23,7 @@ class Scheduler {
  public:
 
   // ------------------------------------------------------------ public methods
-  void execute_delayed(std::function<void()> callback, double delay);
+  void execute_delayed(double delay, std::function<void()> callback);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

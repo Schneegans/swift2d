@@ -62,7 +62,7 @@ Pipeline::~Pipeline() {
 void Pipeline::set_output_window(WindowPtr const& window) {
   window_ = window;
 
-  window_->on_resize.connect([this](math::vec2i){
+  window_->Size.on_change().connect([this](math::vec2i){
     needs_reload_ = true;
   });
 }

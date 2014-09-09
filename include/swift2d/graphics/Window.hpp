@@ -43,11 +43,11 @@ class Window {
   Bool   Open;
   Bool   HideCursor;
   String Title;
+  Vec2i  Size;
 
   // ------------------------------------------------------------------- signals
   Signal<>                                    on_close;
   Signal<Key, int, int, int>                  on_key_press;
-  Signal<math::vec2i>                         on_resize;
   Signal<math::vec2>                          on_mouse_move;
   Signal<Button, int, int>                    on_mouse_button_press;
   Signal<math::vec2>                          on_mouse_scroll;

@@ -20,6 +20,9 @@ namespace swift {
 
 Window::Window()
   : Open(false)
+  , HideCursor(false)
+  , Title("Swift2D")
+  , Size(math::vec2i(1024, 768))
   , window_(nullptr)
   , joystick_axis_cache_(static_cast<int>(JoystickId::JOYSTICK_NUM),
                          std::vector<float>(
@@ -129,7 +132,7 @@ void Window::open() {
 
       render_context_.window_size = math::vec2i(desktop_width, desktop_height);
     } else {
-      render_context_.window_size = math::vec2i(1024, 768);
+      render_context_.window_size = Size();
     }
 
     // glfwWindowHint(GLFW_DECORATED, false);
@@ -155,7 +158,7 @@ void Window::open() {
 
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
       WindowManager::get().glfw_windows[w]->get_context().window_size = math::vec2i(width, height);
-      WindowManager::get().glfw_windows[w]->on_resize.emit(math::vec2i(width, height));
+      WindowManager::get().glfw_windows[w]->Size = math::vec2i(width, height);
     });
 
     glfwSetKeyCallback(window_, [](GLFWwindow* w, int key, int scancode, int action, int mods) {
