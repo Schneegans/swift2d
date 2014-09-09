@@ -12,17 +12,20 @@
 #include <vector>
 #include <array>
 
+#define BUFFER_COUNT 3
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
 Music::Music()
-  : buffers_(3) {}
+  : buffers_(BUFFER_COUNT)
+  , playing_id_(0) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 Music::~Music() {
-  alDeleteBuffers(3, buffers_.data());
+  alDeleteBuffers(BUFFER_COUNT, buffers_.data());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,21 +59,21 @@ void Music::load_from_file(std::string const& file_name) {
 
   sf_close(file);
 
-  alGenBuffers(3, buffers_.data());
+  alGenBuffers(BUFFER_COUNT, buffers_.data());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Music::load(oalplus::Source* source) {
 
-  playing_ = true;
+  int playing_id = playing_id_;
 
-  load_thread_ = std::thread([this](){
+  std::thread load_thread([this, playing_id](){
 
     unsigned long current_frame = 0;
 
-    while (playing_) {
-      if (buffer_queue_.size() < 3 && current_frame < max_frames_) {
+    while (playing_id == playing_id_) {
+      if (buffer_queue_.size() < BUFFER_COUNT && current_frame < max_frames_) {
         SF_INFO info;
         SNDFILE* file = sf_open(file_.c_str(), SFM_READ, &info);
 
@@ -93,16 +96,14 @@ void Music::load(oalplus::Source* source) {
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
   });
+
+  load_thread.detach();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Music::unload(oalplus::Source* source) {
-  playing_ = false;
-
-  if (load_thread_.joinable()) {
-    load_thread_.join();
-  }
+  ++playing_id_;
 
   while (!buffer_queue_.empty()) {
     buffer_queue_.pop();
@@ -114,44 +115,42 @@ void Music::unload(oalplus::Source* source) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Music::update(oalplus::Source* source, double time) {
-  if (playing_) {
-    int processed(0);
-    int queued(0);
-    alGetSourcei(oalplus::GetALName(*source), AL_BUFFERS_PROCESSED, &processed);
-    alGetSourcei(oalplus::GetALName(*source), AL_BUFFERS_QUEUED,    &queued);
+  int processed(0);
+  int queued(0);
+  alGetSourcei(oalplus::GetALName(*source), AL_BUFFERS_PROCESSED, &processed);
+  alGetSourcei(oalplus::GetALName(*source), AL_BUFFERS_QUEUED,    &queued);
 
-    while ((processed > 0 || queued < 3) && buffer_queue_.size() > 0) {
+  while ((processed > 0 || queued < BUFFER_COUNT) && buffer_queue_.size() > 0) {
 
-      auto load_buffer = [this](ALuint buffer){
-        std::unique_lock<std::mutex> lock(load_mutex_);
-        auto f = channels_ == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
-        alBufferData(buffer, f, &buffer_queue_.front().front(),
-                     buffer_queue_.front().size() * sizeof(short), sample_rate_);
-        buffer_queue_.pop();
-      };
+    auto load_buffer = [this](ALuint buffer){
+      std::unique_lock<std::mutex> lock(load_mutex_);
+      auto f = channels_ == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
+      alBufferData(buffer, f, &buffer_queue_.front().front(),
+                   buffer_queue_.front().size() * sizeof(short), sample_rate_);
+      buffer_queue_.pop();
+    };
 
-      if (queued < 3) {
-        queued += 1;
-        load_buffer(buffers_[queued-1]);
-        alSourceQueueBuffers(oalplus::GetALName(*source), 1, &buffers_[queued-1]);
+    if (queued < BUFFER_COUNT) {
+      queued += 1;
+      load_buffer(buffers_[queued-1]);
+      alSourceQueueBuffers(oalplus::GetALName(*source), 1, &buffers_[queued-1]);
 
-      } else if (processed > 0) {
-        // reuse already used buffers
-        processed -= 1;
+    } else if (processed > 0) {
+      // reuse already used buffers
+      processed -= 1;
 
-        // unqueue oldest buffer
-        ALuint name;
-        alSourceUnqueueBuffers(oalplus::GetALName(*source), 1, &name);
+      // unqueue oldest buffer
+      ALuint name;
+      alSourceUnqueueBuffers(oalplus::GetALName(*source), 1, &name);
 
-        // load & queue next
-        load_buffer(name);
-        alSourceQueueBuffers(oalplus::GetALName(*source), 1, &name);
-      }
+      // load & queue next
+      load_buffer(name);
+      alSourceQueueBuffers(oalplus::GetALName(*source), 1, &name);
+    }
 
-      // there was an underflow --- start playing again!
-      if (queued == 1) {
-        source->Play();
-      }
+    // there was an underflow --- start playing again!
+    if (queued == 1) {
+      source->Play();
     }
   }
 }

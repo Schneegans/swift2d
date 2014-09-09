@@ -81,9 +81,8 @@ class Music : public AudioBuffer {
   unsigned long max_frames_;
 
   std::mutex load_mutex_;
-  std::thread load_thread_;
   std::queue<std::vector<short>> buffer_queue_;
-  bool playing_;
+  int playing_id_;
 };
 
 }
