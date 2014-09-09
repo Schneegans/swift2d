@@ -6,12 +6,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SOUND_HPP
-#define SWIFT2D_SOUND_HPP
+#ifndef SWIFT2D_BUFFER_HPP
+#define SWIFT2D_BUFFER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/audio/AudioBuffer.hpp>
-#include <swift2d/properties.hpp>
+#include <swift2d/objects/SavableObjectVisitor.hpp>
+#include <swift2d/openal.hpp>
 
 #include <memory>
 
@@ -21,45 +21,22 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class Sound;
-typedef std::shared_ptr<Sound>       SoundPtr;
-typedef std::shared_ptr<const Sound> ConstSoundPtr;
-typedef Property<SoundPtr>           SoundProperty;
+class AudioBuffer;
+typedef std::shared_ptr<AudioBuffer>       AudioBufferPtr;
+typedef std::shared_ptr<const AudioBuffer> ConstAudioBufferPtr;
+typedef Property<AudioBufferPtr>           AudioBufferProperty;
 
 // -----------------------------------------------------------------------------
-class Sound : public AudioBuffer {
+class AudioBuffer : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-
-  static SoundPtr create() {
-    return std::make_shared<Sound>();
-  }
-
-  static SoundPtr create_from_file(std::string const& file_name) {
-    auto sound(std::make_shared<Sound>());
-    sound->load_from_file(file_name);
-    return sound;
-  }
-
-  // ------------------------------------------------------------ public methods
-  virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "Sound"; }
-
-  void load(oalplus::Source* source);
-  void unload(oalplus::Source* source);
-
- ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
- protected:
-  void load_from_file(std::string const& file_name);
-
- private:
-  oalplus::Buffer buffer_;
-
+  virtual void load(oalplus::Source* source) = 0;
+  virtual void unload(oalplus::Source* source) = 0;
+  virtual void update(oalplus::Source* source, double time) {};
 };
 
 }
 
-#endif // SWIFT2D_SOUND_HPP
+#endif // SWIFT2D_BUFFER_HPP

@@ -20,15 +20,6 @@ void Sound::load_from_file(std::string const& file_name) {
   SF_INFO info;
   SNDFILE* file = sf_open(file_name.c_str(), SFM_READ, &info);
 
-  auto tmp(sf_get_string(file, SF_STR_TITLE));
-  if (tmp) title_  = std::string(tmp);
-  tmp = sf_get_string(file, SF_STR_ARTIST);
-  if (tmp) artist_ = std::string(tmp);
-  tmp = sf_get_string(file, SF_STR_ALBUM);
-  if (tmp) album_  = std::string(tmp);
-  tmp = sf_get_string(file, SF_STR_DATE);
-  if (tmp) year_   = std::string(tmp);
-
   int error(sf_error(file));
   if (error) {
     Logger::LOG_WARNING << "Error loading audio file \"" << file_name << "\": "
@@ -48,17 +39,14 @@ void Sound::load_from_file(std::string const& file_name) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::string const& Sound::get_title() {
-  return title_;
+void Sound::load(oalplus::Source* source) {
+  source->Buffer(buffer_);
 }
-std::string const& Sound::get_artist() {
-  return artist_;
-}
-std::string const& Sound::get_album() {
-  return album_;
-}
-std::string const& Sound::get_year() {
-  return year_;
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Sound::unload(oalplus::Source* source) {
+  source->DetachBuffers();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

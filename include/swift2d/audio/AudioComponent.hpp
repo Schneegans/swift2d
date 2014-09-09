@@ -6,12 +6,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SOUND_COMPONENT_HPP
-#define SWIFT2D_SOUND_COMPONENT_HPP
+#ifndef SWIFT2D_AUDIO_COMPONENT_HPP
+#define SWIFT2D_AUDIO_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/TransformableComponent.hpp>
-#include <swift2d/audio/Sound.hpp>
+#include <swift2d/audio/AudioBuffer.hpp>
 #include <swift2d/openal.hpp>
 
 namespace swift {
@@ -23,39 +23,39 @@ namespace swift {
 class AudioContext;
 
 // shared pointer type definition ----------------------------------------------
-class SoundComponent;
-typedef std::shared_ptr<SoundComponent>       SoundComponentPtr;
-typedef std::shared_ptr<const SoundComponent> ConstSoundComponentPtr;
+class AudioComponent;
+typedef std::shared_ptr<AudioComponent>       AudioComponentPtr;
+typedef std::shared_ptr<const AudioComponent> ConstAudioComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SoundComponent : public TransformableComponent {
+class AudioComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
   // ---------------------------------------------------------------- properties
-  SoundProperty Sound;
-  Float         Volume;
-  Float         Pitch;
+  AudioBufferProperty Sound;
+  Float               Volume;
+  Float               Pitch;
 
   // ---------------------------------------------------- construction interface
-  SoundComponent();
-  ~SoundComponent();
+  AudioComponent();
+  ~AudioComponent();
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static SoundComponentPtr create(Args&& ... a) {
-    return std::make_shared<SoundComponent>(a...);
+  static AudioComponentPtr create(Args&& ... a) {
+    return std::make_shared<AudioComponent>(a...);
   }
 
   // creates a copy from this
-  SoundComponentPtr create_copy() const {
-    return std::make_shared<SoundComponent>(*this);
+  AudioComponentPtr create_copy() const {
+    return std::make_shared<AudioComponent>(*this);
   }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "SoundComponent"; }
+  static  std::string get_type_name_static() { return "AudioComponent"; }
 
   virtual void update(double time);
 
@@ -76,4 +76,4 @@ class SoundComponent : public TransformableComponent {
 
 }
 
-#endif  // SWIFT2D_SOUND_COMPONENT_HPP
+#endif  // SWIFT2D_AUDIO_COMPONENT_HPP

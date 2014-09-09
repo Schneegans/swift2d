@@ -15,7 +15,6 @@
 #include <swift2d/components/PointLightComponent.hpp>
 #include <swift2d/components/DirectionalLightComponent.hpp>
 #include <swift2d/components/ListenerComponent.hpp>
-#include <swift2d/components/SoundComponent.hpp>
 #include <swift2d/components/CameraComponent.hpp>
 
 #endif  // SWIFT2D_INCLUDE_COMPONENTS_HPP

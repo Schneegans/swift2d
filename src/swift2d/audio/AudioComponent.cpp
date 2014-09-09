@@ -7,20 +7,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/SoundComponent.hpp>
+#include <swift2d/audio/AudioComponent.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SoundComponent::SoundComponent()
+AudioComponent::AudioComponent()
   : Volume(1.0)
   , Pitch(1.0)
   , source_(new oalplus::Source()) {
 
-  Sound.on_change().connect([&](SoundPtr const& val) {
+  Sound.on_change().connect([&](AudioBufferPtr const& val) {
     stop();
-    source_->Buffer(val->get_buffer());
   });
 
   Volume.on_change().connect([&](float val) {
@@ -34,7 +33,7 @@ SoundComponent::SoundComponent()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SoundComponent::~SoundComponent() {
+AudioComponent::~AudioComponent() {
   stop();
   source_->DetachBuffers();
   delete source_;
@@ -42,34 +41,43 @@ SoundComponent::~SoundComponent() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SoundComponent::update(double time) {
+void AudioComponent::update(double time) {
   TransformableComponent::update(time);
   auto pos(get_world_position());
   source_->Position(pos.x(), pos.y(), 0);
+
+  if (Sound()) {
+    Sound()->update(source_, time);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SoundComponent::play() {
+void AudioComponent::play() {
+  Sound()->load(source_);
   source_->Play();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SoundComponent::pause() {
+void AudioComponent::pause() {
   if (source_->State() == oalplus::SourceState::Playing) source_->Pause();
   else                                                   source_->Play();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SoundComponent::stop() {
+void AudioComponent::stop() {
   source_->Stop();
+
+  if (Sound()) {
+    Sound()->unload(source_);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SoundComponent::accept(SavableObjectVisitor& visitor) {
+void AudioComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
   visitor.add_member("Volume", Volume);
   visitor.add_object("Sound", Sound);

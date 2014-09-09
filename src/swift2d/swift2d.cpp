@@ -70,7 +70,8 @@ namespace {
       Object::init<PolygonCollisionShape>();
       Object::init<SceneObject>();
       Object::init<Sound>();
-      Object::init<SoundComponent>();
+      Object::init<Music>();
+      Object::init<AudioComponent>();
       Object::init<SpriteComponent>();
       Object::init<SpriteParticleSystemComponent>();
       Object::init<StaticBodyComponent>();
