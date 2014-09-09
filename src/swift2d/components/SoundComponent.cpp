@@ -14,7 +14,9 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 SoundComponent::SoundComponent()
-  : source_(new oalplus::Source()) {
+  : Volume(1.0)
+  , Pitch(1.0)
+  , source_(new oalplus::Source()) {
 
   Sound.on_change().connect([&](SoundPtr const& val) {
     stop();
@@ -23,6 +25,10 @@ SoundComponent::SoundComponent()
 
   Volume.on_change().connect([&](float val) {
     source_->Gain(val);
+  });
+
+  Pitch.on_change().connect([&](float val) {
+    source_->Pitch(val);
   });
 }
 

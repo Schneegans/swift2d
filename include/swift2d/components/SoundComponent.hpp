@@ -36,6 +36,7 @@ class SoundComponent : public TransformableComponent {
   // ---------------------------------------------------------------- properties
   SoundProperty Sound;
   Float         Volume;
+  Float         Pitch;
 
   // ---------------------------------------------------- construction interface
   SoundComponent();
