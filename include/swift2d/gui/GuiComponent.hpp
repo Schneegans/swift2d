@@ -14,6 +14,8 @@
 #include <swift2d/gui/GuiElement.hpp>
 #include <swift2d/gui/Interface.hpp>
 
+#include <unordered_map>
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +66,9 @@ class GuiComponent : public DrawableComponent {
   void call_javascript(std::string const& method) const;
   void call_javascript(std::string const& method, std::string const& arg) const;
   void call_javascript(std::string const& method, std::vector<std::string> const& args) const;
-  void add_javascript_callback(std::string const& callback);
+
+  void add_javascript_callback(std::string const& name);
+  void add_javascript_getter(std::string const& name, std::function<std::string()> callback);
 
   void draw(RenderContext const& ctx);
 
@@ -72,9 +76,14 @@ class GuiComponent : public DrawableComponent {
 
   virtual void accept(SavableObjectVisitor& visitor);
 
+  std::unordered_map<std::string, std::function<std::string()>> const& get_result_callbacks() const {
+    return result_callbacks_;
+  }
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  std::unordered_map<std::string, std::function<std::string()>> result_callbacks_;
   GuiElementPtr gui_element_;
 };
 

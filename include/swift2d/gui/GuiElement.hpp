@@ -56,7 +56,7 @@ class GuiElement {
   void update_mouse_position(math::vec2 const& pos) const;
 
   void call_javascript(std::string const& method, std::vector<std::string> const& args) const;
-  void add_javascript_callback(std::string const& callback);
+  void add_javascript_callback(std::string const& callback, bool with_result);
 
   void draw(RenderContext const& ctx);
 

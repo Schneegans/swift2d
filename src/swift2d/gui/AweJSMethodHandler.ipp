@@ -32,8 +32,15 @@ class AweJSMethodHandler : public Awesomium::JSMethodHandler {
 
   Awesomium::JSValue OnMethodCallWithReturnValue(
     Awesomium::WebView* caller, unsigned int remote_object_id,
-    Awesomium::WebString const& method_name, Awesomium::JSArray const& args) {
+    Awesomium::WebString const& method_name, Awesomium::JSArray const& jargs) {
 
+    auto name(Awesomium::ToString(method_name));
+    auto callback(parent_->get_result_callbacks().find(name));
+    if (callback != parent_->get_result_callbacks().end()) {
+      return Awesomium::JSValue(Awesomium::WSLit(callback->second().c_str()));
+    }
+
+    return Awesomium::JSValue::Undefined();
   }
 
  ///////////////////////////////////////////////////////////////////////////////

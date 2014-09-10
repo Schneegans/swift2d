@@ -64,8 +64,15 @@ void GuiComponent::call_javascript(std::string const& method, std::vector<std::s
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GuiComponent::add_javascript_callback(std::string const& callback) {
-  gui_element_->add_javascript_callback(callback);
+void GuiComponent::add_javascript_callback(std::string const& name) {
+  gui_element_->add_javascript_callback(name, false);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void GuiComponent::add_javascript_getter(std::string const& name, std::function<std::string()> callback) {
+  gui_element_->add_javascript_callback(name, true);
+  result_callbacks_[name] = callback;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

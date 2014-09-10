@@ -167,13 +167,13 @@ void GuiElement::call_javascript(std::string const& method, std::vector<std::str
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GuiElement::add_javascript_callback(std::string const& callback) {
+void GuiElement::add_javascript_callback(std::string const& callback, bool with_result) {
   Awesomium::JSValue o = view_->ExecuteJavascriptWithResult(
     Awesomium::WSLit("Swift2D"), Awesomium::WSLit("")
   );
 
   if (o.IsObject()) {
-    o.ToObject().SetCustomMethod(Awesomium::ToWebString(callback), false);
+    o.ToObject().SetCustomMethod(Awesomium::ToWebString(callback), with_result);
   }
 }
 
