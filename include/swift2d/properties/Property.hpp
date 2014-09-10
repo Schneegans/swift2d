@@ -54,6 +54,7 @@ class Property {
     connection_id_ = source.on_change().connect([&](T const& value){
       set(value);
     });
+    set(source.get());
   }
 
   virtual void disconnect() {

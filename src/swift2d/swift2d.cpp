@@ -45,15 +45,16 @@ namespace {
       Logger::LOG_MESSAGE << "Booting Swift2D..." << std::endl;
 
       // register all objects ------------------------------------------------
-      Object::init<DisplaySettings>();
       Object::init<AnimatedSpriteComponent>();
       Object::init<AnimatedTexture>();
+      Object::init<AudioComponent>();
       Object::init<BoxCollisionShape>();
       Object::init<CameraComponent>();
       Object::init<CircleCollisionShape>();
       Object::init<CircularShape>();
       Object::init<DeleteOnLeaveBehavior>();
       Object::init<DirectionalLightComponent>();
+      Object::init<EngineSettings>();
       Object::init<DynamicBodyComponent>();
       Object::init<GravitySourceComponent>();
       Object::init<GuiComponent>();
@@ -63,6 +64,7 @@ namespace {
       Object::init<ListenerComponent>();
       Object::init<Material>();
       Object::init<MoveBehavior>();
+      Object::init<Music>();
       Object::init<OffsetBehavior>();
       Object::init<ParticleEmitterComponent>();
       Object::init<PointLightComponent>();
@@ -70,8 +72,6 @@ namespace {
       Object::init<PolygonCollisionShape>();
       Object::init<SceneObject>();
       Object::init<Sound>();
-      Object::init<Music>();
-      Object::init<AudioComponent>();
       Object::init<SpriteComponent>();
       Object::init<SpriteParticleSystemComponent>();
       Object::init<StaticBodyComponent>();
@@ -115,7 +115,7 @@ namespace {
       TrailShader::destroy_instance();
       TrailUpdateShader::destroy_instance();
       Steam::destroy_instance();
-      Settings::destroy_instance();
+      SettingsWrapper::destroy_instance();
       Application::destroy_instance();
       Paths::destroy_instance();
 

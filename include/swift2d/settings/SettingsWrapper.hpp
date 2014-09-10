@@ -6,38 +6,46 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SETTINGS_HPP
-#define SWIFT2D_SETTINGS_HPP
+#ifndef SWIFT2D_SETTINGS_WRAPPER_HPP
+#define SWIFT2D_SETTINGS_WRAPPER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/settings/DisplaySettings.hpp>
+#include <swift2d/settings/EngineSettings.hpp>
 #include <swift2d/utils/Singleton.hpp>
 #include <swift2d/objects/SavableObject.hpp>
 
 namespace swift {
 
 // -----------------------------------------------------------------------------
-class Settings: public Singleton<Settings> {
+class SettingsWrapper: public Singleton<SettingsWrapper> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  DisplaySettings Display;
+  EngineSettingsPtr Settings;
 
-  friend class Singleton<Settings>;
+  template<typename T>
+  std::shared_ptr<T> settings() {
+    return std::dynamic_pointer_cast<T>(Settings);
+  }
+
+  void set_settings_type(std::string const& type);
+
+  friend class Singleton<SettingsWrapper>;
 
  private:
   void load();
   void save();
 
-  Settings();
-  ~Settings();
+  SettingsWrapper();
+  ~SettingsWrapper();
 
+  std::string settings_type_;
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_SETTINGS_HPP
+#endif // SWIFT2D_SETTINGS_WRAPPER_HPP

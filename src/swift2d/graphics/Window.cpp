@@ -40,11 +40,11 @@ Window::Window()
     else     close();
   });
 
-  Settings::get().Display.VSync.on_change().connect([this](bool) {
+  SettingsWrapper::get().Settings->VSync.on_change().connect([this](bool) {
     vsync_dirty_ = true;
   });
 
-  Settings::get().Display.Fullscreen.on_change().connect([this](bool) {
+  SettingsWrapper::get().Settings->Fullscreen.on_change().connect([this](bool) {
     fullscreen_dirty_ = true;
   });
 }
@@ -80,7 +80,7 @@ void Window::display() {
 
   if (vsync_dirty_) {
     vsync_dirty_ = false;
-    glfwSwapInterval(Settings::get().Display.VSync() ? 1 : 0);
+    glfwSwapInterval(SettingsWrapper::get().Settings->VSync() ? 1 : 0);
   }
 
   if (window_) {
@@ -123,7 +123,7 @@ void Window::open() {
 
   if (!window_) {
 
-    bool fullscreen = Settings::get().Display.Fullscreen();
+    bool fullscreen = SettingsWrapper::get().Settings->Fullscreen();
 
     if (fullscreen) {
       auto desktop_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());

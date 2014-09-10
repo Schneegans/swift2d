@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/settings/DisplaySettings.hpp>
+#include <swift2d/settings/EngineSettings.hpp>
 
 #include <swift2d/objects/SavableObjectVisitor.hpp>
 
@@ -15,7 +15,7 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-DisplaySettings::DisplaySettings()
+EngineSettings::EngineSettings()
   : VSync(true)
   , Fullscreen(false)
   , ShadingQuality(5)
@@ -24,7 +24,7 @@ DisplaySettings::DisplaySettings()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DisplaySettings::accept(SavableObjectVisitor& visitor) {
+void EngineSettings::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("VSync", VSync);
   visitor.add_member("Fullscreen", Fullscreen);
   visitor.add_member("ShadingQuality", ShadingQuality);

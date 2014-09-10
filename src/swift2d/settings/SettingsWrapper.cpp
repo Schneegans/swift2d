@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/settings/Settings.hpp>
+#include <swift2d/settings/SettingsWrapper.hpp>
 
 #include <swift2d/objects/SavableObjectVisitor.hpp>
 
@@ -15,29 +15,39 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Settings::Settings() {
+void SettingsWrapper::set_settings_type(std::string const& type) {
+  settings_type_ = type;
   load();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Settings::~Settings() {
+SettingsWrapper::SettingsWrapper()
+  : settings_type_("EngineSettings") {
+  load();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SettingsWrapper::~SettingsWrapper() {
   save();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Settings::load() {
-  auto d(DisplaySettings::create_from_file("display_settings.json"));
+void SettingsWrapper::load() {
+  auto d(EngineSettings::create_from_file("settings.json"));
   if (d) {
-    Display = *std::dynamic_pointer_cast<DisplaySettings>(d);
+    Settings = std::dynamic_pointer_cast<EngineSettings>(d);
+  } else {
+    Settings = std::dynamic_pointer_cast<EngineSettings>(Object::create(settings_type_));
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Settings::save() {
-  Display.save_to_file("display_settings.json");
+void SettingsWrapper::save() {
+  Settings->save_to_file("settings.json");
 }
 
 ////////////////////////////////////////////////////////////////////////////////

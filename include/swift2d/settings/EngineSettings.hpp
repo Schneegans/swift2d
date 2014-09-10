@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_DISPLAY_SETTINGS_HPP
-#define SWIFT2D_DISPLAY_SETTINGS_HPP
+#ifndef SWIFT2D_ENGINE_SETTINGS_HPP
+#define SWIFT2D_ENGINE_SETTINGS_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/objects/SavableObject.hpp>
@@ -18,12 +18,12 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class DisplaySettings;
-typedef std::shared_ptr<DisplaySettings>       DisplaySettingsPtr;
-typedef std::shared_ptr<const DisplaySettings> ConstDisplaySettingsPtr;
+class EngineSettings;
+typedef std::shared_ptr<EngineSettings>       EngineSettingsPtr;
+typedef std::shared_ptr<const EngineSettings> ConstEngineSettingsPtr;
 
 // -----------------------------------------------------------------------------
-class DisplaySettings: public SavableObject {
+class EngineSettings: public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -41,20 +41,20 @@ class DisplaySettings: public SavableObject {
 
   // ----------------------------------------------------- contruction interface
   template <typename... Args>
-  static DisplaySettingsPtr create(Args&& ... a) {
-    return std::make_shared<DisplaySettings>(a...);
+  static EngineSettingsPtr create(Args&& ... a) {
+    return std::make_shared<EngineSettings>(a...);
   }
 
-  DisplaySettings();
+  EngineSettings();
 
   void accept(SavableObjectVisitor& to);
 
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "DisplaySettings"; }
+  static  std::string get_type_name_static() { return "EngineSettings"; }
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_DISPLAY_SETTINGS_HPP
+#endif // SWIFT2D_ENGINE_SETTINGS_HPP

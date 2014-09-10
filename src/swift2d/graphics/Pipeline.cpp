@@ -13,7 +13,7 @@
 #include <swift2d/components/DrawableComponent.hpp>
 #include <swift2d/components/CameraComponent.hpp>
 #include <swift2d/graphics/Window.hpp>
-#include <swift2d/settings/Settings.hpp>
+#include <swift2d/settings/SettingsWrapper.hpp>
 #include <swift2d/utils/Logger.hpp>
 #include <swift2d/physics.hpp>
 
@@ -33,13 +33,13 @@ Pipeline::Pipeline()
   , current_load_amount_(0)
   , needs_reload_(true) {
 
-  Settings::get().Display.ShadingQuality.on_change().connect([this](int) {
+  SettingsWrapper::get().Settings->ShadingQuality.on_change().connect([this](int) {
     needs_reload_ = true;
   });
-  Settings::get().Display.SubSampling.on_change().connect([this](bool) {
+  SettingsWrapper::get().Settings->SubSampling.on_change().connect([this](bool) {
     needs_reload_ = true;
   });
-  Settings::get().Display.Fullscreen.on_change().connect([this](bool) {
+  SettingsWrapper::get().Settings->Fullscreen.on_change().connect([this](bool) {
     needs_reload_ = true;
   });
 }
@@ -91,8 +91,8 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   if (needs_reload_) {
 
     window_->get_context().pipeline        = this;
-    window_->get_context().shading_quality = Settings::get().Display.ShadingQuality();
-    window_->get_context().sub_sampling    = Settings::get().Display.SubSampling();
+    window_->get_context().shading_quality = SettingsWrapper::get().Settings->ShadingQuality();
+    window_->get_context().sub_sampling    = SettingsWrapper::get().Settings->SubSampling();
 
     if (window_->get_context().sub_sampling) {
       window_->get_context().g_buffer_size = window_->get_context().window_size / 2;

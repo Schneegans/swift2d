@@ -9,7 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/PostProcessor.hpp>
 
-#include <swift2d/settings/Settings.hpp>
+#include <swift2d/settings/SettingsWrapper.hpp>
 #include <swift2d/geometries/Quad.hpp>
 #include <swift2d/application/Paths.hpp>
 
@@ -212,7 +212,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
       g_buffer->bind_final(1);
     }
     post_fx_shader_.set_uniform("g_buffer_shaded", 1);
-    gamma_.Set(Settings::get().Display.Gamma());
+    gamma_.Set(SettingsWrapper::get().Settings->Gamma());
     Quad::get().draw(ctx);
 
     ctx.gl.Enable(oglplus::Capability::Blend);
@@ -264,7 +264,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
       use_heat_.Set(0);
     }
 
-    gamma_.Set(Settings::get().Display.Gamma());
+    gamma_.Set(SettingsWrapper::get().Settings->Gamma());
 
     dirt_.bind(ctx, start);
     dirt_tex_.Set(start);
