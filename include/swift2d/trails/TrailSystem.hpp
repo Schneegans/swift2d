@@ -50,7 +50,9 @@ class TrailSystem {
     std::vector<SerializedTrailEmitter> const& emitters,
     RenderContext const& context);
 
-  void draw_trails(RenderContext const& context);
+  void draw_trails(
+    std::vector<SerializedTrailEmitter> const& emitters,
+    RenderContext const& context);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
@@ -63,6 +65,9 @@ class TrailSystem {
   std::vector<oglplus::TransformFeedback> transform_feedbacks_;
   std::vector<oglplus::Buffer>            trail_buffers_;
   std::vector<oglplus::VertexArray>       trail_vaos_;
+
+  oglplus::Buffer*                        emitter_buffer_;
+  oglplus::VertexArray*                   emitter_vao_;
 
   std::unordered_map<TrailEmitterComponent const*, float>      trails_to_spawn_;
   bool   ping_;

@@ -48,23 +48,19 @@ void TrailSystemComponent::remove_emitter(TrailEmitterComponent const* emitter) 
 void TrailSystemComponent::draw(RenderContext const& ctx) {
   trail_system_->update_trails(serialized_emitters_, ctx);
 
-  // if (BlendAdd()) {
   ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
-  // }
 
   auto& shader(TrailShader::get());
   shader.use(ctx);
-  shader.projection. Set(ctx.projection_matrix);
-  shader.width.      Set(Width());
-  shader.start_color.Set(StartColor().vec4());
-  shader.end_color.  Set(EndColor().vec4());
-  shader.glow.       Set(math::vec2(StartGlow(), EndGlow()));
+  shader.projection.            Set(ctx.projection_matrix);
+  shader.width.                 Set(Width());
+  shader.start_color.           Set(StartColor().vec4());
+  shader.end_color.             Set(EndColor().vec4());
+  shader.glow.                  Set(math::vec2(StartGlow(), EndGlow()));
 
-  trail_system_->draw_trails(ctx);
+  trail_system_->draw_trails(serialized_emitters_, ctx);
 
-  // if (BlendAdd()) {
   ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
-  // }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

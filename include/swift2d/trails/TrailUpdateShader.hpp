@@ -29,10 +29,10 @@ class TrailUpdateShader : public Shader,
   // ------------------------------------------------------------------ uniforms
   oglplus::Lazy<oglplus::Uniform<math::vec2>>   time;
   oglplus::Lazy<oglplus::Uniform<int>>          spawn_count;
-  oglplus::Lazy<oglplus::Uniform<math::mat3>>   transform;
-  oglplus::Lazy<oglplus::Uniform<math::mat3>>   prev_1_transform;
-  oglplus::Lazy<oglplus::Uniform<math::mat3>>   prev_2_transform;
-  oglplus::Lazy<oglplus::Uniform<math::mat3>>   prev_3_transform;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>   position;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>   prev_1_position;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>   prev_2_position;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>   prev_3_position;
   oglplus::Lazy<oglplus::Uniform<float>>        life;
 
   friend class Singleton<TrailUpdateShader>;
