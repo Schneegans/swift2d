@@ -16,15 +16,19 @@ namespace swift {
 SpriteComponent::SpriteComponent()
   : Depth(0.f)
   , FullScreen(false)
-  , Material(nullptr) {}
+  , Material(nullptr)
+  , CustomMaterial(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void SpriteComponent::draw(RenderContext const& ctx) {
+
+  auto& mat(Material() ? Material() : CustomMaterial());
+
   if (FullScreen()) {
-    Material()->draw_fullscreen_quad(ctx);
+    mat->draw_fullscreen_quad(ctx);
   } else {
-    Material()->draw_quad(ctx, WorldTransform(), Depth());
+    mat->draw_quad(ctx, WorldTransform(), Depth());
   }
 }
 
@@ -41,6 +45,7 @@ void SpriteComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Depth", Depth);
   visitor.add_member("FullScreen", FullScreen);
   visitor.add_object("Material", Material);
+  visitor.add_object("CustomMaterial", CustomMaterial);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

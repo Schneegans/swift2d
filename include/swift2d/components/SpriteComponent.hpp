@@ -33,9 +33,10 @@ class SpriteComponent : public DrawableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float            Depth;
-  Bool             FullScreen;
-  MaterialProperty Material;
+  Float                 Depth;
+  Bool                  FullScreen;
+  MaterialProperty      Material;
+  MaterialBaseProperty  CustomMaterial; // used, if the above is not set
 
   // ----------------------------------------------------- contruction interface
   SpriteComponent();
