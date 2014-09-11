@@ -22,11 +22,11 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 struct TrailPoint {
-  math::vec2 pos;
-  math::vec2 life;
-  math::vec2 prev_1_pos;
-  math::vec2 prev_2_pos;
-  math::vec2 prev_3_pos;
+  math::vec2  pos;
+  math::vec2  life;
+  math::vec2  prev_1_pos;
+  math::vec2  prev_2_pos;
+  math::vec2  prev_3_pos;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -36,6 +36,8 @@ TrailSystem::TrailSystem(int max_trail_points)
   , transform_feedbacks_()
   , trail_vaos_()
   , trail_buffers_()
+  , emitter_buffer_(nullptr)
+  , emitter_vao_(nullptr)
   , ping_(true)
   , total_time_(0.0)
   , update_max_trail_points_(max_trail_points) {}
@@ -50,6 +52,9 @@ void TrailSystem::set_max_trail_points(int max_trail_points) {
 
 void TrailSystem::upload_to(RenderContext const& ctx) {
 
+  auto t(ogl::DataType::Float);
+  auto s(sizeof(TrailPoint));
+
   // allocate GPU resources
   for (int i(0); i<2; ++i) {
     transform_feedbacks_.push_back(ogl::TransformFeedback());
@@ -59,15 +64,24 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
     trail_vaos_[i].Bind();
     trail_buffers_[i].Bind(ose::Array());
 
-    auto t(ogl::DataType::Float);
-    auto s(sizeof(TrailPoint));
-
     ogl::VertexArrayAttrib(0).Pointer(2, t, false, s, (void const*) 0);
     ogl::VertexArrayAttrib(1).Pointer(2, t, false, s, (void const*) 8);
     ogl::VertexArrayAttrib(2).Pointer(2, t, false, s, (void const*) 16);
     ogl::VertexArrayAttrib(3).Pointer(2, t, false, s, (void const*) 24);
     ogl::VertexArrayAttrib(4).Pointer(2, t, false, s, (void const*) 32);
   }
+
+  emitter_buffer_ = new ogl::Buffer();
+  emitter_vao_    = new ogl::VertexArray();
+
+  emitter_vao_->Bind();
+  emitter_buffer_->Bind(ose::Array());
+  ogl::VertexArrayAttrib(0).Pointer(2, t, false, s, (void const*) 0);
+  ogl::VertexArrayAttrib(1).Pointer(2, t, false, s, (void const*) 8);
+  ogl::VertexArrayAttrib(2).Pointer(2, t, false, s, (void const*) 16);
+  ogl::VertexArrayAttrib(3).Pointer(2, t, false, s, (void const*) 24);
+  ogl::VertexArrayAttrib(4).Pointer(2, t, false, s, (void const*) 32);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -130,19 +144,21 @@ void TrailSystem::update_trails(
     // spawn new particles -----------------------------------------------------
     for (auto const& emitter: emitters) {
 
-      math::vec2 time      (frame_time * 1000.0, total_time_ * 1000.0);
-      float life           (emitter.Life);
+      if (emitter.SpawnNewPoint) {
+        math::vec2 time      (frame_time * 1000.0, total_time_ * 1000.0);
+        float life           (emitter.Life);
 
-      shader.spawn_count.         Set(1);
-      shader.transform.           Set(emitter.WorldTransform);
-      shader.prev_1_transform.    Set(emitter.Prev1WorldTransform);
-      shader.prev_2_transform.    Set(emitter.Prev2WorldTransform);
-      shader.prev_3_transform.    Set(emitter.Prev3WorldTransform);
+        shader.spawn_count.         Set(1);
+        shader.position.            Set(emitter.LastPosition);
+        shader.prev_1_position.     Set(emitter.Prev1Position);
+        shader.prev_2_position.     Set(emitter.Prev2Position);
+        shader.prev_3_position.     Set(emitter.Prev3Position);
 
-      shader.time.                Set(time);
-      shader.life.                Set(life);
+        shader.time.                Set(time);
+        shader.life.                Set(life);
 
-      ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
+        ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
+      }
 
     }
 
@@ -170,7 +186,61 @@ void TrailSystem::update_trails(
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TrailSystem::draw_trails(RenderContext const& ctx) {
+void TrailSystem::draw_trails(
+  std::vector<SerializedTrailEmitter> const& emitters,
+  RenderContext const& ctx) {
+
+  std::vector<TrailPoint> emitter_points;
+
+  for (auto const& emitter : emitters) {
+
+    TrailPoint trail_point;
+
+    trail_point.life = math::vec2();
+
+    if (emitter.LastPosition != emitter.Position) {
+      auto next_dir(emitter.LastPosition - emitter.Prev1Position);
+
+      trail_point.pos = emitter.Position + next_dir;
+      trail_point.prev_1_pos = emitter.Position;
+      trail_point.prev_2_pos = emitter.LastPosition;
+      trail_point.prev_3_pos = emitter.Prev1Position;
+
+      emitter_points.push_back(trail_point);
+
+
+      trail_point.pos = emitter.Position;
+      trail_point.prev_1_pos = emitter.LastPosition;
+      trail_point.prev_2_pos = emitter.Prev1Position;
+      trail_point.prev_3_pos = emitter.Prev2Position;
+
+      emitter_points.push_back(trail_point);
+    } else {
+      auto next_dir(emitter.Prev1Position - emitter.Prev2Position);
+
+      trail_point.pos = emitter.Position + next_dir;
+      trail_point.prev_1_pos = emitter.Position;
+      trail_point.prev_2_pos = emitter.Prev1Position;
+      trail_point.prev_3_pos = emitter.Prev2Position;
+
+      emitter_points.push_back(trail_point);
+    }
+  }
+
+  emitter_vao_->Bind();
+
+  ogl::VertexArrayAttrib(0).Enable();
+  ogl::VertexArrayAttrib(1).Enable();
+  ogl::VertexArrayAttrib(2).Enable();
+  ogl::VertexArrayAttrib(3).Enable();
+  ogl::VertexArrayAttrib(4).Enable();
+
+  emitter_buffer_->Bind(oglplus::Buffer::Target::Array);
+  oglplus::Buffer::Data(oglplus::Buffer::Target::Array, emitter_points);
+
+  ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, emitter_points.size());
+
+
   trail_vaos_[current_tf()].Bind();
 
   ogl::VertexArrayAttrib(0).Enable();

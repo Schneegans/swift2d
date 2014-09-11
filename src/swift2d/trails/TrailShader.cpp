@@ -19,16 +19,16 @@ TrailShader::TrailShader()
       // vertex shader ---------------------------------------------------------
       @include "version"
 
-      layout(location=0) in vec2 position;
-      layout(location=1) in vec2 life;
-      layout(location=2) in vec2 prev_1_position;
-      layout(location=3) in vec2 prev_2_position;
-      layout(location=4) in vec2 prev_3_position;
+      layout(location=0) in vec2  position;
+      layout(location=1) in vec2  life;
+      layout(location=2) in vec2  prev_1_position;
+      layout(location=3) in vec2  prev_2_position;
+      layout(location=4) in vec2  prev_3_position;
 
       out float varying_age;
-      out vec2 varying_prev_1_position;
-      out vec2 varying_prev_2_position;
-      out vec2 varying_prev_3_position;
+      out vec2  varying_prev_1_position;
+      out vec2  varying_prev_2_position;
+      out vec2  varying_prev_3_position;
 
       void main(void) {
         gl_Position = vec4(position, 0.0, 1.0);
@@ -37,7 +37,7 @@ TrailShader::TrailShader()
         varying_prev_2_position = prev_2_position;
         varying_prev_3_position = prev_3_position;
 
-        varying_age = life.x;
+        varying_age             = life.x;
       }
     )",
 
@@ -67,7 +67,7 @@ TrailShader::TrailShader()
       @include "version"
 
       layout(points) in;
-      layout(triangle_strip, max_vertices = 6) out;
+      layout(triangle_strip, max_vertices = 404) out;
 
       in float varying_age[];
       in vec2 varying_prev_1_position[];
@@ -77,7 +77,16 @@ TrailShader::TrailShader()
       uniform mat3 projection;
       uniform float width;
 
+      uniform int  emitter_count;
+      uniform vec2 curr_emitter_positions[100];
+      uniform vec4 prev_emitter_positions[100];
+
       out float age;
+      out float vertex_id;
+
+      float flip_ccw(vec2 v1, vec2 v2) {
+        return v1.x * v2.y - v2.x * v1.y > 0.0 ? 1.0 : -1.0;
+      }
 
       void main(void) {
         float r = width * 0.5;
@@ -85,7 +94,7 @@ TrailShader::TrailShader()
         vec2 p2_to_p3 = normalize(varying_prev_3_position[0] - varying_prev_2_position[0]);
         vec2 p2_to_p1 = normalize(varying_prev_1_position[0] - varying_prev_2_position[0]);
 
-        vec2 n1 = normalize(p2_to_p3 + p2_to_p1);
+        vec2 n1 = normalize(p2_to_p3 + p2_to_p1) * flip_ccw(p2_to_p1, p2_to_p3);
 
         vec3 v1 = projection * vec3(varying_prev_2_position[0] + r * n1, 1.0);
         vec3 v2 = projection * vec3(varying_prev_2_position[0] - r * n1, 1.0);
@@ -93,7 +102,7 @@ TrailShader::TrailShader()
         vec2 p1_to_p2 = normalize(varying_prev_2_position[0] - varying_prev_1_position[0]);
         vec2 p1_to_p0 = normalize(gl_in[0].gl_Position.xy - varying_prev_1_position[0]);
 
-        vec2 n2 = normalize(p1_to_p2 + p1_to_p0);
+        vec2 n2 = normalize(p1_to_p2 + p1_to_p0) * flip_ccw(p1_to_p0, p1_to_p2);
 
         vec3 v3 = projection * vec3(varying_prev_1_position[0] + r * n2, 1.0);
         vec3 v4 = projection * vec3(varying_prev_1_position[0] - r * n2, 1.0);
@@ -111,18 +120,7 @@ TrailShader::TrailShader()
         age = varying_age[0];
         EmitVertex();
 
-        EndPrimitive();
-
-
         gl_Position = vec4(v4, 1.0);
-        age = varying_age[0];
-        EmitVertex();
-
-        gl_Position = vec4(v2, 1.0);
-        age = varying_age[0];
-        EmitVertex();
-
-        gl_Position = vec4(v3, 1.0);
         age = varying_age[0];
         EmitVertex();
 
