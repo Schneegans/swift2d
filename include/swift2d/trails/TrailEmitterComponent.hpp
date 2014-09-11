@@ -29,10 +29,12 @@ struct SerializedTrailEmitter {
   float Life;
   float Density;
 
-  math::mat3 WorldTransform;
-  math::mat3 Prev1WorldTransform;
-  math::mat3 Prev2WorldTransform;
-  math::mat3 Prev3WorldTransform;
+  math::vec2 Position;
+  math::vec2 LastPosition;
+  math::vec2 Prev1Position;
+  math::vec2 Prev2Position;
+  math::vec2 Prev3Position;
+  bool       SpawnNewPoint;
   TrailEmitterComponent const* Self;
 };
 
@@ -63,11 +65,14 @@ class TrailEmitterComponent : public TransformableComponent {
 
  private:
 
-  math::mat3 prev_1_world_transform_;
-  math::mat3 prev_2_world_transform_;
-  math::mat3 prev_3_world_transform_;
+  math::vec2 position_;
+  math::vec2 last_position_;
+  math::vec2 prev_1_position_;
+  math::vec2 prev_2_position_;
+  math::vec2 prev_3_position_;
 
   bool first_frame_;
+  bool spawn_new_point_;
 
 };
 
