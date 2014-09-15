@@ -27,7 +27,8 @@ typedef Property<TrailEmitterComponentPtr>           TrailEmitterComponentProper
 
 struct SerializedTrailEmitter {
   float Life;
-  float Density;
+  float MaxSpawnGap;
+  float MinSpawnGap;
 
   math::vec2 Position;
   math::vec2 LastPosition;
@@ -48,7 +49,8 @@ class TrailEmitterComponent : public TransformableComponent {
   // ---------------------------------------------------------------- properties
   Float Life;
 
-  Float Density;
+  Float MaxSpawnGap;
+  Float MinSpawnGap;
 
   // ----------------------------------------------------- contruction interface
   TrailEmitterComponent();

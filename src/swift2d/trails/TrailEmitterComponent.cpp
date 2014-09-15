@@ -15,7 +15,8 @@ namespace swift {
 
 TrailEmitterComponent::TrailEmitterComponent()
   : Life                   (10.f)
-  , Density                (1.f)
+  , MinSpawnGap       (0.1f)
+  , MaxSpawnGap       (10.f)
   , position_()
   , last_position_()
   , prev_1_position_()
@@ -43,6 +44,7 @@ void TrailEmitterComponent::update(double time) {
 
   position_ = (WorldTransform() * math::vec3(0.0, 0.0, 1)).xy();
 
+  auto distance = (position_ - last_position_).Length();
 
   auto p1_to_p2 = prev_1_position_ - last_position_;
   auto p1_to_p0 = position_ - last_position_;
@@ -50,23 +52,29 @@ void TrailEmitterComponent::update(double time) {
   auto l1(p1_to_p2.Length());
   auto l2(p1_to_p0.Length());
 
-  if (l2 > 0.0) {
-    if (l1 > 0.0) {
-      float angle = std::abs(math::vec2::DotProduct(p1_to_p0 / l2, p1_to_p2 / l1));
-      if (angle < 0.9999) {
-        prev_3_position_ = prev_2_position_;
-        prev_2_position_ = prev_1_position_;
-        prev_1_position_ = last_position_;
-        last_position_ = position_;
-        spawn_new_point_ = true;
+  auto spawn_point = [&](){
+    prev_3_position_ = prev_2_position_;
+    prev_2_position_ = prev_1_position_;
+    prev_1_position_ = last_position_;
+    last_position_ = position_;
+    spawn_new_point_ = true;
+  };
+
+  if (distance > MinSpawnGap()) {
+    if (l2 > 0.0) {
+      if (l1 > 0.0) {
+        float angle = std::abs(math::vec2::DotProduct(p1_to_p0 / l2, p1_to_p2 / l1));
+        if (angle < 0.9999) {
+          spawn_point();
+        }
+      } else {
+        spawn_point();
       }
-    } else {
-      prev_3_position_ = prev_2_position_;
-      prev_2_position_ = prev_1_position_;
-      prev_1_position_ = last_position_;
-      last_position_ = position_;
-      spawn_new_point_ = true;
     }
+  }
+
+  if ((!spawn_new_point_) && (distance > MaxSpawnGap())) {
+    spawn_point();
   }
 }
 
@@ -75,7 +83,8 @@ void TrailEmitterComponent::update(double time) {
 void TrailEmitterComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
   visitor.add_member("Life", Life);
-  visitor.add_member("Density", Density);
+  visitor.add_member("MinSpawnGap", MinSpawnGap);
+  visitor.add_member("MaxSpawnGap", MaxSpawnGap);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,7 +93,8 @@ SerializedTrailEmitter TrailEmitterComponent::make_serialized_emitter() const {
   SerializedTrailEmitter result;
 
   result.Life = Life();
-  result.Density = Density();
+  result.MinSpawnGap = MinSpawnGap();
+  result.MaxSpawnGap = MaxSpawnGap();
   result.Position = position_;
   result.LastPosition = last_position_;
   result.Prev1Position = prev_1_position_;

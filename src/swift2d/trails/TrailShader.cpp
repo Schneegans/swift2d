@@ -67,7 +67,7 @@ TrailShader::TrailShader()
       @include "version"
 
       layout(points) in;
-      layout(triangle_strip, max_vertices = 404) out;
+      layout(triangle_strip, max_vertices = 4) out;
 
       in float varying_age[];
       in vec2 varying_prev_1_position[];
