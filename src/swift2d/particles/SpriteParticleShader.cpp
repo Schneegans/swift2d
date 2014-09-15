@@ -68,7 +68,8 @@ SpriteParticleShader::SpriteParticleShader()
       in float varying_age[];
       in float varying_rotation[];
 
-      uniform mat3  projection;
+      @include "camera_ubo"
+
       uniform vec2  scale;
 
       out float age;

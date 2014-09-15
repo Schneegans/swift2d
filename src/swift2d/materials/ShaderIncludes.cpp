@@ -21,6 +21,12 @@ ShaderIncludes::ShaderIncludes() {
     #version 330
   )");
 
+  add_include("camera_ubo", R"(
+    uniform mat3  projection;
+    uniform float parallax;
+  )");
+
+
   // ---------------------------------------------------------------------------
   add_include("quad_vertext_shader", R"(
     @include "version"
@@ -29,10 +35,9 @@ ShaderIncludes::ShaderIncludes() {
     layout(location=0) in vec2 position;
 
     // uniforms
-    uniform mat3  projection;
+    @include "camera_ubo"
     uniform mat3  transform;
     uniform float depth;
-    uniform float parallax;
 
     // varyings
     out vec2 texcoords;
@@ -91,7 +96,7 @@ ShaderIncludes::ShaderIncludes() {
     uniform sampler2D g_buffer_light;
 
     vec3 get_normal(vec2 texcoords) {
-      return texture2D(g_buffer_normal, texcoords).rgb * 2 - 1;
+      return normalize(texture2D(g_buffer_normal, texcoords).rgb * 2 - 1);
     }
 
     vec3 get_diffuse(vec2 texcoords) {
@@ -107,12 +112,11 @@ ShaderIncludes::ShaderIncludes() {
   // ---------------------------------------------------------------------------
   add_include("get_lit_surface_color", R"(
     vec3 get_lit_surface_color(vec2 texcoords, vec3 dir, vec4 color, float attenuation) {
-      vec3  normal      = normalize(get_normal(texcoords));
+      vec3  normal      = get_normal(texcoords);
       vec3  light_info  = get_light_info(texcoords);
       float gloss       = light_info.g;
-      float specular    = pow(dot(normal, normalize(dir + vec3(0, 0, -1))), gloss*100 + 1) * gloss;
-      // float specular    = pow(reflect(dir, normal).z, gloss*100 + 1) * gloss;
-      float diffuse     = dot(dir, normal);
+      float specular    = pow(max(0, dot(normal, normalize(dir + vec3(0, 0, -1)))), gloss*100 + 1) * gloss;
+      float diffuse     = max(0, dot(dir, normal));
       vec3  light       = (diffuse*get_diffuse(texcoords) + specular) * color.rgb * color.a;
       return (1.0-light_info.r) * attenuation * light;
     }

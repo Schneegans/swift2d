@@ -9,6 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/Compositor.hpp>
 #include <swift2d/components/DrawableComponent.hpp>
+#include <swift2d/components/DirectionalLightComponent.hpp>
 #include <swift2d/geometries/Quad.hpp>
 #include <swift2d/gui/Interface.hpp>
 #include <swift2d/physics/Physics.hpp>
@@ -36,12 +37,39 @@ Compositor::Compositor(RenderContext const& ctx)
 
         @include "gbuffer_input"
 
+        uniform vec3 light_dirs[10];
+        uniform vec4 light_colors[10];
+        uniform int  light_count;
+
         in vec2 texcoords;
+
+        @include "get_lit_surface_color"
 
         layout (location = 0) out vec3 fragColor;
 
         void main(void){
-          fragColor = get_light_info(texcoords).r * get_diffuse(texcoords);
+          vec3  light_info  = get_light_info(texcoords);
+          float emit = light_info.r;
+          vec3 color = get_diffuse(texcoords);
+
+          if (light_count > 0) {
+            vec3  normal      = get_normal(texcoords);
+            float gloss       = light_info.g;
+            vec3 light_color  = vec3(0);
+
+            for (int i=0; i<light_count; ++i) {
+              float specular    = max(0, pow(dot(normal, normalize(light_dirs[i] + vec3(0, 0, -1))), gloss*100 + 1) * gloss);
+              float diffuse     = max(0, dot(light_dirs[i], normal));
+              light_color      += (diffuse*color + specular) * light_colors[i].rgb * light_colors[i].a;
+            }
+
+            color = mix(light_color, color, emit);
+
+          } else {
+            color = color * emit;
+          }
+
+          fragColor = color;
         }
     )");
   }
@@ -90,7 +118,24 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
 
     background_shader_->use(ctx);
     background_shader_->set_uniform("g_buffer_diffuse", 1);
+    background_shader_->set_uniform("g_buffer_normal", 2);
     background_shader_->set_uniform("g_buffer_light", 3);
+
+    std::vector<math::vec3> light_dirs;
+    std::vector<math::vec4> light_colors;
+
+    for (auto& light: scene->sun_lights) {
+      if (light_dirs.size() < 10) {
+        light_dirs.push_back(light.second->Direction());
+        light_colors.push_back(light.second->Color().vec4());
+      }
+    }
+
+    background_shader_->set_uniform_array("light_dirs",   light_dirs);
+    background_shader_->set_uniform_array("light_colors", light_colors);
+    background_shader_->set_uniform("light_count",  (int)light_dirs.size());
+
+
     Quad::get().draw(ctx);
 
     for (auto& light: scene->lights) {

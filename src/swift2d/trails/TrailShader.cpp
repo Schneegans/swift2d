@@ -74,7 +74,7 @@ TrailShader::TrailShader()
       in vec2 varying_prev_2_position[];
       in vec2 varying_prev_3_position[];
 
-      uniform mat3 projection;
+      @include "camera_ubo"
       uniform float width;
 
       uniform int  emitter_count;
