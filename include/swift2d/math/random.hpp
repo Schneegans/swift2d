@@ -9,6 +9,8 @@
 #ifndef SWIFT2D_MATH_RANDOM_HPP
 #define SWIFT2D_MATH_RANDOM_HPP
 
+#include <cstdlib>
+
 namespace swift {
 namespace math {
 namespace random {
@@ -35,17 +37,12 @@ unsigned int get_seed();
  *
  * \return        A random floating point value.
  */
-float get(float begin, float end);
+ template<typename T>
+T get(T begin, T end) {
+    return static_cast<T>(std::rand()) * (end - begin) / RAND_MAX + begin;
+}
 
-/**
- * Returns a random integer value.
- *
- * \param   begin Smallest possible result.
- * \param   end   Largets possible result.
- *
- * \return        A random integer value.
- */
-int get(int begin, int end);
+
 }
 }
 }
