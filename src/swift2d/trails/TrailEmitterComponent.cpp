@@ -18,6 +18,8 @@ TrailEmitterComponent::TrailEmitterComponent()
   , MinSpawnGap       (0.1f)
   , MaxSpawnGap       (10.f)
   , position_()
+  , time_since_last_spawn_(0.f)
+  , time_since_prev_1_spawn_(0.f)
   , last_position_()
   , prev_1_position_()
   , prev_2_position_()
@@ -36,6 +38,9 @@ void TrailEmitterComponent::update(double time) {
     prev_1_position_ = (WorldTransform() * math::vec3(0.0, 0.0, 1)).xy();
     first_frame_ = false;
   }
+
+  time_since_last_spawn_ += time;
+  time_since_prev_1_spawn_ += time;
 
   TransformableComponent::update(time);
 
@@ -58,6 +63,8 @@ void TrailEmitterComponent::update(double time) {
     prev_1_position_ = last_position_;
     last_position_ = position_;
     spawn_new_point_ = true;
+    time_since_prev_1_spawn_ = time_since_last_spawn_;
+    time_since_last_spawn_ = 0.f;
   };
 
   if (distance > MinSpawnGap()) {
@@ -96,6 +103,8 @@ SerializedTrailEmitter TrailEmitterComponent::make_serialized_emitter() const {
   result.MinSpawnGap = MinSpawnGap();
   result.MaxSpawnGap = MaxSpawnGap();
   result.Position = position_;
+  result.TimeSinceLastSpawn = time_since_last_spawn_;
+  result.TimeSincePrev1Spawn = time_since_prev_1_spawn_;
   result.LastPosition = last_position_;
   result.Prev1Position = prev_1_position_;
   result.Prev2Position = prev_2_position_;

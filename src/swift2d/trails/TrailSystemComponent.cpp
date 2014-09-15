@@ -21,7 +21,7 @@ namespace swift {
 TrailSystemComponent::TrailSystemComponent()
   : MaxCount(1000)
   , Depth(0.f)
-  , Width(1.f)
+  , StartWidth(1.f),               EndWidth(1.f)
   , StartGlow(0.f),                EndGlow(0.f)
   , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 0))
   , trail_system_(TrailSystem::create(MaxCount())) {
@@ -53,10 +53,16 @@ void TrailSystemComponent::draw(RenderContext const& ctx) {
   auto& shader(TrailShader::get());
   shader.use(ctx);
   shader.projection.            Set(ctx.projection_matrix);
-  shader.width.                 Set(Width());
+  shader.start_width.           Set(StartWidth());
+  shader.end_width.             Set(EndWidth());
   shader.start_color.           Set(StartColor().vec4());
   shader.end_color.             Set(EndColor().vec4());
   shader.glow.                  Set(math::vec2(StartGlow(), EndGlow()));
+
+  if (Texture()) {
+    Texture()->bind(ctx, 0);
+    shader.texture.Set(0);
+  }
 
   trail_system_->draw_trails(serialized_emitters_, ctx);
 
@@ -80,11 +86,13 @@ void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
   DrawableComponent::accept(visitor);
   visitor.add_member("MaxCount",    MaxCount);
   visitor.add_member("Depth",       Depth);
-  visitor.add_member("Width",       Width);
+  visitor.add_member("StartWidth",  StartWidth);
+  visitor.add_member("EndWidth",    EndWidth);
   visitor.add_member("StartGlow",   StartGlow);
   visitor.add_member("EndGlow",     EndGlow);
   visitor.add_member("StartColor",  StartColor);
   visitor.add_member("EndColor",    EndColor);
+  visitor.add_object("Texture",     Texture);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -28,10 +28,12 @@ class TrailShader : public Shader,
 
   // ------------------------------------------------------------------ uniforms
   oglplus::Lazy<oglplus::Uniform<math::mat3>>  projection;
-  oglplus::Lazy<oglplus::Uniform<float>>       width;
+  oglplus::Lazy<oglplus::Uniform<float>>       start_width;
+  oglplus::Lazy<oglplus::Uniform<float>>       end_width;
   oglplus::Lazy<oglplus::Uniform<math::vec4>>  start_color;
   oglplus::Lazy<oglplus::Uniform<math::vec4>>  end_color;
   oglplus::Lazy<oglplus::Uniform<math::vec2>>  glow;
+  oglplus::Lazy<oglplus::Uniform<int>>         texture;
 
   friend class Singleton<TrailShader>;
 

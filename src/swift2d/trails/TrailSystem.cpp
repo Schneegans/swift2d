@@ -24,6 +24,7 @@ namespace swift {
 struct TrailPoint {
   math::vec2  pos;
   math::vec2  life;
+  math::vec2  prev_u_texcoords; // last and prev_1
   math::vec2  prev_1_pos;
   math::vec2  prev_2_pos;
   math::vec2  prev_3_pos;
@@ -69,6 +70,7 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
     ogl::VertexArrayAttrib(2).Pointer(2, t, false, s, (void const*) 16);
     ogl::VertexArrayAttrib(3).Pointer(2, t, false, s, (void const*) 24);
     ogl::VertexArrayAttrib(4).Pointer(2, t, false, s, (void const*) 32);
+    ogl::VertexArrayAttrib(5).Pointer(2, t, false, s, (void const*) 40);
   }
 
   emitter_buffer_ = new ogl::Buffer();
@@ -81,6 +83,7 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
   ogl::VertexArrayAttrib(2).Pointer(2, t, false, s, (void const*) 16);
   ogl::VertexArrayAttrib(3).Pointer(2, t, false, s, (void const*) 24);
   ogl::VertexArrayAttrib(4).Pointer(2, t, false, s, (void const*) 32);
+  ogl::VertexArrayAttrib(5).Pointer(2, t, false, s, (void const*) 40);
 
 }
 
@@ -107,6 +110,7 @@ void TrailSystem::update_trails(
       std::vector<TrailPoint> data(update_max_trail_points_);
       data.front().pos  = math::vec2(0.f, 0.f);
       data.front().life = math::vec2(0.f, 0.f);
+      data.front().prev_u_texcoords = math::vec2(0.f, 0.f);
       data.front().prev_1_pos = math::vec2(0.f, 0.f);
       data.front().prev_2_pos = math::vec2(0.f, 0.f);
       data.front().prev_3_pos = math::vec2(0.f, 0.f);
@@ -137,6 +141,7 @@ void TrailSystem::update_trails(
   ogl::VertexArrayAttrib(2).Enable();
   ogl::VertexArrayAttrib(3).Enable();
   ogl::VertexArrayAttrib(4).Enable();
+  ogl::VertexArrayAttrib(5).Enable();
 
   transform_feedbacks_[current_tf()].BeginPoints();
   {
@@ -148,14 +153,19 @@ void TrailSystem::update_trails(
         math::vec2 time      (frame_time * 1000.0, total_time_ * 1000.0);
         float life           (emitter.Life);
 
-        shader.spawn_count.         Set(1);
-        shader.position.            Set(emitter.LastPosition);
-        shader.prev_1_position.     Set(emitter.Prev1Position);
-        shader.prev_2_position.     Set(emitter.Prev2Position);
-        shader.prev_3_position.     Set(emitter.Prev3Position);
+        shader.spawn_count.            Set(1);
+        shader.position.               Set(emitter.LastPosition);
+        shader.time_since_prev_spawns. Set(math::vec2(
+                                            emitter.TimeSinceLastSpawn,
+                                            emitter.TimeSincePrev1Spawn
+                                           )
+                                          );
+        shader.prev_1_position.        Set(emitter.Prev1Position);
+        shader.prev_2_position.        Set(emitter.Prev2Position);
+        shader.prev_3_position.        Set(emitter.Prev3Position);
 
-        shader.time.                Set(time);
-        shader.life.                Set(life);
+        shader.time.                   Set(time);
+        shader.life.                   Set(life);
 
         ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       }
@@ -180,6 +190,7 @@ void TrailSystem::update_trails(
   ogl::VertexArrayAttrib(2).Disable();
   ogl::VertexArrayAttrib(3).Disable();
   ogl::VertexArrayAttrib(4).Disable();
+  ogl::VertexArrayAttrib(5).Disable();
 
   ctx.gl.Disable(ogl::Capability::RasterizerDiscard);
 }
@@ -210,6 +221,9 @@ void TrailSystem::draw_trails(
 
 
       trail_point.pos = emitter.Position;
+      trail_point.prev_u_texcoords = math::vec2(0.0,
+                                                emitter.TimeSinceLastSpawn/
+                                                emitter.Life);
       trail_point.prev_1_pos = emitter.LastPosition;
       trail_point.prev_2_pos = emitter.Prev1Position;
       trail_point.prev_3_pos = emitter.Prev2Position;
@@ -219,6 +233,9 @@ void TrailSystem::draw_trails(
       auto next_dir(emitter.Prev1Position - emitter.Prev2Position);
 
       trail_point.pos = emitter.Position + next_dir;
+      trail_point.prev_u_texcoords = math::vec2(0.0,
+                                                emitter.TimeSinceLastSpawn/
+                                                emitter.Life);
       trail_point.prev_1_pos = emitter.Position;
       trail_point.prev_2_pos = emitter.Prev1Position;
       trail_point.prev_3_pos = emitter.Prev2Position;
@@ -234,6 +251,7 @@ void TrailSystem::draw_trails(
   ogl::VertexArrayAttrib(2).Enable();
   ogl::VertexArrayAttrib(3).Enable();
   ogl::VertexArrayAttrib(4).Enable();
+  ogl::VertexArrayAttrib(5).Enable();
 
   emitter_buffer_->Bind(oglplus::Buffer::Target::Array);
   oglplus::Buffer::Data(oglplus::Buffer::Target::Array, emitter_points);
@@ -248,6 +266,7 @@ void TrailSystem::draw_trails(
   ogl::VertexArrayAttrib(2).Enable();
   ogl::VertexArrayAttrib(3).Enable();
   ogl::VertexArrayAttrib(4).Enable();
+  ogl::VertexArrayAttrib(5).Enable();
 
   ctx.gl.DrawTransformFeedback(
     ogl::PrimitiveType::Points, transform_feedbacks_[current_tf()]
@@ -258,6 +277,7 @@ void TrailSystem::draw_trails(
   ogl::VertexArrayAttrib(2).Disable();
   ogl::VertexArrayAttrib(3).Disable();
   ogl::VertexArrayAttrib(4).Disable();
+  ogl::VertexArrayAttrib(5).Disable();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

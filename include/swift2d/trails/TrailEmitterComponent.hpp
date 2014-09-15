@@ -31,6 +31,8 @@ struct SerializedTrailEmitter {
   float MinSpawnGap;
 
   math::vec2 Position;
+  float      TimeSinceLastSpawn;
+  float      TimeSincePrev1Spawn;
   math::vec2 LastPosition;
   math::vec2 Prev1Position;
   math::vec2 Prev2Position;
@@ -68,6 +70,8 @@ class TrailEmitterComponent : public TransformableComponent {
  private:
 
   math::vec2 position_;
+  float      time_since_last_spawn_;
+  float      time_since_prev_1_spawn_;
   math::vec2 last_position_;
   math::vec2 prev_1_position_;
   math::vec2 prev_2_position_;
