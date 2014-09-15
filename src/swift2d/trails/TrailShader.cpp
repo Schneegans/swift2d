@@ -81,7 +81,8 @@ TrailShader::TrailShader()
       in vec2 varying_prev_3_position[];
       in vec2 varying_prev_u_texcoods[];
 
-      uniform mat3 projection;
+
+      @include "camera_ubo"
       uniform float start_width;
       uniform float end_width;
 

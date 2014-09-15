@@ -23,7 +23,7 @@ PointParticleShader::PointParticleShader()
       layout(location=1) in vec2 velocity;
       layout(location=2) in vec2 life;
 
-      uniform mat3 projection;
+      @include "camera_ubo"
 
       out float age;
 

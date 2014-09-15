@@ -27,6 +27,9 @@ typedef std::shared_ptr<GravitySourceComponent> GravitySourceComponentPtr;
 class CameraComponent;
 typedef std::shared_ptr<CameraComponent> CameraComponentPtr;
 
+class DirectionalLightComponent;
+typedef std::shared_ptr<DirectionalLightComponent> DirectionalLightComponentPtr;
+
 // shared pointer type definition ----------------------------------------------
 class SerializedScene;
 typedef std::shared_ptr<SerializedScene>       SerializedScenePtr;
@@ -43,10 +46,11 @@ class SerializedScene {
     return std::make_shared<SerializedScene>();
   }
 
-  std::multimap<float, DrawableComponentPtr> objects;
-  std::multimap<float, DrawableComponentPtr> lights;
-  std::multimap<float, DrawableComponentPtr> heat_objects;
-  std::multimap<float, DrawableComponentPtr> gui_elements;
+  std::multimap<float, DrawableComponentPtr>          objects;
+  std::multimap<float, DrawableComponentPtr>          lights;
+  std::multimap<float, DirectionalLightComponentPtr>  sun_lights;
+  std::multimap<float, DrawableComponentPtr>          heat_objects;
+  std::multimap<float, DrawableComponentPtr>          gui_elements;
 
   CameraComponentPtr camera;
 

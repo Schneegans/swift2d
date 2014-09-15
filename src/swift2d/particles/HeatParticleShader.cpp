@@ -60,7 +60,7 @@ HeatParticleShader::HeatParticleShader()
 
       in float varying_age[];
 
-      uniform mat3 projection;
+      @include "camera_ubo"
       uniform vec2 scale;
 
       out float age;

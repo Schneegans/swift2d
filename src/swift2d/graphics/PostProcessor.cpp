@@ -24,7 +24,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
     )",
     ctx.shading_quality <= 1 ?
     R"(
-      // fragment shader -----------------------------------------------------
+      // fragment shader -------------------------------------------------------
       @include "version"
 
       in vec2 texcoords;
@@ -167,7 +167,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
     ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
-        0, p_format, oglplus::PixelDataType::Float, nullptr)
+               0, p_format, oglplus::PixelDataType::Float, nullptr)
       .MinFilter(oglplus::TextureMinFilter::Linear)
       .MagFilter(oglplus::TextureMagFilter::Linear)
       .WrapS(oglplus::TextureWrap::MirroredRepeat)

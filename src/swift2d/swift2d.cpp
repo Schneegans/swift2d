@@ -13,7 +13,6 @@
 #include <swift2d/openal.hpp>
 
 // singletons which are not included by default
-#include <swift2d/materials/DirectionalLightShader.hpp>
 #include <swift2d/materials/PointLightShader.hpp>
 #include <swift2d/materials/ShaderIncludes.hpp>
 #include <swift2d/materials/MaterialShaderFactory.hpp>
@@ -97,7 +96,6 @@ namespace {
 
       DefaultAnimatedTexture::destroy_instance();
       DefaultTexture::destroy_instance();
-      DirectionalLightShader::destroy_instance();
       GuiShader::destroy_instance();
       HeatParticleShader::destroy_instance();
       LightParticleShader::destroy_instance();
