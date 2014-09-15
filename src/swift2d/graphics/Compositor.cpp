@@ -48,14 +48,14 @@ Compositor::Compositor(RenderContext const& ctx)
         layout (location = 0) out vec3 fragColor;
 
         void main(void){
-          vec3  light_info  = get_light_info(texcoords);
-          float emit = light_info.r;
-          vec3 color = get_diffuse(texcoords);
+          vec3  light_info = get_light_info(texcoords);
+          float emit       = light_info.r;
+          vec3  color      = get_diffuse(texcoords);
 
           if (light_count > 0) {
-            vec3  normal      = get_normal(texcoords);
-            float gloss       = light_info.g;
-            vec3 light_color  = vec3(0);
+            vec3  normal     = get_normal(texcoords);
+            float gloss      = light_info.g;
+            vec3 light_color = vec3(0);
 
             for (int i=0; i<light_count; ++i) {
               float specular    = max(0, pow(dot(normal, normalize(light_dirs[i] + vec3(0, 0, -1))), gloss*100 + 1) * gloss);
