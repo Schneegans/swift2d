@@ -23,23 +23,17 @@ Shader::Shader(std::string const& v_source,
   , v_source_(v_source)
   , f_source_(f_source)
   , g_source_(g_source)
-  , transform_feedback_varyings_(transform_feedback_varyings) {
-
-  ShaderIncludes::get().process(v_source_);
-  ShaderIncludes::get().process(f_source_);
-  ShaderIncludes::get().process(g_source_);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-Shader::~Shader() {
-}
+  , transform_feedback_varyings_(transform_feedback_varyings) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Shader::upload_to(RenderContext const& ctx) const {
 
   dirty_ = false;
+
+  ShaderIncludes::get().process(v_source_);
+  ShaderIncludes::get().process(f_source_);
+  ShaderIncludes::get().process(g_source_);
 
   // set the vertex shader source
   v_shader_.Source(v_source_);

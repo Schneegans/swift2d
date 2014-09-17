@@ -10,6 +10,7 @@
 #include <swift2d/graphics/PostProcessor.hpp>
 
 #include <swift2d/settings/SettingsWrapper.hpp>
+#include <swift2d/materials/ShaderIncludes.hpp>
 #include <swift2d/geometries/Quad.hpp>
 #include <swift2d/application/Paths.hpp>
 
@@ -160,6 +161,23 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   , heat_effect_(ctx)
   , dirt_(Paths::get().resource("images", "dirt.jpg")) {
 
+  // add shader includes -------------------------------------------------------
+  ShaderIncludes::get().add_include("get_vignette", R"(
+
+    uniform vec4  vignette_color;
+    uniform float vignette_coverage;
+    uniform float vignette_softness;
+
+    float get_vignette() {
+      // inigo quilez's great vigneting effect!
+      float a = -vignette_coverage/vignette_softness;
+      float b = 1.0/vignette_softness;
+      vec2 q = texcoords;
+      return clamp(a + b*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.1 ), 0, 1) * vignette_color.a + (1-vignette_color.a);
+    }
+  )");
+
+  // helper lambda -------------------------------------------------------------
   auto create_texture = [&](
     oglplus::Texture& tex, int width, int height,
     oglplus::enums::PixelDataInternalFormat i_format,
