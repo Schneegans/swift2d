@@ -1,0 +1,63 @@
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// This file is part of Swift2D.                                              //
+//                                                                            //
+// Copyright: (c) 2011-2014 Simon Schneegans & Felix Lauer                    //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+// includes  -------------------------------------------------------------------
+#include <swift2d/trails/TexturedTrailShader.hpp>
+
+namespace swift {
+
+////////////////////////////////////////////////////////////////////////////////
+
+TexturedTrailShader::TexturedTrailShader()
+  : TrailShaderBase(),
+    Shader(
+    R"(
+      @include "trail_vertex_shader"
+    )",
+
+    R"(
+      // fragment shader -------------------------------------------------------
+      @include "version"
+
+      in vec2 texcoords;
+
+      uniform vec4 start_color;
+      uniform vec4 end_color;
+      uniform vec2 glow;
+
+      uniform sampler2D texture;
+
+      @include "write_gbuffer"
+
+      void main(void) {
+        vec4 color = texture2D(texture, texcoords);
+        vec4  c = mix(start_color * color, end_color * color, texcoords.x);
+        float g = mix(glow.x,      glow.y,    texcoords.x);
+
+        write_gbuffer(c, g);
+      }
+    )",
+
+
+    R"(
+      // geometry shader -------------------------------------------------------
+      @include "trail_fragment_shader"
+    )"
+  )
+  , projection(get_uniform<math::mat3>("projection"))
+  , start_width(get_uniform<float>("start_width"))
+  , end_width(get_uniform<float>("end_width"))
+  , start_color(get_uniform<math::vec4>("start_color"))
+  , end_color(get_uniform<math::vec4>("end_color"))
+  , glow(get_uniform<math::vec2>("glow"))
+  , texture(get_uniform<int>("texture"))
+  {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+}

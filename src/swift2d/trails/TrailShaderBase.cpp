@@ -7,14 +7,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/trails/TrailShader.hpp>
+#include <swift2d/trails/TrailShaderBase.hpp>
+#include <swift2d/materials/ShaderIncludes.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TrailShader::TrailShader()
-  : Shader(
+TrailShaderBase::TrailShaderBase() {
+
+  ShaderIncludes::get().add_include("trail_vertex_shader",
     R"(
       // vertex shader ---------------------------------------------------------
       @include "version"
@@ -42,32 +44,9 @@ TrailShader::TrailShader()
 
         varying_age             = life.x;
       }
-    )",
+    )");
 
-    R"(
-      // fragment shader -------------------------------------------------------
-      @include "version"
-
-      in vec2 texcoords;
-
-      uniform vec4 start_color;
-      uniform vec4 end_color;
-      uniform vec2 glow;
-
-      uniform sampler2D texture;
-
-      @include "write_gbuffer"
-
-      void main(void) {
-        vec4 color = texture2D(texture, texcoords);
-        vec4  c = mix(start_color * color, end_color * color, texcoords.x);
-        float g = mix(glow.x,      glow.y,    texcoords.x);
-
-        write_gbuffer(c, g);
-      }
-    )",
-
-
+  ShaderIncludes::get().add_include("trail_fragment_shader",
     R"(
       // geometry shader -------------------------------------------------------
       @include "version"
@@ -134,16 +113,7 @@ TrailShader::TrailShader()
         EndPrimitive();
       }
     )"
-  )
-  , projection(get_uniform<math::mat3>("projection"))
-  , start_width(get_uniform<float>("start_width"))
-  , end_width(get_uniform<float>("end_width"))
-  , start_color(get_uniform<math::vec4>("start_color"))
-  , end_color(get_uniform<math::vec4>("end_color"))
-  , glow(get_uniform<math::vec2>("glow"))
-  , texture(get_uniform<int>("texture"))
-  {}
-
-////////////////////////////////////////////////////////////////////////////////
-
+  );
 }
+}
+
