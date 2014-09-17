@@ -6,10 +6,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TRAIL_SHADER_HPP
-#define SWIFT2D_TRAIL_SHADER_HPP
+#ifndef SWIFT2D_TEXTURED_TRAIL_SHADER_HPP
+#define SWIFT2D_TEXTURED_TRAIL_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
+#include <swift2d/trails/TrailShaderBase.hpp>
 #include <swift2d/materials/Shader.hpp>
 #include <swift2d/utils/Singleton.hpp>
 
@@ -19,8 +20,9 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class TrailShader : public Shader,
-                    public Singleton<TrailShader> {
+class TexturedTrailShader : public TrailShaderBase,
+                            public Shader,
+                            public Singleton<TexturedTrailShader> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -35,18 +37,18 @@ class TrailShader : public Shader,
   oglplus::Lazy<oglplus::Uniform<math::vec2>>  glow;
   oglplus::Lazy<oglplus::Uniform<int>>         texture;
 
-  friend class Singleton<TrailShader>;
+  friend class Singleton<TexturedTrailShader>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  TrailShader();
-  ~TrailShader() {};
+  TexturedTrailShader();
+  ~TexturedTrailShader() {};
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_TRAIL_SHADER_HPP
+#endif // SWIFT2D_TEXTURED_TRAIL_SHADER_HPP
