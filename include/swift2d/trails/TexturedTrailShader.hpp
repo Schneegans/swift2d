@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_COLORED_TRAIL_SHADER_HPP
-#define SWIFT2D_COLORED_TRAIL_SHADER_HPP
+#ifndef SWIFT2D_TEXTURED_TRAIL_SHADER_HPP
+#define SWIFT2D_TEXTURED_TRAIL_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/trails/TrailShaderBase.hpp>
@@ -20,9 +20,9 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class ColoredTrailShader : public TrailShaderBase,
-                          public Shader,
-                           public Singleton<ColoredTrailShader> {
+class TexturedTrailShader : public TrailShaderBase,
+                            public Shader,
+                            public Singleton<TexturedTrailShader> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -35,19 +35,20 @@ class ColoredTrailShader : public TrailShaderBase,
   oglplus::Lazy<oglplus::Uniform<math::vec4>>  start_color;
   oglplus::Lazy<oglplus::Uniform<math::vec4>>  end_color;
   oglplus::Lazy<oglplus::Uniform<math::vec2>>  glow;
+  oglplus::Lazy<oglplus::Uniform<int>>         texture;
 
-  friend class Singleton<ColoredTrailShader>;
+  friend class Singleton<TexturedTrailShader>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  ColoredTrailShader();
-  ~ColoredTrailShader() {};
+  TexturedTrailShader();
+  ~TexturedTrailShader() {};
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_COLORED_TRAIL_SHADER_HPP
+#endif // SWIFT2D_TEXTURED_TRAIL_SHADER_HPP

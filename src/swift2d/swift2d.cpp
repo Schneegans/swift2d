@@ -24,7 +24,8 @@
 #include <swift2d/particles/ParticleUpdateShader.hpp>
 #include <swift2d/particles/SpriteParticleShader.hpp>
 #include <swift2d/trails/TrailUpdateShader.hpp>
-#include <swift2d/trails/TrailShader.hpp>
+#include <swift2d/trails/TexturedTrailShader.hpp>
+#include <swift2d/trails/ColoredTrailShader.hpp>
 #include <swift2d/textures/NoiseTexture.hpp>
 #include <swift2d/textures/DefaultTexture.hpp>
 #include <swift2d/textures/DefaultAnimatedTexture.hpp>
@@ -112,7 +113,8 @@ namespace {
       SoundDatabase::destroy_instance();
       SpriteParticleShader::destroy_instance();
       TextureDatabase::destroy_instance();
-      TrailShader::destroy_instance();
+      TexturedTrailShader::destroy_instance();
+      ColoredTrailShader::destroy_instance();
       TrailUpdateShader::destroy_instance();
       Steam::destroy_instance();
       SettingsWrapper::destroy_instance();
