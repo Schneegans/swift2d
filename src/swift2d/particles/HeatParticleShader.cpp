@@ -60,7 +60,7 @@ HeatParticleShader::HeatParticleShader()
 
       in float varying_age[];
 
-      @include "camera_ubo"
+      @include "camera_uniforms"
       uniform vec2 scale;
 
       out float age;

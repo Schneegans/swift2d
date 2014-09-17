@@ -68,7 +68,7 @@ SpriteParticleShader::SpriteParticleShader()
       in float varying_age[];
       in float varying_rotation[];
 
-      @include "camera_ubo"
+      @include "camera_uniforms"
 
       uniform vec2  scale;
 

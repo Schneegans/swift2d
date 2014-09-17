@@ -21,7 +21,7 @@ ShaderIncludes::ShaderIncludes() {
     #version 330
   )");
 
-  add_include("camera_ubo", R"(
+  add_include("camera_uniforms", R"(
     uniform mat3  projection;
     uniform float parallax;
   )");
@@ -35,7 +35,7 @@ ShaderIncludes::ShaderIncludes() {
     layout(location=0) in vec2 position;
 
     // uniforms
-    @include "camera_ubo"
+    @include "camera_uniforms"
     uniform mat3  transform;
     uniform float depth;
 
@@ -170,22 +170,6 @@ ShaderIncludes::ShaderIncludes() {
         }
       }
       EndPrimitive();
-    }
-  )");
-
-  // ---------------------------------------------------------------------------
-  add_include("get_vignette", R"(
-
-    uniform vec4  vignette_color;
-    uniform float vignette_coverage;
-    uniform float vignette_softness;
-
-    float get_vignette() {
-      // inigo quilez's great vigneting effect!
-      float a = -vignette_coverage/vignette_softness;
-      float b = 1.0/vignette_softness;
-      vec2 q = texcoords;
-      return clamp(a + b*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.1 ), 0, 1) * vignette_color.a + (1-vignette_color.a);
     }
   )");
 }

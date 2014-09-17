@@ -44,8 +44,6 @@ class Shader {
          std::string const& g_source = "",
          std::vector<std::string> const& transform_feedback_varyings = {});
 
-  ~Shader();
-
   // ------------------------------------------------------------ public methods
 
   // uses the Shader on the given context.
@@ -78,9 +76,9 @@ class Shader {
 
   mutable bool dirty_;
 
-  std::string v_source_;
-  std::string f_source_;
-  std::string g_source_;
+  mutable std::string v_source_;
+  mutable std::string f_source_;
+  mutable std::string g_source_;
   std::vector<std::string> transform_feedback_varyings_;
 };
 

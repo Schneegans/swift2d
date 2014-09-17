@@ -82,7 +82,7 @@ TrailShader::TrailShader()
       in vec2 varying_prev_u_texcoods[];
 
 
-      @include "camera_ubo"
+      @include "camera_uniforms"
       uniform float start_width;
       uniform float end_width;
 
