@@ -31,11 +31,12 @@ TexturedTrailShader::TexturedTrailShader()
       uniform vec2 glow;
 
       uniform sampler2D texture;
+      uniform float texture_repeat;
 
       @include "write_gbuffer"
 
       void main(void) {
-        vec4 color = texture2D(texture, texcoords);
+        vec4 color = texture2D(texture, vec2(texcoords.x * texture_repeat, texcoords.y));
         vec4  c = mix(start_color * color, end_color * color, texcoords.x);
         float g = mix(glow.x,      glow.y,    texcoords.x);
 
@@ -56,6 +57,7 @@ TexturedTrailShader::TexturedTrailShader()
   , end_color(get_uniform<math::vec4>("end_color"))
   , glow(get_uniform<math::vec2>("glow"))
   , texture(get_uniform<int>("texture"))
+  , texture_repeat(get_uniform<float>("texture_repeat"))
   {}
 
 ////////////////////////////////////////////////////////////////////////////////
