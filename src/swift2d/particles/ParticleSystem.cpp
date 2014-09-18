@@ -57,13 +57,10 @@ void ParticleSystem::upload_to(RenderContext const& ctx) {
     particle_vaos_[i].Bind();
     particle_buffers_[i].Bind(ose::Array());
 
-    auto t(ogl::DataType::Float);
-    auto s(sizeof(Particle));
-
-    ogl::VertexArrayAttrib(0).Pointer(2, t, false, s, (void const*) 0);
-    ogl::VertexArrayAttrib(1).Pointer(2, t, false, s, (void const*) 8);
-    ogl::VertexArrayAttrib(2).Pointer(2, t, false, s, (void const*)16);
-    ogl::VertexArrayAttrib(3).Pointer(2, t, false, s, (void const*)24);
+    for (long i(0); i<4; ++i) {
+      ogl::VertexArrayAttrib(i).Pointer(2, ogl::DataType::Float, false, sizeof(Particle), (void const*) (i*8));
+      ogl::VertexArrayAttrib(i).Enable();
+    }
   }
 }
 
@@ -113,11 +110,6 @@ void ParticleSystem::update_particles(
 
   auto& shader(ParticleUpdateShader::get());
   shader.use(ctx);
-
-  ogl::VertexArrayAttrib(0).Enable();
-  ogl::VertexArrayAttrib(1).Enable();
-  ogl::VertexArrayAttrib(2).Enable();
-  ogl::VertexArrayAttrib(3).Enable();
 
   transform_feedbacks_[current_tf()].BeginPoints();
   {
@@ -177,11 +169,6 @@ void ParticleSystem::update_particles(
   }
   transform_feedbacks_[current_tf()].End();
 
-  ogl::VertexArrayAttrib(0).Disable();
-  ogl::VertexArrayAttrib(1).Disable();
-  ogl::VertexArrayAttrib(2).Disable();
-  ogl::VertexArrayAttrib(3).Disable();
-
   ctx.gl.Disable(ogl::Capability::RasterizerDiscard);
 }
 
@@ -191,19 +178,9 @@ void ParticleSystem::draw_particles(RenderContext const& ctx) {
 
   particle_vaos_[current_tf()].Bind();
 
-  ogl::VertexArrayAttrib(0).Enable();
-  ogl::VertexArrayAttrib(1).Enable();
-  ogl::VertexArrayAttrib(2).Enable();
-  ogl::VertexArrayAttrib(3).Enable();
-
   ctx.gl.DrawTransformFeedback(
     ogl::PrimitiveType::Points, transform_feedbacks_[current_tf()]
   );
-
-  ogl::VertexArrayAttrib(0).Disable();
-  ogl::VertexArrayAttrib(1).Disable();
-  ogl::VertexArrayAttrib(2).Disable();
-  ogl::VertexArrayAttrib(3).Disable();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
