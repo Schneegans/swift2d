@@ -36,6 +36,7 @@ class TexturedTrailShader : public TrailShaderBase,
   oglplus::Lazy<oglplus::Uniform<math::vec4>>  end_color;
   oglplus::Lazy<oglplus::Uniform<math::vec2>>  glow;
   oglplus::Lazy<oglplus::Uniform<int>>         texture;
+  oglplus::Lazy<oglplus::Uniform<float>>       texture_repeat;
 
   friend class Singleton<TexturedTrailShader>;
 

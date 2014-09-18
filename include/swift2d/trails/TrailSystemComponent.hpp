@@ -43,6 +43,7 @@ class TrailSystemComponent : public DrawableComponent {
   Float         StartGlow,  EndGlow;
   ColorProperty StartColor, EndColor;
   TextureProperty Texture;
+  Float           TextureRepeat;
 
   // ----------------------------------------------------- contruction interface
   TrailSystemComponent();

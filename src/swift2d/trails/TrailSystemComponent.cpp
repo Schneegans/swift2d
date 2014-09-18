@@ -25,6 +25,7 @@ TrailSystemComponent::TrailSystemComponent()
   , StartWidth(1.f),               EndWidth(1.f)
   , StartGlow(0.f),                EndGlow(0.f)
   , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 1))
+  , TextureRepeat(1.f)
   , trail_system_(TrailSystem::create(MaxCount())) {
 
   MaxCount.on_change().connect([&](int val){
@@ -56,6 +57,7 @@ void TrailSystemComponent::draw(RenderContext const& ctx) {
     shader.use(ctx);
     Texture()->bind(ctx, 0);
     shader.texture.Set(0);
+    shader.texture_repeat.Set(TextureRepeat());
     shader.projection.            Set(ctx.projection_matrix);
     shader.start_width.           Set(StartWidth());
     shader.end_width.             Set(EndWidth());
@@ -93,15 +95,16 @@ void TrailSystemComponent::serialize(SerializedScenePtr& scene) const {
 
 void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
   DrawableComponent::accept(visitor);
-  visitor.add_member("MaxCount",    MaxCount);
-  visitor.add_member("Depth",       Depth);
-  visitor.add_member("StartWidth",  StartWidth);
-  visitor.add_member("EndWidth",    EndWidth);
-  visitor.add_member("StartGlow",   StartGlow);
-  visitor.add_member("EndGlow",     EndGlow);
-  visitor.add_member("StartColor",  StartColor);
-  visitor.add_member("EndColor",    EndColor);
-  visitor.add_object("Texture",     Texture);
+  visitor.add_member("MaxCount",      MaxCount);
+  visitor.add_member("Depth",         Depth);
+  visitor.add_member("StartWidth",    StartWidth);
+  visitor.add_member("EndWidth",      EndWidth);
+  visitor.add_member("StartGlow",     StartGlow);
+  visitor.add_member("EndGlow",       EndGlow);
+  visitor.add_member("StartColor",    StartColor);
+  visitor.add_member("EndColor",      EndColor);
+  visitor.add_object("Texture",       Texture);
+  visitor.add_member("TextureRepeat", TextureRepeat);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
