@@ -33,10 +33,20 @@ class AudioComponent : public TransformableComponent {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  enum AudioState {
+    INITIAL,
+    PLAYING,
+    PAUSED,
+    INTERUPTED,
+    FINISHED
+  };
+
   // ---------------------------------------------------------------- properties
-  AudioBufferProperty Sound;
-  Float               Volume;
-  Float               Pitch;
+  AudioBufferProperty   Sound;
+  Float                 Volume;
+  Float                 Pitch;
+  Property<AudioState>  State;
 
   // ---------------------------------------------------- construction interface
   AudioComponent();

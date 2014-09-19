@@ -16,6 +16,7 @@ namespace swift {
 AudioComponent::AudioComponent()
   : Volume(1.0)
   , Pitch(1.0)
+  , State(INITIAL)
   , source_(new oalplus::Source()) {
 
   Sound.on_change().connect([&](AudioBufferPtr const& val) {
@@ -45,6 +46,15 @@ void AudioComponent::update(double time) {
   TransformableComponent::update(time);
   auto pos(get_world_position());
   source_->Position(pos.x(), pos.y(), 0);
+
+  if      (source_->State() == oalplus::SourceState::Playing) State = PLAYING;
+  else if (source_->State() == oalplus::SourceState::Paused)  State = PAUSED;
+  else if (source_->State() == oalplus::SourceState::Stopped) {
+    int queued(0);
+    alGetSourcei(oalplus::GetALName(*source_), AL_BUFFERS_QUEUED, &queued);
+    if (queued == 0) State = INTERUPTED;
+    else             State = FINISHED;
+  }
 
   if (Sound()) {
     Sound()->update(source_, time);
