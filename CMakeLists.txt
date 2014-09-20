@@ -32,7 +32,8 @@ pkg_check_modules(OPENAL  REQUIRED openal)
 pkg_check_modules(SNDFILE REQUIRED sndfile)
 pkg_check_modules(ALUT    REQUIRED freealut)
 pkg_check_modules(OPENGL  REQUIRED gl)
-# pkg_check_modules(BOX2D   REQUIRED box2d)
+pkg_check_modules(BOX2D   REQUIRED box2d)
+pkg_check_modules(CURL    REQUIRED libcurl)
 
 set(BOOST_ROOT "/opt/boost/boost_1_55_0")
 set(Boost_USE_STATIC_LIBS OFF)
@@ -50,10 +51,10 @@ set(LIBS
   ${ALUT_LIBRARIES}
   ${OPENGL_LIBRARIES}
   ${BOX2D_LIBRARIES}
+  ${CURL_LIBRARIES}
   miniupnpc
   awesomium-1-7
   Xxf86vm
-  Box2D
 )
 link_libraries(${LIBS})
 
@@ -67,6 +68,7 @@ set(LIB_PATHS
   ${ALUT_LIBRARY_DIRS}
   ${OPENGL_LIBRARY_DIRS}
   ${BOX2D_LIBRARY_DIRS}
+  ${CURL_LIBRARY_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}/third_party/steam/redistributable_bin/linux64
 )
 link_directories(${LIB_PATHS})
@@ -89,6 +91,7 @@ set(INCLUDE_PATHS
   ${ALUT_INCLUDE_DIRS}
   ${OPENGL_INCLUDE_DIRS}
   ${BOX2D_INCLUDE_DIRS}
+  ${CURL_INCLUDE_DIRS}
 )
 include_directories(SYSTEM ${INCLUDE_PATHS})
 

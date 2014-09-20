@@ -6,60 +6,53 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SOUND_HPP
-#define SWIFT2D_SOUND_HPP
+#ifndef SWIFT2D_DOWNLOADER_HPP
+#define SWIFT2D_DOWNLOADER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/audio/AudioBuffer.hpp>
+#include <swift2d/events/Ticker.hpp>
 #include <swift2d/properties.hpp>
 
-#include <memory>
+#include <string>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-// shared pointer type definition ----------------------------------------------
-class Sound;
-typedef std::shared_ptr<Sound>       SoundPtr;
-typedef std::shared_ptr<const Sound> ConstSoundPtr;
-typedef Property<SoundPtr>           SoundProperty;
-
 // -----------------------------------------------------------------------------
-class Sound : public AudioBuffer {
+class Downloader {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  static SoundPtr create() {
-    return std::make_shared<Sound>();
-  }
+  Signal<std::string> on_error;
 
-  static SoundPtr create(std::string const& file_name) {
-    auto sound(std::make_shared<Sound>());
-    sound->load_from_file(file_name);
-    return sound;
-  }
+  Int   ProgressBytes;
+  Float ProgressPercent;
 
-  // ------------------------------------------------------------ public methods
-  virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "Sound"; }
+  Downloader();
 
-  void load(oalplus::Source* source);
-  void unload(oalplus::Source* source);
+  void download(std::string const& uri);
+  void download(std::string const& uri, std::string const& result_file);
+
+  void update();
+
+  std::string const& result_file() const { return result_; }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
- protected:
-  void load_from_file(std::string const& file_name);
-
  private:
-  oalplus::Buffer buffer_;
+  static size_t write_func(void *ptr, size_t size, size_t nmemb, FILE *stream, void* user_data);
+  static int progress_func(void* s, long total, long now, long, long);
 
+  std::string result_;
+  int current_dl_, total_dl_;
+
+  std::string error_;
 };
 
 }
 
-#endif // SWIFT2D_SOUND_HPP
+#endif  // SWIFT2D_DOWNLOADER_HPP

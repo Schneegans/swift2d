@@ -12,6 +12,7 @@
 #include <raknet/src/HTTPConnection2.h>
 #include <raknet/src/TCPInterface.h>
 
+#include <thread>
 #include <iostream>
 
 namespace swift {

@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/audio/AudioBuffer.hpp>
+#include <swift2d/utils/Downloader.hpp>
 #include <swift2d/properties.hpp>
 
 #include <mutex>
@@ -35,17 +36,17 @@ class Music : public AudioBuffer {
  // ----------------------------------------------------------- public interface
  public:
 
+  Signal<> on_metadata_loaded;
+
   static MusicPtr create() {
     return std::make_shared<Music>();
   }
 
-  static MusicPtr create_from_file(std::string const& file_name) {
-    auto music(std::make_shared<Music>());
-    music->load_from_file(file_name);
-    return music;
+  static MusicPtr create(std::string const& file_name) {
+    return std::make_shared<Music>(file_name);
   }
 
-  Music();
+  Music(std::string const& file_name = "");
   virtual ~Music();
 
   // ------------------------------------------------------------ public methods
@@ -64,9 +65,6 @@ class Music : public AudioBuffer {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
- protected:
-  void load_from_file(std::string const& file_name);
-
  private:
   std::string file_;
 
@@ -83,6 +81,8 @@ class Music : public AudioBuffer {
   std::mutex load_mutex_;
   std::queue<std::vector<short>> buffer_queue_;
   int playing_id_;
+
+  Downloader downloader_;
 };
 
 }

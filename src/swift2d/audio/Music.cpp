@@ -18,9 +18,13 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Music::Music()
-  : buffers_(BUFFER_COUNT)
-  , playing_id_(0) {}
+Music::Music(std::string const& file_name)
+  : file_(file_name)
+  , buffers_(BUFFER_COUNT)
+  , playing_id_(0) {
+
+  alGenBuffers(BUFFER_COUNT, buffers_.data());
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -30,9 +34,23 @@ Music::~Music() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Music::load_from_file(std::string const& file_name) {
+void Music::load(oalplus::Source* source) {
 
-  file_ = file_name;
+  if (file_.find("http:") == 0) {
+    downloader_.ProgressPercent.on_change().connect([this, source](float p){
+      if (p > 5 && file_.find("http:") == 0) {
+        file_ = downloader_.result_file();
+        load(source);
+      }
+    });
+    downloader_.on_error.connect([](std::string const& what){
+      Logger::LOG_WARNING << "Failed to download music: " << what << std::endl;
+    });
+    downloader_.download(file_);
+    return;
+  }
+
+  int playing_id = playing_id_;
 
   SF_INFO info;
   SNDFILE* file = sf_open(file_.c_str(), SFM_READ, &info);
@@ -45,6 +63,8 @@ void Music::load_from_file(std::string const& file_name) {
   if (tmp) album_  = std::string(tmp);
   tmp = sf_get_string(file, SF_STR_DATE);
   if (tmp) year_   = std::string(tmp);
+
+  on_metadata_loaded.emit();
 
   sample_rate_ = info.samplerate;
   channels_ = info.channels;
@@ -59,15 +79,6 @@ void Music::load_from_file(std::string const& file_name) {
 
   sf_close(file);
 
-  alGenBuffers(BUFFER_COUNT, buffers_.data());
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Music::load(oalplus::Source* source) {
-
-  int playing_id = playing_id_;
-
   std::thread load_thread([this, playing_id](){
 
     unsigned long current_frame = 0;
@@ -76,6 +87,7 @@ void Music::load(oalplus::Source* source) {
       if (buffer_queue_.size() < BUFFER_COUNT && current_frame < max_frames_) {
         SF_INFO info;
         SNDFILE* file = sf_open(file_.c_str(), SFM_READ, &info);
+        max_frames_ = info.frames;
 
         // read one second
         int read_amount = std::min(max_frames_, channels_ * sample_rate_ + current_frame) - current_frame;
@@ -115,6 +127,9 @@ void Music::unload(oalplus::Source* source) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Music::update(oalplus::Source* source, double time) {
+
+  downloader_.update();
+
   int processed(0);
   int queued(0);
   alGetSourcei(oalplus::GetALName(*source), AL_BUFFERS_PROCESSED, &processed);
