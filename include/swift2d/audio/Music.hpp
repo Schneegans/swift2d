@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/audio/AudioBuffer.hpp>
+#include <swift2d/audio/Jamendo.hpp>
 #include <swift2d/utils/Downloader.hpp>
 #include <swift2d/properties.hpp>
 
@@ -36,17 +37,14 @@ class Music : public AudioBuffer {
  // ----------------------------------------------------------- public interface
  public:
 
-  Signal<> on_metadata_loaded;
-
-  static MusicPtr create() {
-    return std::make_shared<Music>();
+  template <typename... Args>
+  static MusicPtr create(Args&& ... a) {
+    return std::make_shared<Music>(a...);
   }
 
-  static MusicPtr create(std::string const& file_name) {
-    return std::make_shared<Music>(file_name);
-  }
-
-  Music(std::string const& file_name = "");
+  Music();
+  Music(std::string const& file_name);
+  Music(Jamendo::Track const& track);
   virtual ~Music();
 
   // ------------------------------------------------------------ public methods
@@ -56,7 +54,6 @@ class Music : public AudioBuffer {
   std::string const& get_title();
   std::string const& get_artist();
   std::string const& get_album();
-  std::string const& get_year();
 
   // internal interface --------------------------------------------------------
   void load(oalplus::Source* source);

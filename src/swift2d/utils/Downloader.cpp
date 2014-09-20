@@ -44,7 +44,6 @@ void Downloader::download(std::string const& uri, std::string const& result_file
     CURL *curl;
     FILE *fp;
     CURLcode res;
-    Downloader* self = this;
 
     char error_buffer[CURL_ERROR_SIZE];
     curl = curl_easy_init();

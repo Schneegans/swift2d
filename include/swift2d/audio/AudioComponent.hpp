@@ -46,6 +46,7 @@ class AudioComponent : public TransformableComponent {
   AudioBufferProperty   Sound;
   Float                 Volume;
   Float                 Pitch;
+  Bool                  Loop;
   Property<AudioState>  State;
 
   // ---------------------------------------------------- construction interface

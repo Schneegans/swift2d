@@ -10,7 +10,6 @@
 #define SWIFT2D_DOWNLOADER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/events/Ticker.hpp>
 #include <swift2d/properties.hpp>
 
 #include <string>
