@@ -11,6 +11,8 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/audio/AudioBuffer.hpp>
+#include <swift2d/audio/Jamendo.hpp>
+#include <swift2d/utils/Downloader.hpp>
 #include <swift2d/properties.hpp>
 
 #include <mutex>
@@ -35,17 +37,14 @@ class Music : public AudioBuffer {
  // ----------------------------------------------------------- public interface
  public:
 
-  static MusicPtr create() {
-    return std::make_shared<Music>();
-  }
-
-  static MusicPtr create_from_file(std::string const& file_name) {
-    auto music(std::make_shared<Music>());
-    music->load_from_file(file_name);
-    return music;
+  template <typename... Args>
+  static MusicPtr create(Args&& ... a) {
+    return std::make_shared<Music>(a...);
   }
 
   Music();
+  Music(std::string const& file_name);
+  Music(Jamendo::Track const& track);
   virtual ~Music();
 
   // ------------------------------------------------------------ public methods
@@ -55,7 +54,6 @@ class Music : public AudioBuffer {
   std::string const& get_title();
   std::string const& get_artist();
   std::string const& get_album();
-  std::string const& get_year();
 
   // internal interface --------------------------------------------------------
   void load(oalplus::Source* source);
@@ -64,9 +62,6 @@ class Music : public AudioBuffer {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
- protected:
-  void load_from_file(std::string const& file_name);
-
  private:
   std::string file_;
 
@@ -83,6 +78,8 @@ class Music : public AudioBuffer {
   std::mutex load_mutex_;
   std::queue<std::vector<short>> buffer_queue_;
   int playing_id_;
+
+  Downloader downloader_;
 };
 
 }

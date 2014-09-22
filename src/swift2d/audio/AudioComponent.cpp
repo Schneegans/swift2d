@@ -16,7 +16,11 @@ namespace swift {
 AudioComponent::AudioComponent()
   : Volume(1.0)
   , Pitch(1.0)
+  , Loop(false)
+  , State(INITIAL)
   , source_(new oalplus::Source()) {
+
+  source_->ReferenceDistance(10);
 
   Sound.on_change().connect([&](AudioBufferPtr const& val) {
     stop();
@@ -28,6 +32,10 @@ AudioComponent::AudioComponent()
 
   Pitch.on_change().connect([&](float val) {
     source_->Pitch(val);
+  });
+
+  Loop.on_change().connect([&](bool val) {
+    source_->Looping(val);
   });
 }
 
@@ -45,6 +53,15 @@ void AudioComponent::update(double time) {
   TransformableComponent::update(time);
   auto pos(get_world_position());
   source_->Position(pos.x(), pos.y(), 0);
+
+  if      (source_->State() == oalplus::SourceState::Playing) State = PLAYING;
+  else if (source_->State() == oalplus::SourceState::Paused)  State = PAUSED;
+  else if (source_->State() == oalplus::SourceState::Stopped) {
+    int queued(0);
+    alGetSourcei(oalplus::GetALName(*source_), AL_BUFFERS_QUEUED, &queued);
+    if (queued == 0) State = INTERUPTED;
+    else             State = FINISHED;
+  }
 
   if (Sound()) {
     Sound()->update(source_, time);
@@ -79,8 +96,10 @@ void AudioComponent::stop() {
 
 void AudioComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
-  visitor.add_member("Volume", Volume);
   visitor.add_object("Sound", Sound);
+  visitor.add_member("Volume", Volume);
+  visitor.add_member("Pitch", Pitch);
+  visitor.add_member("Loop", Loop);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -16,6 +16,14 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+Sound::Sound() {
+  FileName.on_change().connect([this](std::string const& file) {
+    load_from_file(file);
+  });
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Sound::load_from_file(std::string const& file_name) {
   SF_INFO info;
   SNDFILE* file = sf_open(file_name.c_str(), SFM_READ, &info);
@@ -47,6 +55,13 @@ void Sound::load(oalplus::Source* source) {
 
 void Sound::unload(oalplus::Source* source) {
   source->DetachBuffers();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Sound::accept(SavableObjectVisitor& visitor) {
+  AudioBuffer::accept(visitor);
+  visitor.add_member("FileName", FileName);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

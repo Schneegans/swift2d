@@ -6,66 +6,59 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SOUND_HPP
-#define SWIFT2D_SOUND_HPP
+#ifndef SWIFT2D_JAMENDO_HPP
+#define SWIFT2D_JAMENDO_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/audio/AudioBuffer.hpp>
-#include <swift2d/properties.hpp>
-
-#include <memory>
+#include <swift2d/utils/Singleton.hpp>
+#include <swift2d/network/HttpConnection.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-// shared pointer type definition ----------------------------------------------
-class Sound;
-typedef std::shared_ptr<Sound>       SoundPtr;
-typedef std::shared_ptr<const Sound> ConstSoundPtr;
-typedef Property<SoundPtr>           SoundProperty;
 
 // -----------------------------------------------------------------------------
-class Sound : public AudioBuffer {
+class Jamendo : public Singleton<Jamendo> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  String FileName;
+  struct Track {
+    std::string title;
+    std::string artist;
+    std::string album;
+    std::string url;
+  };
 
-  static SoundPtr create() {
-    return std::make_shared<Sound>();
-  }
+  struct Album {
+    std::vector<Track> tracks;
+  };
 
-  static SoundPtr create(std::string const& file_name) {
-    auto sound(std::make_shared<Sound>());
-    sound->FileName = file_name;
-    return sound;
-  }
 
-  Sound();
+  // ------------------------------------------------------------------- signals
+  Signal<Album> on_album_loaded;
 
   // ------------------------------------------------------------ public methods
-  virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "Sound"; }
 
-  void load(oalplus::Source* source);
-  void unload(oalplus::Source* source);
+  void load_album(std::string const& id);
+  void update();
 
-  virtual void accept(SavableObjectVisitor& visitor);
+  friend class Singleton<Jamendo>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
- protected:
-  void load_from_file(std::string const& file_name);
-
  private:
-  oalplus::Buffer buffer_;
+  // this class is a Singleton --- private c'tor and d'tor
+  Jamendo();
+  ~Jamendo() {}
 
+  HttpConnection  http_;
+  Album           album_;
 };
 
 }
 
-#endif // SWIFT2D_SOUND_HPP
+#endif  // SWIFT2D_JAMENDO_HPP

@@ -53,9 +53,6 @@ void TrailSystem::set_max_trail_points(int max_trail_points) {
 
 void TrailSystem::upload_to(RenderContext const& ctx) {
 
-  auto t(ogl::DataType::Float);
-  auto s(sizeof(TrailPoint));
-
   // allocate GPU resources
   for (int i(0); i<2; ++i) {
     transform_feedbacks_.push_back(ogl::TransformFeedback());
@@ -65,12 +62,10 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
     trail_vaos_[i].Bind();
     trail_buffers_[i].Bind(ose::Array());
 
-    ogl::VertexArrayAttrib(0).Pointer(2, t, false, s, (void const*) 0);
-    ogl::VertexArrayAttrib(1).Pointer(2, t, false, s, (void const*) 8);
-    ogl::VertexArrayAttrib(2).Pointer(2, t, false, s, (void const*) 16);
-    ogl::VertexArrayAttrib(3).Pointer(2, t, false, s, (void const*) 24);
-    ogl::VertexArrayAttrib(4).Pointer(2, t, false, s, (void const*) 32);
-    ogl::VertexArrayAttrib(5).Pointer(2, t, false, s, (void const*) 40);
+    for (long i(0); i<6; ++i) {
+      ogl::VertexArrayAttrib(i).Pointer(2, ogl::DataType::Float, false, sizeof(TrailPoint), (void const*) (i*8));
+      ogl::VertexArrayAttrib(i).Enable();
+    }
   }
 
   emitter_buffer_ = new ogl::Buffer();
@@ -78,13 +73,10 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
 
   emitter_vao_->Bind();
   emitter_buffer_->Bind(ose::Array());
-  ogl::VertexArrayAttrib(0).Pointer(2, t, false, s, (void const*) 0);
-  ogl::VertexArrayAttrib(1).Pointer(2, t, false, s, (void const*) 8);
-  ogl::VertexArrayAttrib(2).Pointer(2, t, false, s, (void const*) 16);
-  ogl::VertexArrayAttrib(3).Pointer(2, t, false, s, (void const*) 24);
-  ogl::VertexArrayAttrib(4).Pointer(2, t, false, s, (void const*) 32);
-  ogl::VertexArrayAttrib(5).Pointer(2, t, false, s, (void const*) 40);
-
+  for (long i(0); i<6; ++i) {
+    ogl::VertexArrayAttrib(i).Pointer(2, ogl::DataType::Float, false, sizeof(TrailPoint), (void const*) (i*8));
+    ogl::VertexArrayAttrib(i).Enable();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -137,13 +129,6 @@ void TrailSystem::update_trails(
   auto& shader(TrailUpdateShader::get());
   shader.use(ctx);
 
-  ogl::VertexArrayAttrib(0).Enable();
-  ogl::VertexArrayAttrib(1).Enable();
-  ogl::VertexArrayAttrib(2).Enable();
-  ogl::VertexArrayAttrib(3).Enable();
-  ogl::VertexArrayAttrib(4).Enable();
-  ogl::VertexArrayAttrib(5).Enable();
-
   transform_feedbacks_[current_tf()].BeginPoints();
   {
 
@@ -187,13 +172,6 @@ void TrailSystem::update_trails(
   }
 
   transform_feedbacks_[current_tf()].End();
-
-  ogl::VertexArrayAttrib(0).Disable();
-  ogl::VertexArrayAttrib(1).Disable();
-  ogl::VertexArrayAttrib(2).Disable();
-  ogl::VertexArrayAttrib(3).Disable();
-  ogl::VertexArrayAttrib(4).Disable();
-  ogl::VertexArrayAttrib(5).Disable();
 
   ctx.gl.Disable(ogl::Capability::RasterizerDiscard);
 }
@@ -275,14 +253,6 @@ void TrailSystem::draw_trails(
   }
 
   emitter_vao_->Bind();
-
-  ogl::VertexArrayAttrib(0).Enable();
-  ogl::VertexArrayAttrib(1).Enable();
-  ogl::VertexArrayAttrib(2).Enable();
-  ogl::VertexArrayAttrib(3).Enable();
-  ogl::VertexArrayAttrib(4).Enable();
-  ogl::VertexArrayAttrib(5).Enable();
-
   emitter_buffer_->Bind(oglplus::Buffer::Target::Array);
   oglplus::Buffer::Data(oglplus::Buffer::Target::Array, emitter_points);
 
@@ -291,23 +261,9 @@ void TrailSystem::draw_trails(
 
   trail_vaos_[current_tf()].Bind();
 
-  ogl::VertexArrayAttrib(0).Enable();
-  ogl::VertexArrayAttrib(1).Enable();
-  ogl::VertexArrayAttrib(2).Enable();
-  ogl::VertexArrayAttrib(3).Enable();
-  ogl::VertexArrayAttrib(4).Enable();
-  ogl::VertexArrayAttrib(5).Enable();
-
   ctx.gl.DrawTransformFeedback(
     ogl::PrimitiveType::Points, transform_feedbacks_[current_tf()]
   );
-
-  ogl::VertexArrayAttrib(0).Disable();
-  ogl::VertexArrayAttrib(1).Disable();
-  ogl::VertexArrayAttrib(2).Disable();
-  ogl::VertexArrayAttrib(3).Disable();
-  ogl::VertexArrayAttrib(4).Disable();
-  ogl::VertexArrayAttrib(5).Disable();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

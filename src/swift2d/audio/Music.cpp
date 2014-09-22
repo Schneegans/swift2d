@@ -19,8 +19,54 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Music::Music()
-  : buffers_(BUFFER_COUNT)
-  , playing_id_(0) {}
+  : file_("")
+  , buffers_(BUFFER_COUNT)
+  , playing_id_(0) {
+
+  alGenBuffers(BUFFER_COUNT, buffers_.data());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Music::Music(std::string const& file_name)
+  : file_(file_name)
+  , buffers_(BUFFER_COUNT)
+  , playing_id_(0) {
+
+  alGenBuffers(BUFFER_COUNT, buffers_.data());
+
+  SF_INFO info;
+  SNDFILE* file = sf_open(file_.c_str(), SFM_READ, &info);
+
+  int error(sf_error(file));
+  if (error) {
+    Logger::LOG_WARNING << "Error loading audio file \"" << file_ << "\": "
+                        << sf_error_number(error) << std::endl;
+  } else {
+
+    auto tmp(sf_get_string(file, SF_STR_TITLE));
+    if (tmp) title_  = std::string(tmp);
+    tmp = sf_get_string(file, SF_STR_ARTIST);
+    if (tmp) artist_ = std::string(tmp);
+    tmp = sf_get_string(file, SF_STR_ALBUM);
+    if (tmp) album_  = std::string(tmp);
+  }
+
+  sf_close(file);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Music::Music(Jamendo::Track const& track)
+  : file_(track.url)
+  , title_(track.title)
+  , artist_(track.artist)
+  , album_(track.album)
+  , buffers_(BUFFER_COUNT)
+  , playing_id_(0) {
+
+  alGenBuffers(BUFFER_COUNT, buffers_.data());
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -30,74 +76,70 @@ Music::~Music() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Music::load_from_file(std::string const& file_name) {
-
-  file_ = file_name;
-
-  SF_INFO info;
-  SNDFILE* file = sf_open(file_.c_str(), SFM_READ, &info);
-
-  auto tmp(sf_get_string(file, SF_STR_TITLE));
-  if (tmp) title_  = std::string(tmp);
-  tmp = sf_get_string(file, SF_STR_ARTIST);
-  if (tmp) artist_ = std::string(tmp);
-  tmp = sf_get_string(file, SF_STR_ALBUM);
-  if (tmp) album_  = std::string(tmp);
-  tmp = sf_get_string(file, SF_STR_DATE);
-  if (tmp) year_   = std::string(tmp);
-
-  sample_rate_ = info.samplerate;
-  channels_ = info.channels;
-
-  int error(sf_error(file));
-  if (error) {
-    Logger::LOG_WARNING << "Error loading audio file \"" << file_ << "\": "
-                        << sf_error_number(error) << std::endl;
-  }
-
-  max_frames_ = info.frames;
-
-  sf_close(file);
-
-  alGenBuffers(BUFFER_COUNT, buffers_.data());
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void Music::load(oalplus::Source* source) {
 
-  int playing_id = playing_id_;
-
-  std::thread load_thread([this, playing_id](){
-
-    unsigned long current_frame = 0;
-
-    while (playing_id == playing_id_) {
-      if (buffer_queue_.size() < BUFFER_COUNT && current_frame < max_frames_) {
-        SF_INFO info;
-        SNDFILE* file = sf_open(file_.c_str(), SFM_READ, &info);
-
-        // read one second
-        int read_amount = std::min(max_frames_, channels_ * sample_rate_ + current_frame) - current_frame;
-        current_frame += read_amount;
-
-        std::vector<short> data(channels_ * read_amount);
-
-        sf_seek(file, current_frame - read_amount, SEEK_SET);
-        sf_readf_short(file, data.data(), read_amount);
-
-        sf_close(file);
-
-        std::unique_lock<std::mutex> lock(load_mutex_); {
-          buffer_queue_.push(data);
+  if (file_ != "") {
+    if (file_.find("http:") == 0) {
+      downloader_.ProgressPercent.on_change().connect([this, source](float p){
+        if (p > 5 && file_.find("http:") == 0) {
+          file_ = downloader_.result_file();
+          load(source);
         }
-      }
-
-      std::this_thread::sleep_for(std::chrono::milliseconds(200));
+      });
+      downloader_.on_error.connect([](std::string const& what){
+        Logger::LOG_WARNING << "Failed to download music: " << what << std::endl;
+      });
+      downloader_.download(file_);
+      return;
     }
-  });
 
-  load_thread.detach();
+    SF_INFO info;
+    SNDFILE* file = sf_open(file_.c_str(), SFM_READ, &info);
+
+    int error(sf_error(file));
+    if (error) {
+      Logger::LOG_WARNING << "Error loading audio file \"" << file_ << "\": "
+                          << sf_error_number(error) << std::endl;
+    } else {
+      sample_rate_ = info.samplerate;
+      channels_    = info.channels;
+      max_frames_  = info.frames;
+
+      int playing_id = playing_id_;
+
+      std::thread load_thread([this, playing_id](){
+
+        unsigned long current_frame = 0;
+
+        while (playing_id == playing_id_) {
+          if (buffer_queue_.size() < BUFFER_COUNT && current_frame < max_frames_) {
+            SF_INFO info;
+            SNDFILE* file = sf_open(file_.c_str(), SFM_READ, &info);
+            max_frames_ = info.frames;
+
+            // read one second
+            int read_amount = std::min(max_frames_, channels_ * sample_rate_ + current_frame) - current_frame;
+            current_frame += read_amount;
+
+            std::vector<short> data(channels_ * read_amount);
+
+            sf_seek(file, current_frame - read_amount, SEEK_SET);
+            sf_readf_short(file, data.data(), read_amount);
+
+            sf_close(file);
+
+            std::unique_lock<std::mutex> lock(load_mutex_); {
+              buffer_queue_.push(data);
+            }
+          }
+
+          std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        }
+      });
+
+      load_thread.detach();
+    }
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -115,6 +157,9 @@ void Music::unload(oalplus::Source* source) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Music::update(oalplus::Source* source, double time) {
+
+  downloader_.update();
+
   int processed(0);
   int queued(0);
   alGetSourcei(oalplus::GetALName(*source), AL_BUFFERS_PROCESSED, &processed);
@@ -165,9 +210,6 @@ std::string const& Music::get_artist() {
 }
 std::string const& Music::get_album() {
   return album_;
-}
-std::string const& Music::get_year() {
-  return year_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
