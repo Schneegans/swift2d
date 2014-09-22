@@ -26,6 +26,8 @@ TrailSystemComponent::TrailSystemComponent()
   , StartGlow(0.f),                EndGlow(0.f)
   , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 1))
   , TextureRepeat(1.f)
+  , UseGlobalTexCoords(false)
+  , BlendAdd(false)
   , trail_system_(TrailSystem::create(MaxCount())) {
 
   MaxCount.on_change().connect([&](int val){
@@ -48,22 +50,25 @@ void TrailSystemComponent::remove_emitter(TrailEmitterComponent const* emitter) 
 ////////////////////////////////////////////////////////////////////////////////
 
 void TrailSystemComponent::draw(RenderContext const& ctx) {
-  trail_system_->update_trails(serialized_emitters_, ctx);
+  trail_system_->update_trails(serialized_emitters_, UseGlobalTexCoords(), ctx);
 
-  ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
+  if (BlendAdd())
+    ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
 
   if (Texture()) {
     auto& shader(TexturedTrailShader::get());
     shader.use(ctx);
     Texture()->bind(ctx, 0);
     shader.texture.Set(0);
-    shader.texture_repeat.Set(TextureRepeat());
+    shader.texture_repeat.        Set(TextureRepeat());
     shader.projection.            Set(ctx.projection_matrix);
     shader.start_width.           Set(StartWidth());
     shader.end_width.             Set(EndWidth());
     shader.start_color.           Set(StartColor().vec4());
     shader.end_color.             Set(EndColor().vec4());
     shader.glow.                  Set(math::vec2(StartGlow(), EndGlow()));
+    shader.use_global_texcoords.  Set(UseGlobalTexCoords() ? 1 : 0);
+    shader.total_time.            Set(trail_system_->get_total_time() * 1000.0);
   } else {
     auto& shader(ColoredTrailShader::get());
     shader.use(ctx);
@@ -73,11 +78,14 @@ void TrailSystemComponent::draw(RenderContext const& ctx) {
     shader.start_color.           Set(StartColor().vec4());
     shader.end_color.             Set(EndColor().vec4());
     shader.glow.                  Set(math::vec2(StartGlow(), EndGlow()));
+    shader.use_global_texcoords.  Set(UseGlobalTexCoords() ? 1 : 0);
+    shader.total_time.            Set(trail_system_->get_total_time() * 1000.0);
   }
 
-  trail_system_->draw_trails(serialized_emitters_, ctx);
+  trail_system_->draw_trails(serialized_emitters_, UseGlobalTexCoords(), ctx);
 
-  ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
+  if (BlendAdd())
+    ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -105,6 +113,8 @@ void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("EndColor",      EndColor);
   visitor.add_object("Texture",       Texture);
   visitor.add_member("TextureRepeat", TextureRepeat);
+  visitor.add_member("UseGlobalTexCoords", UseGlobalTexCoords);
+  visitor.add_member("BlendAdd",      BlendAdd);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -25,6 +25,7 @@ ColoredTrailShader::ColoredTrailShader()
       @include "version"
 
       in vec2 texcoords;
+      in float age;
 
       uniform vec4 start_color;
       uniform vec4 end_color;
@@ -33,8 +34,8 @@ ColoredTrailShader::ColoredTrailShader()
       @include "write_gbuffer"
 
       void main(void) {
-        vec4  c = mix(start_color, end_color, texcoords.x);
-        float g = mix(glow.x,      glow.y,    texcoords.x);
+        vec4  c = mix(start_color, end_color, age);
+        float g = mix(glow.x,      glow.y,    age);
 
         write_gbuffer(c, g);
       }
@@ -43,7 +44,7 @@ ColoredTrailShader::ColoredTrailShader()
 
     R"(
       // geometry shader -------------------------------------------------------
-      @include "trail_fragment_shader"
+      @include "trail_tf_shader"
     )"
   )
   , projection(get_uniform<math::mat3>("projection"))
@@ -52,6 +53,8 @@ ColoredTrailShader::ColoredTrailShader()
   , start_color(get_uniform<math::vec4>("start_color"))
   , end_color(get_uniform<math::vec4>("end_color"))
   , glow(get_uniform<math::vec2>("glow"))
+  , total_time(get_uniform<float>("total_time"))
+  , use_global_texcoords(get_uniform<int>("use_global_texcoords"))
   {}
 
 ////////////////////////////////////////////////////////////////////////////////

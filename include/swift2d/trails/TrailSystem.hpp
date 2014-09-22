@@ -48,11 +48,17 @@ class TrailSystem {
 
   void update_trails(
     std::vector<SerializedTrailEmitter> const& emitters,
+    bool use_global_texcoords,
     RenderContext const& context);
 
   void draw_trails(
     std::vector<SerializedTrailEmitter> const& emitters,
+    bool use_global_texcoords,
     RenderContext const& context);
+
+  double get_total_time() const {
+    return total_time_;
+  }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

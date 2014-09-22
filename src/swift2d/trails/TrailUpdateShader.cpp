@@ -68,7 +68,8 @@ TrailUpdateShader::TrailUpdateShader()
       uniform vec2      prev_2_position;
       uniform vec2      prev_3_position;
       uniform vec2      time_since_prev_spawns; // x: last  y: prev_1
-      uniform float     life;         //  [sec]
+      uniform float     life;         //  [millisec]
+      uniform int       use_global_texcoords;
 
 
       out vec2  out_position;
@@ -82,6 +83,12 @@ TrailUpdateShader::TrailUpdateShader()
 
         if (spawn_count >= 0) {
 
+          vec2 texcoords = (-time_since_prev_spawns + time.y) / life;
+
+          if (use_global_texcoords == 0) {
+            texcoords = time_since_prev_spawns/life;
+          }
+
           // spawn new trail points -----------------------------------------------
 
           for (int i=0; i<spawn_count; ++i) {
@@ -90,11 +97,8 @@ TrailUpdateShader::TrailUpdateShader()
             out_prev_1_position = prev_1_position;
             out_prev_2_position = prev_2_position;
             out_prev_3_position = prev_3_position;
-            out_life     = vec2(0, life*1000.0);
-            out_prev_u_texcoords = vec2(
-                time_since_prev_spawns.x/life,
-                time_since_prev_spawns.y/life
-              );
+            out_life     = vec2(0, life);
+            out_prev_u_texcoords = texcoords;
 
             EmitVertex(); EndPrimitive();
           }
@@ -106,15 +110,18 @@ TrailUpdateShader::TrailUpdateShader()
 
           if (varying_life[0].x < 1) {
 
+            vec2 texcoords = varying_prev_u_texcoords[0];
+
+            if (use_global_texcoords == 0) {
+              texcoords = texcoords + time.x/varying_life[0].y;
+            }
+
             out_position = varying_position[0];
             out_prev_1_position = varying_prev_1_position[0];
             out_prev_2_position = varying_prev_2_position[0];
             out_prev_3_position = varying_prev_3_position[0];
             out_life     = vec2(varying_life[0].x + time.x/varying_life[0].y, varying_life[0].y);
-            out_prev_u_texcoords = vec2(
-                       varying_prev_u_texcoords[0].x + time.x/varying_life[0].y,
-                       varying_prev_u_texcoords[0].y + time.x/varying_life[0].y
-                       );
+            out_prev_u_texcoords = texcoords;
 
             EmitVertex(); EndPrimitive();
           }
@@ -133,7 +140,9 @@ TrailUpdateShader::TrailUpdateShader()
   , prev_1_position(get_uniform<math::vec2>("prev_1_position"))
   , prev_2_position(get_uniform<math::vec2>("prev_2_position"))
   , prev_3_position(get_uniform<math::vec2>("prev_3_position"))
-  , life(get_uniform<float>("life")) {}
+  , life(get_uniform<float>("life"))
+  , use_global_texcoords(get_uniform<int>("use_global_texcoords"))
+  {}
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -36,14 +36,16 @@ class TrailSystemComponent : public DrawableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Int           MaxCount;
-  Float         Depth;
+  Int             MaxCount;
+  Float           Depth;
 
-  Float         StartWidth, EndWidth;
-  Float         StartGlow,  EndGlow;
-  ColorProperty StartColor, EndColor;
+  Float           StartWidth, EndWidth;
+  Float           StartGlow,  EndGlow;
+  ColorProperty   StartColor, EndColor;
   TextureProperty Texture;
   Float           TextureRepeat;
+  Bool            UseGlobalTexCoords;
+  Bool            BlendAdd;
 
   // ----------------------------------------------------- contruction interface
   TrailSystemComponent();

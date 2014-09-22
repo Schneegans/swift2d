@@ -20,6 +20,7 @@ TrailEmitterComponent::TrailEmitterComponent()
   , position_()
   , time_since_last_spawn_(0.f)
   , time_since_prev_1_spawn_(0.f)
+  , time_since_prev_2_spawn_(0.f)
   , last_position_()
   , prev_1_position_()
   , prev_2_position_()
@@ -41,6 +42,7 @@ void TrailEmitterComponent::update(double time) {
 
   time_since_last_spawn_ += time;
   time_since_prev_1_spawn_ += time;
+  time_since_prev_2_spawn_ += time;
 
   TransformableComponent::update(time);
 
@@ -63,6 +65,7 @@ void TrailEmitterComponent::update(double time) {
     prev_1_position_ = last_position_;
     last_position_ = position_;
     spawn_new_point_ = true;
+    time_since_prev_2_spawn_ = time_since_prev_1_spawn_;
     time_since_prev_1_spawn_ = time_since_last_spawn_;
     time_since_last_spawn_ = 0.f;
   };
@@ -105,6 +108,7 @@ SerializedTrailEmitter TrailEmitterComponent::make_serialized_emitter() const {
   result.Position = position_;
   result.TimeSinceLastSpawn = time_since_last_spawn_;
   result.TimeSincePrev1Spawn = time_since_prev_1_spawn_;
+  result.TimeSincePrev2Spawn = time_since_prev_2_spawn_;
   result.LastPosition = last_position_;
   result.Prev1Position = prev_1_position_;
   result.Prev2Position = prev_2_position_;

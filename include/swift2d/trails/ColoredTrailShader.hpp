@@ -35,6 +35,8 @@ class ColoredTrailShader : public TrailShaderBase,
   oglplus::Lazy<oglplus::Uniform<math::vec4>>  start_color;
   oglplus::Lazy<oglplus::Uniform<math::vec4>>  end_color;
   oglplus::Lazy<oglplus::Uniform<math::vec2>>  glow;
+  oglplus::Lazy<oglplus::Uniform<float>>       total_time;
+  oglplus::Lazy<oglplus::Uniform<int>>         use_global_texcoords;
 
   friend class Singleton<ColoredTrailShader>;
 

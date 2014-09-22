@@ -25,6 +25,7 @@ TexturedTrailShader::TexturedTrailShader()
       @include "version"
 
       in vec2 texcoords;
+      in float age;
 
       uniform vec4 start_color;
       uniform vec4 end_color;
@@ -37,8 +38,8 @@ TexturedTrailShader::TexturedTrailShader()
 
       void main(void) {
         vec4 color = texture2D(texture, vec2(texcoords.x * texture_repeat, texcoords.y));
-        vec4  c = mix(start_color * color, end_color * color, texcoords.x);
-        float g = mix(glow.x,      glow.y,    texcoords.x);
+        vec4  c = color * mix(start_color, end_color, age);
+        float g =         mix(glow.x,      glow.y,    age);
 
         write_gbuffer(c, g);
       }
@@ -47,7 +48,7 @@ TexturedTrailShader::TexturedTrailShader()
 
     R"(
       // geometry shader -------------------------------------------------------
-      @include "trail_fragment_shader"
+      @include "trail_tf_shader"
     )"
   )
   , projection(get_uniform<math::mat3>("projection"))
@@ -58,6 +59,8 @@ TexturedTrailShader::TexturedTrailShader()
   , glow(get_uniform<math::vec2>("glow"))
   , texture(get_uniform<int>("texture"))
   , texture_repeat(get_uniform<float>("texture_repeat"))
+  , total_time(get_uniform<float>("total_time"))
+  , use_global_texcoords(get_uniform<int>("use_global_texcoords"))
   {}
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -28,7 +28,7 @@ TrailShaderBase::TrailShaderBase() {
       layout(location=4) in vec2  prev_2_position;
       layout(location=5) in vec2  prev_3_position;
 
-      out float varying_age;
+      out vec2  varying_life;
       out vec2  varying_prev_u_texcoods;
       out vec2  varying_prev_1_position;
       out vec2  varying_prev_2_position;
@@ -42,11 +42,11 @@ TrailShaderBase::TrailShaderBase() {
         varying_prev_3_position = prev_3_position;
         varying_prev_u_texcoods = prev_u_texcoords;
 
-        varying_age             = life.x;
+        varying_life             = life;
       }
     )");
 
-  ShaderIncludes::get().add_include("trail_fragment_shader",
+  ShaderIncludes::get().add_include("trail_tf_shader",
     R"(
       // geometry shader -------------------------------------------------------
       @include "version"
@@ -54,7 +54,7 @@ TrailShaderBase::TrailShaderBase() {
       layout(points) in;
       layout(triangle_strip, max_vertices = 4) out;
 
-      in float varying_age[];
+      in vec2 varying_life[];
       in vec2 varying_prev_1_position[];
       in vec2 varying_prev_2_position[];
       in vec2 varying_prev_3_position[];
@@ -64,16 +64,24 @@ TrailShaderBase::TrailShaderBase() {
       @include "camera_uniforms"
       uniform float start_width;
       uniform float end_width;
+      uniform float total_time;
+      uniform int use_global_texcoords;
 
-      out vec2 texcoords;
+      out vec2  texcoords;
+      out float age;
 
       float flip_ccw(vec2 v1, vec2 v2) {
         return v1.x * v2.y - v2.x * v1.y > 0.0 ? 1.0 : -1.0;
       }
 
       void main(void) {
-        float current_age = varying_prev_u_texcoods[0].y;
-        float r = mix(start_width * 0.5, end_width * 0.5, current_age);
+        age = varying_prev_u_texcoods[0].y;
+
+        if (use_global_texcoords == 1) {
+          age = total_time / varying_life[0].y - age;
+        }
+
+        float r = mix(start_width * 0.5, end_width * 0.5, age);
 
         vec2 p2_to_p3 = normalize(varying_prev_3_position[0] - varying_prev_2_position[0]);
         vec2 p2_to_p1 = normalize(varying_prev_1_position[0] - varying_prev_2_position[0]);
@@ -84,16 +92,21 @@ TrailShaderBase::TrailShaderBase() {
         vec3 v2 = projection * vec3(varying_prev_2_position[0] - r * n1, 1.0);
 
         gl_Position = vec4(v1, 1.0);
-        texcoords = vec2(current_age, 1.0);
+        texcoords = vec2(varying_prev_u_texcoods[0].y, 1.0);
         EmitVertex();
 
         gl_Position = vec4(v2, 1.0);
-        texcoords = vec2(current_age, 0.0);
+        texcoords = vec2(varying_prev_u_texcoods[0].y, 0.0);
         EmitVertex();
 
 
-        current_age = varying_prev_u_texcoods[0].x;
-        r = mix(start_width * 0.5, end_width * 0.5, current_age);
+        age = varying_prev_u_texcoods[0].x;
+
+        if (use_global_texcoords == 1) {
+          age = total_time / varying_life[0].y - age;
+        }
+
+        r = mix(start_width * 0.5, end_width * 0.5, age);
 
         vec2 p1_to_p2 = normalize(varying_prev_2_position[0] - varying_prev_1_position[0]);
         vec2 p1_to_p0 = normalize(gl_in[0].gl_Position.xy - varying_prev_1_position[0]);
@@ -104,11 +117,11 @@ TrailShaderBase::TrailShaderBase() {
         vec3 v4 = projection * vec3(varying_prev_1_position[0] - r * n2, 1.0);
 
         gl_Position = vec4(v3, 1.0);
-        texcoords = vec2(current_age, 1.0);
+        texcoords = vec2(varying_prev_u_texcoods[0].x, 1.0);
         EmitVertex();
 
         gl_Position = vec4(v4, 1.0);
-        texcoords = vec2(current_age, 0.0);
+        texcoords = vec2(varying_prev_u_texcoods[0].x, 0.0);
         EmitVertex();
 
         EndPrimitive();
