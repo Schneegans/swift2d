@@ -54,13 +54,18 @@ class Steam : public Singleton<Steam> {
   bool init();
   void update();
 
-  uint64_t  get_room_id();
-  void      update_room_list();
-  void      create_room(std::string const& name);
-  void      join_room(uint64_t room_id);
-  void      leave_room();
+  void        update_room_list();
+  uint64_t    get_room_id();
 
-  void send_chat_message(std::string const& message);
+  void        create_room(std::string const& name);
+  void        join_room(uint64_t room_id);
+  void        leave_room();
+
+  void        set_room_data(std::string const& key, std::string const& value);
+  std::string get_room_data(std::string const& key);
+  uint64_t    get_room_owner();
+
+  void        send_chat_message(std::string const& message);
 
   uint64_t    get_user_id();
   std::string get_user_name();

@@ -17,7 +17,6 @@ namespace RakNet {
   class ConnectionGraph2;
   class FullyConnectedMesh2;
   class NatPunchthroughClient;
-  class NatTypeDetectionClient;
   class NetworkIDManager;
 }
 
@@ -63,7 +62,6 @@ class Peer {
   RakNet::ConnectionGraph2*             graph_;
   RakNet::FullyConnectedMesh2*          mesh_;
   RakNet::NatPunchthroughClient*        npt_;
-  RakNet::NatTypeDetectionClient*       nat_type_detector_;
   RakNet::NetworkIDManager*             id_manager_;
 
   ReplicationManager*                   replica_;

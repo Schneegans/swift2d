@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <swift2d/swift2d.hpp>
-#include <swift2d/steam/SteamCallback.hpp>
 #include "SpaceScene.hpp"
 #include "Player.hpp"
 
@@ -41,22 +40,24 @@ int main(int argc, char** argv) {
       Steam::get().create_room("ichmachemaleinfachnureinenraumauf");
   });
 
-  std::map<uint64_t, SNetSocket_t> users_;
-  SNetListenSocket_t myself = SteamNetworking()->CreateListenSocket(0, 0, 60001, false);
-  auto c = new swift::SteamCallback<SocketStatusCallback_t>([](SocketStatusCallback_t* result) {
-
-    struct sockaddr_in localAddress;
-    socklen_t addressLength = sizeof(localAddress);
-    getsockname(result->m_hSocket, (struct sockaddr*)&localAddress, &addressLength);
-    printf("local address: %s\n", inet_ntoa(localAddress.sin_addr));
-    printf("local port: %d\n", (int) ntohs(localAddress.sin_port));
-  });
+  Peer peer;
 
   Steam::get().on_message.connect(
     [&](Steam::MessageType type, uint64_t user_id, std::string const& join_message) {
-      if (user_id != Steam::get().get_user_id()) {
-        std::cout << "Join " << join_message  << " " << user_id<< std::endl;
-        users_[user_id] = SteamNetworking()->CreateP2PConnectionSocket(user_id, 0, 5.f, true);
+
+      auto self      (Steam::get().get_user_id());
+      bool self_join (type == Steam::JOIN && user_id == self);
+      bool owner     (Steam::get().get_room_owner() == self);
+
+      if (self_join) {
+        if (owner) {
+          std::cout << "Im lobby host." << std::endl;
+          Steam::get().set_room_data("host", std::to_string(Network::get().get_own_id()));
+        } else {
+          auto host = Steam::get().get_room_data("host");
+          std::cout << "Current lobby host: " << host << std::endl;
+          peer.open_nat(std::from_string<uint64_t>(host), "natpunch.jenkinssoftware.com:61111");
+        }
       }
   });
 
@@ -69,67 +70,10 @@ int main(int argc, char** argv) {
   Player::init();
   Player player(true);
 
-  swift::Peer peer;
-
   // main loop -----------------------------------------------------------------
   Application::get().on_frame.connect([&](double frame_time) {
     Steam::get().update();
-
-    uint32 size;
-
-    for (auto user : users_) {
-
-      if (SteamNetworking()->IsDataAvailableOnSocket(user.second, &size)) {
-        std::string result(size, ' ');
-        uint32 actual_size;
-        CSteamID sender;
-        SteamNetworking()->RetrieveDataFromSocket(user.second, &(*result.begin()), size, &actual_size);
-
-        std::cout << "got " << result << std::endl;
-
-        // uint32 raw_remote_ip;
-        // uint16 raw_remote_port;
-        // std::string remote_ip;
-        // std::string remote_port;
-
-        // int status;
-
-        // if (SteamNetworking()->GetSocketInfo(user.second, &sender, &status, &raw_remote_ip, &raw_remote_port)) {
-        //   std::string a = std::to_string((raw_remote_ip >> 24) & 255);
-        //   std::string b = std::to_string((raw_remote_ip >> 16) & 255);
-        //   std::string c = std::to_string((raw_remote_ip >> 8)  & 255);
-        //   std::string d = std::to_string(raw_remote_ip         & 255);
-
-        //   remote_ip = a + "." + b + "." + c + "." + d;
-        //   remote_port = std::to_string(raw_remote_port);
-
-        //   // if (state.m_bUsingRelay) {
-        //   //   std::cout << "    Message has been relayed." << std::endl;
-        //   // } else {
-        //   //   std::cout << "    Message has not been relayed." << std::endl;
-        //   // }
-        // }
-
-        if (result == "request_connect") {
-          std::string msg("confirm_connect");
-          SteamNetworking()->SendDataOnSocket(user.second, &msg[0], msg.length(), k_EP2PSendReliable);
-
-        } else if (result == "confirm_connect") {
-          std::cout << "confirm!" << std::endl;
-
-          struct sockaddr_in localAddress;
-          socklen_t addressLength = sizeof(localAddress);
-          getsockname(user.second, (struct sockaddr*)&localAddress, &addressLength);
-          printf("local address: %s\n", inet_ntoa(localAddress.sin_addr));
-          printf("local port: %d\n", (int) ntohs(localAddress.sin_port));
-
-          // std::cout << "remote address: " << remote_ip << std::endl;
-          // std::cout << "remote port: " << remote_port << std::endl;
-        }
-      }
-    }
-
-    // Network::get().update();
+    Network::get().update();
     scene->update(frame_time);
   });
 
@@ -144,22 +88,13 @@ int main(int argc, char** argv) {
         case Key::ESCAPE:
           Application::get().stop();
           break;
-        case Key::ENTER:
-          for (auto user : users_) {
-            std::string msg("request_connect");
-            if (SteamNetworking()->SendDataOnSocket(user.second, &msg[0], msg.length(), k_EP2PSendReliable)) {
-              std::cout << "send" << std::endl;
-            }
-          }
-          break;
       }
     }
   });
 
   Application::get().start();
 
-  // Network::get().disconnect();
-
+  Network::get().disconnect();
   Application::get().clean_up();
 
   return 0;

@@ -26,9 +26,7 @@
 
 #include <sstream>
 
-
-#define USE_NAT_TYPE_DETECTION  true
-#define USE_UPNP                false
+#define USE_UPNP false
 
 namespace swift {
 
@@ -135,13 +133,8 @@ void Network::update() {
 
   http_.update();
 
-  if (phase_ == HOSTING_INSTANCE && update_timer_.get_elapsed() > 1.0) {
-    // register_game();
-    // for (int i=0; i < 32; i++) {
-      // if (peer_.peer_->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS,0).GetPort()!=60000+i) {
-        peer_.peer_->AdvertiseSystem("255.255.255.255", 61234, 0,0,0);
-      // }
-    // }
+  if (phase_ == HOSTING_INSTANCE && update_timer_.get_elapsed() > 10.0) {
+    register_game();
     update_timer_.reset();
   }
 
@@ -156,9 +149,8 @@ void Network::update() {
           Logger::LOG_MESSAGE << "Connected to NAT server." << std::endl;
           nat_server_address_ = packet->systemAddress.ToString();
 
-          if (USE_NAT_TYPE_DETECTION) enter_phase(DETECT_NAT_TYPE);
-          else if (USE_UPNP)          enter_phase(OPENING_UPNP);
-          else                        enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
+          if (USE_UPNP)          enter_phase(OPENING_UPNP);
+          else                   enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
 
 
         } else if (phase_ == CONNECTING_TO_HOST) {
@@ -323,12 +315,6 @@ void Network::enter_phase(Phase phase) {
     case CONNECTING_TO_SERVER:
       Logger::LOG_MESSAGE << "Connecting to NAT server..." << std::endl;
       peer_.connect("natpunch.jenkinssoftware.com", 61111);
-      break;
-
-    // -------------------------------------------------------------------------
-    case DETECT_NAT_TYPE:
-      Logger::LOG_MESSAGE << "Detecting NAT type..." << std::endl;
-      peer_.nat_type_detector_->DetectNATType(RakNet::SystemAddress(nat_server_address_.c_str()));
       break;
 
     // -------------------------------------------------------------------------

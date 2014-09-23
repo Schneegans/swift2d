@@ -79,9 +79,8 @@ Steam::Steam()
   lobby_enter_ = new SteamCallback<LobbyEnter_t>([this](LobbyEnter_t* result) {
     current_room_ = result->m_ulSteamIDLobby;
     std::string name(SteamMatchmaking()->GetLobbyData(current_room_, "name"));
-    std::string host(SteamMatchmaking()->GetLobbyData(current_room_, "host"));
 
-    on_message.emit(MessageType::JOIN, get_user_id(), "joined " + name + " by " + host);
+    on_message.emit(MessageType::JOIN, get_user_id(), "joined " + name);
 
     int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
     for (int i(0); i<user_count; ++i) {
@@ -189,7 +188,6 @@ void Steam::create_room(std::string const& name) {
         current_room_ = result->m_ulSteamIDLobby;
 
         SteamMatchmaking()->SetLobbyData(current_room_, "name", name.c_str());
-        SteamMatchmaking()->SetLobbyData(current_room_, "host", std::to_string(Network::get().get_own_id()).c_str());
       } else {
         Logger::LOG_WARNING << "failed to create lobby" << std::endl;
       }
@@ -198,6 +196,24 @@ void Steam::create_room(std::string const& name) {
   } else {
     Logger::LOG_WARNING << "Already in a room" << std::endl;
   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Steam::set_room_data(std::string const& key, std::string const& value) {
+  SteamMatchmaking()->SetLobbyData(current_room_, key.c_str(), value.c_str());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::string Steam::get_room_data(std::string const& key) {
+  return SteamMatchmaking()->GetLobbyData(current_room_, key.c_str());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+uint64_t Steam::get_room_owner() {
+  return SteamMatchmaking()->GetLobbyOwner(current_room_).ConvertToUint64();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

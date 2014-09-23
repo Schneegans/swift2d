@@ -35,7 +35,6 @@ class Network : public Singleton<Network> {
  public:
   enum Phase {
     CONNECTING_TO_SERVER,
-    DETECT_NAT_TYPE,
     OPENING_UPNP,
     SEARCHING_FOR_OTHER_INSTANCES,
     CONNECTING_TO_HOST,

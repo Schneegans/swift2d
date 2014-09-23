@@ -34,14 +34,12 @@ Peer::Peer(unsigned short port)
   , graph_            (RakNet::ConnectionGraph2::GetInstance())
   , mesh_             (RakNet::FullyConnectedMesh2::GetInstance())
   , npt_              (RakNet::NatPunchthroughClient::GetInstance())
-  , nat_type_detector_(RakNet::NatTypeDetectionClient::GetInstance())
   , id_manager_       (new RakNet::NetworkIDManager())
   , replica_          (new ReplicationManager()) {
 
   peer_->AttachPlugin(mesh_);
   peer_->AttachPlugin(graph_);
   peer_->AttachPlugin(npt_);
-  peer_->AttachPlugin(nat_type_detector_);
   peer_->AttachPlugin(replica_);
 
   replica_->SetNetworkIDManager(id_manager_);
@@ -54,20 +52,11 @@ Peer::Peer(unsigned short port)
   sd.socketFamily = AF_INET;
   sd.port = port;
 
-  // while (RakNet::IRNS2_Berkley::IsPortInUse(sd.port, sd.hostAddress, sd.socketFamily, SOCK_DGRAM)==true) {
-  //   sd.port++;
-  // }
-
   RakNet::StartupResult sr = peer_->Startup(8, &sd, 1);
 
   if (sr != RakNet::RAKNET_STARTED) {
     Logger::LOG_ERROR << "Failed to start peer!" << std::endl;
   }
-
-
-  // RakNet::SystemAddress target;
-  // target.FromString("192.168.0.103");
-  // std::cout << "############## " << peer_->GetExternalID(target).ToString() << std::endl;
 
   peer_->SetMaximumIncomingConnections(8);
   peer_->SetTimeoutTime(1000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
