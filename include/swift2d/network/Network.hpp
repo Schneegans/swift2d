@@ -58,8 +58,7 @@ class Network : public Singleton<Network> {
   void distribute_object(NetworkObjectBase* object);
 
   bool is_host() const;
-  void connect(std::string const& ip, unsigned short port);
-  void open_nat(uint64_t guid, std::string const& nat_server);
+  void connect(uint64_t guid);
 
   friend class UpnpOpener;
   friend class Singleton<Network>;

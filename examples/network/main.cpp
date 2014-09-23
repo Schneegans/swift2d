@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
         } else {
           auto host = Steam::get().get_room_data("host");
           std::cout << "Current lobby host: " << host << std::endl;
-          Network::get().open_nat(std::from_string<uint64_t>(host), "http://www.google.de:80");
+          Network::get().connect(std::from_string<uint64_t>(host));
         }
       }
   });

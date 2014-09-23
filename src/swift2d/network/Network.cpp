@@ -93,21 +93,15 @@ uint64_t Network::get_own_id() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Network::connect(std::string const& ip, unsigned short port) {
-  RakNet::ConnectionAttemptResult car = peer_->Connect(ip.c_str(), port, 0, 0);
-  if (car!=RakNet::CONNECTION_ATTEMPT_STARTED) {
-    Logger::LOG_WARNING << "Failed connect to "<< ip << ". Code=" << car << std::endl;
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Network::open_nat(uint64_t guid, std::string const& nat_server) {
+void Network::connect(uint64_t guid) {
   if (phase_ == STARTED) {
     host_guid_ = guid;
-    Logger::LOG_WARNING << "Connecting to " << nat_server << std::endl;
     phase_ = CONNECTING_TO_NAT_SERVER;
-    connect("natpunch.jenkinssoftware.com", 61111);
+
+    RakNet::ConnectionAttemptResult car = peer_->Connect("natpunch.jenkinssoftware.com", 61111, 0, 0);
+    if (car!=RakNet::CONNECTION_ATTEMPT_STARTED) {
+      Logger::LOG_WARNING << "Failed to connect! Code=" << car << std::endl;
+    }
   }
 }
 
@@ -130,16 +124,14 @@ void Network::open_nat(uint64_t guid, std::string const& nat_server) {
 
 void Network::update() {
 
-  auto register_new_peer = [&](RakNet::RakNetGUID guid){
-    RakNet::Connection_RM3 *connection = replica_->AllocConnection(peer_->GetSystemAddressFromGuid(guid), guid);
-    if (replica_->PushConnection(connection) == false) {
-      replica_->DeallocConnection(connection);
-    }
-  };
-
+  // auto register_new_peer = [&](RakNet::RakNetGUID guid){
+  //   RakNet::Connection_RM3 *connection = replica_->AllocConnection(peer_->GetSystemAddressFromGuid(guid), guid);
+  //   if (replica_->PushConnection(connection) == false) {
+  //     replica_->DeallocConnection(connection);
+  //   }
+  // };
 
   for (RakNet::Packet* packet=peer_->Receive(); packet; peer_->DeallocatePacket(packet), packet=peer_->Receive()) {
-          Logger::LOG_MESSAGE << RakNet::PacketLogger::BaseIDTOString(packet->data[0]) << std::endl;
     switch (packet->data[0]) {
 
       // ##################### BASIC PACKETS ###################################
@@ -147,6 +139,8 @@ void Network::update() {
       case ID_CONNECTION_REQUEST_ACCEPTED:
 
         if (phase_ == CONNECTING_TO_NAT_SERVER) {
+
+          // the nat server accepted our connection
           Logger::LOG_MESSAGE << "Connected to NAT server." << std::endl;
           nat_server_address_ = packet->systemAddress.ToString();
           phase_ = NAT_PUNCH_TO_HOST;
@@ -155,16 +149,17 @@ void Network::update() {
 
         } else if (phase_ == NAT_PUNCH_TO_HOST) {
 
+          // nar punch was successfull, we got a connection!
           phase_ = CONNECTING_TO_HOST;
-          request_join(packet->guid.g);
+          // request_join(packet->guid.g);
         }
 
         break;
 
-      // -----------------------------------------------------------------------
-      case ID_DISCONNECTION_NOTIFICATION:
-        Logger::LOG_MESSAGE << packet->guid.ToString() << " disconnected." << std::endl;
-        break;
+      // // -----------------------------------------------------------------------
+      // case ID_DISCONNECTION_NOTIFICATION:
+      //   Logger::LOG_MESSAGE << packet->guid.ToString() << " disconnected." << std::endl;
+      //   break;
 
       // // ################ NAT PUNCH THROUGH PACKETS ############################
       // // -----------------------------------------------------------------------
@@ -290,7 +285,7 @@ void Network::distribute_object(NetworkObjectBase* object) {
   replica_->Reference(object);
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////////
 
 bool Network::is_host() const {
   return mesh_->IsConnectedHost();
@@ -355,33 +350,33 @@ void Network::enter_phase(Phase phase) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Network::request_join(uint64_t guid) {
-  mesh_->ResetHostCalculation();
+// void Network::request_join(uint64_t guid) {
+//   mesh_->ResetHostCalculation();
 
-  RakNet::BitStream message;
-  message.Write((RakNet::MessageID)(ID_USER_PACKET_ENUM + Network::REQUEST_JOIN));
-  peer_->Send(&message, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::RakNetGUID(guid), false);
-}
+//   RakNet::BitStream message;
+//   message.Write((RakNet::MessageID)(ID_USER_PACKET_ENUM + Network::REQUEST_JOIN));
+//   peer_->Send(&message, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::RakNetGUID(guid), false);
+// }
 
-////////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////////
 
-void Network::start_join(uint64_t guid) {
-  mesh_->StartVerifiedJoin(RakNet::RakNetGUID(guid));
-}
+// void Network::start_join(uint64_t guid) {
+//   mesh_->StartVerifiedJoin(RakNet::RakNetGUID(guid));
+// }
 
-////////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////////
 
-void Network::join(uint64_t guid, std::string const& nat_server) {
-  DataStructures::List<RakNet::SystemAddress> addresses;
-  DataStructures::List<RakNet::RakNetGUID> guids;
-  DataStructures::List<RakNet::BitStream*> userData;
-  mesh_->GetVerifiedJoinRequiredProcessingList(RakNet::RakNetGUID(guid), addresses, guids, userData);
-  for (unsigned int i=0; i < guids.Size(); i++) {
-    // if (guids[i].g != get_guid()) {
-      npt_->OpenNAT(guids[i], RakNet::SystemAddress(nat_server.c_str()));
-    // }
-  }
-}
+// void Network::join(uint64_t guid, std::string const& nat_server) {
+//   DataStructures::List<RakNet::SystemAddress> addresses;
+//   DataStructures::List<RakNet::RakNetGUID> guids;
+//   DataStructures::List<RakNet::BitStream*> userData;
+//   mesh_->GetVerifiedJoinRequiredProcessingList(RakNet::RakNetGUID(guid), addresses, guids, userData);
+//   for (unsigned int i=0; i < guids.Size(); i++) {
+//     // if (guids[i].g != get_guid()) {
+//       npt_->OpenNAT(guids[i], RakNet::SystemAddress(nat_server.c_str()));
+//     // }
+//   }
+// }
 
 ////////////////////////////////////////////////////////////////////////////////
 
