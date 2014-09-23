@@ -12,7 +12,6 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Singleton.hpp>
 
-#include <swift2d/network/Peer.hpp>
 #include <swift2d/network/UpnpOpener.hpp>
 #include <swift2d/network/NetworkObjectBase.hpp>
 #include <swift2d/network/ReplicationManager.hpp>
@@ -20,6 +19,10 @@
 
 namespace RakNet {
   class RakPeerInterface;
+  class ConnectionGraph2;
+  class FullyConnectedMesh2;
+  class NatPunchthroughClient;
+  class NetworkIDManager;
 }
 
 namespace swift {
@@ -34,14 +37,10 @@ class Network : public Singleton<Network> {
  // ----------------------------------------------------------- public interface
  public:
   enum Phase {
-    CONNECTING_TO_SERVER,
-    OPENING_UPNP,
-    SEARCHING_FOR_OTHER_INSTANCES,
-    CONNECTING_TO_HOST,
-    STARTING_NEW_INSTANCE,
-    HOSTING_INSTANCE,
-    CONNECTING_TO_PEERS,
-    PARTICIPATING
+    STARTED,
+    CONNECTING_TO_NAT_SERVER,
+    NAT_PUNCH_TO_HOST,
+    CONNECTING_TO_HOST
   };
 
   enum PacketID {
@@ -50,38 +49,46 @@ class Network : public Singleton<Network> {
 
   uint64_t get_own_id();
 
-  void connect(std::string const& game_ID);
-  void disconnect();
   void update();
 
   template<typename T> void register_type(RakNet::RakString const& type) {
-    peer_.replica_->register_object(type, [](){ return new T(); });
+    replica_->register_object(type, [](){ return new T(); });
   };
 
   void distribute_object(NetworkObjectBase* object);
 
   bool is_host() const;
+  void connect(std::string const& ip, unsigned short port);
+  void open_nat(uint64_t guid, std::string const& nat_server);
 
+  friend class UpnpOpener;
   friend class Singleton<Network>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   void enter_phase(Phase phase);
-  void register_game();
-  void unregister_game();
 
   Network();
-  ~Network() {}
+  ~Network();
 
-  Peer            peer_;
-  HttpConnection  http_;
+  void request_join(uint64_t guid);
+  void start_join(uint64_t guid);
+  void join(uint64_t guid, std::string const& nat_server);
+
+  RakNet::RakPeerInterface*             peer_;
+  RakNet::ConnectionGraph2*             graph_;
+  RakNet::FullyConnectedMesh2*          mesh_;
+  RakNet::NatPunchthroughClient*        npt_;
+  RakNet::NetworkIDManager*             id_manager_;
+
+  ReplicationManager*                   replica_;
+
   UpnpOpener      upnp_;
 
   Phase           phase_;
   std::string     game_ID_;
 
-  Timer           update_timer_;
   uint64_t        host_guid_;
   std::string     nat_server_address_;
 };

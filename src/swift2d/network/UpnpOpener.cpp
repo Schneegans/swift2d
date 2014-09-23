@@ -9,7 +9,6 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/network/UpnpOpener.hpp>
 
-#include <swift2d/network/Peer.hpp>
 #include <swift2d/utils/Logger.hpp>
 
 #include <miniupnpc/miniupnpc.h>
@@ -112,11 +111,11 @@ namespace {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void UpnpOpener::open(Peer const& peer) {
-    DataStructures::List<RakNet::RakNetSocket2*> sockets;
-    peer.peer_->GetSockets(sockets);
-    UPNPOpenAsynch(sockets[0]->GetBoundAddress().GetPort(), 2000, this);
-}
+// void UpnpOpener::open(Peer const& peer) {
+//     DataStructures::List<RakNet::RakNetSocket2*> sockets;
+//     peer.peer_->GetSockets(sockets);
+//     UPNPOpenAsynch(sockets[0]->GetBoundAddress().GetPort(), 2000, this);
+// }
 
 ////////////////////////////////////////////////////////////////////////////////
 

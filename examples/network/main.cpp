@@ -19,7 +19,6 @@ int main(int argc, char** argv) {
 
   // initialize Swift2D
   Application::get().init(argc, argv);
-  // Network::get().connect("TestGame");
 
   if (!Steam::get().init()) {
     Application::get().clean_up();
@@ -40,8 +39,6 @@ int main(int argc, char** argv) {
       Steam::get().create_room("ichmachemaleinfachnureinenraumauf");
   });
 
-  Peer peer;
-
   Steam::get().on_message.connect(
     [&](Steam::MessageType type, uint64_t user_id, std::string const& join_message) {
 
@@ -56,15 +53,14 @@ int main(int argc, char** argv) {
         } else {
           auto host = Steam::get().get_room_data("host");
           std::cout << "Current lobby host: " << host << std::endl;
-          peer.open_nat(std::from_string<uint64_t>(host), "natpunch.jenkinssoftware.com:61111");
+          Network::get().open_nat(std::from_string<uint64_t>(host), "http://www.google.de:80");
         }
       }
   });
 
   // scene ---------------------------------------------------------------------
   auto scene = SpaceScene::create();
-  auto camera = SceneManager::get().current()->Camera;
-  camera->Size = math::vec2(2.f, 2.f);
+  SceneManager::get().current()->Camera->Size = math::vec2(2.f, 2.f);
 
   // player --------------------------------------------------------------------
   Player::init();
@@ -82,19 +78,7 @@ int main(int argc, char** argv) {
     Application::get().stop();
   });
 
-  window->on_key_press.connect([&](Key key, int scancode, int action, int mods) {
-    if (action != 1) {
-      switch(key) {
-        case Key::ESCAPE:
-          Application::get().stop();
-          break;
-      }
-    }
-  });
-
   Application::get().start();
-
-  Network::get().disconnect();
   Application::get().clean_up();
 
   return 0;

@@ -23,6 +23,9 @@
 #include <raknet/src/FullyConnectedMesh2.h>
 #include <raknet/src/PacketLogger.h>
 #include <raknet/src/NatTypeDetectionClient.h>
+#include <raknet/src/ConnectionGraph2.h>
+#include <raknet/src/NatPunchthroughClient.h>
+#include <raknet/src/NetworkIDManager.h>
 
 #include <sstream>
 
@@ -33,79 +36,82 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Network::Network()
-  : phase_(CONNECTING_TO_HOST) {
+  : phase_(STARTED)
+  , peer_             (RakNet::RakPeerInterface::GetInstance())
+  , graph_            (RakNet::ConnectionGraph2::GetInstance())
+  , mesh_             (RakNet::FullyConnectedMesh2::GetInstance())
+  , npt_              (RakNet::NatPunchthroughClient::GetInstance())
+  , id_manager_       (new RakNet::NetworkIDManager())
+  , replica_          (new ReplicationManager()) {
 
-  // update_timer_.start();
+  peer_->AttachPlugin(mesh_);
+  peer_->AttachPlugin(graph_);
+  peer_->AttachPlugin(npt_);
+  peer_->AttachPlugin(replica_);
+
+  replica_->SetNetworkIDManager(id_manager_);
+  replica_->SetAutoManageConnections(false,true);
+
+  mesh_->SetAutoparticipateConnections(false);
+  mesh_->SetConnectOnNewRemoteConnection(false, "");
+
+  RakNet::SocketDescriptor sd;
+  sd.socketFamily = AF_INET;
+  sd.port = 0;
+
+  RakNet::StartupResult sr = peer_->Startup(8, &sd, 1);
+
+  if (sr != RakNet::RAKNET_STARTED) {
+    Logger::LOG_ERROR << "Failed to start peer!" << std::endl;
+  }
+
+  peer_->SetMaximumIncomingConnections(8);
+  peer_->SetTimeoutTime(1000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+
+  // connect("natpunch.jenkinssoftware.com", 61111);
 
   Logger::LOG_MESSAGE << "I'm " << get_own_id() << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Network::disconnect() {
-  // if (phase_ == HOSTING_INSTANCE) {
-  //   Logger::LOG_MESSAGE << "Unregistering game." << std::endl;
-  //   unregister_game();
-  // }
+Network::~Network() {
+  peer_->Shutdown(100);
+  RakNet::RakPeerInterface::DestroyInstance(peer_);
+  RakNet::ConnectionGraph2::DestroyInstance(graph_);
+  RakNet::FullyConnectedMesh2::DestroyInstance(mesh_);
+
+  delete replica_;
+  delete id_manager_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 uint64_t Network::get_own_id() {
-  return peer_.get_guid();
+  return peer_->GetMyGUID().g;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Network::connect(std::string const& game_ID) {
-  // game_ID_ = game_ID;
+void Network::connect(std::string const& ip, unsigned short port) {
+  RakNet::ConnectionAttemptResult car = peer_->Connect(ip.c_str(), port, 0, 0);
+  if (car!=RakNet::CONNECTION_ATTEMPT_STARTED) {
+    Logger::LOG_WARNING << "Failed connect to "<< ip << ". Code=" << car << std::endl;
+  }
+}
 
-  // http_.on_response.connect([&](std::string const& response) {
-  //   switch (phase_) {
+////////////////////////////////////////////////////////////////////////////////
 
-  //     // -----------------------------------------------------------------------
-  //     case SEARCHING_FOR_OTHER_INSTANCES: {
-  //       Logger::LOG_MESSAGE << "Got response from master server." << std::endl;
+void Network::open_nat(uint64_t guid, std::string const& nat_server) {
+  if (phase_ == STARTED) {
+    host_guid_ = guid;
+    Logger::LOG_WARNING << "Connecting to " << nat_server << std::endl;
+    phase_ = CONNECTING_TO_NAT_SERVER;
+    connect("natpunch.jenkinssoftware.com", 61111);
+  }
+}
 
-  //       bool found_other_game(false);
-
-  //       try {
-  //         boost::property_tree::ptree tree;
-  //         std::istringstream is(response);
-  //         boost::property_tree::read_json(is, tree);
-
-  //         if (tree.get_child("GET").size() > 0) {
-  //           host_guid_        = tree.get_child("GET").front().second.get<uint64_t>("guid");
-  //           found_other_game  = true;
-  //         }
-
-  //       } catch(std::runtime_error const& e) {
-  //         Logger::LOG_WARNING << "Failed to parse response: " << e.what() << std::endl;
-  //       }
-
-  //       if (found_other_game) enter_phase(CONNECTING_TO_HOST);
-  //       else                  enter_phase(STARTING_NEW_INSTANCE);
-
-  //       } break;
-
-  //     // -----------------------------------------------------------------------
-  //     case STARTING_NEW_INSTANCE:
-  //       Logger::LOG_MESSAGE << "Successfully registered new instance." << std::endl;
-  //       enter_phase(HOSTING_INSTANCE);
-  //       break;
-
-  //     // -----------------------------------------------------------------------
-  //     case HOSTING_INSTANCE:
-  //       // ignore reply
-  //       break;
-
-
-  //     // -----------------------------------------------------------------------
-  //     default:
-  //       Logger::LOG_WARNING << "Got unexpected HTTP response." << std::endl;
-  //       break;
-  //   }
-  // });
+////////////////////////////////////////////////////////////////////////////////
 
   // upnp_.on_success.connect([&](){
   //   Logger::LOG_MESSAGE << "Successfully opened UPNP." << std::endl;
@@ -118,48 +124,41 @@ void Network::connect(std::string const& game_ID) {
   // });
 
   // enter_phase(HOSTING_INSTANCE);
-}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Network::update() {
 
   auto register_new_peer = [&](RakNet::RakNetGUID guid){
-    RakNet::Connection_RM3 *connection = peer_.replica_->AllocConnection(peer_.peer_->GetSystemAddressFromGuid(guid), guid);
-    if (peer_.replica_->PushConnection(connection) == false) {
-      peer_.replica_->DeallocConnection(connection);
+    RakNet::Connection_RM3 *connection = replica_->AllocConnection(peer_->GetSystemAddressFromGuid(guid), guid);
+    if (replica_->PushConnection(connection) == false) {
+      replica_->DeallocConnection(connection);
     }
   };
 
-  http_.update();
 
-  // if (phase_ == HOSTING_INSTANCE && update_timer_.get_elapsed() > 10.0) {
-  //   register_game();
-  //   update_timer_.reset();
-  // }
-
-  for (RakNet::Packet* packet=peer_.peer_->Receive(); packet; peer_.peer_->DeallocatePacket(packet), packet=peer_.peer_->Receive()) {
+  for (RakNet::Packet* packet=peer_->Receive(); packet; peer_->DeallocatePacket(packet), packet=peer_->Receive()) {
           Logger::LOG_MESSAGE << RakNet::PacketLogger::BaseIDTOString(packet->data[0]) << std::endl;
     switch (packet->data[0]) {
 
       // ##################### BASIC PACKETS ###################################
       // -----------------------------------------------------------------------
       case ID_CONNECTION_REQUEST_ACCEPTED:
-        if (phase_ == CONNECTING_TO_SERVER) {
+
+        if (phase_ == CONNECTING_TO_NAT_SERVER) {
           Logger::LOG_MESSAGE << "Connected to NAT server." << std::endl;
           nat_server_address_ = packet->systemAddress.ToString();
+          phase_ = NAT_PUNCH_TO_HOST;
 
-          if (USE_UPNP)          enter_phase(OPENING_UPNP);
-          else                   enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
+          npt_->OpenNAT(RakNet::RakNetGUID(host_guid_), RakNet::SystemAddress(nat_server_address_.c_str()));
 
+        } else if (phase_ == NAT_PUNCH_TO_HOST) {
 
-        } else if (phase_ == CONNECTING_TO_HOST) {
-          Logger::LOG_MESSAGE << "Connected to host " << packet->guid.ToString() << ". Sending join request." << std::endl;
-          peer_.request_join(packet->guid.g);
-
-        } else if (phase_ == HOSTING_INSTANCE) {
-          Logger::LOG_MESSAGE << "Connected to client " << packet->guid.ToString() << "." << std::endl;
+          phase_ = CONNECTING_TO_HOST;
+          request_join(packet->guid.g);
         }
+
         break;
 
       // -----------------------------------------------------------------------
@@ -167,125 +166,118 @@ void Network::update() {
         Logger::LOG_MESSAGE << packet->guid.ToString() << " disconnected." << std::endl;
         break;
 
-      // ################ NAT PUNCH THROUGH PACKETS ############################
-      // -----------------------------------------------------------------------
-      case ID_NAT_PUNCHTHROUGH_SUCCEEDED:
-        if (phase_ == CONNECTING_TO_HOST || phase_ == CONNECTING_TO_PEERS) {
-          Logger::LOG_MESSAGE << "NAT punch succeeded. Connecting..." << std::endl;
-          peer_.connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort());
-        }
-        break;
+      // // ################ NAT PUNCH THROUGH PACKETS ############################
+      // // -----------------------------------------------------------------------
+      // case ID_NAT_PUNCHTHROUGH_SUCCEEDED:
+      //   if (phase_ == CONNECTING_TO_HOST || phase_ == CONNECTING_TO_PEERS) {
+      //     Logger::LOG_MESSAGE << "NAT punch succeeded. Connecting..." << std::endl;
+      //     connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort());
+      //   }
+      //   break;
 
-      // -----------------------------------------------------------------------
-      case ID_NAT_PUNCHTHROUGH_FAILED:
-        Logger::LOG_MESSAGE << "NAT punch through failed." << std::endl;
-        break;
+      // // -----------------------------------------------------------------------
+      // case ID_NAT_PUNCHTHROUGH_FAILED:
+      //   Logger::LOG_MESSAGE << "NAT punch through failed." << std::endl;
+      //   break;
 
-      // -----------------------------------------------------------------------
-      case ID_NAT_TYPE_DETECTION_RESULT: {
-        auto type = (RakNet::NATTypeDetectionResult) packet->data[1];
-        Logger::LOG_MESSAGE << "NAT Type is " << RakNet::NATTypeDetectionResultToString(type) << " (" << RakNet::NATTypeDetectionResultToStringFriendly(type) << ")" << std::endl;
+      // // -----------------------------------------------------------------------
+      // case ID_NAT_TYPE_DETECTION_RESULT: {
+      //   auto type = (RakNet::NATTypeDetectionResult) packet->data[1];
+      //   Logger::LOG_MESSAGE << "NAT Type is " << RakNet::NATTypeDetectionResultToString(type) << " (" << RakNet::NATTypeDetectionResultToStringFriendly(type) << ")" << std::endl;
 
-        if (USE_UPNP) enter_phase(OPENING_UPNP);
-        else          enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
-        } break;
+      //   if (USE_UPNP) enter_phase(OPENING_UPNP);
+      //   else          enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
+      //   } break;
 
-      // ################## FULLY CONNECTED MESH ###############################
-      // -----------------------------------------------------------------------
-      case ID_FCM2_NEW_HOST: {
-        RakNet::BitStream bs(packet->data, packet->length, false);
-        bs.IgnoreBytes(1);
-        RakNet::RakNetGUID old_host;
-        bs.Read(old_host);
+      // // ################## FULLY CONNECTED MESH ###############################
+      // // -----------------------------------------------------------------------
+      // case ID_FCM2_NEW_HOST: {
+      //   RakNet::BitStream bs(packet->data, packet->length, false);
+      //   bs.IgnoreBytes(1);
+      //   RakNet::RakNetGUID old_host;
+      //   bs.Read(old_host);
 
-        if (packet->guid.g == peer_.get_guid()) {
-          if (phase_ != HOSTING_INSTANCE) {
-            enter_phase(HOSTING_INSTANCE);
-          }
-        } else {
-          Logger::LOG_MESSAGE << packet->guid.ToString() << " is host now." << std::endl;
+      //   if (packet->guid.g == get_own_id()) {
+      //     if (phase_ != HOSTING_INSTANCE) {
+      //       enter_phase(HOSTING_INSTANCE);
+      //     }
+      //   } else {
+      //     Logger::LOG_MESSAGE << packet->guid.ToString() << " is host now." << std::endl;
 
 
-          if (old_host != RakNet::UNASSIGNED_RAKNET_GUID) {
-            Logger::LOG_MESSAGE << "Old host was " << old_host.ToString() << std::endl;
-          } else {
-            Logger::LOG_MESSAGE << "There was no host before." << std::endl;
-          }
-        }
+      //     if (old_host != RakNet::UNASSIGNED_RAKNET_GUID) {
+      //       Logger::LOG_MESSAGE << "Old host was " << old_host.ToString() << std::endl;
+      //     } else {
+      //       Logger::LOG_MESSAGE << "There was no host before." << std::endl;
+      //     }
+      //   }
 
-        if (old_host == RakNet::UNASSIGNED_RAKNET_GUID) {
-          DataStructures::List<RakNet::RakNetGUID> peers;
-          peer_.mesh_->GetParticipantList(peers);
-          for (unsigned int i=0; i < peers.Size(); i++) {
-            register_new_peer(peers[i]);
-          }
-        }
+      //   if (old_host == RakNet::UNASSIGNED_RAKNET_GUID) {
+      //     DataStructures::List<RakNet::RakNetGUID> peers;
+      //     mesh_->GetParticipantList(peers);
+      //     for (unsigned int i=0; i < peers.Size(); i++) {
+      //       register_new_peer(peers[i]);
+      //     }
+      //   }
 
-        } break;
+      //   } break;
 
-      // -----------------------------------------------------------------------
-      case (ID_USER_PACKET_ENUM + REQUEST_JOIN):
-        Logger::LOG_MESSAGE << "Got join request from " << packet->guid.ToString() << "." << std::endl;
-        peer_.start_join(packet->guid.g);
-        break;
+      // // -----------------------------------------------------------------------
+      // case (ID_USER_PACKET_ENUM + REQUEST_JOIN):
+      //   Logger::LOG_MESSAGE << "Got join request from " << packet->guid.ToString() << "." << std::endl;
+      //   start_join(packet->guid.g);
+      //   break;
 
-      // -----------------------------------------------------------------------
-      case ID_FCM2_VERIFIED_JOIN_CAPABLE:
-        peer_.mesh_->RespondOnVerifiedJoinCapable(packet, true, 0);
-        break;
+      // // -----------------------------------------------------------------------
+      // case ID_FCM2_VERIFIED_JOIN_CAPABLE:
+      //   mesh_->RespondOnVerifiedJoinCapable(packet, true, 0);
+      //   break;
 
-      // -----------------------------------------------------------------------
-      case ID_FCM2_VERIFIED_JOIN_ACCEPTED: {
-        DataStructures::List<RakNet::RakNetGUID> peers;
-        bool this_was_accepted;
-        peer_.mesh_->GetVerifiedJoinAcceptedAdditionalData(packet, &this_was_accepted, peers, 0);
-        if (this_was_accepted) {
-          Logger::LOG_MESSAGE << "Join accepted." << std::endl;
-        } else {
-          Logger::LOG_MESSAGE << "Peer " << peers[0].ToString() << " joined the game." << std::endl;
-        }
+      // // -----------------------------------------------------------------------
+      // case ID_FCM2_VERIFIED_JOIN_ACCEPTED: {
+      //   DataStructures::List<RakNet::RakNetGUID> peers;
+      //   bool this_was_accepted;
+      //   mesh_->GetVerifiedJoinAcceptedAdditionalData(packet, &this_was_accepted, peers, 0);
+      //   if (this_was_accepted) {
+      //     Logger::LOG_MESSAGE << "Join accepted." << std::endl;
+      //   } else {
+      //     Logger::LOG_MESSAGE << "Peer " << peers[0].ToString() << " joined the game." << std::endl;
+      //   }
 
-        if (peer_.mesh_->GetConnectedHost() != RakNet::UNASSIGNED_RAKNET_GUID) {
-          for (unsigned int i=0; i < peers.Size(); i++) {
-            register_new_peer(peers[i]);
-          }
-        }
+      //   if (mesh_->GetConnectedHost() != RakNet::UNASSIGNED_RAKNET_GUID) {
+      //     for (unsigned int i=0; i < peers.Size(); i++) {
+      //       register_new_peer(peers[i]);
+      //     }
+      //   }
 
-        if (this_was_accepted) {
-          enter_phase(PARTICIPATING);
-        }
+      //   if (this_was_accepted) {
+      //     enter_phase(PARTICIPATING);
+      //   }
 
-      } break;
+      // } break;
 
-      // -----------------------------------------------------------------------
-      case ID_FCM2_VERIFIED_JOIN_REJECTED:
-        Logger::LOG_MESSAGE << "Join rejected." << std::endl;
-        peer_.peer_->CloseConnection(packet->guid, true);
-        break;
+      // // -----------------------------------------------------------------------
+      // case ID_FCM2_VERIFIED_JOIN_REJECTED:
+      //   Logger::LOG_MESSAGE << "Join rejected." << std::endl;
+      //   peer_->CloseConnection(packet->guid, true);
+      //   break;
 
-      // -----------------------------------------------------------------------
-      case ID_FCM2_VERIFIED_JOIN_FAILED:
-        Logger::LOG_MESSAGE << "Join failed." << std::endl;
-        break;
+      // // -----------------------------------------------------------------------
+      // case ID_FCM2_VERIFIED_JOIN_FAILED:
+      //   Logger::LOG_MESSAGE << "Join failed." << std::endl;
+      //   break;
 
-      // -----------------------------------------------------------------------
-      case ID_FCM2_VERIFIED_JOIN_START:
-        Logger::LOG_MESSAGE << "Connecting to other peers..." << std::endl;
-        enter_phase(CONNECTING_TO_PEERS);
-        peer_.join(packet->guid.g, nat_server_address_);
-        break;
+      // // -----------------------------------------------------------------------
+      // case ID_FCM2_VERIFIED_JOIN_START:
+      //   Logger::LOG_MESSAGE << "Connecting to other peers..." << std::endl;
+      //   enter_phase(CONNECTING_TO_PEERS);
+      //   join(packet->guid.g, nat_server_address_);
+      //   break;
 
       // ##################### OTHER PACKETS ###################################
-      case ID_ADVERTISE_SYSTEM:
-        Logger::LOG_MESSAGE << "Got ID_ADVERTISE_SYSTEM" << std::endl;
-        if (packet->guid!=peer_.peer_->GetMyGUID()) {
-          peer_.peer_->Connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort(),0,0);
-        }
-        break;
-
       // -----------------------------------------------------------------------
       default:
-        Logger::LOG_TRACE << "Got " << RakNet::PacketLogger::BaseIDTOString(packet->data[0])
+        Logger::LOG_DEBUG << "Got " << RakNet::PacketLogger::BaseIDTOString(packet->data[0])
                           << " from " << packet->guid.ToString() << std::endl;
         break;
     }
@@ -295,89 +287,100 @@ void Network::update() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Network::distribute_object(NetworkObjectBase* object) {
-  peer_.replica_->Reference(object);
+  replica_->Reference(object);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Network::is_host() const {
-  return peer_.mesh_->IsConnectedHost();
+  return mesh_->IsConnectedHost();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Network::enter_phase(Phase phase) {
-  phase_ = phase;
+  // phase_ = phase;
 
-  switch (phase) {
+  // switch (phase) {
 
-    // -------------------------------------------------------------------------
-    case CONNECTING_TO_SERVER:
-      Logger::LOG_MESSAGE << "Connecting to NAT server..." << std::endl;
-      peer_.connect("natpunch.jenkinssoftware.com", 61111);
-      break;
+  //   // -------------------------------------------------------------------------
+  //   case CONNECTING_TO_SERVER:
+  //     Logger::LOG_MESSAGE << "Connecting to NAT server..." << std::endl;
+  //     connect("natpunch.jenkinssoftware.com", 61111);
+  //     break;
 
-    // -------------------------------------------------------------------------
-    case OPENING_UPNP:
-      Logger::LOG_MESSAGE << "Opening UPNP..." << std::endl;
-      upnp_.open(peer_);
-      break;
+  //   // -------------------------------------------------------------------------
+  //   case OPENING_UPNP:
+  //     Logger::LOG_MESSAGE << "Opening UPNP..." << std::endl;
+  //     // upnp_.open(peer_);
+  //     break;
 
-    // -------------------------------------------------------------------------
-    case SEARCHING_FOR_OTHER_INSTANCES:
-      Logger::LOG_MESSAGE << "Downloading running instances from "
-                          << "master server..." << std::endl;
-      http_.get("masterserver2.raknet.com/testServer?__gameId=" + game_ID_,
-                "masterserver2.raknet.com", 80);
-      break;
+  //   // -------------------------------------------------------------------------
+  //   case SEARCHING_FOR_OTHER_INSTANCES:
+  //     Logger::LOG_MESSAGE << "Downloading running instances from "
+  //                         << "master server..." << std::endl;
+  //     http_.get("masterserver2.raknet.com/testServer?__gameId=" + game_ID_,
+  //               "masterserver2.raknet.com", 80);
+  //     break;
 
-    // -------------------------------------------------------------------------
-    case CONNECTING_TO_HOST:
-      Logger::LOG_MESSAGE << "Found running instance. Searching route to host "
-                          << host_guid_ << "..." << std::endl;
-      peer_.open_nat(host_guid_, nat_server_address_);
-      break;
+  //   // -------------------------------------------------------------------------
+  //   case CONNECTING_TO_HOST:
+  //     Logger::LOG_MESSAGE << "Found running instance. Searching route to host "
+  //                         << host_guid_ << "..." << std::endl;
+  //     open_nat(host_guid_, nat_server_address_);
+  //     break;
 
-    // -------------------------------------------------------------------------
-    case STARTING_NEW_INSTANCE:
-      Logger::LOG_MESSAGE << "No running instances found. "
-                          << "Starting new instance..." << std::endl;
-      peer_.mesh_->ResetHostCalculation();
-      register_game();
-      update_timer_.reset();
-      break;
+  //   // -------------------------------------------------------------------------
+  //   case STARTING_NEW_INSTANCE:
+  //     Logger::LOG_MESSAGE << "No running instances found. "
+  //                         << "Starting new instance..." << std::endl;
+  //     mesh_->ResetHostCalculation();
+  //     // register_game();
+  //     // update_timer_.reset();
+  //     break;
 
-    // -------------------------------------------------------------------------
-    case HOSTING_INSTANCE:
-      Logger::LOG_MESSAGE << "I'm host now." << std::endl;
-      register_game();
-      update_timer_.reset();
-      break;
+  //   // -------------------------------------------------------------------------
+  //   case HOSTING_INSTANCE:
+  //     Logger::LOG_MESSAGE << "I'm host now." << std::endl;
+  //     // register_game();
+  //     // update_timer_.reset();
+  //     break;
 
-    // -------------------------------------------------------------------------
-    case PARTICIPATING:
-      Logger::LOG_MESSAGE << "Participating game." << std::endl;
-      break;
+  //   // -------------------------------------------------------------------------
+  //   case PARTICIPATING:
+  //     Logger::LOG_MESSAGE << "Participating game." << std::endl;
+  //     break;
+  // }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Network::request_join(uint64_t guid) {
+  mesh_->ResetHostCalculation();
+
+  RakNet::BitStream message;
+  message.Write((RakNet::MessageID)(ID_USER_PACKET_ENUM + Network::REQUEST_JOIN));
+  peer_->Send(&message, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::RakNetGUID(guid), false);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Network::start_join(uint64_t guid) {
+  mesh_->StartVerifiedJoin(RakNet::RakNetGUID(guid));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Network::join(uint64_t guid, std::string const& nat_server) {
+  DataStructures::List<RakNet::SystemAddress> addresses;
+  DataStructures::List<RakNet::RakNetGUID> guids;
+  DataStructures::List<RakNet::BitStream*> userData;
+  mesh_->GetVerifiedJoinRequiredProcessingList(RakNet::RakNetGUID(guid), addresses, guids, userData);
+  for (unsigned int i=0; i < guids.Size(); i++) {
+    // if (guids[i].g != get_guid()) {
+      npt_->OpenNAT(guids[i], RakNet::SystemAddress(nat_server.c_str()));
+    // }
   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Network::register_game() {
-  std::stringstream game_descriptor;
-  game_descriptor << "{'__gameId': '" << game_ID_ << "', '__clientReqId': '0', "
-                  << "'__rowId': '0', '__timeoutSec': '45', "
-                  << "'guid': '" << peer_.peer_->GetMyGUID().ToString() << "' }";
-
-  http_.post("masterserver2.raknet.com/testServer", game_descriptor.str(),
-             "masterserver2.raknet.com", 80);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Network::unregister_game() {
-  http_.del("masterserver2.raknet.com/testServer?__gameId=" + game_ID_ + "&__rowId=0",
-            "masterserver2.raknet.com", 80);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
