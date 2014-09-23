@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/textures/Texture.hpp>
+#include <swift2d/utils/Color.hpp>
 
 namespace swift {
 
@@ -43,6 +44,10 @@ class Texture3D : public Texture {
 
   Texture3D();
   Texture3D(std::string const& file_name, unsigned tiles_x, unsigned tiles_y);
+
+  Texture3D(Color const& fbl, Color const& ftl, Color const& ftr, Color const& fbr,
+            Color const& bbl, Color const& btl, Color const& btr, Color const& bbr,
+            int width, int height, int depth);
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
