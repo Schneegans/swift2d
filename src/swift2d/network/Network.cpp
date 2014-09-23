@@ -33,7 +33,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Network::Network()
-  : phase_(SEARCHING_FOR_OTHER_INSTANCES) {
+  : phase_(CONNECTING_TO_HOST) {
 
   update_timer_.start();
 
