@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
 
   // initialize Swift2D
   Application::get().init(argc, argv);
-  Network::get().connect("TestGame");
+  // Network::get().connect("TestGame");
 
   if (!Steam::get().init()) {
     Application::get().clean_up();
@@ -27,7 +27,6 @@ int main(int argc, char** argv) {
   }
 
   Steam::get().update_room_list();
-
 
   Steam::get().on_updated_room_list.connect(
     [](std::unordered_map<uint64_t, Steam::RoomData> const& rooms) {
@@ -41,14 +40,20 @@ int main(int argc, char** argv) {
       Steam::get().create_room("ichmachemaleinfachnureinenraumauf");
   });
 
-  std::set<uint64_t> user_ids;
+  std::map<uint64_t, SNetSocket_t> users_;
 
   Steam::get().on_message.connect(
     [&](Steam::MessageType type, uint64_t user_id, std::string const& join_message) {
-      std::cout << join_message << std::endl;
-      user_ids.insert(user_id);
-      std::string huhu("huhu");
-      SteamNetworking()->SendP2PPacket(user_id, huhu.c_str(), huhu.length(), k_EP2PSendReliable);
+      if (user_id != Steam::get().get_user_id()) {
+        std::cout << "Join " << join_message << std::endl;
+        users_[user_id] = SteamNetworking()->CreateP2PConnectionSocket(user_id, 0, 5.f, false);
+
+        struct sockaddr_in localAddress;
+        socklen_t addressLength = sizeof(localAddress);
+        getsockname(users_[user_id], (struct sockaddr*)&localAddress, &addressLength);
+        printf("local address: %s\n", inet_ntoa(localAddress.sin_addr));
+        printf("local port: %d\n", (int) ntohs(localAddress.sin_port));
+      }
   });
 
   // scene ---------------------------------------------------------------------
@@ -60,6 +65,8 @@ int main(int argc, char** argv) {
   Player::init();
   Player player(true);
 
+  swift::Peer peer;
+
   // main loop -----------------------------------------------------------------
   Application::get().on_frame.connect([&](double frame_time) {
     Steam::get().update();
@@ -70,7 +77,9 @@ int main(int argc, char** argv) {
       uint32 actual_size;
       CSteamID sender;
       SteamNetworking()->ReadP2PPacket(&(*result.begin()), size, &actual_size, &sender);
-      std::cout << std::endl << "Got message: " << result << std::endl;
+
+      std::string remote_ip;
+      std::string remote_port;
 
       P2PSessionState_t state;
       if (SteamNetworking()->GetP2PSessionState(sender, &state)) {
@@ -79,11 +88,11 @@ int main(int argc, char** argv) {
         std::string c = std::to_string((state.m_nRemoteIP >> 8)  & 255);
         std::string d = std::to_string(state.m_nRemoteIP         & 255);
 
-        std::string ip = a + "." + b + "." + c + "." + d;
-        std::string port = std::to_string(state.m_nRemotePort);
+        remote_ip = a + "." + b + "." + c + "." + d;
+        remote_port = std::to_string(state.m_nRemotePort);
 
         std::cout << "    From " << Steam::get().get_user_name(sender.ConvertToUint64())
-                  << " (" << ip << ":" << port << ")" << std::endl;
+                  << " (" << remote_ip << ":" << remote_port << ")" << std::endl;
 
         if (state.m_bUsingRelay) {
           std::cout << "    Message has been relayed." << std::endl;
@@ -91,9 +100,17 @@ int main(int argc, char** argv) {
           std::cout << "    Message has not been relayed." << std::endl;
         }
       }
+
+      if (result == "request_connect") {
+        std::string msg("confirm_connect");
+        SteamNetworking()->SendDataOnSocket(users_[sender.ConvertToUint64()], &msg[0], msg.length(), k_EP2PSendReliable);
+
+      } else if (result == "confirm_connect") {
+
+      }
     }
 
-    Network::get().update();
+    // Network::get().update();
     scene->update(frame_time);
   });
 
@@ -109,9 +126,9 @@ int main(int argc, char** argv) {
           Application::get().stop();
           break;
         case Key::ENTER:
-          for (auto user_id : user_ids) {
-            std::string msg("Huhu, ich habe Enter gedrückt!");
-            SteamNetworking()->SendP2PPacket(user_id, msg.c_str(), msg.length(), k_EP2PSendReliable);
+          for (auto user : users_) {
+            std::string msg("request_connect");
+            SteamNetworking()->SendDataOnSocket(user.second, &msg[0], msg.length(), k_EP2PSendReliable);
           }
           break;
       }
@@ -120,7 +137,7 @@ int main(int argc, char** argv) {
 
   Application::get().start();
 
-  Network::get().disconnect();
+  // Network::get().disconnect();
 
   Application::get().clean_up();
 

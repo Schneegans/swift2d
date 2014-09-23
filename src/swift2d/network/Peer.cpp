@@ -29,7 +29,7 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Peer::Peer()
+Peer::Peer(unsigned short port)
   : peer_             (RakNet::RakPeerInterface::GetInstance())
   , graph_            (RakNet::ConnectionGraph2::GetInstance())
   , mesh_             (RakNet::FullyConnectedMesh2::GetInstance())
@@ -51,29 +51,23 @@ Peer::Peer()
   mesh_->SetConnectOnNewRemoteConnection(false, "");
 
   RakNet::SocketDescriptor sd;
-  sd.socketFamily=AF_INET;
-  // sd.port=60000;
-  sd.port=61234;
+  sd.socketFamily = AF_INET;
+  sd.port = port;
 
   // while (RakNet::IRNS2_Berkley::IsPortInUse(sd.port, sd.hostAddress, sd.socketFamily, SOCK_DGRAM)==true) {
   //   sd.port++;
   // }
 
-  RakNet::StartupResult sr = peer_->Startup(8,&sd,1);
+  RakNet::StartupResult sr = peer_->Startup(8, &sd, 1);
 
   if (sr != RakNet::RAKNET_STARTED) {
     Logger::LOG_ERROR << "Failed to start peer!" << std::endl;
   }
 
 
-
-
   // RakNet::SystemAddress target;
   // target.FromString("192.168.0.103");
   // std::cout << "############## " << peer_->GetExternalID(target).ToString() << std::endl;
-
-
-
 
   peer_->SetMaximumIncomingConnections(8);
   peer_->SetTimeoutTime(1000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);

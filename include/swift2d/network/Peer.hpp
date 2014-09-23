@@ -37,7 +37,7 @@ class Peer {
  public:
 
   // ---------------------------------------------------- construction interface
-  Peer();
+  Peer(unsigned short port = 0);
   ~Peer();
 
   // ------------------------------------------------ standard network interface
