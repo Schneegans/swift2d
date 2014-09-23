@@ -45,8 +45,8 @@ int main(int argc, char** argv) {
   Steam::get().on_message.connect(
     [&](Steam::MessageType type, uint64_t user_id, std::string const& join_message) {
       if (user_id != Steam::get().get_user_id()) {
-        std::cout << "Join " << join_message << std::endl;
-        users_[user_id] = SteamNetworking()->CreateP2PConnectionSocket(user_id, 0, 5.f, false);
+        std::cout << "Join " << join_message  << " " << user_id<< std::endl;
+        users_[user_id] = SteamNetworking()->CreateP2PConnectionSocket(user_id, 0, 5.f, true);
 
 
 
@@ -79,6 +79,8 @@ int main(int argc, char** argv) {
         uint32 actual_size;
         CSteamID sender;
         SteamNetworking()->RetrieveDataFromSocket(user.second, &(*result.begin()), size, &actual_size);
+
+        std::cout << "got " << result << std::endl;
 
         uint32 raw_remote_ip;
         uint16 raw_remote_port;
@@ -140,6 +142,7 @@ int main(int argc, char** argv) {
         case Key::ENTER:
           for (auto user : users_) {
             std::string msg("request_connect");
+            std::cout << "send" << std::endl;
             SteamNetworking()->SendDataOnSocket(user.second, &msg[0], msg.length(), k_EP2PSendReliable);
           }
           break;
