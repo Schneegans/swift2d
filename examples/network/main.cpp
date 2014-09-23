@@ -48,11 +48,10 @@ int main(int argc, char** argv) {
         std::cout << "Join " << join_message << std::endl;
         users_[user_id] = SteamNetworking()->CreateP2PConnectionSocket(user_id, 0, 5.f, false);
 
-        struct sockaddr_in localAddress;
-        socklen_t addressLength = sizeof(localAddress);
-        getsockname(users_[user_id], (struct sockaddr*)&localAddress, &addressLength);
-        printf("local address: %s\n", inet_ntoa(localAddress.sin_addr));
-        printf("local port: %d\n", (int) ntohs(localAddress.sin_port));
+
+
+
+
       }
   });
 
@@ -72,41 +71,54 @@ int main(int argc, char** argv) {
     Steam::get().update();
 
     uint32 size;
-    if (SteamNetworking()->IsP2PPacketAvailable(&size)) {
-      std::string result(size, ' ');
-      uint32 actual_size;
-      CSteamID sender;
-      SteamNetworking()->ReadP2PPacket(&(*result.begin()), size, &actual_size, &sender);
 
-      std::string remote_ip;
-      std::string remote_port;
+    for (auto user : users_) {
 
-      P2PSessionState_t state;
-      if (SteamNetworking()->GetP2PSessionState(sender, &state)) {
-        std::string a = std::to_string((state.m_nRemoteIP >> 24) & 255);
-        std::string b = std::to_string((state.m_nRemoteIP >> 16) & 255);
-        std::string c = std::to_string((state.m_nRemoteIP >> 8)  & 255);
-        std::string d = std::to_string(state.m_nRemoteIP         & 255);
+      if (SteamNetworking()->IsDataAvailableOnSocket(user.second, &size)) {
+        std::string result(size, ' ');
+        uint32 actual_size;
+        CSteamID sender;
+        SteamNetworking()->RetrieveDataFromSocket(user.second, &(*result.begin()), size, &actual_size);
 
-        remote_ip = a + "." + b + "." + c + "." + d;
-        remote_port = std::to_string(state.m_nRemotePort);
+        uint32 raw_remote_ip;
+        uint16 raw_remote_port;
+        std::string remote_ip;
+        std::string remote_port;
 
-        std::cout << "    From " << Steam::get().get_user_name(sender.ConvertToUint64())
-                  << " (" << remote_ip << ":" << remote_port << ")" << std::endl;
+        int status;
 
-        if (state.m_bUsingRelay) {
-          std::cout << "    Message has been relayed." << std::endl;
-        } else {
-          std::cout << "    Message has not been relayed." << std::endl;
+        if (SteamNetworking()->GetSocketInfo(user.second, &sender, &status, &raw_remote_ip, &raw_remote_port)) {
+          std::string a = std::to_string((raw_remote_ip >> 24) & 255);
+          std::string b = std::to_string((raw_remote_ip >> 16) & 255);
+          std::string c = std::to_string((raw_remote_ip >> 8)  & 255);
+          std::string d = std::to_string(raw_remote_ip         & 255);
+
+          remote_ip = a + "." + b + "." + c + "." + d;
+          remote_port = std::to_string(raw_remote_port);
+
+          // if (state.m_bUsingRelay) {
+          //   std::cout << "    Message has been relayed." << std::endl;
+          // } else {
+          //   std::cout << "    Message has not been relayed." << std::endl;
+          // }
         }
-      }
 
-      if (result == "request_connect") {
-        std::string msg("confirm_connect");
-        SteamNetworking()->SendDataOnSocket(users_[sender.ConvertToUint64()], &msg[0], msg.length(), k_EP2PSendReliable);
+        if (result == "request_connect") {
+          std::string msg("confirm_connect");
+          SteamNetworking()->SendDataOnSocket(user.second, &msg[0], msg.length(), k_EP2PSendReliable);
 
-      } else if (result == "confirm_connect") {
+        } else if (result == "confirm_connect") {
+          std::cout << "confirm!" << std::endl;
 
+          struct sockaddr_in localAddress;
+          socklen_t addressLength = sizeof(localAddress);
+          getsockname(user.second, (struct sockaddr*)&localAddress, &addressLength);
+          printf("local address: %s\n", inet_ntoa(localAddress.sin_addr));
+          printf("local port: %d\n", (int) ntohs(localAddress.sin_port));
+
+          std::cout << "remote address: " << remote_ip << std::endl;
+          std::cout << "remote port: " << remote_port << std::endl;
+        }
       }
     }
 
