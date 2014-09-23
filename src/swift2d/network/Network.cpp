@@ -119,7 +119,7 @@ void Network::connect(std::string const& game_ID) {
     enter_phase(OPENING_UPNP);
   });
 
-  enter_phase(CONNECTING_TO_SERVER);
+  enter_phase(HOSTING_INSTANCE);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -137,15 +137,16 @@ void Network::update() {
 
   if (phase_ == HOSTING_INSTANCE && update_timer_.get_elapsed() > 1.0) {
     // register_game();
-    for (int i=0; i < 32; i++) {
-      if (peer_.peer_->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS,0).GetPort()!=60000+i) {
-        peer_.peer_->AdvertiseSystem("255.255.255.255", 60000+i, 0,0,0);
-      }
-    }
+    // for (int i=0; i < 32; i++) {
+      // if (peer_.peer_->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS,0).GetPort()!=60000+i) {
+        peer_.peer_->AdvertiseSystem("255.255.255.255", 61234, 0,0,0);
+      // }
+    // }
     update_timer_.reset();
   }
 
   for (RakNet::Packet* packet=peer_.peer_->Receive(); packet; peer_.peer_->DeallocatePacket(packet), packet=peer_.peer_->Receive()) {
+          Logger::LOG_MESSAGE << RakNet::PacketLogger::BaseIDTOString(packet->data[0]) << std::endl;
     switch (packet->data[0]) {
 
       // ##################### BASIC PACKETS ###################################
@@ -284,6 +285,7 @@ void Network::update() {
 
       // ##################### OTHER PACKETS ###################################
       case ID_ADVERTISE_SYSTEM:
+        Logger::LOG_MESSAGE << "Got ID_ADVERTISE_SYSTEM" << std::endl;
         if (packet->guid!=peer_.peer_->GetMyGUID()) {
           peer_.peer_->Connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort(),0,0);
         }

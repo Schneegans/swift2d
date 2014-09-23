@@ -52,11 +52,12 @@ Peer::Peer()
 
   RakNet::SocketDescriptor sd;
   sd.socketFamily=AF_INET;
-  sd.port=60000;
+  // sd.port=60000;
+  sd.port=61234;
 
-  while (RakNet::IRNS2_Berkley::IsPortInUse(sd.port, sd.hostAddress, sd.socketFamily, SOCK_DGRAM)==true) {
-    sd.port++;
-  }
+  // while (RakNet::IRNS2_Berkley::IsPortInUse(sd.port, sd.hostAddress, sd.socketFamily, SOCK_DGRAM)==true) {
+  //   sd.port++;
+  // }
 
   RakNet::StartupResult sr = peer_->Startup(8,&sd,1);
 
