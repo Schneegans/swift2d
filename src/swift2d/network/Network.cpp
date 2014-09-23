@@ -135,8 +135,13 @@ void Network::update() {
 
   http_.update();
 
-  if (phase_ == HOSTING_INSTANCE && update_timer_.get_elapsed() > 20.0) {
-    register_game();
+  if (phase_ == HOSTING_INSTANCE && update_timer_.get_elapsed() > 1.0) {
+    // register_game();
+    for (int i=0; i < 32; i++) {
+      if (peer_.peer_->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS,0).GetPort()!=60000+i) {
+        peer_.peer_->AdvertiseSystem("255.255.255.255", 60000+i, 0,0,0);
+      }
+    }
     update_timer_.reset();
   }
 
@@ -278,6 +283,12 @@ void Network::update() {
         break;
 
       // ##################### OTHER PACKETS ###################################
+      case ID_ADVERTISE_SYSTEM:
+        if (packet->guid!=peer_.peer_->GetMyGUID()) {
+          peer_.peer_->Connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort(),0,0);
+        }
+        break;
+
       // -----------------------------------------------------------------------
       default:
         Logger::LOG_TRACE << "Got " << RakNet::PacketLogger::BaseIDTOString(packet->data[0])

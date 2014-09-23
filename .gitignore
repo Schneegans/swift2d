@@ -28,3 +28,4 @@ tags
 .nfs*
 .vim.custom
 tests/tests
+examples/network/settings.json

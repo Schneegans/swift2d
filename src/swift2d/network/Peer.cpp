@@ -21,6 +21,7 @@
 #include <raknet/src/BitStream.h>
 #include <raknet/src/MessageIdentifiers.h>
 #include <raknet/src/NetworkIDManager.h>
+#include <raknet/src/RakNetSocket2.h>
 
 #include <iostream>
 
@@ -51,7 +52,11 @@ Peer::Peer()
 
   RakNet::SocketDescriptor sd;
   sd.socketFamily=AF_INET;
-  sd.port=0;
+  sd.port=60000;
+
+  while (RakNet::IRNS2_Berkley::IsPortInUse(sd.port, sd.hostAddress, sd.socketFamily, SOCK_DGRAM)==true) {
+    sd.port++;
+  }
 
   RakNet::StartupResult sr = peer_->Startup(8,&sd,1);
 
