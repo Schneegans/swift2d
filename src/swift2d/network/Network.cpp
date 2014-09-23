@@ -35,7 +35,7 @@ namespace swift {
 Network::Network()
   : phase_(CONNECTING_TO_HOST) {
 
-  update_timer_.start();
+  // update_timer_.start();
 
   Logger::LOG_MESSAGE << "I'm " << get_own_id() << std::endl;
 }
@@ -43,10 +43,10 @@ Network::Network()
 ////////////////////////////////////////////////////////////////////////////////
 
 void Network::disconnect() {
-  if (phase_ == HOSTING_INSTANCE) {
-    Logger::LOG_MESSAGE << "Unregistering game." << std::endl;
-    unregister_game();
-  }
+  // if (phase_ == HOSTING_INSTANCE) {
+  //   Logger::LOG_MESSAGE << "Unregistering game." << std::endl;
+  //   unregister_game();
+  // }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,66 +58,66 @@ uint64_t Network::get_own_id() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Network::connect(std::string const& game_ID) {
-  game_ID_ = game_ID;
+  // game_ID_ = game_ID;
 
-  http_.on_response.connect([&](std::string const& response) {
-    switch (phase_) {
+  // http_.on_response.connect([&](std::string const& response) {
+  //   switch (phase_) {
 
-      // -----------------------------------------------------------------------
-      case SEARCHING_FOR_OTHER_INSTANCES: {
-        Logger::LOG_MESSAGE << "Got response from master server." << std::endl;
+  //     // -----------------------------------------------------------------------
+  //     case SEARCHING_FOR_OTHER_INSTANCES: {
+  //       Logger::LOG_MESSAGE << "Got response from master server." << std::endl;
 
-        bool found_other_game(false);
+  //       bool found_other_game(false);
 
-        try {
-          boost::property_tree::ptree tree;
-          std::istringstream is(response);
-          boost::property_tree::read_json(is, tree);
+  //       try {
+  //         boost::property_tree::ptree tree;
+  //         std::istringstream is(response);
+  //         boost::property_tree::read_json(is, tree);
 
-          if (tree.get_child("GET").size() > 0) {
-            host_guid_        = tree.get_child("GET").front().second.get<uint64_t>("guid");
-            found_other_game  = true;
-          }
+  //         if (tree.get_child("GET").size() > 0) {
+  //           host_guid_        = tree.get_child("GET").front().second.get<uint64_t>("guid");
+  //           found_other_game  = true;
+  //         }
 
-        } catch(std::runtime_error const& e) {
-          Logger::LOG_WARNING << "Failed to parse response: " << e.what() << std::endl;
-        }
+  //       } catch(std::runtime_error const& e) {
+  //         Logger::LOG_WARNING << "Failed to parse response: " << e.what() << std::endl;
+  //       }
 
-        if (found_other_game) enter_phase(CONNECTING_TO_HOST);
-        else                  enter_phase(STARTING_NEW_INSTANCE);
+  //       if (found_other_game) enter_phase(CONNECTING_TO_HOST);
+  //       else                  enter_phase(STARTING_NEW_INSTANCE);
 
-        } break;
+  //       } break;
 
-      // -----------------------------------------------------------------------
-      case STARTING_NEW_INSTANCE:
-        Logger::LOG_MESSAGE << "Successfully registered new instance." << std::endl;
-        enter_phase(HOSTING_INSTANCE);
-        break;
+  //     // -----------------------------------------------------------------------
+  //     case STARTING_NEW_INSTANCE:
+  //       Logger::LOG_MESSAGE << "Successfully registered new instance." << std::endl;
+  //       enter_phase(HOSTING_INSTANCE);
+  //       break;
 
-      // -----------------------------------------------------------------------
-      case HOSTING_INSTANCE:
-        // ignore reply
-        break;
+  //     // -----------------------------------------------------------------------
+  //     case HOSTING_INSTANCE:
+  //       // ignore reply
+  //       break;
 
 
-      // -----------------------------------------------------------------------
-      default:
-        Logger::LOG_WARNING << "Got unexpected HTTP response." << std::endl;
-        break;
-    }
-  });
+  //     // -----------------------------------------------------------------------
+  //     default:
+  //       Logger::LOG_WARNING << "Got unexpected HTTP response." << std::endl;
+  //       break;
+  //   }
+  // });
 
-  upnp_.on_success.connect([&](){
-    Logger::LOG_MESSAGE << "Successfully opened UPNP." << std::endl;
-    enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
-  });
+  // upnp_.on_success.connect([&](){
+  //   Logger::LOG_MESSAGE << "Successfully opened UPNP." << std::endl;
+  //   enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
+  // });
 
-  upnp_.on_fail.connect([&](){
-    Logger::LOG_MESSAGE << "Failed to open UPNP. Using NAT punch through." << std::endl;
-    enter_phase(OPENING_UPNP);
-  });
+  // upnp_.on_fail.connect([&](){
+  //   Logger::LOG_MESSAGE << "Failed to open UPNP. Using NAT punch through." << std::endl;
+  //   enter_phase(OPENING_UPNP);
+  // });
 
-  enter_phase(HOSTING_INSTANCE);
+  // enter_phase(HOSTING_INSTANCE);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -133,10 +133,10 @@ void Network::update() {
 
   http_.update();
 
-  if (phase_ == HOSTING_INSTANCE && update_timer_.get_elapsed() > 10.0) {
-    register_game();
-    update_timer_.reset();
-  }
+  // if (phase_ == HOSTING_INSTANCE && update_timer_.get_elapsed() > 10.0) {
+  //   register_game();
+  //   update_timer_.reset();
+  // }
 
   for (RakNet::Packet* packet=peer_.peer_->Receive(); packet; peer_.peer_->DeallocatePacket(packet), packet=peer_.peer_->Receive()) {
           Logger::LOG_MESSAGE << RakNet::PacketLogger::BaseIDTOString(packet->data[0]) << std::endl;
