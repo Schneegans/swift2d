@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <swift2d/swift2d.hpp>
+#include <swift2d/steam/SteamCallback.hpp>
 #include "SpaceScene.hpp"
 #include "Player.hpp"
 
@@ -41,17 +42,21 @@ int main(int argc, char** argv) {
   });
 
   std::map<uint64_t, SNetSocket_t> users_;
+  SNetListenSocket_t myself = SteamNetworking()->CreateListenSocket(0, 0, 60001, false);
+  auto c = new swift::SteamCallback<SocketStatusCallback_t>([](SocketStatusCallback_t* result) {
+
+    struct sockaddr_in localAddress;
+    socklen_t addressLength = sizeof(localAddress);
+    getsockname(result->m_hSocket, (struct sockaddr*)&localAddress, &addressLength);
+    printf("local address: %s\n", inet_ntoa(localAddress.sin_addr));
+    printf("local port: %d\n", (int) ntohs(localAddress.sin_port));
+  });
 
   Steam::get().on_message.connect(
     [&](Steam::MessageType type, uint64_t user_id, std::string const& join_message) {
       if (user_id != Steam::get().get_user_id()) {
         std::cout << "Join " << join_message  << " " << user_id<< std::endl;
         users_[user_id] = SteamNetworking()->CreateP2PConnectionSocket(user_id, 0, 5.f, true);
-
-
-
-
-
       }
   });
 
@@ -82,28 +87,28 @@ int main(int argc, char** argv) {
 
         std::cout << "got " << result << std::endl;
 
-        uint32 raw_remote_ip;
-        uint16 raw_remote_port;
-        std::string remote_ip;
-        std::string remote_port;
+        // uint32 raw_remote_ip;
+        // uint16 raw_remote_port;
+        // std::string remote_ip;
+        // std::string remote_port;
 
-        int status;
+        // int status;
 
-        if (SteamNetworking()->GetSocketInfo(user.second, &sender, &status, &raw_remote_ip, &raw_remote_port)) {
-          std::string a = std::to_string((raw_remote_ip >> 24) & 255);
-          std::string b = std::to_string((raw_remote_ip >> 16) & 255);
-          std::string c = std::to_string((raw_remote_ip >> 8)  & 255);
-          std::string d = std::to_string(raw_remote_ip         & 255);
+        // if (SteamNetworking()->GetSocketInfo(user.second, &sender, &status, &raw_remote_ip, &raw_remote_port)) {
+        //   std::string a = std::to_string((raw_remote_ip >> 24) & 255);
+        //   std::string b = std::to_string((raw_remote_ip >> 16) & 255);
+        //   std::string c = std::to_string((raw_remote_ip >> 8)  & 255);
+        //   std::string d = std::to_string(raw_remote_ip         & 255);
 
-          remote_ip = a + "." + b + "." + c + "." + d;
-          remote_port = std::to_string(raw_remote_port);
+        //   remote_ip = a + "." + b + "." + c + "." + d;
+        //   remote_port = std::to_string(raw_remote_port);
 
-          // if (state.m_bUsingRelay) {
-          //   std::cout << "    Message has been relayed." << std::endl;
-          // } else {
-          //   std::cout << "    Message has not been relayed." << std::endl;
-          // }
-        }
+        //   // if (state.m_bUsingRelay) {
+        //   //   std::cout << "    Message has been relayed." << std::endl;
+        //   // } else {
+        //   //   std::cout << "    Message has not been relayed." << std::endl;
+        //   // }
+        // }
 
         if (result == "request_connect") {
           std::string msg("confirm_connect");
@@ -118,8 +123,8 @@ int main(int argc, char** argv) {
           printf("local address: %s\n", inet_ntoa(localAddress.sin_addr));
           printf("local port: %d\n", (int) ntohs(localAddress.sin_port));
 
-          std::cout << "remote address: " << remote_ip << std::endl;
-          std::cout << "remote port: " << remote_port << std::endl;
+          // std::cout << "remote address: " << remote_ip << std::endl;
+          // std::cout << "remote port: " << remote_port << std::endl;
         }
       }
     }
@@ -142,8 +147,9 @@ int main(int argc, char** argv) {
         case Key::ENTER:
           for (auto user : users_) {
             std::string msg("request_connect");
-            std::cout << "send" << std::endl;
-            SteamNetworking()->SendDataOnSocket(user.second, &msg[0], msg.length(), k_EP2PSendReliable);
+            if (SteamNetworking()->SendDataOnSocket(user.second, &msg[0], msg.length(), k_EP2PSendReliable)) {
+              std::cout << "send" << std::endl;
+            }
           }
           break;
       }
