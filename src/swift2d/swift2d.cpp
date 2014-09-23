@@ -27,7 +27,7 @@
 #include <swift2d/trails/ColoredTrailShader.hpp>
 #include <swift2d/textures/NoiseTexture.hpp>
 #include <swift2d/textures/DefaultTexture.hpp>
-#include <swift2d/textures/DefaultAnimatedTexture.hpp>
+#include <swift2d/textures/DefaultTexture3D.hpp>
 
 #include <GLFW/glfw3.h>
 
@@ -46,7 +46,7 @@ namespace {
 
       // register all objects ------------------------------------------------
       Object::init<AnimatedSpriteComponent>();
-      Object::init<AnimatedTexture>();
+      Object::init<Texture3D>();
       Object::init<AudioComponent>();
       Object::init<BoxCollisionShape>();
       Object::init<CameraComponent>();
@@ -95,7 +95,7 @@ namespace {
     ~Swift2DContext() {
       Logger::LOG_MESSAGE << "Shutting down... " << std::endl;
 
-      DefaultAnimatedTexture::destroy_instance();
+      DefaultTexture3D::destroy_instance();
       DefaultTexture::destroy_instance();
       GuiShader::destroy_instance();
       HeatParticleShader::destroy_instance();

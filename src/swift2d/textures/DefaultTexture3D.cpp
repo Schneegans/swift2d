@@ -7,24 +7,24 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/textures/DefaultAnimatedTexture.hpp>
+#include <swift2d/textures/DefaultTexture3D.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-DefaultAnimatedTexture::DefaultAnimatedTexture()
+DefaultTexture3D::DefaultTexture3D()
   : texture_(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-DefaultAnimatedTexture::~DefaultAnimatedTexture() {
+DefaultTexture3D::~DefaultTexture3D() {
   delete texture_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DefaultAnimatedTexture::bind(RenderContext const& context, unsigned location) const {
+void DefaultTexture3D::bind(RenderContext const& context, unsigned location) const {
   if (!texture_) {
     upload_to(context);
   }
@@ -35,7 +35,7 @@ void DefaultAnimatedTexture::bind(RenderContext const& context, unsigned locatio
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DefaultAnimatedTexture::upload_to(RenderContext const& context) const {
+void DefaultTexture3D::upload_to(RenderContext const& context) const {
 
   texture_ = new oglplus::Texture();
 

@@ -7,9 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/textures/AnimatedTexture.hpp>
+#include <swift2d/textures/Texture3D.hpp>
 
-#include <swift2d/textures/DefaultAnimatedTexture.hpp>
+#include <swift2d/textures/DefaultTexture3D.hpp>
 #include <oglplus/images/png.hpp>
 #include <oglplus/images/newton.hpp>
 #include <istream>
@@ -19,7 +19,7 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AnimatedTexture::AnimatedTexture()
+Texture3D::Texture3D()
   : Texture() {
 
   TilesX.on_change().connect([&](unsigned){
@@ -32,7 +32,7 @@ AnimatedTexture::AnimatedTexture()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AnimatedTexture::AnimatedTexture(std::string const& file_name, unsigned tiles_x, unsigned tiles_y)
+Texture3D::Texture3D(std::string const& file_name, unsigned tiles_x, unsigned tiles_y)
   : Texture(file_name)
   , TilesX(tiles_x)
   , TilesY(tiles_y) {
@@ -47,20 +47,20 @@ AnimatedTexture::AnimatedTexture(std::string const& file_name, unsigned tiles_x,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void AnimatedTexture::bind(RenderContext const& ctx, unsigned location) const {
+void Texture3D::bind(RenderContext const& ctx, unsigned location) const {
 
   if (texture_) {
     texture_->Active(location);
     ctx.gl.Bind(ose::_3D(), *texture_);
   } else {
     upload_to(ctx);
-    DefaultAnimatedTexture::get().bind(ctx, location);
+    DefaultTexture3D::get().bind(ctx, location);
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void AnimatedTexture::accept(SavableObjectVisitor& visitor) {
+void Texture3D::accept(SavableObjectVisitor& visitor) {
   Texture::accept(visitor);
   visitor.add_member("TilesX", TilesX);
   visitor.add_member("TilesY", TilesY);
@@ -68,7 +68,7 @@ void AnimatedTexture::accept(SavableObjectVisitor& visitor) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void AnimatedTexture::upload_to(RenderContext const& ctx) const {
+void Texture3D::upload_to(RenderContext const& ctx) const {
 
   if (!loading_) {
     load_texture_data();
