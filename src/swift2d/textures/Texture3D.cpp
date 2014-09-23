@@ -28,6 +28,7 @@ Texture3D::Texture3D()
   TilesY.on_change().connect([&](unsigned){
     needs_update_ = true;
   });
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,6 +44,7 @@ Texture3D::Texture3D(std::string const& file_name, unsigned tiles_x, unsigned ti
   TilesY.on_change().connect([&](unsigned){
     needs_update_ = true;
   });
+  std::cout << "file ctor " << file_name << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

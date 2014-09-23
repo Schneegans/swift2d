@@ -13,6 +13,7 @@
 #include <swift2d/materials/ShaderIncludes.hpp>
 #include <swift2d/geometries/Quad.hpp>
 #include <swift2d/application/Paths.hpp>
+#include <swift2d/databases/TextureDatabase.hpp>
 
 namespace swift {
 
@@ -31,12 +32,16 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       in vec2 texcoords;
       uniform sampler2D g_buffer_shaded;
       uniform float gamma;
+      uniform bool use_color_grading;
 
       @include "get_vignette"
+      @include "get_color_grading"
 
       layout (location = 0) out vec3 fragColor;
 
       void main(void){
+        if (use_color_grading)
+          fragColor = get_color_grading(fragColor);
         fragColor = mix(vignette_color.rgb, texture2D(g_buffer_shaded, texcoords).rgb, get_vignette());
         fragColor = pow(fragColor, 1.0/vec3(gamma));
       }
@@ -58,6 +63,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       uniform float     dirt_opacity;
       uniform bool      use_heat;
       uniform float     gamma;
+      uniform bool      use_color_grading;
 
       // varyings
       in vec2 texcoords;
@@ -65,6 +71,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       layout (location = 0) out vec3 fragColor;
 
       @include "get_vignette"
+      @include "get_color_grading"
 
       void main(void) {
         vec3 glow      = texture2D(glow_buffer_1, texcoords).rgb
@@ -85,6 +92,8 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
         }
 
         fragColor = texture2D(g_buffer_shaded, shifted_texcoords).rgb;
+        if (use_color_grading)
+          fragColor = get_color_grading(fragColor);
         fragColor = mix(vignette_color.rgb, (fragColor + (glow + 0.1) * dirt * dirt_opacity), get_vignette());
         fragColor = pow(fragColor, 1.0/vec3(gamma));
       }
@@ -153,13 +162,16 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   , vignette_color_(post_fx_shader_.get_uniform<math::vec4>("vignette_color"))
   , vignette_softness_(post_fx_shader_.get_uniform<float>("vignette_softness"))
   , vignette_coverage_(post_fx_shader_.get_uniform<float>("vignette_coverage"))
+  , use_color_grading_(post_fx_shader_.get_uniform<int>("use_color_grading"))
+  , color_grading_tex_(post_fx_shader_.get_uniform<int>("color_grading_tex"))
   , screen_size_(threshold_shader_.get_uniform<math::vec2i>("screen_size"))
   , g_buffer_diffuse_(threshold_shader_.get_uniform<int>("g_buffer_diffuse"))
   , g_buffer_light_(threshold_shader_.get_uniform<int>("g_buffer_light"))
   , streak_effect_(ctx)
   , ghost_effect_(ctx)
   , heat_effect_(ctx)
-  , dirt_(Paths::get().resource("images", "dirt.jpg")) {
+  , dirt_(Paths::get().resource("images", "dirt.jpg"))
+ {
 
   // add shader includes -------------------------------------------------------
   ShaderIncludes::get().add_include("get_vignette", R"(
@@ -174,6 +186,15 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       float b = 1.0/vignette_softness;
       vec2 q = texcoords;
       return clamp(a + b*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.1 ), 0, 1) * vignette_color.a + (1-vignette_color.a);
+    }
+  )");
+
+  ShaderIncludes::get().add_include("get_color_grading", R"(
+
+    uniform sampler3D color_grading_tex;
+
+    vec3 get_color_grading(vec3 color_in) {
+      return texture(color_grading_tex, color_in).xyz;
     }
   )");
 
@@ -216,6 +237,16 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
   vignette_softness_.Set(scene->vignette_softness);
   vignette_coverage_.Set(scene->vignette_coverage);
   vignette_color_.Set(scene->vignette_color);
+
+  use_color_grading_.Set(0);
+  if (scene->color_map_name != "") {
+    auto color_map(TextureDatabase::get().lookup(scene->color_map_name));
+    if (color_map) {
+      color_map->bind(ctx, 1);
+      color_grading_tex_.Set(1);
+      use_color_grading_.Set(1);
+    }
+  }
 
   if (ctx.shading_quality <= 1) {
 
@@ -261,18 +292,18 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     post_fx_shader_.use(ctx);
     g_buffer_shaded_.Set(0);
 
-    int start(1);
+    int start(2);
     start = streak_effect_.bind_buffers(start, ctx);
     start = ghost_effect_.bind_buffers(start, ctx);
 
-    glow_buffer_1_.Set(1);
-    glow_buffer_2_.Set(2);
-    glow_buffer_3_.Set(3);
-    glow_buffer_4_.Set(4);
-    glow_buffer_5_.Set(5);
-    glow_buffer_6_.Set(6);
-    glow_buffer_7_.Set(7);
-    glow_buffer_8_.Set(8);
+    glow_buffer_1_.Set(2);
+    glow_buffer_2_.Set(3);
+    glow_buffer_3_.Set(4);
+    glow_buffer_4_.Set(5);
+    glow_buffer_5_.Set(6);
+    glow_buffer_6_.Set(7);
+    glow_buffer_7_.Set(8);
+    glow_buffer_8_.Set(9);
 
     if (ctx.shading_quality > 2) {
       heat_buffer_.Set(start);

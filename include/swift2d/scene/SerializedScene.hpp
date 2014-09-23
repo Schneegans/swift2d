@@ -59,6 +59,8 @@ class SerializedScene {
   float       vignette_coverage;
   float       dirt_opacity;
 
+  std::string color_map_name;
+
   std::vector<GravitySourceComponentPtr> gravity_sources;
 
 };

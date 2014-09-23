@@ -19,7 +19,9 @@ Scene::Scene()
   , VignetteColor(Color(0, 0, 0, 1))
   , VignetteSoftness(0.5)
   , VignetteCoverage(0.5)
-  , DirtOpacity(0.5) {
+  , DirtOpacity(0.5)
+  , ColorMapName("")
+{
 
   Root->add(Camera);
 }
@@ -35,6 +37,8 @@ SerializedScenePtr Scene::serialize() const {
   scene->vignette_softness = VignetteSoftness();
   scene->vignette_coverage = VignetteCoverage();
   scene->dirt_opacity = DirtOpacity();
+
+  scene->color_map_name = ColorMapName();
 
   if (Root->Enabled()) {
     Root->serialize(scene);
