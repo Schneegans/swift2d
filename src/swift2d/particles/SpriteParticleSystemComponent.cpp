@@ -17,9 +17,9 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 SpriteParticleSystemComponent::SpriteParticleSystemComponent()
-  : StartScale(1.f),               EndScale(1.f)
-  , StartGlow(0.f),                EndGlow(0.f)
-  , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 0))
+  : StartScale(math::vec2(1.f, 1.f)), EndScale(math::vec2(1.f, 1.f))
+  , StartGlow(0.f),                   EndGlow(0.f)
+  , StartColor(Color(1, 1, 1, 1)),    EndColor(Color(1, 1, 1, 0))
   , BlendAdd(false)
   , SubSamplingLevel(1) {}
 
@@ -40,7 +40,7 @@ void SpriteParticleSystemComponent::draw(RenderContext const& ctx) {
   shader.use(ctx);
   shader.projection. Set(ctx.projection_matrix);
   shader.diffuse.    Set(0);
-  shader.scale.      Set(math::vec2(StartScale(), EndScale()));
+  shader.scale.      Set(math::vec4(StartScale().x(), StartScale().y(), EndScale().x(), EndScale().y()));
   shader.glow.       Set(math::vec2(StartGlow(), EndGlow()));
   shader.start_color.Set(StartColor().vec4());
   shader.end_color.  Set(EndColor().vec4());

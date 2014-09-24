@@ -34,7 +34,7 @@ class SpriteParticleSystemComponent : public ParticleSystemComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float           StartScale, EndScale;
+  Vec2            StartScale, EndScale;
   Float           StartGlow,  EndGlow;
   ColorProperty   StartColor, EndColor;
   Bool            BlendAdd;

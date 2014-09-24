@@ -23,8 +23,8 @@ class Property {
     : connection_(nullptr),
       connection_id_(-1) {}
 
-  Property(T const& value)
-    : value_(value),
+  Property(T const& val)
+    : value_(val),
       connection_(nullptr),
       connection_id_(-1) {}
 
@@ -69,15 +69,13 @@ class Property {
     on_change_.disconnect_all();
   }
 
-
-
-  virtual Property<T>& operator=(T const& rhs) {
-    set(rhs);
+  virtual Property<T>& operator=(Property<T> const& rhs) {
+    set(rhs.value_);
     return *this;
   }
 
-  virtual Property<T>& operator=(Property<T> const& rhs) {
-    set(rhs.value_);
+  virtual Property<T>& operator=(T const& rhs) {
+    set(rhs);
     return *this;
   }
 
@@ -96,6 +94,7 @@ class Property {
   T const& operator()() const { return Property<T>::get(); }
 
  private:
+
   T value_;
   Signal<T> on_change_;
 

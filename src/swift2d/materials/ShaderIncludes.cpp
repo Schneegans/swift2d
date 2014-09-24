@@ -124,7 +124,7 @@ ShaderIncludes::ShaderIncludes() {
 
   // ---------------------------------------------------------------------------
   add_include("emit_quad", R"(
-    void emit_quad(vec2 position, float scale, float rotation) {
+    void emit_quad(vec2 position, vec2 scale, float rotation) {
       const float yo[2] = float[2](0.5, -0.5);
       const float xo[2] = float[2](0.5, -0.5);
 
@@ -151,7 +151,7 @@ ShaderIncludes::ShaderIncludes() {
       EndPrimitive();
     }
 
-    void emit_quad(vec2 position, float scale) {
+    void emit_quad(vec2 position, vec2 scale) {
       const float yo[2] = float[2](0.5, -0.5);
       const float xo[2] = float[2](0.5, -0.5);
 

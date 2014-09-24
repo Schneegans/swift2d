@@ -99,7 +99,7 @@ void Network::connect(uint64_t guid) {
     phase_ = CONNECTING_TO_NAT_SERVER;
 
     RakNet::ConnectionAttemptResult car = peer_->Connect("natpunch.jenkinssoftware.com", 61111, 0, 0);
-    if (car!=RakNet::CONNECTION_ATTEMPT_STARTED) {
+    if (car != RakNet::CONNECTION_ATTEMPT_STARTED) {
       Logger::LOG_WARNING << "Failed to connect! Code=" << car << std::endl;
     }
   }

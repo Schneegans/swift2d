@@ -69,7 +69,7 @@ LightParticleShader::LightParticleShader()
       in float varying_age[];
 
       @include "camera_uniforms"
-      uniform vec2  scale;
+      uniform vec2 scale;
 
       out float age;
       out vec2  texcoords;
@@ -78,7 +78,7 @@ LightParticleShader::LightParticleShader()
 
       void main(void) {
         float scale = mix(scale.x, scale.y, varying_age[0]);
-        emit_quad(gl_in[0].gl_Position.xy, scale);
+        emit_quad(gl_in[0].gl_Position.xy, vec2(scale));
       }
     )",
     {}

@@ -97,7 +97,7 @@ ParticleUpdateShader::ParticleUpdateShader()
             out_position = (transform * vec3(random.xy*position_variance, 1)).xy;
             out_life     = vec2(0, l*1000.0);
             out_velocity = (transform * vec3(cos(d), sin(d), 0)).xy * v;
-            out_rotation = vec2(0, r);
+            out_rotation = vec2(d, r);
 
             EmitVertex(); EndPrimitive();
           }
