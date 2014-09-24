@@ -16,7 +16,7 @@ set(SWIFT2D_PACKAGENAME "Swift2D")
 
 cmake_minimum_required(VERSION 2.8.0)
 
-find_package(PkgConfig)
+# find_package(PkgConfig)
 
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
@@ -25,21 +25,31 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 ################################################################
 
 find_package(GLFW3 REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(OPENGL REQUIRED)
+find_package(BOX2D REQUIRED)
+find_package(OPENAL REQUIRED)
+find_package(SNDFILE REQUIRED)
 
-pkg_check_modules(GLEW    REQUIRED glew)
-pkg_check_modules(PNG     REQUIRED libpng)
-pkg_check_modules(OPENAL  REQUIRED openal)
-pkg_check_modules(SNDFILE REQUIRED sndfile)
-pkg_check_modules(ALUT    REQUIRED freealut)
-pkg_check_modules(OPENGL  REQUIRED gl)
-pkg_check_modules(BOX2D   REQUIRED box2d)
-pkg_check_modules(CURL    REQUIRED libcurl)
-
-set(BOOST_ROOT "/opt/boost/boost_1_55_0")
-set(Boost_USE_STATIC_LIBS OFF)
+# set(BOOST_ROOT "/opt/boost/boost_1_55_0")
+set(BOOST_ROOT "D:/boost_1_56_0")
+set(BOOST_LIBRARYDIR "D:/boost_1_56_0/lib32-msvc-12.0")
+set(Boost_USE_STATIC_LIBS ON)
+# set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
+# set(Boost_USE_STATIC_RUNTIME OFF)
+set(Boost_USE_STATIC_RUNTIME ON)
 find_package(Boost REQUIRED COMPONENTS thread system filesystem)
+
+# pkg_check_modules(CURL    REQUIRED libcurl)
+# pkg_check_modules(PNG     REQUIRED libpng)
+# pkg_check_modules(SNDFILE REQUIRED sndfile)
+# pkg_check_modules(GLEW    REQUIRED glew)
+# pkg_check_modules(OPENAL  REQUIRED openal)
+# pkg_check_modules(ALUT    REQUIRED freealut)
+# pkg_check_modules(OPENGL  REQUIRED gl)
+# pkg_check_modules(BOX2D   REQUIRED box2d)
+
 
 set(LIBS
   ${GLFW_LIBRARIES}
@@ -99,12 +109,15 @@ if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "release")
 endif()
 
-IF(CMAKE_BUILD_TYPE MATCHES "release")
-  add_definitions(-DOGLPLUS_LOW_PROFILE)
-  set(CMAKE_CXX_FLAGS "-s -Ofast --std=c++0x")
-ELSE(CMAKE_BUILD_TYPE MATCHES "release")
-  set(CMAKE_CXX_FLAGS "-g -Wall --std=c++0x")
-ENDIF(CMAKE_BUILD_TYPE MATCHES "release")
+# IF(CMAKE_BUILD_TYPE MATCHES "release")
+#   add_definitions(-DOGLPLUS_LOW_PROFILE)
+#   set(CMAKE_CXX_FLAGS "-s -Ofast --std=c++0x")
+# ELSE(CMAKE_BUILD_TYPE MATCHES "release")
+#   set(CMAKE_CXX_FLAGS "-g -Wall --std=c++0x")
+# ENDIF(CMAKE_BUILD_TYPE MATCHES "release")
+
+set(CMAKE_CXX_FLAGS "/Ox /MP /w /EHsc")
+add_definitions(-D_WIN32_WINDOWS)
 
 ################################################################
 # Create libraries

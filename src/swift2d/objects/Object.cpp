@@ -19,8 +19,8 @@ ObjectPtr Object::create(std::string const& type_name) {
   if (factory != factory_.end()) {
     return (factory->second)();
   }
-  Logger::LOG_WARNING << "Failed to create Object of type \"" << type_name
-                      << "\": Type not registered!" << std::endl;
+  LOG_WARNING << "Failed to create Object of type \"" << type_name.c_str()
+              << "\": Type not registered!" << std::endl;
   return nullptr;
 }
 

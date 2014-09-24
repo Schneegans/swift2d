@@ -7,6 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include <swift2d/math/transformations.hpp>
 
 #include <iostream>

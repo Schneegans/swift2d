@@ -133,7 +133,7 @@ void NetworkObjectBase::print_bitstream(RakNet::BitStream *bs) {
 
   RakNet::RakString string;
   bs->Read(string);
-  Logger::LOG_TRACE << "NetworkObjectBase receive: " << string.C_String() << std::endl;
+  LOG_TRACE << "NetworkObjectBase receive: " << string.C_String() << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

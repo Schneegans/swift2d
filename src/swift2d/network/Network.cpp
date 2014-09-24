@@ -62,7 +62,7 @@ Network::Network()
   RakNet::StartupResult sr = peer_->Startup(8, &sd, 1);
 
   if (sr != RakNet::RAKNET_STARTED) {
-    Logger::LOG_ERROR << "Failed to start peer!" << std::endl;
+    LOG_ERROR << "Failed to start peer!" << std::endl;
   }
 
   peer_->SetMaximumIncomingConnections(8);
@@ -70,7 +70,7 @@ Network::Network()
 
   // connect("natpunch.jenkinssoftware.com", 61111);
 
-  Logger::LOG_MESSAGE << "I'm " << get_own_id() << std::endl;
+  LOG_MESSAGE << "I'm " << get_own_id() << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ void Network::connect(uint64_t guid) {
 
     RakNet::ConnectionAttemptResult car = peer_->Connect("natpunch.jenkinssoftware.com", 61111, 0, 0);
     if (car != RakNet::CONNECTION_ATTEMPT_STARTED) {
-      Logger::LOG_WARNING << "Failed to connect! Code=" << car << std::endl;
+      LOG_WARNING << "Failed to connect! Code=" << car << std::endl;
     }
   }
 }
@@ -141,7 +141,7 @@ void Network::update() {
         if (phase_ == CONNECTING_TO_NAT_SERVER) {
 
           // the nat server accepted our connection
-          Logger::LOG_MESSAGE << "Connected to NAT server." << std::endl;
+          LOG_MESSAGE << "Connected to NAT server." << std::endl;
           nat_server_address_ = packet->systemAddress.ToString();
           phase_ = NAT_PUNCH_TO_HOST;
 
@@ -272,7 +272,7 @@ void Network::update() {
       // ##################### OTHER PACKETS ###################################
       // -----------------------------------------------------------------------
       default:
-        Logger::LOG_DEBUG << "Got " << RakNet::PacketLogger::BaseIDTOString(packet->data[0])
+        LOG_DEBUG << "Got " << RakNet::PacketLogger::BaseIDTOString(packet->data[0])
                           << " from " << packet->guid.ToString() << std::endl;
         break;
     }

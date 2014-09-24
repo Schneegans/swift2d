@@ -126,13 +126,13 @@ Steam::~Steam() {
 bool Steam::init() {
 
   if (!SteamAPI_IsSteamRunning()) {
-    Logger::LOG_WARNING << "Steam is not running." << std::endl;
-    Logger::LOG_WARNING << "Please start Steam before running the game." << std::endl;
+    LOG_WARNING << "Steam is not running." << std::endl;
+    LOG_WARNING << "Please start Steam before running the game." << std::endl;
     return false;
   }
 
   if (!SteamAPI_Init()) {
-    Logger::LOG_WARNING << "Failed to initialized Steam!" << std::endl;
+    LOG_WARNING << "Failed to initialized Steam!" << std::endl;
     return false;
   }
 
@@ -184,17 +184,17 @@ void Steam::create_room(std::string const& name) {
       [this, name](LobbyCreated_t *result, bool f) {
 
       if (result->m_eResult == k_EResultOK) {
-        Logger::LOG_WARNING << "created " << result->m_ulSteamIDLobby << std::endl;
+        LOG_WARNING << "created " << result->m_ulSteamIDLobby << std::endl;
         current_room_ = result->m_ulSteamIDLobby;
 
         SteamMatchmaking()->SetLobbyData(current_room_, "name", name.c_str());
       } else {
-        Logger::LOG_WARNING << "failed to create lobby" << std::endl;
+        LOG_WARNING << "failed to create lobby" << std::endl;
       }
     });
 
   } else {
-    Logger::LOG_WARNING << "Already in a room" << std::endl;
+    LOG_WARNING << "Already in a room" << std::endl;
   }
 }
 

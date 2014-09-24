@@ -215,7 +215,7 @@ bool ShaderIncludes::process_impl(std::string& input) const {
       if (code != snippets_.end()) {
         include = code->second;
       } else {
-        Logger::LOG_WARNING << "Failed to resolve shader include \""
+        LOG_WARNING << "Failed to resolve shader include \""
                             << snippet << "\": No such snippet!" << std::endl;
       }
 

@@ -142,7 +142,7 @@ void DynamicBodyComponent::init() {
     body_ = Physics::get().add(this);
 
     Shape.on_change().connect([&](CollisionShapePtr const&){
-      Logger::LOG_WARNING << "Updating collision shapes is not implmented yet!"
+      LOG_WARNING << "Updating collision shapes is not implmented yet!"
                           << std::endl;
     });
     Density.on_change().connect([&](float val){

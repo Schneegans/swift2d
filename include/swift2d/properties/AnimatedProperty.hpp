@@ -31,7 +31,7 @@ class AnimatedProperty: public Property<T> {
 
   // --------------------------------------------------------------------- enums
   enum Direction {
-    IN, OUT, IN_OUT, OUT_IN, LINEAR
+	  DIR_IN, DIR_OUT, DIR_IN_OUT, DIR_OUT_IN, DIR_LINEAR
   };
 
   enum Loop {
@@ -41,7 +41,7 @@ class AnimatedProperty: public Property<T> {
   // ----------------------------------------------------- contruction interface
   AnimatedProperty()
     : Property<T>()
-    , direction_(IN_OUT)
+    , direction_(DIR_IN_OUT)
     , start_()
     , end_()
     , state_(0.0)
@@ -51,7 +51,7 @@ class AnimatedProperty: public Property<T> {
 
   AnimatedProperty(T const& value)
     : Property<T>(value)
-    , direction_(IN_OUT)
+    , direction_(DIR_IN_OUT)
     , start_(value)
     , end_(value)
     , state_(-1.0)
@@ -60,7 +60,7 @@ class AnimatedProperty: public Property<T> {
     , delay_(0.0) {}
 
   AnimatedProperty(T const& start, T const& end, double duration = 1.0,
-                   Direction direction = IN_OUT, Loop loop = NONE,
+	  Direction direction = DIR_IN_OUT, Loop loop = NONE,
                    double exponent = 0.0)
     : Property<T>(start)
     , direction_(direction)
@@ -107,19 +107,19 @@ class AnimatedProperty: public Property<T> {
         state_ += time / duration_;
 
         switch (direction_) {
-          case LINEAR:
+          case DIR_LINEAR:
             Property<T>::set(updateLinear(state_, start_, end_));
             break;
-          case IN:
+          case DIR_IN:
             Property<T>::set(updateEaseIn(state_, start_, end_));
             return;
-          case OUT:
+          case DIR_OUT:
             Property<T>::set(updateEaseOut(state_, start_, end_));
             return;
-          case IN_OUT:
+          case DIR_IN_OUT:
             Property<T>::set(updateEaseInOut(state_, start_, end_));
             return;
-          case OUT_IN:
+          case DIR_OUT_IN:
             Property<T>::set(updateEaseOutIn(state_, start_, end_));
             return;
         }

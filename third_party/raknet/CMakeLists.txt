@@ -1,5 +1,4 @@
-set(CMAKE_CXX_FLAGS_RELEASE "-s -w -O4 -fPIC")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -fPIC")
+set(CMAKE_CXX_FLAGS "/Ox /MP /w /EHsc")
 
 INCLUDE_DIRECTORIES(
   src
