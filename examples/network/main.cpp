@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
     [&](Steam::MessageType type, uint64_t user_id, std::string const& join_message) {
 
       auto self      (Steam::get().get_user_id());
-      bool self_join (type == Steam::JOIN && user_id == self);
+      bool self_join (type == Steam::MSG_JOIN && user_id == self);
       bool owner     (Steam::get().get_room_owner() == self);
 
       if (self_join) {

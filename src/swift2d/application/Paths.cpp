@@ -48,8 +48,9 @@ void Paths::clean_up() {
 ////////////////////////////////////////////////////////////////////////////////
 
 std::string Paths::tmp_file(std::string const& suffix) const {
-  boost::filesystem::path temp = boost::filesystem::unique_path();
-  return executable_ + "/tmp/" + temp.native().c_str() + "." + suffix;
+  std::wstring wpath(boost::filesystem::unique_path().native());
+  std::string path(wpath.begin(), wpath.end());
+  return executable_ + "/tmp/" + path + "." + suffix;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

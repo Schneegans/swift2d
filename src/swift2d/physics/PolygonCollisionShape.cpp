@@ -26,13 +26,13 @@ PolygonCollisionShape::PolygonCollisionShape() {}
 b2Shape* PolygonCollisionShape::get_shape(math::mat3 const& body_transform) const {
   auto scale(math::get_scale(body_transform));
 
-  b2Vec2 vertices[Coordinates.size()];
+  std::vector<b2Vec2> vertices(Coordinates.size());
   for (int i(0); i<Coordinates.size(); ++i) {
     vertices[i] = b2Vec2(Coordinates[i].x()*scale.x(), Coordinates[i].y()*scale.y());
   }
 
   auto shape(new b2PolygonShape());
-  shape->Set(vertices, Coordinates.size());
+  shape->Set(vertices.data(), Coordinates.size());
 
   return shape;
 }

@@ -30,6 +30,8 @@ find_package(OPENGL REQUIRED)
 find_package(BOX2D REQUIRED)
 find_package(OPENAL REQUIRED)
 find_package(SNDFILE REQUIRED)
+find_package(PNG REQUIRED)
+find_package(CURL REQUIRED)
 
 # set(BOOST_ROOT "/opt/boost/boost_1_55_0")
 set(BOOST_ROOT "D:/boost_1_56_0")

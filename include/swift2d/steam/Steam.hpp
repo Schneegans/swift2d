@@ -34,12 +34,12 @@ class Steam : public Singleton<Steam> {
  public:
 
   enum MessageType {
-    CHAT          = 0,
-    CHAT_UPDATE   = 1,
-    LEAVE         = 2,
-    JOIN          = 3,
-    MESSAGE       = 4,
-    ERROR         = 5
+    MSG_CHAT          = 0,
+    MSG_CHAT_UPDATE   = 1,
+    MSG_LEAVE         = 2,
+    MSG_JOIN          = 3,
+    MSG_MESSAGE       = 4,
+    MSG_ERROR         = 5
   };
 
   struct RoomData {
@@ -48,29 +48,29 @@ class Steam : public Singleton<Steam> {
     int         current_players;
   };
 
-  Signal<std::unordered_map<uint64_t, RoomData>> on_updated_room_list;
-  Signal<MessageType, uint64_t, std::string>     on_message;
+  Signal<std::unordered_map<math::uint64, RoomData>> on_updated_room_list;
+  Signal<MessageType, math::uint64, std::string>     on_message;
 
   bool init();
   void update();
 
   void        update_room_list();
-  uint64_t    get_room_id();
+  math::uint64    get_room_id();
 
   void        create_room(std::string const& name);
-  void        join_room(uint64_t room_id);
+  void        join_room(math::uint64 room_id);
   void        leave_room();
 
   void        set_room_data(std::string const& key, std::string const& value);
   std::string get_room_data(std::string const& key);
-  uint64_t    get_room_owner();
+  math::uint64    get_room_owner();
 
   void        send_chat_message(std::string const& message);
 
-  uint64_t    get_user_id();
+  math::uint64    get_user_id();
   std::string get_user_name();
-  std::string get_user_name(uint64_t steam_id);
-  std::string get_user_avatar(uint64_t steam_id);
+  std::string get_user_name(math::uint64 steam_id);
+  std::string get_user_avatar(math::uint64 steam_id);
 
   friend class Singleton<Steam>;
 
@@ -81,16 +81,16 @@ class Steam : public Singleton<Steam> {
   Steam();
   ~Steam();
 
-  void save_avatar(uint64_t steam_id);
+  void save_avatar(math::uint64 steam_id);
 
-  uint64_t current_room_;
+  math::uint64 current_room_;
 
   SteamCallback<LobbyChatUpdate_t>*     chat_update_;
   SteamCallback<LobbyChatMsg_t>*        chat_message_;
   SteamCallback<LobbyEnter_t>*          lobby_enter_;
   SteamCallback<PersonaStateChange_t>*  persona_change_;
 
-  std::unordered_map<uint64_t, std::string> avatar_cache_;
+  std::unordered_map<math::uint64, std::string> avatar_cache_;
 };
 
 }

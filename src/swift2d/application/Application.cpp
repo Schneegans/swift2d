@@ -12,7 +12,6 @@
 #include <swift2d/swift2d.hpp>
 #include <swift2d/utils/Logger.hpp>
 
-#include <boost/asio.hpp>
 #include <boost/filesystem.hpp>
 
 namespace swift {

@@ -10,10 +10,10 @@
 #define SWIFT2D_EVENTS_MAINLOOP_HPP
 
 // includes  -------------------------------------------------------------------
+#include <boost/asio.hpp>
 #include <swift2d/utils/Singleton.hpp>
 
 #include <functional>
-#include <boost/asio.hpp>
 
 namespace swift {
 

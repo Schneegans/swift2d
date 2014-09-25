@@ -38,7 +38,7 @@ NetworkObjectBase* ReplicationManager::create_object(RakNet::RakString const& na
   if (factory != object_registry_.end()) {
     return factory->second();
   } else {
-    Logger::LOG_WARNING << "Failed to create NetworkObjectBase: Type " << name << " is not registered!" << std::endl;
+    LOG_WARNING << "Failed to create NetworkObjectBase: Type " << name << " is not registered!" << std::endl;
     return nullptr;
   }
 }

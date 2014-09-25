@@ -7,6 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
+#include <boost/asio.hpp> // needs to be included first (else msvc complains)
+
 #include <swift2d/particles/SpriteParticleSystemComponent.hpp>
 
 #include <swift2d/particles/SpriteParticleShader.hpp>

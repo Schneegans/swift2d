@@ -7,6 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
+#include <boost/asio.hpp> // needs to be included first (else msvc complains)
+
 #include <swift2d/audio/Music.hpp>
 #include <sndfile.h>
 #include <vector>
@@ -40,7 +42,7 @@ Music::Music(std::string const& file_name)
 
   int error(sf_error(file));
   if (error) {
-    Logger::LOG_WARNING << "Error loading audio file \"" << file_ << "\": "
+    LOG_WARNING << "Error loading audio file \"" << file_ << "\": "
                         << sf_error_number(error) << std::endl;
   } else {
 
@@ -87,7 +89,7 @@ void Music::load(oalplus::Source* source) {
         }
       });
       downloader_.on_error.connect([](std::string const& what){
-        Logger::LOG_WARNING << "Failed to download music: " << what << std::endl;
+        LOG_WARNING << "Failed to download music: " << what << std::endl;
       });
       downloader_.download(file_);
       return;
@@ -98,7 +100,7 @@ void Music::load(oalplus::Source* source) {
 
     int error(sf_error(file));
     if (error) {
-      Logger::LOG_WARNING << "Error loading audio file \"" << file_ << "\": "
+      LOG_WARNING << "Error loading audio file \"" << file_ << "\": "
                           << sf_error_number(error) << std::endl;
     } else {
       sample_rate_ = info.samplerate;

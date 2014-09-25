@@ -10,14 +10,14 @@
 #define SWIFT2D_APPLICATION_HPP
 
 // includes  -------------------------------------------------------------------
+#include <boost/asio.hpp>
+
 #include <swift2d/utils/Singleton.hpp>
 #include <swift2d/properties.hpp>
 #include <swift2d/scene/SceneObject.hpp>
 #include <swift2d/utils/FPSCounter.hpp>
 #include <swift2d/graphics/Pipeline.hpp>
 #include <swift2d/graphics/Renderer.hpp>
-
-#include <boost/asio.hpp>
 
 namespace swift {
 

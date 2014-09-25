@@ -42,7 +42,7 @@ namespace {
       : audio_device_()
       , audio_context_(audio_device_) {
 
-      Logger::LOG_MESSAGE << "Booting Swift2D..." << std::endl;
+      LOG_MESSAGE << "Booting Swift2D..." << std::endl;
 
       // register all objects ------------------------------------------------
       Object::init<AnimatedSpriteComponent>();
@@ -82,18 +82,18 @@ namespace {
 
       // init glfw -----------------------------------------------------------
       if (!glfwInit()) {
-        Logger::LOG_ERROR << "Failed to initialize glfw3!" << std::endl;
+        LOG_ERROR << "Failed to initialize glfw3!" << std::endl;
       }
 
       glfwSetErrorCallback([](int error, const char* description){
-        Logger::LOG_ERROR << "glfw3 error: " << description << std::endl;
+        LOG_ERROR << "glfw3 error: " << description << std::endl;
       });
 
-      Logger::LOG_MESSAGE << "Done!" << std::endl;
+      LOG_MESSAGE << "Done!" << std::endl;
     }
 
     ~Swift2DContext() {
-      Logger::LOG_MESSAGE << "Shutting down... " << std::endl;
+      LOG_MESSAGE << "Shutting down... " << std::endl;
 
       DefaultAnimatedTexture::destroy_instance();
       DefaultTexture::destroy_instance();
@@ -128,7 +128,7 @@ namespace {
 
       glfwTerminate();
 
-      Logger::LOG_MESSAGE << "Bye!" << std::endl;
+      LOG_MESSAGE << "Bye!" << std::endl;
     }
 
     oalplus::Device audio_device_;
