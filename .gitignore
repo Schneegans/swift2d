@@ -3,3 +3,4 @@ build
 
 scripts/Swift2D.sublime-workspace
 examples/network/settings.json
+/lib/Release

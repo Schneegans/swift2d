@@ -6,7 +6,7 @@ file(GLOB_RECURSE SWIFT2D_SRC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     ../include/swift2d/*.hpp
 )
 
-ADD_LIBRARY( swift2d SHARED
+ADD_LIBRARY( swift2d STATIC
     ${SWIFT2D_SRC}
 )
 

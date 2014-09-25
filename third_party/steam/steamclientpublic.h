@@ -22,7 +22,7 @@
 #include "steamtypes.h"
 #include "steamuniverse.h"
 
-typedef long unsigned int uint64_t;
+//typedef long unsigned int uint64_t;
 
 // General result codes
 enum EResult
@@ -446,12 +446,12 @@ public:
 	{
 		SetFromUint64( ulSteamID );
 	}
-// #ifdef INT64_DIFFERENT_FROM_INT64_T
+ #ifdef INT64_DIFFERENT_FROM_INT64_T
 	CSteamID( uint64_t ulSteamID )
 	{
 		SetFromUint64( (uint64)ulSteamID );
 	}
-// #endif
+ #endif
 
 
 	//-----------------------------------------------------------------------------
@@ -848,12 +848,12 @@ public:
 	{
 		m_ulGameID = ulGameID;
 	}
-// #ifdef INT64_DIFFERENT_FROM_INT64_T
+#ifdef INT64_DIFFERENT_FROM_INT64_T
 	CGameID( uint64_t ulGameID )
 	{
 		m_ulGameID = (uint64)ulGameID;
 	}
-// #endif
+#endif
 
 	explicit CGameID( int32 nAppID )
 	{

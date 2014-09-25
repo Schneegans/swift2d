@@ -32,6 +32,7 @@ find_package(OPENAL REQUIRED)
 find_package(SNDFILE REQUIRED)
 find_package(PNG REQUIRED)
 find_package(CURL REQUIRED)
+find_package(ZLIB REQUIRED)
 
 # set(BOOST_ROOT "/opt/boost/boost_1_55_0")
 set(BOOST_ROOT "D:/boost_1_56_0")
@@ -52,6 +53,7 @@ find_package(Boost REQUIRED COMPONENTS thread system filesystem)
 # pkg_check_modules(OPENGL  REQUIRED gl)
 # pkg_check_modules(BOX2D   REQUIRED box2d)
 
+cmake_policy(SET CMP0015 OLD)
 
 set(LIBS
   ${GLFW_LIBRARIES}
@@ -64,23 +66,17 @@ set(LIBS
   ${OPENGL_LIBRARIES}
   ${BOX2D_LIBRARIES}
   ${CURL_LIBRARIES}
-  miniupnpc
-  awesomium-1-7
-  Xxf86vm
+  ${ZLIB_LIBRARIES}
+  awesomium
+  # miniupnpc
+  # awesomium-1-7
+  # Xxf86vm
 )
 link_libraries(${LIBS})
 
 set(LIB_PATHS
-  ${GLFW_LIBRARY_DIRS}
   ${Boost_LIBRARY_DIRS}
-  ${GLEW_LIBRARY_DIRS}
-  ${PNG_LIBRARY_DIRS}
-  ${OPENAL_LIBRARY_DIRS}
-  ${SNDFILE_LIBRARY_DIRS}
-  ${ALUT_LIBRARY_DIRS}
-  ${OPENGL_LIBRARY_DIRS}
-  ${BOX2D_LIBRARY_DIRS}
-  ${CURL_LIBRARY_DIRS}
+  "$(AWE_DIR)build/lib"
   ${CMAKE_CURRENT_SOURCE_DIR}/third_party/steam/redistributable_bin/linux64
 )
 link_directories(${LIB_PATHS})
@@ -104,6 +100,8 @@ set(INCLUDE_PATHS
   ${OPENGL_INCLUDE_DIRS}
   ${BOX2D_INCLUDE_DIRS}
   ${CURL_INCLUDE_DIRS}
+  ${ZLIB_INCLUDE_DIRS}
+  "$(AWE_DIR)include"
 )
 include_directories(SYSTEM ${INCLUDE_PATHS})
 
@@ -118,7 +116,7 @@ endif()
 #   set(CMAKE_CXX_FLAGS "-g -Wall --std=c++0x")
 # ENDIF(CMAKE_BUILD_TYPE MATCHES "release")
 
-set(CMAKE_CXX_FLAGS "/Ox /MP /w /EHsc")
+set(CMAKE_CXX_FLAGS "/Ox /MP /MT /w /EHsc")
 add_definitions(-D_WIN32_WINDOWS)
 
 ################################################################
@@ -135,48 +133,3 @@ add_subdirectory(src)
 ################################################################
 
 add_subdirectory(examples/network)
-
-################################################################
-# Summary
-################################################################
-
-message( "" )
-message( "Summary:" )
-message( " build type: ${CMAKE_BUILD_TYPE}" )
-message( "" )
-message( " boost:" )
-message( "   library: ${Boost_LIBRARIES}" )
-message( "   include: ${Boost_INCLUDE_DIRS}" )
-message( "" )
-message( " glfw3:" )
-message( "   library: ${GLFW_LIBRARIES}" )
-message( "   include: ${GLFW_INCLUDE_DIRS}" )
-message( "" )
-message( " glew:" )
-message( "   library: ${GLEW_LIBRARIES}" )
-message( "   include: ${GLEW_INCLUDE_DIRS}" )
-message( "" )
-message( " png:" )
-message( "   library: ${PNG_LIBRARIES}" )
-message( "   include: ${PNG_INCLUDE_DIRS}" )
-message( "" )
-message( " openal:" )
-message( "   library: ${OPENAL_LIBRARIES}" )
-message( "   include: ${OPENAL_INCLUDE_DIRS}" )
-message( "" )
-message( " sndfile:" )
-message( "   library: ${SNDFILE_LIBRARIES}" )
-message( "   include: ${SNDFILE_INCLUDE_DIRS}" )
-message( "" )
-message( " alut:" )
-message( "   library: ${ALUT_LIBRARIES}" )
-message( "   include: ${ALUT_INCLUDE_DIRS}" )
-message( "" )
-message( " opengl:" )
-message( "   library: ${OPENGL_LIBRARIES}" )
-message( "   include: ${OPENGL_INCLUDE_DIRS}" )
-message( "" )
-message( " box2d:" )
-message( "   library: ${BOX2D_LIBRARIES}" )
-message( "   include: ${BOX2D_INCLUDE_DIRS}" )
-message( "" )

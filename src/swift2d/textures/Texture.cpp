@@ -144,7 +144,7 @@ void Texture::load_texture_data() const {
         height_ = h;
         channels_ = c;
       } else {
-        Logger::LOG_ERROR << "Failed to load texture \"" << FileName() << "\"!" << std::endl;
+        LOG_ERROR << "Failed to load texture \"" << FileName() << "\"!" << std::endl;
       }
     });
 

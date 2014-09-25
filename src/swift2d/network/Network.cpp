@@ -87,13 +87,13 @@ Network::~Network() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-uint64_t Network::get_own_id() {
+math::uint64 Network::get_own_id() {
   return peer_->GetMyGUID().g;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Network::connect(uint64_t guid) {
+void Network::connect(math::uint64 guid) {
   if (phase_ == STARTED) {
     host_guid_ = guid;
     phase_ = CONNECTING_TO_NAT_SERVER;
@@ -350,7 +350,7 @@ void Network::enter_phase(Phase phase) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// void Network::request_join(uint64_t guid) {
+// void Network::request_join(math::uint64 guid) {
 //   mesh_->ResetHostCalculation();
 
 //   RakNet::BitStream message;
@@ -360,13 +360,13 @@ void Network::enter_phase(Phase phase) {
 
 // ////////////////////////////////////////////////////////////////////////////////
 
-// void Network::start_join(uint64_t guid) {
+// void Network::start_join(math::uint64 guid) {
 //   mesh_->StartVerifiedJoin(RakNet::RakNetGUID(guid));
 // }
 
 // ////////////////////////////////////////////////////////////////////////////////
 
-// void Network::join(uint64_t guid, std::string const& nat_server) {
+// void Network::join(math::uint64 guid, std::string const& nat_server) {
 //   DataStructures::List<RakNet::SystemAddress> addresses;
 //   DataStructures::List<RakNet::RakNetGUID> guids;
 //   DataStructures::List<RakNet::BitStream*> userData;

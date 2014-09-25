@@ -17,6 +17,7 @@
 
 #include <stb_image/stb_image_write.h>
 
+#include <array>
 #include <iostream>
 #include <steam/steam_api.h>
 
@@ -302,12 +303,12 @@ void Steam::save_avatar(math::uint64 steam_id) {
   SteamUtils()->GetImageSize(avatar_id, &width, &height);
 
   int data_length = width*height * 4 * sizeof(math::uint8);
-  math::uint8 data[data_length];
+  std::vector<math::uint8> data(data_length);
 
-  if (!SteamUtils()->GetImageRGBA(avatar_id, data, data_length)) {
+  if (!SteamUtils()->GetImageRGBA(avatar_id, &data[0], data_length)) {
     LOG_WARNING << "Failed to get avatar image!" << std::endl;
   } else {
-    stbi_write_png(avatar_cache_[steam_id].c_str(), width, height, 4, data, width * 4 * sizeof(math::uint8));
+    stbi_write_png(avatar_cache_[steam_id].c_str(), width, height, 4, &data[0], width * 4 * sizeof(math::uint8));
   }
 }
 
