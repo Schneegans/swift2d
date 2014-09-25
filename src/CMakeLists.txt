@@ -10,4 +10,4 @@ ADD_LIBRARY( swift2d SHARED
     ${SWIFT2D_SRC}
 )
 
-TARGET_LINK_LIBRARIES( swift2d  ${LIBS} raknet )
+TARGET_LINK_LIBRARIES( swift2d  ${LIBS} glew raknet )

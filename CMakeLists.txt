@@ -25,7 +25,6 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 ################################################################
 
 find_package(GLFW3 REQUIRED)
-find_package(GLEW REQUIRED)
 find_package(OPENGL REQUIRED)
 find_package(BOX2D REQUIRED)
 find_package(OPENAL REQUIRED)
@@ -35,13 +34,13 @@ find_package(CURL REQUIRED)
 find_package(ZLIB REQUIRED)
 
 # set(BOOST_ROOT "/opt/boost/boost_1_55_0")
-set(BOOST_ROOT "D:/boost_1_56_0")
-set(BOOST_LIBRARYDIR "D:/boost_1_56_0/lib32-msvc-12.0")
+set(BOOST_ROOT "D:\\boost_1_56_0")
+set(BOOST_LIBRARYDIR "D:\\boost_1_56_0\\lib32-msvc-12.0")
 set(Boost_USE_STATIC_LIBS ON)
 # set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 # set(Boost_USE_STATIC_RUNTIME OFF)
-set(Boost_USE_STATIC_RUNTIME ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost REQUIRED COMPONENTS thread system filesystem)
 
 # pkg_check_modules(CURL    REQUIRED libcurl)
@@ -58,7 +57,6 @@ cmake_policy(SET CMP0015 OLD)
 set(LIBS
   ${GLFW_LIBRARIES}
   ${Boost_LIBRARIES}
-  ${GLEW_LIBRARIES}
   ${PNG_LIBRARIES}
   ${OPENAL_LIBRARIES}
   ${SNDFILE_LIBRARIES}
@@ -68,6 +66,8 @@ set(LIBS
   ${CURL_LIBRARIES}
   ${ZLIB_LIBRARIES}
   awesomium
+  steam_api
+  wldap32
   # miniupnpc
   # awesomium-1-7
   # Xxf86vm
@@ -85,7 +85,6 @@ link_directories(${LIB_PATHS})
 set(OWN_INCLUDE_PATHS
   ${CMAKE_CURRENT_SOURCE_DIR}/build
   ${CMAKE_CURRENT_SOURCE_DIR}/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/include
   ${CMAKE_CURRENT_SOURCE_DIR}/third_party
 )
 include_directories(${OWN_INCLUDE_PATHS})
@@ -93,7 +92,6 @@ include_directories(${OWN_INCLUDE_PATHS})
 set(INCLUDE_PATHS
   ${GLFW_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
-  ${GLEW_INCLUDE_DIRS}
   ${PNG_INCLUDE_DIRS}
   ${OPENAL_INCLUDE_DIRS}
   ${SNDFILE_INCLUDE_DIRS}
@@ -103,6 +101,7 @@ set(INCLUDE_PATHS
   ${CURL_INCLUDE_DIRS}
   ${ZLIB_INCLUDE_DIRS}
   "$(AWE_DIR)include"
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/glew
 )
 include_directories(SYSTEM ${INCLUDE_PATHS})
 
@@ -117,8 +116,11 @@ endif()
 #   set(CMAKE_CXX_FLAGS "-g -Wall --std=c++0x")
 # ENDIF(CMAKE_BUILD_TYPE MATCHES "release")
 
-set(CMAKE_CXX_FLAGS "/Ox /MP /MD /w /EHsc")
+set(CMAKE_CXX_FLAGS_RELEASE "/Ox /MP /MD /w /EHsc")
+set(CMAKE_CXX_FLAGS_DEBUG "/Ox /MP /MD /w /EHsc")
 add_definitions(-D_WIN32_WINDOWS)
+add_definitions(-DGLEW_STATIC)
+add_definitions(-DCURL_STATICLIB)
 
 ################################################################
 # Create libraries
@@ -126,6 +128,7 @@ add_definitions(-D_WIN32_WINDOWS)
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+add_subdirectory(third_party/glew)
 add_subdirectory(third_party/raknet)
 add_subdirectory(src)
 
