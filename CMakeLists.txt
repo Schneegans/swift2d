@@ -78,6 +78,7 @@ set(LIB_PATHS
   ${Boost_LIBRARY_DIRS}
   "$(AWE_DIR)build/lib"
   ${CMAKE_CURRENT_SOURCE_DIR}/third_party/steam/redistributable_bin/linux64
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/steam/redistributable_bin
 )
 link_directories(${LIB_PATHS})
 
@@ -116,7 +117,7 @@ endif()
 #   set(CMAKE_CXX_FLAGS "-g -Wall --std=c++0x")
 # ENDIF(CMAKE_BUILD_TYPE MATCHES "release")
 
-set(CMAKE_CXX_FLAGS "/Ox /MP /MT /w /EHsc")
+set(CMAKE_CXX_FLAGS "/Ox /MP /MD /w /EHsc")
 add_definitions(-D_WIN32_WINDOWS)
 
 ################################################################

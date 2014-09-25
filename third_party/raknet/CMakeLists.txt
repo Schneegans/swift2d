@@ -1,4 +1,4 @@
-set(CMAKE_CXX_FLAGS "/Ox /MP /MT /w /EHsc")
+set(CMAKE_CXX_FLAGS "/Ox /MP /MD /w /EHsc")
 
 INCLUDE_DIRECTORIES(
   src
