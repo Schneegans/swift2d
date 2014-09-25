@@ -36,7 +36,7 @@ typedef std::shared_ptr<SerializedScene>       SerializedScenePtr;
 typedef std::shared_ptr<const SerializedScene> ConstSerializedScenePtr;
 
 // -----------------------------------------------------------------------------
-class SerializedScene {
+class SWIFT_DLL SerializedScene {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

@@ -25,7 +25,7 @@ typedef std::shared_ptr<const AnimatedTexture> ConstAnimatedTexturePtr;
 typedef Property<AnimatedTexturePtr>           AnimatedTextureProperty;
 
 // -----------------------------------------------------------------------------
-class AnimatedTexture : public Texture {
+class SWIFT_DLL AnimatedTexture : public Texture {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

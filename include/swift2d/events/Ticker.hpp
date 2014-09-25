@@ -21,7 +21,7 @@ typedef std::shared_ptr<Ticker>       TickerPtr;
 typedef std::shared_ptr<const Ticker> ConstTickerPtr;
 
 // -----------------------------------------------------------------------------
-class Ticker : public std::enable_shared_from_this<Ticker> {
+class SWIFT_DLL Ticker : public std::enable_shared_from_this<Ticker> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

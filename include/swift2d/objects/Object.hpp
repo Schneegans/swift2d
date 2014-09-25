@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Logger.hpp>
+#include <swift2d/utils/platform.hpp>
 
 #include <memory>
 #include <functional>
@@ -28,7 +29,7 @@ typedef std::shared_ptr<Object>       ObjectPtr;
 typedef std::shared_ptr<const Object> ConstObjectPtr;
 
 // -----------------------------------------------------------------------------
-class Object {
+class SWIFT_DLL Object {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

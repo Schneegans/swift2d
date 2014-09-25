@@ -25,7 +25,7 @@ typedef std::shared_ptr<TrailEmitterComponent>       TrailEmitterComponentPtr;
 typedef std::shared_ptr<const TrailEmitterComponent> ConstTrailEmitterComponentPtr;
 typedef Property<TrailEmitterComponentPtr>           TrailEmitterComponentProperty;
 
-struct SerializedTrailEmitter {
+struct SWIFT_DLL SerializedTrailEmitter {
   float Life;
   float MaxSpawnGap;
   float MinSpawnGap;
@@ -43,7 +43,7 @@ struct SerializedTrailEmitter {
 };
 
 // -----------------------------------------------------------------------------
-class TrailEmitterComponent : public TransformableComponent {
+class SWIFT_DLL TrailEmitterComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

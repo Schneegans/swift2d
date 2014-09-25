@@ -27,7 +27,7 @@ typedef std::shared_ptr<PointLightComponent>       PointLightComponentPtr;
 typedef std::shared_ptr<const PointLightComponent> ConstPointLightComponentPtr;
 
 // -----------------------------------------------------------------------------
-class PointLightComponent : public DrawableComponent {
+class SWIFT_DLL PointLightComponent : public DrawableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

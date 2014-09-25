@@ -25,7 +25,7 @@ typedef std::shared_ptr<TransformableComponent>       TransformableComponentPtr;
 typedef std::shared_ptr<const TransformableComponent> ConstTransformableComponentPtr;
 
 // -----------------------------------------------------------------------------
-class TransformableComponent : public Component {
+class SWIFT_DLL TransformableComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

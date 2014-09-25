@@ -10,6 +10,8 @@
 #define SWIFT2D_EVENTS_SIGNAL_HPP
 
 // includes  ------------------------------------------------------------------
+#include <swift2d/utils/platform.hpp>
+
 #include <functional>
 #include <map>
 
@@ -17,7 +19,7 @@ namespace swift {
 
 // -----------------------------------------------------------------------------
 template <typename... Parameters>
-class Signal {
+class SWIFT_DLL Signal {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

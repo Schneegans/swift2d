@@ -24,7 +24,7 @@ typedef std::shared_ptr<CameraComponent>       CameraComponentPtr;
 typedef std::shared_ptr<const CameraComponent> ConstCameraComponentPtr;
 
 // -----------------------------------------------------------------------------
-class CameraComponent : public TransformableComponent {
+class SWIFT_DLL CameraComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

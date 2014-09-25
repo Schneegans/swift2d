@@ -23,12 +23,12 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class ParticleSystemComponent;
+class SWIFT_DLL ParticleSystemComponent;
 typedef std::shared_ptr<ParticleSystemComponent>       ParticleSystemComponentPtr;
 typedef std::shared_ptr<const ParticleSystemComponent> ConstParticleSystemComponentPtr;
 
 // -----------------------------------------------------------------------------
-class ParticleSystemComponent : public DrawableComponent {
+class SWIFT_DLL ParticleSystemComponent : public DrawableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

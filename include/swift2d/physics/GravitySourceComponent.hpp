@@ -26,7 +26,7 @@ typedef std::shared_ptr<GravitySourceComponent>       GravitySourceComponentPtr;
 typedef std::shared_ptr<const GravitySourceComponent> ConstGravitySourceComponentPtr;
 
 // -----------------------------------------------------------------------------
-class GravitySourceComponent : public TransformableComponent {
+class SWIFT_DLL GravitySourceComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

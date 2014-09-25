@@ -33,7 +33,7 @@ typedef std::shared_ptr<Window>       WindowPtr;
 typedef std::shared_ptr<const Window> ConstWindowPtr;
 
 // -----------------------------------------------------------------------------
-class Window {
+class SWIFT_DLL Window {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

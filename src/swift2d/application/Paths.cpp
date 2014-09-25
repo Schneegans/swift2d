@@ -39,10 +39,11 @@ void Paths::init(int argc, char** argv) {
 
 void Paths::clean_up() {
 
+  LOG_WARNING << "trying to remove " << executable_ + "/tmp" << std::endl;
   // delete tmp directory ------------------------------------------------------
-  if (!boost::filesystem::remove_all(executable_ + "/tmp")) {
-    LOG_ERROR << "Failed to delete temporary directory!" << std::endl;
-  }
+  //if (!boost::filesystem::remove_all(executable_ + "/tmp")) {
+  //  LOG_ERROR << "Failed to delete temporary directory!" << std::endl;
+ // }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

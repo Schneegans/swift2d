@@ -29,7 +29,7 @@ typedef std::shared_ptr<const Material> ConstMaterialPtr;
 typedef Property<MaterialPtr>           MaterialProperty;
 
 // -----------------------------------------------------------------------------
-class Material : public MaterialBase {
+class SWIFT_DLL Material : public MaterialBase {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

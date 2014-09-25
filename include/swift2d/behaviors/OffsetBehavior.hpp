@@ -25,7 +25,7 @@ typedef std::shared_ptr<OffsetBehavior>       OffsetBehaviorPtr;
 typedef std::shared_ptr<const OffsetBehavior> ConstOffsetBehaviorPtr;
 
 // -----------------------------------------------------------------------------
-class OffsetBehavior : public Component {
+class SWIFT_DLL OffsetBehavior : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

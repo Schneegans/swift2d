@@ -33,7 +33,7 @@ typedef std::shared_ptr<const SavableObject> ConstSavableObjectPtr;
 typedef Property<SavableObjectPtr>           SavableObjectProperty;
 
 // -----------------------------------------------------------------------------
-class SavableObject : public Object {
+class SWIFT_DLL SavableObject : public Object {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

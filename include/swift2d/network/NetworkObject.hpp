@@ -20,7 +20,7 @@ namespace swift {
 
 // -----------------------------------------------------------------------------
 template<typename T>
-class NetworkObject: public NetworkObjectBase {
+class SWIFT_DLL NetworkObject : public NetworkObjectBase {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

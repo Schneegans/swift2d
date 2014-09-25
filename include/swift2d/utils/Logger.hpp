@@ -9,11 +9,12 @@
 #ifndef SWIFT2D_LOGGER_HPP
 #define SWIFT2D_LOGGER_HPP
 
+#include <swift2d/utils/platform.hpp>
 #include <iosfwd>
 
 namespace swift {
 
-class Logger {
+class SWIFT_DLL Logger {
 
  public:
 

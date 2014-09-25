@@ -29,7 +29,7 @@ typedef std::shared_ptr<RectangularShape>       RectangularShapePtr;
 typedef std::shared_ptr<const RectangularShape> ConstRectangularShapePtr;
 
 // -----------------------------------------------------------------------------
-class RectangularShape : public Shape {
+class SWIFT_DLL RectangularShape : public Shape {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -40,11 +40,11 @@ class RectangularShape : public Shape {
   static  std::string get_type_name_static() { return "RectangularShape"; }
 
   /*virtual*/ bool contains(CircularShapePtr const& other) {
-
+    return false;
   };
 
   /*virtual*/ bool contains(RectangularShapePtr const& other) {
-
+    return false;
   };
 };
 

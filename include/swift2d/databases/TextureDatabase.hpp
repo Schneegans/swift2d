@@ -20,8 +20,8 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class TextureDatabase : public Database<Texture>,
-                        public Singleton<TextureDatabase> {
+class SWIFT_DLL TextureDatabase : public Database<Texture>,
+                                  public Singleton<TextureDatabase> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

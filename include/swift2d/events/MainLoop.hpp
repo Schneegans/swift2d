@@ -18,7 +18,7 @@
 namespace swift {
 
 // -----------------------------------------------------------------------------
-class MainLoop : public Singleton<MainLoop> {
+class SWIFT_DLL MainLoop : public Singleton<MainLoop> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

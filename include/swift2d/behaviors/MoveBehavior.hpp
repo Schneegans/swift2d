@@ -25,7 +25,7 @@ typedef std::shared_ptr<MoveBehavior>       MoveBehaviorPtr;
 typedef std::shared_ptr<const MoveBehavior> ConstMoveBehaviorPtr;
 
 // -----------------------------------------------------------------------------
-class MoveBehavior : public Component {
+class SWIFT_DLL MoveBehavior : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

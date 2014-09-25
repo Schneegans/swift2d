@@ -17,7 +17,7 @@
 namespace swift {
 
 // -----------------------------------------------------------------------------
-class SettingsWrapper: public Singleton<SettingsWrapper> {
+class SWIFT_DLL SettingsWrapper : public Singleton<SettingsWrapper> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

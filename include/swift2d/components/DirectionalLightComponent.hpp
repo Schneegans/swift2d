@@ -27,7 +27,7 @@ typedef std::shared_ptr<DirectionalLightComponent>       DirectionalLightCompone
 typedef std::shared_ptr<const DirectionalLightComponent> ConstDirectionalLightComponentPtr;
 
 // -----------------------------------------------------------------------------
-class DirectionalLightComponent : public DrawableComponent {
+class SWIFT_DLL DirectionalLightComponent : public DrawableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

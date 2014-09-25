@@ -10,11 +10,12 @@
 #define SWIFT2D_EVENTS_PROPERTY_HPP
 
 #include <swift2d/events/Signal.hpp>
+#include <swift2d/utils/platform.hpp>
 
 namespace swift {
 
 template <typename T>
-class Property {
+class SWIFT_DLL Property {
 
  public:
   typedef T value_type;

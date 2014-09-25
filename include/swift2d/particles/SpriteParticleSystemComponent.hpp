@@ -27,7 +27,7 @@ typedef std::shared_ptr<SpriteParticleSystemComponent>       SpriteParticleSyste
 typedef std::shared_ptr<const SpriteParticleSystemComponent> ConstSpriteParticleSystemComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SpriteParticleSystemComponent : public ParticleSystemComponent {
+class SWIFT_DLL SpriteParticleSystemComponent : public ParticleSystemComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

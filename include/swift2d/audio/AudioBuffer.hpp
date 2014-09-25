@@ -27,7 +27,7 @@ typedef std::shared_ptr<const AudioBuffer> ConstAudioBufferPtr;
 typedef Property<AudioBufferPtr>           AudioBufferProperty;
 
 // -----------------------------------------------------------------------------
-class AudioBuffer : public SavableObject {
+class SWIFT_DLL AudioBuffer : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

@@ -31,7 +31,7 @@ typedef std::shared_ptr<const SceneObject> ConstSceneObjectPtr;
 typedef Property<SceneObject*>             SceneObjectProperty;
 
 // -----------------------------------------------------------------------------
-class SceneObject : public SavableObject {
+class SWIFT_DLL SceneObject : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

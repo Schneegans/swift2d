@@ -19,7 +19,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class DefaultAnimatedTexture : public Singleton<DefaultAnimatedTexture> {
+class SWIFT_DLL DefaultAnimatedTexture : public Singleton<DefaultAnimatedTexture> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

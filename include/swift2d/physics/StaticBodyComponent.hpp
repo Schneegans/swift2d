@@ -29,7 +29,7 @@ typedef std::shared_ptr<StaticBodyComponent>       StaticBodyComponentPtr;
 typedef std::shared_ptr<const StaticBodyComponent> ConstStaticBodyComponentPtr;
 
 // -----------------------------------------------------------------------------
-class StaticBodyComponent : public Component {
+class SWIFT_DLL StaticBodyComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

@@ -21,7 +21,7 @@ namespace swift {
 
 // -----------------------------------------------------------------------------
 template <typename T>
-class AnimatedProperty: public Property<T> {
+class SWIFT_DLL AnimatedProperty : public Property<T> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
