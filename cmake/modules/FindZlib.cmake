@@ -3,7 +3,7 @@ FIND_PATH(ZLIB_INCLUDE_DIRS zlib.h DOC "Path to ZLIB include directory."
   PATHS
   /usr/include/
   /usr/include/zlib
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/zlib
+  ${CMAKE_MODULE_PATH}/../../third_party/zlib
 )
 
 #Search for the library file...
@@ -14,7 +14,7 @@ FIND_LIBRARY(ZLIB_LIBRARIES DOC "Absolute path to ZLIB library."
   PATHS
   /usr/local/lib
   /usr/lib
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/zlib
+  ${CMAKE_MODULE_PATH}/../../third_party/zlib
 )
 
 #did we find it?

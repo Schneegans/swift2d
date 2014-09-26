@@ -3,7 +3,7 @@ FIND_PATH(GLFW_INCLUDE_DIRS GLFW/glfw3.h DOC "Path to GLFW include directory."
   PATHS
   /usr/include/
   /usr/include/GLFW
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party
+  ${CMAKE_MODULE_PATH}/../../third_party
 )
 
 #Search for the library file...
@@ -14,7 +14,7 @@ FIND_LIBRARY(GLFW_LIBRARIES DOC "Absolute path to GLFW library."
   PATHS
   /usr/local/lib
   /usr/lib
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/GLFW
+  ${CMAKE_MODULE_PATH}/../../third_party/GLFW
 )
 
 #did we find it?

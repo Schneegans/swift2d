@@ -3,7 +3,7 @@ FIND_PATH(CURL_INCLUDE_DIRS curl/curl.h DOC "Path to CURL include directory."
   PATHS
   /usr/include/
   /usr/include/curl
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/curl
+  ${CMAKE_MODULE_PATH}/../../third_party/curl
 )
 
 #Search for the library file...
@@ -14,7 +14,7 @@ FIND_LIBRARY(CURL_LIBRARIES DOC "Absolute path to CURL library."
   PATHS
   /usr/local/lib
   /usr/lib
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/curl
+  ${CMAKE_MODULE_PATH}/../../third_party/curl
 )
 
 #did we find it?

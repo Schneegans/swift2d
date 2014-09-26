@@ -12,10 +12,14 @@
 namespace swift {
 
 #if defined( _WIN32 )
-#define SWIFT_DLL __declspec(dllexport)
-#else // _WIN32
-#define SWIFT_DLL
-#endif // else _WIN32
+  #if defined( SWIFT_MAKE_LIBRARY )
+    #define SWIFT_DLL __declspec(dllexport)
+  #else
+    #define SWIFT_DLL __declspec(dllimport)
+  #endif
+#else
+  #define SWIFT_DLL
+#endif
 
 }
 

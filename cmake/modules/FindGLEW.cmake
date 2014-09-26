@@ -3,7 +3,7 @@ FIND_PATH(GLEW_INCLUDE_DIRS GL/glew.h DOC "Path to GLEW include directory."
   PATHS
   /usr/include/
   /usr/include/GLEW
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/glew
+  ${CMAKE_MODULE_PATH}/../../third_party/glew
 )
 
 #Search for the library file...
@@ -14,7 +14,7 @@ FIND_LIBRARY(GLEW_LIBRARIES DOC "Absolute path to GLEW library."
   PATHS
   /usr/local/lib
   /usr/lib
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/glew
+  ${CMAKE_MODULE_PATH}/../../third_party/glew
 )
 
 #did we find it?

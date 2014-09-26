@@ -8,6 +8,7 @@
 
 #include <swift2d/events/Ticker.hpp>
 
+#include <boost/asio.hpp>
 #include <boost/bind.hpp>
 
 namespace swift {
@@ -15,7 +16,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Ticker::Ticker(double tick_time)
-  : timer_(MainLoop::get().get_io_service(), boost::posix_time::microseconds(1000000.0*tick_time))
+  : timer_(new boost::asio::deadline_timer(MainLoop::get().get_io_service(), boost::posix_time::microseconds(1000000.0*tick_time)))
   , tick_time_(tick_time)
   , active_(false) {}
 
@@ -24,6 +25,7 @@ Ticker::Ticker(double tick_time)
 Ticker::~Ticker() {
   on_tick.disconnect_all();
   stop();
+  delete timer_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +51,7 @@ void Ticker::start() {
 
 void Ticker::stop() {
   active_ = false;
-  timer_.cancel();
+  timer_->cancel();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -64,8 +66,8 @@ void Ticker::self_callback(boost::system::error_code const& error) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Ticker::async_wait() {
-  timer_.expires_from_now(boost::posix_time::microseconds(1000000.0*tick_time_));
-  timer_.async_wait(boost::bind(&Ticker::self_callback, shared_from_this(), _1));
+  timer_->expires_from_now(boost::posix_time::microseconds(1000000.0*tick_time_));
+  timer_->async_wait(boost::bind(&Ticker::self_callback, shared_from_this(), _1));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

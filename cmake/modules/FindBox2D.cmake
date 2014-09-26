@@ -3,7 +3,7 @@ FIND_PATH(BOX2D_INCLUDE_DIRS Box2D/Box2D.h DOC "Path to BOX2D include directory.
   PATHS
   /usr/include/
   /usr/include/box2d
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/box2d
+  ${CMAKE_MODULE_PATH}/../../third_party/box2d
 )
 
 #Search for the library file...
@@ -14,7 +14,7 @@ FIND_LIBRARY(BOX2D_LIBRARIES DOC "Absolute path to BOX2D library."
   PATHS
   /usr/local/lib
   /usr/lib
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/box2d
+  ${CMAKE_MODULE_PATH}/../../third_party/box2d
 )
 
 #did we find it?

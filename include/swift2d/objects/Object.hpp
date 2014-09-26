@@ -35,7 +35,7 @@ class SWIFT_DLL Object {
  // ----------------------------------------------------------- public interface
  public:
 
-  static ObjectPtr create(std::string const& type_name);
+   static ObjectPtr create(std::string const& type_name);
 
   template<typename T>
   static void init() {
@@ -47,7 +47,7 @@ class SWIFT_DLL Object {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  static std::unordered_map<std::string, std::function<ObjectPtr()>> factory_;
+   static std::unordered_map<std::string, std::function<ObjectPtr()>> factory_;
 
 };
 

@@ -13,6 +13,8 @@
 #include <swift2d/events/Scheduler.hpp>
 #include <swift2d/events/Signal.hpp>
 
+#include <memory>
+
 namespace swift {
 
 // shared pointer type definition ----------------------------------------------
@@ -51,7 +53,7 @@ class SWIFT_DLL Ticker : public std::enable_shared_from_this<Ticker> {
   void self_callback(boost::system::error_code const& error);
   void async_wait();
 
-  boost::asio::deadline_timer timer_;
+  boost::asio::deadline_timer* timer_;
   double tick_time_;
   bool active_;
 };

@@ -15,7 +15,7 @@
 namespace swift {
 
 template <typename T>
-class SWIFT_DLL Property {
+class Property {
 
  public:
   typedef T value_type;

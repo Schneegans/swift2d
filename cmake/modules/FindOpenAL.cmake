@@ -3,7 +3,7 @@ FIND_PATH(OPENAL_INCLUDE_DIRS AL/al.h DOC "Path to OPENAL include directory."
   PATHS
   /usr/include/
   /usr/include/OpenAL
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/OpenAL
+  ${CMAKE_MODULE_PATH}/../../third_party/OpenAL
 )
 
 #Search for the library file...
@@ -14,7 +14,7 @@ FIND_LIBRARY(OPENAL_LIBRARIES DOC "Absolute path to OPENAL library."
   PATHS
   /usr/local/lib
   /usr/lib
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/OpenAL
+  ${CMAKE_MODULE_PATH}/../../third_party/OpenAL
 )
 
 #did we find it?

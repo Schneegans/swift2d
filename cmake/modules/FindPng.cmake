@@ -3,7 +3,7 @@ FIND_PATH(PNG_INCLUDE_DIRS png.h DOC "Path to PNG include directory."
   PATHS
   /usr/include/
   /usr/include/png
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/png
+  ${CMAKE_MODULE_PATH}/../../third_party/png
 )
 
 #Search for the library file...
@@ -14,7 +14,7 @@ FIND_LIBRARY(PNG_LIBRARIES DOC "Absolute path to PNG library."
   PATHS
   /usr/local/lib
   /usr/lib
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/png
+  ${CMAKE_MODULE_PATH}/../../third_party/png
 )
 
 #did we find it?

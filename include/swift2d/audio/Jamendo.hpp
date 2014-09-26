@@ -13,6 +13,8 @@
 #include <swift2d/utils/Singleton.hpp>
 #include <swift2d/network/HttpConnection.hpp>
 
+#include <vector>
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////

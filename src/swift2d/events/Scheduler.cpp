@@ -8,6 +8,7 @@
 
 #include <swift2d/events/Scheduler.hpp>
 
+#include <boost/asio.hpp>
 #include <boost/bind.hpp>
 
 namespace swift {

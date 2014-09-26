@@ -10,8 +10,6 @@
 #define SWIFT2D_APPLICATION_HPP
 
 // includes  -------------------------------------------------------------------
-#include <boost/asio.hpp>
-
 #include <swift2d/utils/Singleton.hpp>
 #include <swift2d/properties.hpp>
 #include <swift2d/scene/SceneObject.hpp>
@@ -56,8 +54,6 @@ class SWIFT_DLL Application : public Singleton<Application> {
 
   PipelinePtr pipeline_;
   RendererPtr renderer_;
-
-  boost::asio::signal_set signals_;
 };
 
 }

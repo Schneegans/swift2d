@@ -3,7 +3,7 @@ FIND_PATH(SNDFILE_INCLUDE_DIRS sndfile.h DOC "Path to SNDFILE include directory.
   PATHS
   /usr/include/
   /usr/include/sndfile
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/sndfile
+  ${CMAKE_MODULE_PATH}/../../third_party/sndfile
 )
 
 #Search for the library file...
@@ -14,7 +14,7 @@ FIND_LIBRARY(SNDFILE_LIBRARIES DOC "Absolute path to SNDFILE library."
   PATHS
   /usr/local/lib
   /usr/lib
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/sndfile
+  ${CMAKE_MODULE_PATH}/../../third_party/sndfile
 )
 
 #did we find it?
