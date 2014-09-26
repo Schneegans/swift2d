@@ -36,19 +36,19 @@ FIND_PACKAGE(CURL    REQUIRED)
 FIND_PACKAGE(ZLIB    REQUIRED)
 
 set(LIBS
-  ${GLFW_LIBRARIES}
+  wldap32
   ${Boost_LIBRARIES}
+  ${OPENGL_LIBRARIES}  
+  ${GLFW_LIBRARIES} 
   ${PNG_LIBRARIES}
   ${OPENAL_LIBRARIES}
   ${SNDFILE_LIBRARIES}
   ${ALUT_LIBRARIES}
-  ${OPENGL_LIBRARIES}
   ${BOX2D_LIBRARIES}
-  ${CURL_LIBRARIES}
   ${ZLIB_LIBRARIES}
+  ${CURL_LIBRARIES}
   awesomium
   steam_api
-  wldap32
   # miniupnpc
   # awesomium-1-7
   # Xxf86vm
@@ -98,7 +98,7 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "-g -Wall --std=c++0x")
   ENDIF(CMAKE_BUILD_TYPE MATCHES "release")
 ELSE(CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "/Ox /MP /MD /w /EHsc")
+  set(CMAKE_CXX_FLAGS "/Ox /MP /MD /EHsc")
   add_definitions(-D_WIN32_WINDOWS)
   add_definitions(-DGLEW_STATIC)
   add_definitions(-DWIN32_LEAN_AND_MEAN)

@@ -21,7 +21,7 @@ class SWIFT_DLL FPSCounter {
  // ----------------------------------------------------------- public interface
  public:
 
-  FPSCounter(unsigned t);
+  FPSCounter(unsigned t = 10);
 
   // Call this after creation of this counter.
   void start();

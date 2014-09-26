@@ -20,7 +20,9 @@
 #include <mutex>
 
 // Awesomium bug in linux
+#ifndef _WIN32
 Awesomium::DataSource::~DataSource(){}
+#endif
 
 namespace swift {
 

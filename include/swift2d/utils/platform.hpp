@@ -15,7 +15,7 @@ namespace swift {
   #if defined( SWIFT_MAKE_LIBRARY )
     #define SWIFT_DLL __declspec(dllexport)
   #else
-    #define SWIFT_DLL __declspec(dllimport)
+    #define SWIFT_DLL 
   #endif
 #else
   #define SWIFT_DLL

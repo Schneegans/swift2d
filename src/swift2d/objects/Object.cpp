@@ -12,16 +12,30 @@
 
 namespace swift {
 
-std::unordered_map<std::string, std::function<ObjectPtr()>> Object::factory_;
+////////////////////////////////////////////////////////////////////////////////
+
+namespace {
+  std::unordered_map<std::string, std::function<ObjectPtr()>> factory;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 ObjectPtr Object::create(std::string const& type_name) {
-  auto factory(factory_.find(type_name));
-  if (factory != factory_.end()) {
-    return (factory->second)();
+  auto func(factory.find(type_name));
+  if (func != factory.end()) {
+    return (func->second)();
   }
   LOG_WARNING << "Failed to create Object of type \"" << type_name.c_str()
               << "\": Type not registered!" << std::endl;
   return nullptr;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Object::register_type(std::string const& name, std::function<ObjectPtr()> const& func) {
+  factory[name] = func;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 }

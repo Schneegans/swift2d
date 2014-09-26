@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/FPSCounter.hpp>
 #include <swift2d/events/Ticker.hpp>
+#include <swift2d/events/Timer.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
 #include <boost/thread.hpp>
 #include <vector>

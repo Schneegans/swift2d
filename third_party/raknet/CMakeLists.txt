@@ -1,6 +1,3 @@
-set(CMAKE_CXX_FLAGS_RELEASE "/Ox /MP /MD /w /EHsc")
-set(CMAKE_CXX_FLAGS_DEBUG "/Ox /MP /MD /w /EHsc")
-
 INCLUDE_DIRECTORIES(
   src
   ../steam
