@@ -49,21 +49,23 @@ void Paths::clean_up() {
 ////////////////////////////////////////////////////////////////////////////////
 
 std::string Paths::tmp_file(std::string const& suffix) const {
-  std::wstring wpath(boost::filesystem::unique_path().native());
-  std::string path(wpath.begin(), wpath.end());
-  return executable_ + "/tmp/" + path + "." + suffix;
+  std::string file(boost::filesystem::unique_path().string());
+  boost::filesystem::path p(executable_ + "/tmp/" + file + "." + suffix);
+  return p.normalize().string();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 std::string Paths::resource(std::string const& type, std::string const& file) const {
-  return executable_ + "/resources/" + type + "/" + file;
+  boost::filesystem::path p(executable_ + "/resources/" + type + "/" + file);
+  return p.normalize().string();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 std::string Paths::make_absolute(std::string const& file) const {
-  return executable_ + "/" + file;
+  auto p(boost::filesystem::absolute(file, executable_));
+  return p.normalize().string();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

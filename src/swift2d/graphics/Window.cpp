@@ -77,7 +77,6 @@ void Window::set_active(bool active) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Window::display() {
-
   if (vsync_dirty_) {
     vsync_dirty_ = false;
     glfwSwapInterval(SettingsWrapper::get().Settings->VSync() ? 1 : 0);
@@ -119,6 +118,23 @@ math::vec2 Window::get_cursor_pos() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Window::init_context() {
+  if (init_glew_) {
+    init_glew_ = false;
+
+    // init glew... seems a bit hacky, but works this way
+    glewExperimental = GL_TRUE;
+    glewInit(); glGetError();
+
+    render_context_.gl.Disable(oglplus::Capability::DepthTest);
+    render_context_.gl.DepthMask(false);
+
+    render_context_.ready = true;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Window::open() {
 
   if (!window_) {
@@ -146,11 +162,6 @@ void Window::open() {
       Title().c_str(), fullscreen ? glfwGetPrimaryMonitor() : nullptr, nullptr);
 
     WindowManager::get().glfw_windows[window_] = this;
-
-    set_active(true);
-
-    render_context_.gl.Disable(oglplus::Capability::DepthTest);
-    render_context_.gl.DepthMask(false);
 
     glfwSetWindowCloseCallback(window_, [](GLFWwindow* w) {
       WindowManager::get().glfw_windows[w]->on_close.emit();
@@ -189,16 +200,6 @@ void Window::open() {
     };
     on_hide_cursor_change(HideCursor.get());
     HideCursor.on_change().connect(on_hide_cursor_change);
-  }
-
-  if (init_glew_) {
-    init_glew_ = false;
-
-    // init glew... seems a bit hacky, but works this way
-    glewExperimental = GL_TRUE;
-    glewInit(); glGetError();
-
-    render_context_.ready = true;
   }
 }
 

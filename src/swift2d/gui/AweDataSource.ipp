@@ -18,12 +18,8 @@ class AweDataSource : public Awesomium::DataSource {
 
     std::string html_str("<h1>Failed to load resource.</h1>");
 
-    std::string absolute_path(Awesomium::ToString(path));
-
     // make absolute
-    if (absolute_path[0] != '/') {
-      absolute_path = Paths::get().make_absolute(absolute_path);
-    }
+    std::string absolute_path = Paths::get().make_absolute(Awesomium::ToString(path));
 
     // strip parameters
     int index = absolute_path.find("?");
