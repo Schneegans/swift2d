@@ -15,11 +15,11 @@
 //#include <miniupnpc/upnpcommands.h>
 //#include <miniupnpc/upnperrors.h>
 
-#include <raknet/src/RakPeerInterface.h>
-#include <raknet/src/GetTime.h>
-#include <raknet/src/DS_List.h>
-#include <raknet/src/Itoa.h>
-#include <raknet/src/RakThread.h>
+#include <raknet/RakPeerInterface.h>
+#include <raknet/GetTime.h>
+#include <raknet/DS_List.h>
+#include <raknet/Itoa.h>
+#include <raknet/RakThread.h>
 
 #include <iostream>
 #include <sstream>

@@ -17,7 +17,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/any.hpp>
 
-#include <raknet/src/VariableDeltaSerializer.h>
+#include <raknet/VariableDeltaSerializer.h>
 
 
 namespace swift {

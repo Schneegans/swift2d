@@ -1,5 +1,5 @@
 build
-./lib
+lib
 
 scripts/Swift2D.sublime-workspace
 examples/network/settings.json

@@ -11,8 +11,8 @@
 
 #include <swift2d/utils/Logger.hpp>
 
-#include <raknet/src/RakPeerInterface.h>
-#include <raknet/src/GetTime.h>
+#include <raknet/RakPeerInterface.h>
+#include <raknet/GetTime.h>
 
 namespace swift {
 

@@ -16,16 +16,16 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
-#include <raknet/src/MessageIdentifiers.h>
-#include <raknet/src/RakNetTypes.h>
-#include <raknet/src/RakPeerInterface.h>
-#include <raknet/src/BitStream.h>
-#include <raknet/src/FullyConnectedMesh2.h>
-#include <raknet/src/PacketLogger.h>
-#include <raknet/src/NatTypeDetectionClient.h>
-#include <raknet/src/ConnectionGraph2.h>
-#include <raknet/src/NatPunchthroughClient.h>
-#include <raknet/src/NetworkIDManager.h>
+#include <raknet/MessageIdentifiers.h>
+#include <raknet/RakNetTypes.h>
+#include <raknet/RakPeerInterface.h>
+#include <raknet/BitStream.h>
+#include <raknet/FullyConnectedMesh2.h>
+#include <raknet/PacketLogger.h>
+#include <raknet/NatTypeDetectionClient.h>
+#include <raknet/ConnectionGraph2.h>
+#include <raknet/NatPunchthroughClient.h>
+#include <raknet/NetworkIDManager.h>
 
 #include <sstream>
 

@@ -10,7 +10,7 @@
 #define SWIFT2D_NETWORK_OBJECT_BASE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <raknet/src/ReplicaManager3.h>
+#include <raknet/ReplicaManager3.h>
 
 #include <swift2d/network/SerializableReference.hpp>
 

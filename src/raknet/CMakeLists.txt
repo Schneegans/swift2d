@@ -1,0 +1,5 @@
+FILE(GLOB_RECURSE RAKNET_SRC
+  raknet/*.cpp
+)
+
+ADD_LIBRARY(raknet STATIC ${RAKNET_SRC})
