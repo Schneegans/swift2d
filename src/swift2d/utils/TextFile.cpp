@@ -58,7 +58,7 @@ std::string const& TextFile::get_content() const {
 
   is_loaded_ = true;
 
-  std::ifstream ifs(file_name_.c_str());
+  std::ifstream ifs(file_name_.c_str(), std::ifstream::in | std::ifstream::binary);
   if (!ifs) {
     LOG_WARNING << "Cannot open file \"" << file_name_ << "\"!" << std::endl;
     return content_;

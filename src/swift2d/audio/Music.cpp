@@ -118,7 +118,7 @@ void Music::load(oalplus::Source* source) {
             max_frames_ = info.frames;
 
             // read one second
-            int read_amount = min(max_frames_, channels_ * sample_rate_ + current_frame) - current_frame;
+            int read_amount = std::min(max_frames_, channels_ * sample_rate_ + current_frame) - current_frame;
             current_frame += read_amount;
 
             std::vector<short> data(channels_ * read_amount);

@@ -43,8 +43,10 @@ class SWIFT_DLL MainLoop : public Singleton<MainLoop> {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  MainLoop() {};
-  ~MainLoop() {};
+  MainLoop();
+  ~MainLoop();
+
+  boost::asio::io_service* io_service_;
 };
 
 // -----------------------------------------------------------------------------

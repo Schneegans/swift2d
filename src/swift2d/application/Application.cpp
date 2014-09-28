@@ -17,18 +17,21 @@
 
 namespace swift {
 
-namespace {
-  boost::asio::signal_set signals(MainLoop::get().get_io_service(), SIGINT, SIGTERM);
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 Application::Application()
   : LoadingProgress(0.f)
   , AppFPS(20)
   , RenderFPS(20)
+  , signals_(new boost::asio::signal_set(MainLoop::get().get_io_service(), SIGINT, SIGTERM))
   , pipeline_()
   , renderer_() {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Application::~Application() {
+  delete signals_;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -39,7 +42,7 @@ void Application::init(int argc, char** argv) {
   Paths::get().init(argc, argv);
 
   // init ctrl.c signal handler ------------------------------------------------
-  signals.async_wait([this](boost::system::error_code const& error,
+  signals_->async_wait([this](boost::system::error_code const& error,
                             int signal_number){
     if (!error) {
       stop();
@@ -70,6 +73,7 @@ void Application::stop() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Application::clean_up() {
+  signals_->cancel();
   Paths::get().clean_up();
   swift::clean_up();
 }

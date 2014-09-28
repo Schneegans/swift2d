@@ -39,11 +39,10 @@ void Paths::init(int argc, char** argv) {
 
 void Paths::clean_up() {
 
-  LOG_WARNING << "trying to remove " << executable_ + "/tmp" << std::endl;
   // delete tmp directory ------------------------------------------------------
-  //if (!boost::filesystem::remove_all(executable_ + "/tmp")) {
-  //  LOG_ERROR << "Failed to delete temporary directory!" << std::endl;
- // }
+  if (!boost::filesystem::remove_all(executable_ + "/tmp")) {
+    LOG_ERROR << "Failed to delete temporary directory!" << std::endl;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,6 +65,13 @@ std::string Paths::resource(std::string const& type, std::string const& file) co
 std::string Paths::make_absolute(std::string const& file) const {
   auto p(boost::filesystem::absolute(file, executable_));
   return p.normalize().string();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::string Paths::get_extension(std::string const& file) const {
+  boost::filesystem::path p(file);
+  return p.extension().string();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

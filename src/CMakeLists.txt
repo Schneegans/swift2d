@@ -11,3 +11,4 @@ ADD_LIBRARY( swift2d STATIC
 )
 
 TARGET_LINK_LIBRARIES( swift2d  ${LIBS} glew raknet )
+ 

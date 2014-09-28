@@ -18,14 +18,26 @@ class AweDataSource : public Awesomium::DataSource {
 
     std::string html_str("<h1>Failed to load resource.</h1>");
 
-    // make absolute
-    std::string absolute_path = Paths::get().make_absolute(Awesomium::ToString(path));
+	std::string absolute_path(Awesomium::ToString(path));
 
-    // strip parameters
+	// strip parameters
     int index = absolute_path.find("?");
     if (index != std::string::npos) {
       absolute_path = absolute_path.substr(0, index);
     }
+
+    // make absolute
+    absolute_path = Paths::get().make_absolute(absolute_path);
+
+    std::string ext(Paths::get().get_extension(absolute_path));
+
+	std::string mime("text/html");
+	if      (ext == ".png")  mime = "image/png";
+	else if (ext == ".jpg")  mime = "image/jpg";
+	else if (ext == ".jpeg") mime = "image/jpg";
+	else if (ext == ".js")   mime = "text/javascript";
+	else if (ext == ".css")  mime = "text/css";
+	else if (ext == ".woff") mime = "application/x-font-woff";
 
     TextFile file(absolute_path);
 
@@ -36,7 +48,7 @@ class AweDataSource : public Awesomium::DataSource {
     }
 
     SendResponse(request_id, html_str.size(), (unsigned char*)html_str.c_str(),
-                 Awesomium::WSLit("text/html"));
+                 Awesomium::WSLit(mime.c_str()));
   }
 
 };

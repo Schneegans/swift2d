@@ -17,6 +17,8 @@
 #include <swift2d/graphics/Pipeline.hpp>
 #include <swift2d/graphics/Renderer.hpp>
 
+#include <boost/asio/signal_set.hpp>
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,8 +52,9 @@ class SWIFT_DLL Application : public Singleton<Application> {
  private:
   // this class is a Singleton --- private c'tor and d'tor
   Application();
-  ~Application() {}
+  ~Application();
 
+  boost::asio::signal_set* signals_;
   PipelinePtr pipeline_;
   RendererPtr renderer_;
 };
