@@ -25,7 +25,7 @@ typedef std::shared_ptr<ParticleEmitterComponent>       ParticleEmitterComponent
 typedef std::shared_ptr<const ParticleEmitterComponent> ConstParticleEmitterComponentPtr;
 typedef Property<ParticleEmitterComponentPtr>           ParticleEmitterComponentProperty;
 
-struct SerializedEmitter {
+struct SWIFT_DLL SerializedEmitter {
   float Life,             LifeVariance;
   float Direction,        DirectionVariance;
   float Velocity,         VelocityVariance;
@@ -37,7 +37,7 @@ struct SerializedEmitter {
 };
 
 // -----------------------------------------------------------------------------
-class ParticleEmitterComponent : public TransformableComponent {
+class SWIFT_DLL ParticleEmitterComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

@@ -9,17 +9,12 @@
 #ifndef SWIFT2D_LOGGER_HPP
 #define SWIFT2D_LOGGER_HPP
 
+#include <swift2d/utils/platform.hpp>
 #include <iosfwd>
 
 namespace swift {
 
-#define LOG_TRACE   Logger::trace_impl  (__FILE__, __LINE__)
-#define LOG_DEBUG   Logger::debug_impl  (__FILE__, __LINE__)
-#define LOG_MESSAGE Logger::message_impl(__FILE__, __LINE__)
-#define LOG_WARNING Logger::warning_impl(__FILE__, __LINE__)
-#define LOG_ERROR   Logger::error_impl  (__FILE__, __LINE__)
-
-class Logger {
+class SWIFT_DLL Logger {
 
  public:
 
@@ -35,6 +30,12 @@ class Logger {
   static std::ostream& warning_impl(const char* file, int line);
   static std::ostream& error_impl(const char* file, int line);
 };
+
+#define LOG_TRACE   Logger::trace_impl  (__FILE__, __LINE__)
+#define LOG_DEBUG   Logger::debug_impl  (__FILE__, __LINE__)
+#define LOG_MESSAGE Logger::message_impl(__FILE__, __LINE__)
+#define LOG_WARNING Logger::warning_impl(__FILE__, __LINE__)
+#define LOG_ERROR   Logger::error_impl  (__FILE__, __LINE__)
 
 }
 

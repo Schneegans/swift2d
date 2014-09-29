@@ -29,7 +29,7 @@ typedef std::shared_ptr<TrailSystemComponent>       TrailSystemComponentPtr;
 typedef std::shared_ptr<const TrailSystemComponent> ConstTrailSystemComponentPtr;
 
 // -----------------------------------------------------------------------------
-class TrailSystemComponent : public DrawableComponent {
+class SWIFT_DLL TrailSystemComponent : public DrawableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

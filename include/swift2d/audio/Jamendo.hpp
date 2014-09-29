@@ -13,6 +13,8 @@
 #include <swift2d/utils/Singleton.hpp>
 #include <swift2d/network/HttpConnection.hpp>
 
+#include <vector>
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -20,7 +22,7 @@ namespace swift {
 
 
 // -----------------------------------------------------------------------------
-class Jamendo : public Singleton<Jamendo> {
+class SWIFT_DLL Jamendo : public Singleton<Jamendo> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

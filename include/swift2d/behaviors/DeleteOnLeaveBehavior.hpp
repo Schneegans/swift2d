@@ -25,7 +25,7 @@ typedef std::shared_ptr<DeleteOnLeaveBehavior>       DeleteOnLeaveBehaviorPtr;
 typedef std::shared_ptr<const DeleteOnLeaveBehavior> ConstDeleteOnLeaveBehaviorPtr;
 
 // -----------------------------------------------------------------------------
-class DeleteOnLeaveBehavior : public Component {
+class SWIFT_DLL DeleteOnLeaveBehavior : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

@@ -139,7 +139,7 @@ b2Body* Physics::add(DynamicBodyComponent* body) {
 
   b2Shape* shape;
   if (!body->Shape()) {
-    Logger::LOG_WARNING << "Failed to add DynamicBodyComponent: "
+    LOG_WARNING << "Failed to add DynamicBodyComponent: "
                         << "No CollisionShape attached!" << std::endl;
     shape = new b2CircleShape();
   } else {
@@ -189,7 +189,7 @@ b2Body* Physics::add(StaticBodyComponent* body) {
   b2Shape* shape;
 
   if (!body->Shape()) {
-    Logger::LOG_WARNING << "Failed to add DynamicBodyComponent: "
+    LOG_WARNING << "Failed to add DynamicBodyComponent: "
                         << "No CollisionShape attached!" << std::endl;
     shape = new b2CircleShape();
   } else {

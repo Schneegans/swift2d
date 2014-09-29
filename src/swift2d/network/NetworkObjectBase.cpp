@@ -11,8 +11,8 @@
 
 #include <swift2d/utils/Logger.hpp>
 
-#include <raknet/src/RakPeerInterface.h>
-#include <raknet/src/GetTime.h>
+#include <raknet/RakPeerInterface.h>
+#include <raknet/GetTime.h>
 
 namespace swift {
 
@@ -133,7 +133,7 @@ void NetworkObjectBase::print_bitstream(RakNet::BitStream *bs) {
 
   RakNet::RakString string;
   bs->Read(string);
-  Logger::LOG_TRACE << "NetworkObjectBase receive: " << string.C_String() << std::endl;
+  LOG_TRACE << "NetworkObjectBase receive: " << string.C_String() << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

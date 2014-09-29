@@ -27,7 +27,7 @@ typedef std::shared_ptr<const Sound> ConstSoundPtr;
 typedef Property<SoundPtr>           SoundProperty;
 
 // -----------------------------------------------------------------------------
-class Sound : public AudioBuffer {
+class SWIFT_DLL Sound : public AudioBuffer {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

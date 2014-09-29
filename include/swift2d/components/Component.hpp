@@ -42,7 +42,7 @@ class Component;
 typedef std::shared_ptr<Component> ComponentPtr;
 
 // -----------------------------------------------------------------------------
-class Component : public SavableObject {
+class SWIFT_DLL Component : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

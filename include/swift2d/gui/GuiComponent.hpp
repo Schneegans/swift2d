@@ -27,7 +27,7 @@ typedef std::shared_ptr<GuiComponent>       GuiComponentPtr;
 typedef std::shared_ptr<const GuiComponent> ConstGuiComponentPtr;
 
 // -----------------------------------------------------------------------------
-class GuiComponent : public DrawableComponent {
+class SWIFT_DLL GuiComponent : public DrawableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

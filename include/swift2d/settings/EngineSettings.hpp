@@ -23,7 +23,7 @@ typedef std::shared_ptr<EngineSettings>       EngineSettingsPtr;
 typedef std::shared_ptr<const EngineSettings> ConstEngineSettingsPtr;
 
 // -----------------------------------------------------------------------------
-class EngineSettings: public SavableObject {
+class SWIFT_DLL EngineSettings : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

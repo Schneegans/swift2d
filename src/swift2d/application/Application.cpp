@@ -12,8 +12,8 @@
 #include <swift2d/swift2d.hpp>
 #include <swift2d/utils/Logger.hpp>
 
-#include <boost/asio.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/asio.hpp>
 
 namespace swift {
 
@@ -23,9 +23,15 @@ Application::Application()
   : LoadingProgress(0.f)
   , AppFPS(20)
   , RenderFPS(20)
+  , signals_(new boost::asio::signal_set(MainLoop::get().get_io_service(), SIGINT, SIGTERM))
   , pipeline_()
-  , renderer_()
-  , signals_(MainLoop::get().get_io_service(), SIGINT, SIGTERM) {}
+  , renderer_() {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Application::~Application() {
+  delete signals_;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -36,8 +42,8 @@ void Application::init(int argc, char** argv) {
   Paths::get().init(argc, argv);
 
   // init ctrl.c signal handler ------------------------------------------------
-  signals_.async_wait([this](boost::system::error_code const& error,
-                          int signal_number){
+  signals_->async_wait([this](boost::system::error_code const& error,
+                            int signal_number){
     if (!error) {
       stop();
     }
@@ -67,6 +73,7 @@ void Application::stop() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Application::clean_up() {
+  signals_->cancel();
   Paths::get().clean_up();
   swift::clean_up();
 }

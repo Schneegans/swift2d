@@ -16,16 +16,16 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
-#include <raknet/src/MessageIdentifiers.h>
-#include <raknet/src/RakNetTypes.h>
-#include <raknet/src/RakPeerInterface.h>
-#include <raknet/src/BitStream.h>
-#include <raknet/src/FullyConnectedMesh2.h>
-#include <raknet/src/PacketLogger.h>
-#include <raknet/src/NatTypeDetectionClient.h>
-#include <raknet/src/ConnectionGraph2.h>
-#include <raknet/src/NatPunchthroughClient.h>
-#include <raknet/src/NetworkIDManager.h>
+#include <raknet/MessageIdentifiers.h>
+#include <raknet/RakNetTypes.h>
+#include <raknet/RakPeerInterface.h>
+#include <raknet/BitStream.h>
+#include <raknet/FullyConnectedMesh2.h>
+#include <raknet/PacketLogger.h>
+#include <raknet/NatTypeDetectionClient.h>
+#include <raknet/ConnectionGraph2.h>
+#include <raknet/NatPunchthroughClient.h>
+#include <raknet/NetworkIDManager.h>
 
 #include <sstream>
 
@@ -62,7 +62,7 @@ Network::Network()
   RakNet::StartupResult sr = peer_->Startup(8, &sd, 1);
 
   if (sr != RakNet::RAKNET_STARTED) {
-    Logger::LOG_ERROR << "Failed to start peer!" << std::endl;
+    LOG_ERROR << "Failed to start peer!" << std::endl;
   }
 
   peer_->SetMaximumIncomingConnections(8);
@@ -70,7 +70,7 @@ Network::Network()
 
   // connect("natpunch.jenkinssoftware.com", 61111);
 
-  Logger::LOG_MESSAGE << "I'm " << get_own_id() << std::endl;
+  LOG_MESSAGE << "I'm " << get_own_id() << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -87,20 +87,20 @@ Network::~Network() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-uint64_t Network::get_own_id() {
+math::uint64 Network::get_own_id() {
   return peer_->GetMyGUID().g;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Network::connect(uint64_t guid) {
+void Network::connect(math::uint64 guid) {
   if (phase_ == STARTED) {
     host_guid_ = guid;
     phase_ = CONNECTING_TO_NAT_SERVER;
 
     RakNet::ConnectionAttemptResult car = peer_->Connect("natpunch.jenkinssoftware.com", 61111, 0, 0);
     if (car != RakNet::CONNECTION_ATTEMPT_STARTED) {
-      Logger::LOG_WARNING << "Failed to connect! Code=" << car << std::endl;
+      LOG_WARNING << "Failed to connect! Code=" << car << std::endl;
     }
   }
 }
@@ -141,7 +141,7 @@ void Network::update() {
         if (phase_ == CONNECTING_TO_NAT_SERVER) {
 
           // the nat server accepted our connection
-          Logger::LOG_MESSAGE << "Connected to NAT server." << std::endl;
+          LOG_MESSAGE << "Connected to NAT server." << std::endl;
           nat_server_address_ = packet->systemAddress.ToString();
           phase_ = NAT_PUNCH_TO_HOST;
 
@@ -272,7 +272,7 @@ void Network::update() {
       // ##################### OTHER PACKETS ###################################
       // -----------------------------------------------------------------------
       default:
-        Logger::LOG_DEBUG << "Got " << RakNet::PacketLogger::BaseIDTOString(packet->data[0])
+        LOG_DEBUG << "Got " << RakNet::PacketLogger::BaseIDTOString(packet->data[0])
                           << " from " << packet->guid.ToString() << std::endl;
         break;
     }
@@ -350,7 +350,7 @@ void Network::enter_phase(Phase phase) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// void Network::request_join(uint64_t guid) {
+// void Network::request_join(math::uint64 guid) {
 //   mesh_->ResetHostCalculation();
 
 //   RakNet::BitStream message;
@@ -360,13 +360,13 @@ void Network::enter_phase(Phase phase) {
 
 // ////////////////////////////////////////////////////////////////////////////////
 
-// void Network::start_join(uint64_t guid) {
+// void Network::start_join(math::uint64 guid) {
 //   mesh_->StartVerifiedJoin(RakNet::RakNetGUID(guid));
 // }
 
 // ////////////////////////////////////////////////////////////////////////////////
 
-// void Network::join(uint64_t guid, std::string const& nat_server) {
+// void Network::join(math::uint64 guid, std::string const& nat_server) {
 //   DataStructures::List<RakNet::SystemAddress> addresses;
 //   DataStructures::List<RakNet::RakNetGUID> guids;
 //   DataStructures::List<RakNet::BitStream*> userData;

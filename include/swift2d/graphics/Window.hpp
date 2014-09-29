@@ -33,7 +33,7 @@ typedef std::shared_ptr<Window>       WindowPtr;
 typedef std::shared_ptr<const Window> ConstWindowPtr;
 
 // -----------------------------------------------------------------------------
-class Window {
+class SWIFT_DLL Window {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -74,16 +74,15 @@ class Window {
   math::vec2 get_cursor_pos() const;
 
   RenderContext const& get_context() const { return render_context_; };
-  RenderContext& get_context() { return render_context_; };
+  RenderContext&       get_context()       { return render_context_; };
+
+  void init_context();
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   void open();
   void close();
-
-  void create_glfw_window();
-
   void update_joysticks();
 
   RenderContext render_context_;
@@ -94,7 +93,6 @@ class Window {
 
   bool vsync_dirty_;
   bool fullscreen_dirty_;
-
   bool init_glew_;
 };
 

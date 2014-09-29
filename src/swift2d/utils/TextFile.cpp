@@ -58,9 +58,9 @@ std::string const& TextFile::get_content() const {
 
   is_loaded_ = true;
 
-  std::ifstream ifs(file_name_.c_str());
+  std::ifstream ifs(file_name_.c_str(), std::ifstream::in | std::ifstream::binary);
   if (!ifs) {
-    Logger::LOG_WARNING << "Cannot open file \"" << file_name_ << "\"!" << std::endl;
+    LOG_WARNING << "Cannot open file \"" << file_name_ << "\"!" << std::endl;
     return content_;
   }
 
@@ -68,7 +68,7 @@ std::string const& TextFile::get_content() const {
   oss << ifs.rdbuf();
 
   if (!ifs && !ifs.eof()) {
-    Logger::LOG_WARNING << "Error reading file \"" << file_name_ << "\"!" << std::endl;
+    LOG_WARNING << "Error reading file \"" << file_name_ << "\"!" << std::endl;
     return content_;
   }
 
@@ -88,13 +88,13 @@ void TextFile::set_content(std::string const& content) {
 bool TextFile::save() const {
 
   if (!is_loaded_) {
-    Logger::LOG_WARNING << "Unable to save file \"" << file_name_ << "\"! No content has been set." << std::endl;
+    LOG_WARNING << "Unable to save file \"" << file_name_ << "\"! No content has been set." << std::endl;
     return false;
   }
 
   std::ofstream ofs(file_name_);
   if (!ofs) {
-    Logger::LOG_WARNING << "Cannot open file \""<< file_name_ << "\"!" << std::endl;
+    LOG_WARNING << "Cannot open file \""<< file_name_ << "\"!" << std::endl;
     return false;
   }
 

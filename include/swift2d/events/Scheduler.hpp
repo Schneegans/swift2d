@@ -13,10 +13,12 @@
 #include <swift2d/events/MainLoop.hpp>
 #include <map>
 
+#include <boost/asio/deadline_timer.hpp>
+
 namespace swift {
 
 // -----------------------------------------------------------------------------
-class Scheduler {
+class SWIFT_DLL Scheduler {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

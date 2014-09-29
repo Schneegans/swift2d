@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Logger.hpp>
+#include <swift2d/utils/platform.hpp>
 
 #include <memory>
 #include <functional>
@@ -28,7 +29,7 @@ typedef std::shared_ptr<Object>       ObjectPtr;
 typedef std::shared_ptr<const Object> ConstObjectPtr;
 
 // -----------------------------------------------------------------------------
-class Object {
+class SWIFT_DLL Object {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -38,16 +39,15 @@ class Object {
 
   template<typename T>
   static void init() {
-    factory_[T::get_type_name_static()] = [](){ return std::make_shared<T>(); };
+    register_type(T::get_type_name_static(), [](){ return std::make_shared<T>(); });
   }
 
-  virtual std::string get_type_name() const = 0;
+   virtual std::string get_type_name() const = 0;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  static std::unordered_map<std::string, std::function<ObjectPtr()>> factory_;
-
+   static void register_type(std::string const& name, std::function<ObjectPtr()> const& func);
 };
 
 }

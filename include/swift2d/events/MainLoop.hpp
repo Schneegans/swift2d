@@ -13,12 +13,20 @@
 #include <swift2d/utils/Singleton.hpp>
 
 #include <functional>
-#include <boost/asio.hpp>
+
+namespace boost {
+  namespace asio {
+    class io_service;
+  }
+  namespace system {
+    class error_code;
+  }
+}
 
 namespace swift {
 
 // -----------------------------------------------------------------------------
-class MainLoop : public Singleton<MainLoop> {
+class SWIFT_DLL MainLoop : public Singleton<MainLoop> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -28,17 +36,17 @@ class MainLoop : public Singleton<MainLoop> {
   void start();
   void stop();
 
-  boost::asio::io_service& get_io_service() { return io_service_; }
+  boost::asio::io_service& get_io_service();
 
   friend class Singleton<MainLoop>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  MainLoop() {};
-  ~MainLoop() {};
+  MainLoop();
+  ~MainLoop();
 
-  boost::asio::io_service io_service_;
+  boost::asio::io_service* io_service_;
 };
 
 // -----------------------------------------------------------------------------

@@ -11,15 +11,15 @@
 
 #include <swift2d/utils/Logger.hpp>
 
-#include <miniupnpc/miniupnpc.h>
-#include <miniupnpc/upnpcommands.h>
-#include <miniupnpc/upnperrors.h>
+//#include <miniupnpc/miniupnpc.h>
+//#include <miniupnpc/upnpcommands.h>
+//#include <miniupnpc/upnperrors.h>
 
-#include <raknet/src/RakPeerInterface.h>
-#include <raknet/src/GetTime.h>
-#include <raknet/src/DS_List.h>
-#include <raknet/src/Itoa.h>
-#include <raknet/src/RakThread.h>
+#include <raknet/RakPeerInterface.h>
+#include <raknet/GetTime.h>
+#include <raknet/DS_List.h>
+#include <raknet/Itoa.h>
+#include <raknet/RakThread.h>
 
 #include <iostream>
 #include <sstream>
@@ -40,7 +40,7 @@ namespace {
   };
 
   //////////////////////////////////////////////////////////////////////////////
-
+  /*
   RAK_THREAD_DECLARATION(UPNPOpenWorker) {
 
     UPNPOpenWorkerArgs *args = ( UPNPOpenWorkerArgs * ) arguments;
@@ -91,18 +91,18 @@ namespace {
     }
 
     RakNet::OP_DELETE(args, _FILE_AND_LINE_);
-  }
+  }*/
 
   //////////////////////////////////////////////////////////////////////////////
 
   void UPNPOpenAsynch(unsigned short port_to_open, unsigned int timeout, UpnpOpener* opener) {
 
-    UPNPOpenWorkerArgs *args = RakNet::OP_NEW<UPNPOpenWorkerArgs>(_FILE_AND_LINE_);
+    /*UPNPOpenWorkerArgs *args = RakNet::OP_NEW<UPNPOpenWorkerArgs>(_FILE_AND_LINE_);
     args->port_to_open  = port_to_open;
     args->timeout       = timeout;
     args->opener        = opener;
 
-    RakNet::RakThread::Create(UPNPOpenWorker, args);
+    RakNet::RakThread::Create(UPNPOpenWorker, args);*/
   }
 
   //////////////////////////////////////////////////////////////////////////////

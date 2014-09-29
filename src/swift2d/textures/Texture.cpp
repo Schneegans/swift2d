@@ -131,10 +131,8 @@ void Texture::load_texture_data() const {
   if (f.length() > 0) {
     loading_ = true;
 
-    if (f[0] != '/') {
-      f = Paths::get().make_absolute(f);
-    }
-
+    f = Paths::get().make_absolute(f);
+    
     std::thread load([this, f](){
       int w(0), h(0), c(0);
       auto d(stbi_load(f.c_str(), &w, &h, &c, STBI_default));
@@ -145,7 +143,7 @@ void Texture::load_texture_data() const {
         height_ = h;
         channels_ = c;
       } else {
-        Logger::LOG_ERROR << "Failed to load texture \"" << FileName() << "\"!" << std::endl;
+        LOG_ERROR << "Failed to load texture \"" << FileName() << "\"!" << std::endl;
       }
     });
 

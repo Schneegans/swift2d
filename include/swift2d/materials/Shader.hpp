@@ -25,7 +25,7 @@ typedef std::shared_ptr<Shader>       ShaderPtr;
 typedef std::shared_ptr<const Shader> ConstShaderPtr;
 
 // -----------------------------------------------------------------------------
-class Shader {
+class SWIFT_DLL Shader {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

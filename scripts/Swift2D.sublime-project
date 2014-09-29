@@ -13,11 +13,10 @@
 		{
 			"cmd":
 			[
-				"./scripts/make.sh",
-				"2"
+				"scripts\\make.bat"
 			],
 			"file_regex": "^(..[^:]*):(.*)$",
-			"name": "swift2d-project-low-build",
+			"name": "swift2d-project-windows",
 			"working_dir": "${project_path}/.."
 		}
 	],

@@ -26,7 +26,7 @@ typedef std::shared_ptr<const Texture3D> ConstTexture3DPtr;
 typedef Property<Texture3DPtr>           Texture3DProperty;
 
 // -----------------------------------------------------------------------------
-class Texture3D : public Texture {
+class SWIFT_DLL Texture3D : public Texture {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

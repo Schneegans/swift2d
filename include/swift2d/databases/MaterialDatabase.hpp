@@ -20,8 +20,8 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class MaterialDatabase : public Database<Material>,
-                         public Singleton<MaterialDatabase> {
+class SWIFT_DLL MaterialDatabase : public Database<Material>,
+                                   public Singleton<MaterialDatabase> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -32,7 +32,7 @@ class MaterialDatabase : public Database<Material>,
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  MaterialDatabase() {}
+   MaterialDatabase() {}
   ~MaterialDatabase() {}
 
 };

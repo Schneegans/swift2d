@@ -10,6 +10,8 @@
 #define SWIFT2D_EVENTS_SIGNAL_HPP
 
 // includes  ------------------------------------------------------------------
+#include <swift2d/utils/platform.hpp>
+
 #include <functional>
 #include <map>
 

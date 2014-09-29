@@ -31,7 +31,7 @@ typedef std::shared_ptr<const Music> ConstMusicPtr;
 typedef Property<MusicPtr>           MusicProperty;
 
 // -----------------------------------------------------------------------------
-class Music : public AudioBuffer {
+class SWIFT_DLL Music : public AudioBuffer {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

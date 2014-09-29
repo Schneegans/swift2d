@@ -9,8 +9,8 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/network/HttpConnection.hpp>
 
-#include <raknet/src/HTTPConnection2.h>
-#include <raknet/src/TCPInterface.h>
+#include <raknet/HTTPConnection2.h>
+#include <raknet/TCPInterface.h>
 
 #include <thread>
 #include <iostream>

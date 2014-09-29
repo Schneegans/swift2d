@@ -12,7 +12,26 @@
 #include <sstream>
 #include <iostream>
 #include <boost/iostreams/stream.hpp>
+#include <boost/filesystem.hpp>
 
+// no colors on windows!
+#if defined( _WIN32 ) 
+#define PRINT_RED ""
+#define PRINT_GREEN ""
+#define PRINT_YELLOW ""
+#define PRINT_BLUE ""
+#define PRINT_PURPLE ""
+#define PRINT_TURQUOISE ""
+
+#define PRINT_RED_BOLD ""
+#define PRINT_GREEN_BOLD ""
+#define PRINT_YELLOW_BOLD ""
+#define PRINT_BLUE_BOLD ""
+#define PRINT_PURPLE_BOLD ""
+#define PRINT_TURQUOISE_BOLD ""
+
+#define PRINT_RESET ""
+#else // _WIN32
 #define PRINT_RED "\x001b[0;31m"
 #define PRINT_GREEN "\x001b[0;32m"
 #define PRINT_YELLOW "\x001b[0;33m"
@@ -28,14 +47,15 @@
 #define PRINT_TURQUOISE_BOLD "\x001b[1;36m"
 
 #define PRINT_RESET "\x001b[0m"
+#endif // else _WIN32
 
 namespace swift {
 
-bool Logger::enable_trace = false;
-bool Logger::enable_debug = true;
+bool Logger::enable_trace   = false;
+bool Logger::enable_debug   = true;
 bool Logger::enable_message = true;
 bool Logger::enable_warning = true;
-bool Logger::enable_error = true;
+bool Logger::enable_error   = true;
 
 namespace {
   namespace io = boost::iostreams;
@@ -44,9 +64,11 @@ namespace {
   std::ostream                      dev_null(&null_buffer);
 
   std::string location_string(const char* f, int l) {
-    std::string file(std::string(f).substr(std::string(f).find_last_of('/') + 1).c_str());
+    
+    boost::filesystem::path p(f);
+
     std::stringstream sstr;
-    sstr << "[" << file << "]";
+    sstr << "[" << p.filename() << "]";
     // sstr << "[" << file << ":" << l << "]";
     return sstr.str();
   }

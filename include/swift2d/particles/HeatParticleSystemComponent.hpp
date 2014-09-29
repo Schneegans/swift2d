@@ -26,7 +26,7 @@ typedef std::shared_ptr<HeatParticleSystemComponent>       HeatParticleSystemCom
 typedef std::shared_ptr<const HeatParticleSystemComponent> ConstHeatParticleSystemComponentPtr;
 
 // -----------------------------------------------------------------------------
-class HeatParticleSystemComponent : public ParticleSystemComponent {
+class SWIFT_DLL HeatParticleSystemComponent: public ParticleSystemComponent{
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

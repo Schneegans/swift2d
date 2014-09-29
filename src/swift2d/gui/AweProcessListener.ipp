@@ -14,15 +14,15 @@ class AweProcessListener : public Awesomium::WebViewListener::Process {
 
   // ------------------------------------------------------------ public methods
   void OnUnresponsive(Awesomium::WebView* caller) {
-    Logger::LOG_WARNING << "OnUnresponsive" << std::endl;
+    LOG_WARNING << "OnUnresponsive" << std::endl;
   }
 
   void OnResponsive(Awesomium::WebView* caller) {
-    Logger::LOG_WARNING << "OnResponsive" << std::endl;
+    LOG_WARNING << "OnResponsive" << std::endl;
   }
 
   void OnCrashed(Awesomium::WebView* caller,
                          Awesomium::TerminationStatus status) {
-    Logger::LOG_WARNING << "OnCrashed" << std::endl;
+    LOG_WARNING << "OnCrashed" << std::endl;
   }
 };

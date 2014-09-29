@@ -24,7 +24,7 @@ typedef std::shared_ptr<TimedDeleteBehavior>       TimedDeleteBehaviorPtr;
 typedef std::shared_ptr<const TimedDeleteBehavior> ConstTimedDeleteBehaviorPtr;
 
 // -----------------------------------------------------------------------------
-class TimedDeleteBehavior : public Component {
+class SWIFT_DLL TimedDeleteBehavior : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

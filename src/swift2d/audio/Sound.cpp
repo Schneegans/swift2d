@@ -30,7 +30,7 @@ void Sound::load_from_file(std::string const& file_name) {
 
   int error(sf_error(file));
   if (error) {
-    Logger::LOG_WARNING << "Error loading audio file \"" << file_name << "\": "
+    LOG_WARNING << "Error loading audio file \"" << file_name << "\": "
                         << sf_error_number(error) << std::endl;
   }
 

@@ -29,7 +29,7 @@ typedef std::shared_ptr<CircularShape>       CircularShapePtr;
 typedef std::shared_ptr<const CircularShape> ConstCircularShapePtr;
 
 // -----------------------------------------------------------------------------
-class CircularShape : public TransformableComponent {
+class SWIFT_DLL CircularShape : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -58,11 +58,11 @@ class CircularShape : public TransformableComponent {
   };
 
   /*virtual*/ bool contains(RectangularShapePtr const& other) {
-
+    return false;
   };
 
   /*virtual*/ bool intersects(RectangularShapePtr const& other) {
-
+    return false;
   };
 
  ///////////////////////////////////////////////////////////////////////////////

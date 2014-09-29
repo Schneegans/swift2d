@@ -18,7 +18,7 @@
 namespace swift {
 
 // -----------------------------------------------------------------------------
-class WindowManager : public Singleton<WindowManager> {
+class SWIFT_DLL WindowManager : public Singleton<WindowManager> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

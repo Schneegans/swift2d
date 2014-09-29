@@ -23,7 +23,7 @@ typedef std::shared_ptr<Shape>       ShapePtr;
 typedef std::shared_ptr<const Shape> ConstShapePtr;
 
 // -----------------------------------------------------------------------------
-class Shape : public TransformableComponent {
+class SWIFT_DLL Shape : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

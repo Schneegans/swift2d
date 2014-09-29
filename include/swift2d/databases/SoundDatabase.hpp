@@ -20,8 +20,8 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class SoundDatabase : public Database<Sound>,
-                      public Singleton<SoundDatabase> {
+class SWIFT_DLL SoundDatabase : public Database<Sound>,
+                                public Singleton<SoundDatabase> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

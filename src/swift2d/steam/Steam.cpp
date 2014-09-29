@@ -17,6 +17,7 @@
 
 #include <stb_image/stb_image_write.h>
 
+#include <array>
 #include <iostream>
 #include <steam/steam_api.h>
 
@@ -56,7 +57,7 @@ Steam::Steam()
       what = "was banned";
     }
 
-    on_message.emit(MessageType::CHAT_UPDATE, result->m_ulSteamIDUserChanged, what);
+    on_message.emit(MessageType::MSG_CHAT_UPDATE, result->m_ulSteamIDUserChanged, what);
 
   });
 
@@ -71,7 +72,7 @@ Steam::Steam()
 
     if (type == k_EChatEntryTypeChatMsg) {
       auto message = std::string(data, length);
-      on_message.emit(MessageType::CHAT, speaker.ConvertToUint64(), message);
+      on_message.emit(MessageType::MSG_CHAT, speaker.ConvertToUint64(), message);
     }
   });
 
@@ -80,12 +81,12 @@ Steam::Steam()
     current_room_ = result->m_ulSteamIDLobby;
     std::string name(SteamMatchmaking()->GetLobbyData(current_room_, "name"));
 
-    on_message.emit(MessageType::JOIN, get_user_id(), "joined " + name);
+    on_message.emit(MessageType::MSG_JOIN, get_user_id(), "joined " + name);
 
     int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
     for (int i(0); i<user_count; ++i) {
       auto user = SteamMatchmaking()->GetLobbyMemberByIndex(current_room_, i);
-      on_message.emit(MessageType::CHAT_UPDATE, user.ConvertToUint64(), "is in this room");
+      on_message.emit(MessageType::MSG_CHAT_UPDATE, user.ConvertToUint64(), "is in this room");
     }
   });
 
@@ -126,13 +127,13 @@ Steam::~Steam() {
 bool Steam::init() {
 
   if (!SteamAPI_IsSteamRunning()) {
-    Logger::LOG_WARNING << "Steam is not running." << std::endl;
-    Logger::LOG_WARNING << "Please start Steam before running the game." << std::endl;
+    LOG_WARNING << "Steam is not running." << std::endl;
+    LOG_WARNING << "Please start Steam before running the game." << std::endl;
     return false;
   }
 
   if (!SteamAPI_Init()) {
-    Logger::LOG_WARNING << "Failed to initialized Steam!" << std::endl;
+    LOG_WARNING << "Failed to initialized Steam!" << std::endl;
     return false;
   }
 
@@ -148,7 +149,7 @@ void Steam::update() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-uint64_t Steam::get_room_id() {
+math::uint64 Steam::get_room_id() {
   return current_room_;
 }
 
@@ -159,7 +160,7 @@ void Steam::update_room_list() {
     SteamMatchmaking()->RequestLobbyList(),
     [](LobbyMatchList_t *result, bool f) {
 
-    std::unordered_map<uint64_t, RoomData> rooms;
+    std::unordered_map<math::uint64, RoomData> rooms;
     for (int i(0); i<result->m_nLobbiesMatching; ++i) {
       CSteamID id = SteamMatchmaking()->GetLobbyByIndex(i);
 
@@ -184,17 +185,17 @@ void Steam::create_room(std::string const& name) {
       [this, name](LobbyCreated_t *result, bool f) {
 
       if (result->m_eResult == k_EResultOK) {
-        Logger::LOG_WARNING << "created " << result->m_ulSteamIDLobby << std::endl;
+        LOG_WARNING << "created " << result->m_ulSteamIDLobby << std::endl;
         current_room_ = result->m_ulSteamIDLobby;
 
         SteamMatchmaking()->SetLobbyData(current_room_, "name", name.c_str());
       } else {
-        Logger::LOG_WARNING << "failed to create lobby" << std::endl;
+        LOG_WARNING << "failed to create lobby" << std::endl;
       }
     });
 
   } else {
-    Logger::LOG_WARNING << "Already in a room" << std::endl;
+    LOG_WARNING << "Already in a room" << std::endl;
   }
 }
 
@@ -212,13 +213,13 @@ std::string Steam::get_room_data(std::string const& key) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-uint64_t Steam::get_room_owner() {
+math::uint64 Steam::get_room_owner() {
   return SteamMatchmaking()->GetLobbyOwner(current_room_).ConvertToUint64();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Steam::join_room(uint64_t id) {
+void Steam::join_room(math::uint64 id) {
   if (current_room_ != 0) {
     leave_room();
   }
@@ -231,13 +232,13 @@ void Steam::leave_room() {
   if (current_room_ != 0) {
 
     std::string name(SteamMatchmaking()->GetLobbyData(current_room_, "name"));
-    on_message.emit(MessageType::LEAVE, get_user_id(), "left " + name);
+    on_message.emit(MessageType::MSG_LEAVE, get_user_id(), "left " + name);
 
     SteamMatchmaking()->LeaveLobby(current_room_);
     current_room_ = 0;
 
   } else {
-    Logger::LOG_WARNING << "Not in a room" << std::endl;
+    LOG_WARNING << "Not in a room" << std::endl;
   }
 }
 
@@ -247,17 +248,17 @@ void Steam::send_chat_message(std::string const& message) {
   if (current_room_ != 0) {
 
     if (!SteamMatchmaking()->SendLobbyChatMsg(current_room_, message.c_str(), message.length()+1)) {
-      Logger::LOG_WARNING << "failed to send message" << std::endl;
+      LOG_WARNING << "failed to send message" << std::endl;
     }
 
   } else {
-    Logger::LOG_WARNING << "Not in a room" << std::endl;
+    LOG_WARNING << "Not in a room" << std::endl;
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-uint64_t Steam::get_user_id() {
+math::uint64 Steam::get_user_id() {
   return SteamUser()->GetSteamID().ConvertToUint64();
 }
 
@@ -269,13 +270,13 @@ std::string Steam::get_user_name() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::string Steam::get_user_name(uint64_t steam_id) {
+std::string Steam::get_user_name(math::uint64  steam_id) {
   return SteamFriends()->GetFriendPersonaName(steam_id);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::string Steam::get_user_avatar(uint64_t steam_id) {
+std::string Steam::get_user_avatar(math::uint64 steam_id) {
   auto avatar(avatar_cache_.find(steam_id));
   if (avatar != avatar_cache_.end()) {
     return avatar->second;
@@ -293,21 +294,21 @@ std::string Steam::get_user_avatar(uint64_t steam_id) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Steam::save_avatar(uint64_t steam_id) {
+void Steam::save_avatar(math::uint64 steam_id) {
   int avatar_id = SteamFriends()->GetSmallFriendAvatar(steam_id);
 
-  uint32 width;
-  uint32 height;
+  math::uint32 width;
+  math::uint32 height;
 
   SteamUtils()->GetImageSize(avatar_id, &width, &height);
 
-  int data_length = width*height*4*sizeof(uint8);
-  uint8 data[data_length];
+  int data_length = width*height * 4 * sizeof(math::uint8);
+  std::vector<math::uint8> data(data_length);
 
-  if (!SteamUtils()->GetImageRGBA(avatar_id, data, data_length)) {
-    Logger::LOG_WARNING << "Failed to get avatar image!" << std::endl;
+  if (!SteamUtils()->GetImageRGBA(avatar_id, &data[0], data_length)) {
+    LOG_WARNING << "Failed to get avatar image!" << std::endl;
   } else {
-    stbi_write_png(avatar_cache_[steam_id].c_str(), width, height, 4, data, width*4*sizeof(uint8));
+    stbi_write_png(avatar_cache_[steam_id].c_str(), width, height, 4, &data[0], width * 4 * sizeof(math::uint8));
   }
 }
 

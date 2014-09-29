@@ -35,7 +35,7 @@ typedef std::shared_ptr<Pipeline>       PipelinePtr;
 typedef std::shared_ptr<const Pipeline> ConstPipelinePtr;
 
 // -----------------------------------------------------------------------------
-class Pipeline {
+class SWIFT_DLL Pipeline {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

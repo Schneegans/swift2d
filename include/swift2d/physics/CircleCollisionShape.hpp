@@ -27,7 +27,7 @@ typedef std::shared_ptr<const CircleCollisionShape> ConstCircleCollisionShapePtr
 typedef Property<CircleCollisionShapePtr>           CircleCollisionShapeProperty;
 
 // -----------------------------------------------------------------------------
-class CircleCollisionShape : public CollisionShape {
+class SWIFT_DLL CircleCollisionShape : public CollisionShape {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

@@ -26,7 +26,7 @@ typedef std::shared_ptr<ListenerComponent>       ListenerComponentPtr;
 typedef std::shared_ptr<const ListenerComponent> ConstListenerComponentPtr;
 
 // -----------------------------------------------------------------------------
-class ListenerComponent : public TransformableComponent {
+class SWIFT_DLL ListenerComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

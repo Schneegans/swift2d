@@ -1,13 +1,3 @@
-# determine source and header files
-file(GLOB_RECURSE SWIFT2D_SRC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    swift2d/*.c
-    swift2d/*.cpp
-    ../include/swift2d/*.h
-    ../include/swift2d/*.hpp
-)
-
-ADD_LIBRARY( swift2d SHARED
-    ${SWIFT2D_SRC}
-)
-
-TARGET_LINK_LIBRARIES( swift2d  ${LIBS} raknet )
+add_subdirectory(glew)
+add_subdirectory(raknet)
+add_subdirectory(swift2d)

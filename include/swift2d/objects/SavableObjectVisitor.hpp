@@ -23,7 +23,7 @@ namespace swift {
 class SavableObject;
 
 // -----------------------------------------------------------------------------
-class SavableObjectVisitor {
+class SWIFT_DLL SavableObjectVisitor {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

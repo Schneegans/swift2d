@@ -12,7 +12,10 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/opengl.hpp>
 
-#include <oalplus/al.hpp>
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <AL/alut.h>
+
 #include <oalplus/all.hpp>
 #include <oalplus/alut.hpp>
 

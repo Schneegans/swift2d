@@ -28,7 +28,7 @@ typedef std::shared_ptr<const CollisionShape> ConstCollisionShapePtr;
 typedef Property<CollisionShapePtr>           CollisionShapeProperty;
 
 // -----------------------------------------------------------------------------
-class CollisionShape : public SavableObject {
+class SWIFT_DLL CollisionShape : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

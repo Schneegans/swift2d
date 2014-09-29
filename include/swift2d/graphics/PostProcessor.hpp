@@ -17,7 +17,7 @@
 #include <swift2d/graphics/HeatEffect.hpp>
 #include <swift2d/graphics/GBuffer.hpp>
 #include <swift2d/textures/Texture.hpp>
-
+ 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////

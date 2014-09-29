@@ -44,7 +44,7 @@ class AweViewListener : public Awesomium::WebViewListener::View {
     Awesomium::WebView* caller, const Awesomium::WebString& message,
     int line_number, const Awesomium::WebString& source) {
 
-    Logger::LOG_MESSAGE << message << " (" << source << ":"
+    LOG_MESSAGE << message << " (" << source << ":"
                         << line_number << ")" << std::endl;
   }
 

@@ -26,7 +26,7 @@ typedef std::shared_ptr<const MaterialBase> ConstMaterialBasePtr;
 typedef Property<MaterialBasePtr>           MaterialBaseProperty;
 
 // -----------------------------------------------------------------------------
-class MaterialBase : public SavableObject {
+class SWIFT_DLL MaterialBase : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

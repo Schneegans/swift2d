@@ -29,7 +29,7 @@ typedef std::shared_ptr<const Texture> ConstTexturePtr;
 typedef Property<TexturePtr>           TextureProperty;
 
 // -----------------------------------------------------------------------------
-class Texture : public SavableObject {
+class SWIFT_DLL Texture : public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

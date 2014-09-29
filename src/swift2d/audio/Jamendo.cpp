@@ -44,7 +44,7 @@ Jamendo::Jamendo() {
       on_album_loaded.emit(album_);
 
     } catch(std::runtime_error const& e) {
-      Logger::LOG_WARNING << "Failed to parse response: " << e.what() << std::endl;
+      LOG_WARNING << "Failed to parse response: " << e.what() << std::endl;
     }
   });
 }

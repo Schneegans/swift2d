@@ -27,7 +27,7 @@ typedef std::shared_ptr<Scene>       ScenePtr;
 typedef std::shared_ptr<const Scene> ConstScenePtr;
 
 // -----------------------------------------------------------------------------
-class Scene {
+class SWIFT_DLL Scene {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

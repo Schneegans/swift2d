@@ -28,7 +28,7 @@ typedef std::shared_ptr<AudioComponent>       AudioComponentPtr;
 typedef std::shared_ptr<const AudioComponent> ConstAudioComponentPtr;
 
 // -----------------------------------------------------------------------------
-class AudioComponent : public TransformableComponent {
+class SWIFT_DLL AudioComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface

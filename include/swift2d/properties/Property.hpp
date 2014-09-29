@@ -10,6 +10,7 @@
 #define SWIFT2D_EVENTS_PROPERTY_HPP
 
 #include <swift2d/events/Signal.hpp>
+#include <swift2d/utils/platform.hpp>
 
 namespace swift {
 

@@ -19,7 +19,7 @@ namespace swift {
 // interface as well.                                                         //
 ////////////////////////////////////////////////////////////////////////////////
 
-struct Color {
+class SWIFT_DLL Color {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -72,24 +72,24 @@ struct Color {
 };
 
 // ------------------------------------------------------------------- operators
-bool operator==(Color const& lhs, Color const& rhs);
-bool operator!=(Color const& lhs, Color const& rhs);
+SWIFT_DLL bool operator==(Color const& lhs, Color const& rhs);
+SWIFT_DLL bool operator!=(Color const& lhs, Color const& rhs);
 
 // Multiplication of a color with a float.
-Color operator*(float const& lhs, Color rhs);
-Color operator*(Color const& lhs, float rhs);
+SWIFT_DLL Color operator*(float const& lhs, Color rhs);
+SWIFT_DLL Color operator*(Color const& lhs, float rhs);
 
 // Addition of two colors. Clamped.
-Color operator+(Color const& lhs, Color const& rhs);
+SWIFT_DLL Color operator+(Color const& lhs, Color const& rhs);
 
 // Subtraction of two colors. Clamped.
-Color operator-(Color const& lhs, Color const& rhs);
+SWIFT_DLL Color operator-(Color const& lhs, Color const& rhs);
 
 // Division of a color by a float.
-Color operator/(Color const& lhs, float rhs);
+SWIFT_DLL Color operator/(Color const& lhs, float rhs);
 
-std::ostream& operator<<(std::ostream& os, Color const& color);
-std::istream& operator>>(std::istream& is, Color& color);
+SWIFT_DLL std::ostream& operator<<(std::ostream& os, Color const& color);
+SWIFT_DLL std::istream& operator>>(std::istream& is, Color& color);
 
 typedef Property<Color> ColorProperty;
 

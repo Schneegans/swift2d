@@ -21,7 +21,7 @@ namespace swift {
 
 // -----------------------------------------------------------------------------
 class ColoredTrailShader : public TrailShaderBase,
-                          public Shader,
+                           public Shader,
                            public Singleton<ColoredTrailShader> {
 
  ///////////////////////////////////////////////////////////////////////////////

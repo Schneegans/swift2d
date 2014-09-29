@@ -11,10 +11,6 @@
 #include <swift2d/trails/TexturedTrailShader.hpp>
 #include <swift2d/trails/ColoredTrailShader.hpp>
 
-#include <gl.h>
-#include <glext.h>
-#include <glew.h>
-
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////

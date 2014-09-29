@@ -1,31 +1,6 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
+/build
+/lib
 
-# Compiled Dynamic libraries
-lib/*.so
-*.dylib
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-
-*.out
-*.gv
-*.dot
-*.gsm
-
-*.opensdf
-
-build
-./lib
-doc/html
-guarc/guarc
 scripts/Swift2D.sublime-workspace
-tags
-.nfs*
-.vim.custom
-tests/tests
 examples/network/settings.json
+

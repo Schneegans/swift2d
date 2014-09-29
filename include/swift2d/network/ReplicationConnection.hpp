@@ -12,7 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/network/NetworkObjectBase.hpp>
 
-#include <raknet/src/ReplicaManager3.h>
+#include <raknet/ReplicaManager3.h>
 
 namespace swift {
 

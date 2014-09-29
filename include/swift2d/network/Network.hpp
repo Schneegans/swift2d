@@ -31,7 +31,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class Network : public Singleton<Network> {
+class SWIFT_DLL Network : public Singleton<Network> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -47,7 +47,7 @@ class Network : public Singleton<Network> {
     REQUEST_JOIN
   };
 
-  uint64_t get_own_id();
+  math::uint64 get_own_id();
 
   void update();
 
@@ -58,7 +58,7 @@ class Network : public Singleton<Network> {
   void distribute_object(NetworkObjectBase* object);
 
   bool is_host() const;
-  void connect(uint64_t guid);
+  void connect(math::uint64 guid);
 
   friend class UpnpOpener;
   friend class Singleton<Network>;
@@ -71,9 +71,9 @@ class Network : public Singleton<Network> {
   Network();
   ~Network();
 
-  void request_join(uint64_t guid);
-  void start_join(uint64_t guid);
-  void join(uint64_t guid, std::string const& nat_server);
+  void request_join(math::uint64 guid);
+  void start_join(math::uint64 guid);
+  void join(math::uint64 guid, std::string const& nat_server);
 
   RakNet::RakPeerInterface*             peer_;
   RakNet::ConnectionGraph2*             graph_;
@@ -88,7 +88,7 @@ class Network : public Singleton<Network> {
   Phase           phase_;
   std::string     game_ID_;
 
-  uint64_t        host_guid_;
+  math::uint64    host_guid_;
   std::string     nat_server_address_;
 };
 

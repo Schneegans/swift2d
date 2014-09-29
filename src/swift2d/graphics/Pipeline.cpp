@@ -83,9 +83,8 @@ void Pipeline::update() {
 void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   // create & update window
-  if (!window_->Open()) {
-    window_->Open = true;
-  }
+  window_->set_active(true);
+  window_->init_context();
 
   // update window size
   if (needs_reload_) {

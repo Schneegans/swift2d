@@ -26,7 +26,7 @@ typedef std::shared_ptr<SpriteComponent>       SpriteComponentPtr;
 typedef std::shared_ptr<const SpriteComponent> ConstSpriteComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SpriteComponent : public DrawableComponent {
+class SWIFT_DLL SpriteComponent : public DrawableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
