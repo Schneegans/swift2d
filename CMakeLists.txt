@@ -17,8 +17,8 @@ cmake_policy(SET CMP0015 OLD)
 # Configure and find libraries
 ################################################################
 
-set(BOOST_ROOT "D:\\boost_1_56_0")
-set(BOOST_LIBRARYDIR "D:\\boost_1_56_0\\lib32-msvc-12.0")
+set(BOOST_ROOT "D:\\boost_1_56_0" CACHE STRING "")
+set(BOOST_LIBRARYDIR "D:\\boost_1_56_0\\lib32-msvc-12.0" CACHE STRING "")
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
