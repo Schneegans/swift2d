@@ -19,7 +19,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class DefaultAnimatedTexture : public Singleton<DefaultAnimatedTexture> {
+class DefaultTexture3D : public Singleton<DefaultTexture3D> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -28,15 +28,15 @@ class DefaultAnimatedTexture : public Singleton<DefaultAnimatedTexture> {
   // Binds the texture on the given context to the given location.
   void bind(RenderContext const& context, unsigned location) const;
 
-  friend class Singleton<DefaultAnimatedTexture>;
+  friend class Singleton<DefaultTexture3D>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
 
   // ---------------------------------------------------- construction interface
-  DefaultAnimatedTexture();
-  ~DefaultAnimatedTexture();
+  DefaultTexture3D();
+  ~DefaultTexture3D();
 
   void upload_to(RenderContext const& context) const;
 

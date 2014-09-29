@@ -13,7 +13,7 @@
 #include <swift2d/materials/MaterialBase.hpp>
 #include <swift2d/materials/MaterialShader.hpp>
 #include <swift2d/utils/Color.hpp>
-#include <swift2d/textures/AnimatedTexture.hpp>
+#include <swift2d/textures/Texture3D.hpp>
 #include <swift2d/textures/Texture.hpp>
 #include <swift2d/events/Timer.hpp>
 
@@ -36,22 +36,22 @@ class Material : public MaterialBase {
  public:
 
   // ---------------------------------------------------------------- properties
-  AnimatedTextureProperty AnimatedDiffuseTexture;
+  Texture3DProperty AnimatedDiffuseTexture;
   TextureProperty         DiffuseTexture;
   ColorProperty           Diffuse;
 
-  AnimatedTextureProperty AnimatedNormalTexture;
+  Texture3DProperty AnimatedNormalTexture;
   TextureProperty         NormalTexture;
 
-  AnimatedTextureProperty AnimatedEmitTexture;
+  Texture3DProperty AnimatedEmitTexture;
   TextureProperty         EmitTexture;
   Float                   Emit;
 
-  AnimatedTextureProperty AnimatedGlowTexture;
+  Texture3DProperty AnimatedGlowTexture;
   TextureProperty         GlowTexture;
   Float                   Glow;
 
-  AnimatedTextureProperty AnimatedShinynessTexture;
+  Texture3DProperty AnimatedShinynessTexture;
   TextureProperty         ShinynessTexture;
   Float                   Shinyness;
 

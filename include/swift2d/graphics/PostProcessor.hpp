@@ -66,6 +66,8 @@ class PostProcessor {
   oglplus::Lazy<oglplus::Uniform<math::vec2i>> screen_size_;
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_diffuse_;
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_light_;
+  oglplus::Lazy<oglplus::Uniform<int>> use_color_grading_;
+  oglplus::Lazy<oglplus::Uniform<int>> color_grading_tex_;
 
   oglplus::Framebuffer threshold_fbo_;
   oglplus::Texture     threshold_buffer_;
@@ -74,7 +76,7 @@ class PostProcessor {
   GhostEffect          ghost_effect_;
   HeatEffect           heat_effect_;
 
-  Texture dirt_;
+  Texture   dirt_;
 };
 
 // -----------------------------------------------------------------------------

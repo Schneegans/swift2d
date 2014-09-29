@@ -43,6 +43,8 @@ class Scene {
 
   Float              DirtOpacity;
 
+  String             ColorMapName;
+
   // ----------------------------------------------------- contruction interface
   static ScenePtr create() {
     return std::make_shared<Scene>();
