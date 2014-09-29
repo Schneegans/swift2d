@@ -37,26 +37,33 @@ macro(SwiftLoadSystemLib LIB_NAME)
   list(APPEND SWIFT_INCLUDE_DIRS ${${LIB_NAME}_INCLUDE_DIRS})
 endmacro()
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+  list(APPEND SWIFT_INCLUDE_DIRS "third_party/include/gnucxx")
+else(CMAKE_COMPILER_IS_GNUCXX)
+  list(APPEND SWIFT_INCLUDE_DIRS "third_party/include/msvcxx")
+endif(CMAKE_COMPILER_IS_GNUCXX)
+
 SwiftLoadSystemLib("OpenGL")
 SwiftLoadSystemLib("Boost")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(SYSTEM ${SWIFT_INCLUDE_DIRS})
 
-IF(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX)
   add_definitions(-DOGLPLUS_LOW_PROFILE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s -Ofast --std=c++0x")
   # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall --std=c++0x")
-ELSE(CMAKE_COMPILER_IS_GNUCXX)
+else(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W1 /Ox /MP /MD /EHsc")
-  ADD_DEFINITIONS(-D_WIN32_WINDOWS)
-  ADD_DEFINITIONS(-DGLEW_STATIC)
-  ADD_DEFINITIONS(-DWIN32_LEAN_AND_MEAN)
-  ADD_DEFINITIONS(-DBOOST_ASIO_SEPARATE_COMPILATION)
-  ADD_DEFINITIONS(-DSWIFT_MAKE_LIBRARY)
-  ADD_DEFINITIONS(-DCURL_STATICLIB)
-  ADD_DEFINITIONS(-DNOMINMAX)
-ENDIF(CMAKE_COMPILER_IS_GNUCXX)
+  add_definitions(-D_WIN32_WINDOWS)
+  add_definitions(-DWIN32_LEAN_AND_MEAN)
+  add_definitions(-DNOMINMAX)
+endif(CMAKE_COMPILER_IS_GNUCXX)
+
+add_definitions(-DGLEW_STATIC)
+add_definitions(-DBOOST_ASIO_SEPARATE_COMPILATION)
+add_definitions(-DSWIFT_MAKE_LIBRARY)
+add_definitions(-DCURL_STATICLIB)
 
 ################################################################
 # Create libraries
