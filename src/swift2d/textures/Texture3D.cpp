@@ -44,7 +44,6 @@ Texture3D::Texture3D(std::string const& file_name, unsigned tiles_x, unsigned ti
   TilesY.on_change().connect([&](unsigned){
     needs_update_ = true;
   });
-  std::cout << "file ctor " << file_name << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -174,12 +173,13 @@ void Texture3D::upload_to(RenderContext const& ctx) const {
       }
     }
 
-    tex.GenerateMipmap()
-       .MinFilter(ose::LinearMipmapLinear())
+    tex//.GenerateMipmap()
+       //.MinFilter(ose::LinearMipmapLinear())
+       .MinFilter(ose::Linear())
        .MagFilter(ose::Linear())
-       .WrapS(ose::ClampToBorder())
-       .WrapT(ose::ClampToBorder())
-       .WrapR(ose::ClampToBorder());
+       .WrapS(ose::ClampToEdge())
+       .WrapT(ose::ClampToEdge())
+       .WrapR(ose::ClampToEdge());
 
     if (FileName() != "") {
       free_texture_data();

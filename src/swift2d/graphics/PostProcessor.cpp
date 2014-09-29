@@ -31,6 +31,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
       in vec2 texcoords;
       uniform sampler2D g_buffer_shaded;
+      uniform sampler3D color_grading_tex;
       uniform float gamma;
       uniform bool use_color_grading;
 
@@ -40,8 +41,9 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       layout (location = 0) out vec3 fragColor;
 
       void main(void){
-        if (use_color_grading)
+        if (use_color_grading) {
           fragColor = get_color_grading(fragColor);
+        }
         fragColor = mix(vignette_color.rgb, texture2D(g_buffer_shaded, texcoords).rgb, get_vignette());
         fragColor = pow(fragColor, 1.0/vec3(gamma));
       }
@@ -60,6 +62,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       uniform sampler2D glow_buffer_8;
       uniform sampler2D heat_buffer;
       uniform sampler2D dirt_tex;
+      uniform sampler3D color_grading_tex;
       uniform float     dirt_opacity;
       uniform bool      use_heat;
       uniform float     gamma;
@@ -92,9 +95,11 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
         }
 
         fragColor = texture2D(g_buffer_shaded, shifted_texcoords).rgb;
-        if (use_color_grading)
+        fragColor = fragColor + (glow + 0.1) * dirt * dirt_opacity;
+        if (use_color_grading) {
           fragColor = get_color_grading(fragColor);
-        fragColor = mix(vignette_color.rgb, (fragColor + (glow + 0.1) * dirt * dirt_opacity), get_vignette());
+        }
+        fragColor = mix(vignette_color.rgb, fragColor, get_vignette());
         fragColor = pow(fragColor, 1.0/vec3(gamma));
       }
     )")
@@ -190,8 +195,6 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   )");
 
   ShaderIncludes::get().add_include("get_color_grading", R"(
-
-    uniform sampler3D color_grading_tex;
 
     vec3 get_color_grading(vec3 color_in) {
       return texture(color_grading_tex, color_in).xyz;
