@@ -242,11 +242,11 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
   vignette_color_.Set(scene->vignette_color);
 
   use_color_grading_.Set(0);
+  color_grading_tex_.Set(1);
   if (scene->color_map_name != "") {
     auto color_map(TextureDatabase::get().lookup(scene->color_map_name));
     if (color_map) {
       color_map->bind(ctx, 1);
-      color_grading_tex_.Set(1);
       use_color_grading_.Set(1);
     }
   }
