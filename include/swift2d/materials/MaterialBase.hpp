@@ -33,8 +33,13 @@ class SWIFT_DLL MaterialBase : public SavableObject {
  public:
 
   // uses the Material on the given context.
-  virtual void draw_quad(RenderContext const& ctx, math::mat3 const& object_transform,
-                         float object_depth, float time = 0.f) = 0;
+  virtual void draw_quad(
+    RenderContext const& ctx, math::mat3 const& transform,
+    float depth, float time = 0.f) = 0;
+
+  virtual void draw_quads(
+    RenderContext const& ctx, std::vector<math::mat3> const& transforms,
+    float depth, float time = 0.f) = 0;
 
   virtual void draw_fullscreen_quad(RenderContext const& ctx, float time = 0.f) = 0;
 };

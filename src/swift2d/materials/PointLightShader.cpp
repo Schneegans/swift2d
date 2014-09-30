@@ -17,7 +17,7 @@ PointLightShader::PointLightShader()
   : Shader(
     R"(
       // vertex shader ---------------------------------------------------------
-      @include "quad_vertext_shader"
+      @include "quad_vertex_shader"
     )",
     R"(
       // fragment shader -------------------------------------------------------

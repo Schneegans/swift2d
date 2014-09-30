@@ -37,8 +37,28 @@ void AnimatedSpriteComponent::draw(RenderContext const& ctx) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void AnimatedSpriteComponent::draw_instanced(RenderContext const& ctx, std::vector<math::mat3> const& transforms) {
+  if (FullScreen()) {
+    Material()->draw_fullscreen_quad(ctx, Time());
+  } else {
+    
+    int index(0);
+
+    while (index < transforms.size()) {
+      int count(std::min(100, (int)transforms.size()-index));
+      Material()->draw_quads(ctx, std::vector<math::mat3>(transforms.begin() + index, transforms.begin() + index + count), Depth(), Time());
+
+      index += count;
+    }
+
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void AnimatedSpriteComponent::serialize(SerializedScenePtr& scene) const {
-  scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
+  // scene->objects[Depth.get()].add_object(create_copy());
+  scene->objects[Depth.get()].add_instanced_object(Material().get(), create_copy());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

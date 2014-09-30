@@ -52,17 +52,22 @@ Material::Material()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Material::draw_quad(RenderContext const& ctx, math::mat3 const& object_transform,
-                               float object_depth, float time) {
+void Material::draw_quad(RenderContext const& ctx, math::mat3 const& transform,
+                         float depth, float time) {
+  draw_quad_impl(ctx, {transform}, ctx.projection_matrix, depth, time);
+}
 
-  draw_quad_impl(ctx, object_transform, ctx.projection_matrix, object_depth, time);
+////////////////////////////////////////////////////////////////////////////////
+
+void Material::draw_quads(RenderContext const& ctx, std::vector<math::mat3> const& transforms,
+                         float depth, float time) {
+  draw_quad_impl(ctx, transforms, ctx.projection_matrix, depth, time);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Material::draw_fullscreen_quad(RenderContext const& ctx, float time) {
-
-  draw_quad_impl(ctx, math::mat3(), math::mat3(), 1.0f, time);
+  draw_quad_impl(ctx, {math::mat3()}, math::mat3(), 1.0f, time);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,8 +89,8 @@ void Material::accept(SavableObjectVisitor& visitor) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Material::draw_quad_impl(RenderContext const& ctx,
-                              math::mat3 const& object_transform,
-                              math::mat3 const& projection, float object_depth,
+                              std::vector<math::mat3> const& transforms,
+                              math::mat3 const& projection, float depth,
                               float time) {
 
   if (current_shader_dirty_) {
@@ -138,8 +143,9 @@ void Material::draw_quad_impl(RenderContext const& ctx,
 
   current_shader_->use(ctx);
   current_shader_->projection.Set(projection);
-  current_shader_->transform.Set(object_transform);
-  current_shader_->depth.Set(object_depth);
+  // current_shader_->transform.Set(transforms[0]);
+  current_shader_->transform.Set(transforms);
+  current_shader_->depth.Set(depth);
   current_shader_->parallax.Set(ctx.projection_parallax);
 
   bool needs_time(false);
@@ -159,13 +165,13 @@ void Material::draw_quad_impl(RenderContext const& ctx,
   if (AnimatedNormalTexture()) {
     AnimatedNormalTexture()->bind(ctx, 1);
     current_shader_->normal_tex.Set(1);
-    current_shader_->normal_transform.Set(math::make_rotation(math::get_rotation(object_transform)));
+    current_shader_->normal_transform.Set(math::make_rotation(math::get_rotation(transforms[0])));
     needs_time = true;
 
   } else if (NormalTexture()) {
     NormalTexture()->bind(ctx, 1);
     current_shader_->normal_tex.Set(1);
-    current_shader_->normal_transform.Set(math::make_rotation(math::get_rotation(object_transform)));
+    current_shader_->normal_transform.Set(math::make_rotation(math::get_rotation(transforms[0])));
   }
 
   if (AnimatedEmitTexture()) {
@@ -207,10 +213,12 @@ void Material::draw_quad_impl(RenderContext const& ctx,
 
   if (BlendAdditive()) {
     ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::One);
-    Quad::get().draw(ctx);
+    // Quad::get().draw(ctx);
+    Quad::get().draw(ctx, transforms.size());
     ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::OneMinusSrcAlpha);
   } else {
-    Quad::get().draw(ctx);
+    // Quad::get().draw(ctx);
+    Quad::get().draw(ctx, transforms.size());
   }
 }
 

@@ -34,8 +34,30 @@ void SpriteComponent::draw(RenderContext const& ctx) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void SpriteComponent::draw_instanced(RenderContext const& ctx, std::vector<math::mat3> const& transforms) {
+
+  auto& mat(Material() ? Material() : CustomMaterial());
+
+  if (FullScreen()) {
+    mat->draw_fullscreen_quad(ctx);
+  } else {
+
+    int index(0);
+
+    while (index < transforms.size()) {
+      int count(std::min(100, (int)transforms.size()-index));
+      mat->draw_quads(ctx, std::vector<math::mat3>(transforms.begin() + index, transforms.begin() + index + count), Depth());
+
+      index += count;
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void SpriteComponent::serialize(SerializedScenePtr& scene) const {
-  scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
+  // scene->objects[Depth.get()].add_object(create_copy());
+  scene->objects[Depth.get()].add_instanced_object(Material() ? Material().get() : CustomMaterial().get(), create_copy());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

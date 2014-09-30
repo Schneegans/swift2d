@@ -75,8 +75,13 @@ class SWIFT_DLL Material : public MaterialBase {
   static  std::string get_type_name_static() { return "Material"; }
 
   // uses the Material on the given context.
-  void draw_quad(RenderContext const& ctx, math::mat3 const& object_transform,
-                 float object_depth, float time = 0.f);
+  void draw_quad(
+    RenderContext const& ctx, math::mat3 const& transform,
+    float depth, float time = 0.f);
+
+  void draw_quads(
+    RenderContext const& ctx, std::vector<math::mat3> const& transforms,
+    float depth, float time = 0.f);
 
   void draw_fullscreen_quad(RenderContext const& ctx, float time = 0.f);
 
@@ -85,8 +90,8 @@ class SWIFT_DLL Material : public MaterialBase {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void draw_quad_impl(RenderContext const& ctx, math::mat3 const& object_transform,
-                      math::mat3 const& projection, float object_depth, float time);
+  void draw_quad_impl(RenderContext const& ctx, std::vector<math::mat3> const& transforms,
+                      math::mat3 const& projection, float depth, float time);
 
   bool              current_shader_dirty_;
   MaterialShaderPtr current_shader_;

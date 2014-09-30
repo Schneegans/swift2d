@@ -26,7 +26,7 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
 
   // else create new shader
   std::string v_shader(R"(
-    @include "quad_vertext_shader"
+    @include "instanced_quad_vertex_shader"
   )");
 
   std::stringstream f_shader;

@@ -18,7 +18,7 @@ namespace swift {
 GravityMap::GravityMap(RenderContext const& ctx)
   : gravity_shader_(R"(
       // vertex shader -------------------------------------------------------
-      @include "fullscreen_quad_vertext_shader"
+      @include "fullscreen_quad_vertex_shader"
     )",
     R"(
       // fragment shader -----------------------------------------------------

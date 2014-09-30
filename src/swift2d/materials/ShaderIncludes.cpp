@@ -28,7 +28,7 @@ ShaderIncludes::ShaderIncludes() {
 
 
   // ---------------------------------------------------------------------------
-  add_include("quad_vertext_shader", R"(
+  add_include("quad_vertex_shader", R"(
     @include "version"
 
     // input
@@ -50,7 +50,29 @@ ShaderIncludes::ShaderIncludes() {
   )");
 
   // ---------------------------------------------------------------------------
-  add_include("fullscreen_quad_vertext_shader", R"(
+  add_include("instanced_quad_vertex_shader", R"(
+    @include "version"
+
+    // input
+    layout(location=0) in vec2 position;
+
+    // uniforms
+    @include "camera_uniforms"
+    uniform mat3  transform[100];
+    uniform float depth;
+
+    // varyings
+    out vec2 texcoords;
+
+    void main(void) {
+      vec3 pos    = projection * transform[gl_InstanceID] * vec3(position, 1.0) * pow(parallax, depth);
+      texcoords   = vec2(position.x + 1.0, 1.0 - position.y) * 0.5;
+      gl_Position = vec4(pos.xy, 0.0, 1.0);
+    }
+  )");
+
+  // ---------------------------------------------------------------------------
+  add_include("fullscreen_quad_vertex_shader", R"(
     @include "version"
 
     layout(location=0) in vec2 position;

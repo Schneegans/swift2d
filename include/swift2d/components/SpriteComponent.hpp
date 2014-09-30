@@ -57,6 +57,7 @@ class SWIFT_DLL SpriteComponent : public DrawableComponent {
   static  std::string get_type_name_static() { return "SpriteComponent"; }
 
   virtual void draw(RenderContext const& ctx);
+  virtual void draw_instanced(RenderContext const& ctx, std::vector<math::mat3> const& transforms);
 
   virtual void serialize(SerializedScenePtr& scene) const;
 

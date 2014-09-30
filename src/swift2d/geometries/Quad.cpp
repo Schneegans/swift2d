@@ -74,4 +74,20 @@ void Quad::draw(RenderContext const& ctx) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Quad::draw(RenderContext const& ctx, unsigned instance_count) const {
+
+  // upload to GPU if neccessary
+  if (!verts_) {
+    upload_to(ctx);
+  }
+
+  rectangle_->Bind();
+  oglplus::VertexArrayAttrib(0).Enable();
+  ctx.gl.DrawArraysInstanced(oglplus::PrimitiveType::TriangleStrip, 0, 4, instance_count);
+
+  oglplus::NoVertexArray().Bind();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 }

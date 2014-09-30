@@ -92,7 +92,7 @@ void TrailSystemComponent::serialize(SerializedScenePtr& scene) const {
     serialized_emitters_.push_back(emitter->make_serialized_emitter());
   }
 
-  scene->objects.insert(std::make_pair(Depth.get(), create_copy()));
+  scene->objects[Depth.get()].add_object(create_copy());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -30,6 +30,7 @@ class SWIFT_DLL Quad: public Singleton<Quad> {
 
   // Draws the Quad to the given context.
   void draw(RenderContext const& context) const;
+  void draw(RenderContext const& context, unsigned instance_count) const;
 
   friend class Singleton<Quad>;
 

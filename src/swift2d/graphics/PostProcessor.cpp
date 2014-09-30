@@ -22,7 +22,7 @@ namespace swift {
 PostProcessor::PostProcessor(RenderContext const& ctx)
   : post_fx_shader_(R"(
       // vertex shader ---------------------------------------------------------
-      @include "fullscreen_quad_vertext_shader"
+      @include "fullscreen_quad_vertex_shader"
     )",
     ctx.shading_quality <= 1 ?
     R"(

@@ -29,7 +29,7 @@ Compositor::Compositor(RenderContext const& ctx)
     background_shader_ = new Shader(
       R"(
         // vertex shader -------------------------------------------------------
-        @include "fullscreen_quad_vertext_shader"
+        @include "fullscreen_quad_vertex_shader"
       )",
       R"(
         // fragment shader -----------------------------------------------------
@@ -86,7 +86,6 @@ Compositor::~Compositor() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
-
   ctx.gl.BlendFunc(
     oglplus::BlendFunction::SrcAlpha,
     oglplus::BlendFunction::OneMinusSrcAlpha
@@ -94,8 +93,13 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
 
   g_buffer_->bind_for_drawing(ctx);
 
-  for (auto& object: scene->objects) {
-    object.second->draw(ctx);
+  for (auto const& container: scene->objects) {
+    for (auto const& object: container.second.get_objects()) {
+      object->draw(ctx);
+    }
+    for (auto const& object: container.second.get_instanced_objects()) {
+      object.second.first->draw_instanced(ctx, object.second.second);
+    }
   }
 }
 
@@ -111,15 +115,14 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
     );
 
     g_buffer_->bind_final_buffer_for_drawing(ctx);
-
     g_buffer_->bind_diffuse(1);
     g_buffer_->bind_normal(2);
     g_buffer_->bind_light(3);
 
     background_shader_->use(ctx);
     background_shader_->set_uniform("g_buffer_diffuse", 1);
-    background_shader_->set_uniform("g_buffer_normal", 2);
-    background_shader_->set_uniform("g_buffer_light", 3);
+    background_shader_->set_uniform("g_buffer_normal",  2);
+    background_shader_->set_uniform("g_buffer_light",   3);
 
     std::vector<math::vec3> light_dirs;
     std::vector<math::vec4> light_colors;
@@ -134,7 +137,6 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
     background_shader_->set_uniform_array("light_dirs",   light_dirs);
     background_shader_->set_uniform_array("light_colors", light_colors);
     background_shader_->set_uniform("light_count",  (int)light_dirs.size());
-
 
     Quad::get().draw(ctx);
 

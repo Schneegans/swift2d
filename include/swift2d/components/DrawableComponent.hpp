@@ -36,6 +36,7 @@ class SWIFT_DLL DrawableComponent : public TransformableComponent {
 
   // ------------------------------------------------------------ public methods
   virtual void draw(RenderContext const& ctx) = 0;
+  virtual void draw_instanced(RenderContext const& ctx, std::vector<math::mat3> const& transforms) {};
 };
 
 // -----------------------------------------------------------------------------

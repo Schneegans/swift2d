@@ -10,6 +10,7 @@
 #define SWIFT2D_SERIALIZED_SCENE_HPP
 
 #include <swift2d/utils/Color.hpp>
+#include <swift2d/scene/SortedObjectContainer.hpp>
 
 #include <memory>
 #include <vector>
@@ -46,7 +47,8 @@ class SWIFT_DLL SerializedScene {
     return std::make_shared<SerializedScene>();
   }
 
-  std::multimap<float, DrawableComponentPtr>          objects;
+  std::map<float, SortedObjectContainer>              objects;
+
   std::multimap<float, DrawableComponentPtr>          lights;
   std::multimap<float, DirectionalLightComponentPtr>  sun_lights;
   std::multimap<float, DrawableComponentPtr>          heat_objects;
