@@ -62,11 +62,9 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       uniform sampler2D glow_buffer_8;
       uniform sampler2D heat_buffer;
       uniform sampler2D dirt_tex;
-      uniform sampler3D color_grading_tex;
       uniform float     dirt_opacity;
       uniform bool      use_heat;
       uniform float     gamma;
-      uniform bool      use_color_grading;
 
       // varyings
       in vec2 texcoords;
@@ -169,6 +167,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   , vignette_coverage_(post_fx_shader_.get_uniform<float>("vignette_coverage"))
   , use_color_grading_(post_fx_shader_.get_uniform<int>("use_color_grading"))
   , color_grading_tex_(post_fx_shader_.get_uniform<int>("color_grading_tex"))
+  , color_grading_intensity_(post_fx_shader_.get_uniform<float>("color_grading_intensity"))
   , screen_size_(threshold_shader_.get_uniform<math::vec2i>("screen_size"))
   , g_buffer_diffuse_(threshold_shader_.get_uniform<int>("g_buffer_diffuse"))
   , g_buffer_light_(threshold_shader_.get_uniform<int>("g_buffer_light"))
@@ -196,8 +195,12 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
   ShaderIncludes::get().add_include("get_color_grading", R"(
 
+    uniform sampler3D color_grading_tex;
+    uniform bool      use_color_grading;
+    uniform float     color_grading_intensity;
+
     vec3 get_color_grading(vec3 color_in) {
-      return texture(color_grading_tex, color_in).xyz;
+      return mix(color_in, texture(color_grading_tex, color_in).xyz, color_grading_intensity);
     }
   )");
 
@@ -243,11 +246,13 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
   use_color_grading_.Set(0);
   color_grading_tex_.Set(1);
+  color_grading_intensity_.Set(0.f);
   if (scene->color_map_name != "") {
     auto color_map(TextureDatabase::get().lookup(scene->color_map_name));
     if (color_map) {
       color_map->bind(ctx, 1);
       use_color_grading_.Set(1);
+      color_grading_intensity_.Set(scene->color_grading_intensity);
     }
   }
 

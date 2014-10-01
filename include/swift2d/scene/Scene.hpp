@@ -44,6 +44,7 @@ class SWIFT_DLL Scene {
   Float              DirtOpacity;
 
   String             ColorMapName;
+  Float              ColorGradingIntensity;
 
   // ----------------------------------------------------- contruction interface
   static ScenePtr create() {
