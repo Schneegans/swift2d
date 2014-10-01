@@ -21,6 +21,7 @@ Scene::Scene()
   , VignetteCoverage(0.5)
   , DirtOpacity(0.5)
   , ColorMapName("")
+  , ColorGradingIntensity(1.f)
 {
 
   Root->add(Camera);
@@ -39,6 +40,7 @@ SerializedScenePtr Scene::serialize() const {
   scene->dirt_opacity = DirtOpacity();
 
   scene->color_map_name = ColorMapName();
+  scene->color_grading_intensity = ColorGradingIntensity();
 
   if (Root->Enabled()) {
     Root->serialize(scene);

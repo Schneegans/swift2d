@@ -65,6 +65,8 @@ add_definitions(-DBOOST_ASIO_SEPARATE_COMPILATION)
 add_definitions(-DSWIFT_MAKE_LIBRARY)
 add_definitions(-DCURL_STATICLIB)
 
+add_definitions(-DOGLPLUS_LOW_PROFILE)
+
 ################################################################
 # Create libraries
 ################################################################

@@ -24,6 +24,7 @@ PointParticleSystemComponent::PointParticleSystemComponent()
 ////////////////////////////////////////////////////////////////////////////////
 
 void PointParticleSystemComponent::draw(RenderContext const& ctx) {
+  SWIFT_PUSH_GL_RANGE("Draw PointParticleSystem");
   ParticleSystemComponent::update_particles(ctx);
 
   ctx.gl.Rasterization::PointSize(Scale());
@@ -44,6 +45,7 @@ void PointParticleSystemComponent::draw(RenderContext const& ctx) {
   if (BlendAdd()) {
     ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
   }
+  SWIFT_POP_GL_RANGE();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

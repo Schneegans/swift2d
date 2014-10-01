@@ -18,7 +18,6 @@ namespace swift {
 TrailSystemComponent::TrailSystemComponent()
   : MaxCount(1000)
   , Depth(0.f)
-  , Life(1.f)
   , StartWidth(1.f),               EndWidth(1.f)
   , StartGlow(0.f),                EndGlow(0.f)
   , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 1))
@@ -47,10 +46,13 @@ void TrailSystemComponent::remove_emitter(TrailEmitterComponent const* emitter) 
 ////////////////////////////////////////////////////////////////////////////////
 
 void TrailSystemComponent::draw(RenderContext const& ctx) {
+  SWIFT_PUSH_GL_RANGE("Draw TrailSystem");
   trail_system_->update_trails(serialized_emitters_, this, ctx);
 
-  if (BlendAdd())
+  if (BlendAdd()) {
     ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
+  }
+
 
   if (Texture()) {
     auto& shader(TexturedTrailShader::get());
@@ -81,8 +83,11 @@ void TrailSystemComponent::draw(RenderContext const& ctx) {
 
   trail_system_->draw_trails(serialized_emitters_, this, ctx);
 
-  if (BlendAdd())
+  if (BlendAdd()) {
     ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
+  }
+    
+   SWIFT_POP_GL_RANGE();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -102,7 +107,6 @@ void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
   DrawableComponent::accept(visitor);
   visitor.add_member("MaxCount",      MaxCount);
   visitor.add_member("Depth",         Depth);
-  visitor.add_member("Life",          Life);
   visitor.add_member("StartWidth",    StartWidth);
   visitor.add_member("EndWidth",      EndWidth);
   visitor.add_member("StartGlow",     StartGlow);

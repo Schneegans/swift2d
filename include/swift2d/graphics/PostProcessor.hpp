@@ -17,7 +17,7 @@
 #include <swift2d/graphics/HeatEffect.hpp>
 #include <swift2d/graphics/GBuffer.hpp>
 #include <swift2d/textures/Texture.hpp>
- 
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -68,6 +68,7 @@ class PostProcessor {
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_light_;
   oglplus::Lazy<oglplus::Uniform<int>> use_color_grading_;
   oglplus::Lazy<oglplus::Uniform<int>> color_grading_tex_;
+  oglplus::Lazy<oglplus::Uniform<float>> color_grading_intensity_;
 
   oglplus::Framebuffer threshold_fbo_;
   oglplus::Texture     threshold_buffer_;

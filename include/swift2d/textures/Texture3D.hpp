@@ -45,10 +45,6 @@ class SWIFT_DLL Texture3D : public Texture {
   Texture3D();
   Texture3D(std::string const& file_name, unsigned tiles_x, unsigned tiles_y);
 
-  Texture3D(Color const& fbl, Color const& ftl, Color const& ftr, Color const& fbr,
-            Color const& bbl, Color const& btl, Color const& btr, Color const& bbr,
-            int width, int height, int depth);
-
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "Texture3D"; }
@@ -60,8 +56,17 @@ class SWIFT_DLL Texture3D : public Texture {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
- private:
-  void upload_to(RenderContext const& context) const;
+
+ protected:
+
+  void set_width(int width) const;
+  void set_height(int height) const;
+  void set_channels(int channels) const;
+  void set_data(unsigned char* data) const;
+
+  virtual void upload_to(RenderContext const& context,
+                         bool create_mip_maps = true) const;
+
 };
 
 }

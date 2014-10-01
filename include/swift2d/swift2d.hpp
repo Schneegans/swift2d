@@ -22,6 +22,7 @@
 #include <swift2d/behaviors.hpp>
 #include <swift2d/shapes.hpp>
 #include <swift2d/renderer.hpp>
+#include <swift2d/textures.hpp>
 #include <swift2d/databases.hpp>
 #include <swift2d/materials.hpp>
 #include <swift2d/particles.hpp>
