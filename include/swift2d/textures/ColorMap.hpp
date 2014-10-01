@@ -6,11 +6,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TEXTURE_3D_HPP
-#define SWIFT2D_TEXTURE_3D_HPP
+#ifndef SWIFT2D_COLOR_MAP_HPP
+#define SWIFT2D_COLOR_MAP_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/textures/Texture.hpp>
+#include <swift2d/textures/Texture3D.hpp>
 #include <swift2d/utils/Color.hpp>
 
 namespace swift {
@@ -20,34 +20,47 @@ namespace swift {
 
 
 // shared pointer type definition ----------------------------------------------
-class Texture3D;
-typedef std::shared_ptr<Texture3D>       Texture3DPtr;
-typedef std::shared_ptr<const Texture3D> ConstTexture3DPtr;
-typedef Property<Texture3DPtr>           Texture3DProperty;
+class ColorMap;
+typedef std::shared_ptr<ColorMap>       ColorMapPtr;
+typedef std::shared_ptr<const ColorMap> ConstColorMapPtr;
+typedef Property<ColorMapPtr>           ColorMapProperty;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL Texture3D : public Texture {
+class SWIFT_DLL ColorMap : public Texture3D {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ---------------------------------------------------------------- properties
-  UInt TilesX;
-  UInt TilesY;
+  ColorProperty FrontBottomLeft;
+  ColorProperty FrontTopLeft;
+  ColorProperty FrontTopRight;
+  ColorProperty FrontBottomRight;
+  ColorProperty BackBottomLeft;
+  ColorProperty BackTopLeft;
+  ColorProperty BackTopRight;
+  ColorProperty BackBottomRight;
+  Int           Width;
+  Int           Height;
+  Int           Depth;
 
   // ---------------------------------------------------- construction interface
   template <typename... Args>
-  static Texture3DPtr create(Args&& ... a) {
-    return std::make_shared<Texture3D>(a...);
+  static ColorMapPtr create(Args&& ... a) {
+    return std::make_shared<ColorMap>(a...);
   }
 
-  Texture3D();
-  Texture3D(std::string const& file_name, unsigned tiles_x, unsigned tiles_y);
+  ColorMap();
+  ColorMap(std::string const& file_name, unsigned tiles_x, unsigned tiles_y);
+
+  ColorMap(Color const& fbl, Color const& ftl, Color const& ftr, Color const& fbr,
+           Color const& bbl, Color const& btl, Color const& btr, Color const& bbr,
+           int width, int height, int depth);
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "Texture3D"; }
+  static  std::string get_type_name_static() { return "ColorMap"; }
 
   // Binds the texture on the given context to the given location.
   virtual void bind(RenderContext const& context, unsigned location) const;
@@ -56,19 +69,14 @@ class SWIFT_DLL Texture3D : public Texture {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
+ private:
+  mutable bool update_data_;
+  void upload_to(RenderContext const& context) const;
 
- protected:
-
-  void set_width(int width) const;
-  void set_height(int height) const;
-  void set_channels(int channels) const;
-  void set_data(unsigned char* data) const;
-
-  virtual void upload_to(RenderContext const& context,
-                         bool create_mip_maps = true) const;
-
+  void update_data() const;
+  void connect_on_members() const;
 };
 
 }
 
-#endif // SWIFT2D_TEXTURE_3D_HPP
+#endif // SWIFT2D_COLOR_MAP_HPP
