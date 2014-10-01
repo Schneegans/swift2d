@@ -46,10 +46,13 @@ void TrailSystemComponent::remove_emitter(TrailEmitterComponent const* emitter) 
 ////////////////////////////////////////////////////////////////////////////////
 
 void TrailSystemComponent::draw(RenderContext const& ctx) {
+  SWIFT_PUSH_GL_RANGE("Draw TrailSystem");
   trail_system_->update_trails(serialized_emitters_, UseGlobalTexCoords(), ctx);
 
-  if (BlendAdd())
+  if (BlendAdd()) {
     ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
+  }
+
 
   if (Texture()) {
     auto& shader(TexturedTrailShader::get());
@@ -80,8 +83,11 @@ void TrailSystemComponent::draw(RenderContext const& ctx) {
 
   trail_system_->draw_trails(serialized_emitters_, UseGlobalTexCoords(), ctx);
 
-  if (BlendAdd())
+  if (BlendAdd()) {
     ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
+  }
+    
+   SWIFT_POP_GL_RANGE();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

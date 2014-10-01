@@ -50,7 +50,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(SYSTEM ${SWIFT_INCLUDE_DIRS})
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-  add_definitions(-DOGLPLUS_LOW_PROFILE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s -Ofast --std=c++0x")
   # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall --std=c++0x")
 else(CMAKE_COMPILER_IS_GNUCXX)
@@ -64,6 +63,8 @@ add_definitions(-DGLEW_STATIC)
 add_definitions(-DBOOST_ASIO_SEPARATE_COMPILATION)
 add_definitions(-DSWIFT_MAKE_LIBRARY)
 add_definitions(-DCURL_STATICLIB)
+
+add_definitions(-DOGLPLUS_LOW_PROFILE)
 
 ################################################################
 # Create libraries

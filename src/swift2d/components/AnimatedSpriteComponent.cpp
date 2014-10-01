@@ -28,11 +28,13 @@ void AnimatedSpriteComponent::update(double time) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void AnimatedSpriteComponent::draw(RenderContext const& ctx) {
+  SWIFT_PUSH_GL_RANGE("Draw AnimatedSprite");
   if (FullScreen()) {
     Material()->draw_fullscreen_quad(ctx, Time());
   } else {
     Material()->draw_quad(ctx, WorldTransform(), Depth(), Time());
   }
+  SWIFT_POP_GL_RANGE();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

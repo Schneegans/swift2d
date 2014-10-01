@@ -6,18 +6,18 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_OPENGL_HPP
-#define SWIFT2D_OPENGL_HPP
+#ifndef SWIFT2D_OPENGL_DEBUGGING_HPP
+#define SWIFT2D_OPENGL_DEBUGGING_HPP
 
 // includes  -------------------------------------------------------------------
-#include <GL/glew.h>
-#include <oglplus/all.hpp>
-#include <oglplus/opt/smart_enums.hpp>
-#include <oglplus/bound/texture.hpp>
+#include <nvToolsExt.h>
 
-#include <swift2d/graphics/opengl_debugging.hpp>
+#if defined( _WIN32 ) 
+  #define SWIFT_PUSH_GL_RANGE(name) nvtxRangePushA(name)
+  #define SWIFT_POP_GL_RANGE()      nvtxRangePop()
+#else // _WIN32
+  #define SWIFT_PUSH_GL_RANGE(name) 
+  #define SWIFT_POP_GL_RANGE()     
+#endif // else _WIN32
 
-namespace ogl = oglplus;
-namespace ose = oglplus::smart_enums;
-
-#endif  // SWIFT2D_OPENGL_HPP
+#endif  // SWIFT2D_OPENGL_DEBUGGING_HPP

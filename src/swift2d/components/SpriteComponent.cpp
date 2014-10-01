@@ -22,7 +22,7 @@ SpriteComponent::SpriteComponent()
 ////////////////////////////////////////////////////////////////////////////////
 
 void SpriteComponent::draw(RenderContext const& ctx) {
-
+  SWIFT_PUSH_GL_RANGE("Draw Sprite");
   auto& mat(Material() ? Material() : CustomMaterial());
 
   if (FullScreen()) {
@@ -30,6 +30,7 @@ void SpriteComponent::draw(RenderContext const& ctx) {
   } else {
     mat->draw_quad(ctx, WorldTransform(), Depth());
   }
+  SWIFT_POP_GL_RANGE();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

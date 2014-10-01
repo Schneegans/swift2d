@@ -22,6 +22,7 @@ HeatParticleSystemComponent::HeatParticleSystemComponent()
 ////////////////////////////////////////////////////////////////////////////////
 
 void HeatParticleSystemComponent::draw(RenderContext const& ctx) {
+  SWIFT_PUSH_GL_RANGE("Draw HeatParticleSystem");
   ParticleSystemComponent::update_particles(ctx);
 
   Texture()->bind(ctx, 0);
@@ -34,6 +35,7 @@ void HeatParticleSystemComponent::draw(RenderContext const& ctx) {
   shader.opacity.    Set(math::vec2(StartOpacity(), EndOpacity()));
 
   ParticleSystemComponent::draw_particles(ctx);
+  SWIFT_POP_GL_RANGE();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

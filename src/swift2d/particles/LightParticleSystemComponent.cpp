@@ -22,6 +22,7 @@ LightParticleSystemComponent::LightParticleSystemComponent()
 ////////////////////////////////////////////////////////////////////////////////
 
 void LightParticleSystemComponent::draw(RenderContext const& ctx) {
+  SWIFT_PUSH_GL_RANGE("Draw LightParticleSystem");
   ParticleSystemComponent::update_particles(ctx);
 
   Texture()->bind(ctx, 0);
@@ -39,6 +40,7 @@ void LightParticleSystemComponent::draw(RenderContext const& ctx) {
   shader.g_buffer_light.   Set(3);
 
   ParticleSystemComponent::draw_particles(ctx);
+  SWIFT_POP_GL_RANGE();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

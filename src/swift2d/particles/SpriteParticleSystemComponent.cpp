@@ -26,6 +26,7 @@ SpriteParticleSystemComponent::SpriteParticleSystemComponent()
 ////////////////////////////////////////////////////////////////////////////////
 
 void SpriteParticleSystemComponent::draw(RenderContext const& ctx) {
+  SWIFT_PUSH_GL_RANGE("Draw SpriteParticleSystem");
   ParticleSystemComponent::update_particles(ctx);
 
   if (SubSamplingLevel() > 1) {
@@ -52,6 +53,7 @@ void SpriteParticleSystemComponent::draw(RenderContext const& ctx) {
   } else if (BlendAdd()) {
     ctx.gl.BlendFunc(ose::SrcAlpha(), ose::OneMinusSrcAlpha());
   }
+  SWIFT_POP_GL_RANGE();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

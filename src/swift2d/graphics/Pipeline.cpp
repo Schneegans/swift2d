@@ -82,6 +82,8 @@ void Pipeline::update() {
 
 void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
+  SWIFT_PUSH_GL_RANGE("Frame");
+
   // create & update window
   window_->set_active(true);
   window_->init_context();
@@ -129,19 +131,29 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   ctx.upload_remaining    = 0;
 
   // compute gravity
+  SWIFT_PUSH_GL_RANGE("Update gravity map");
   Physics::get().update_gravity_map(scene, ctx);
+  SWIFT_POP_GL_RANGE();
 
   // draw opaque objects
+  SWIFT_PUSH_GL_RANGE("Draw objects");
   compositor_->draw_objects(scene, ctx);
+  SWIFT_POP_GL_RANGE();
 
   // draw lights
+  SWIFT_PUSH_GL_RANGE("Draw lights");
   compositor_->draw_lights(scene, ctx);
+  SWIFT_POP_GL_RANGE();
 
   // perform post processing
+  SWIFT_PUSH_GL_RANGE("Post process");
   compositor_->post_process(scene, ctx);
+  SWIFT_POP_GL_RANGE();
 
   // draw user interface
+  SWIFT_PUSH_GL_RANGE("Draw GUI");
   compositor_->draw_gui(scene, ctx);
+  SWIFT_POP_GL_RANGE();
 
   // update loading state
   if (ctx.upload_remaining > max_load_amount_) {
