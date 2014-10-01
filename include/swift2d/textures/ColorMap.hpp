@@ -58,6 +58,17 @@ class SWIFT_DLL ColorMap : public Texture3D {
            Color const& bbl, Color const& btl, Color const& btr, Color const& bbr,
            int width, int height, int depth);
 
+  static void save_to_file(std::string const& file_name,
+                           Color const& fbl = Color(0.f, 0.f, 0.f),
+                           Color const& ftl = Color(0.f, 1.f, 0.f),
+                           Color const& ftr = Color(1.f, 1.f, 0.f),
+                           Color const& fbr = Color(1.f, 0.f, 0.f),
+                           Color const& bbl = Color(0.f, 0.f, 1.f),
+                           Color const& btl = Color(0.f, 1.f, 1.f),
+                           Color const& btr = Color(1.f, 1.f, 1.f),
+                           Color const& bbr = Color(1.f, 0.f, 1.f),
+                           int width = 16, int height = 16, int depth = 16);
+
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "ColorMap"; }
@@ -75,6 +86,11 @@ class SWIFT_DLL ColorMap : public Texture3D {
 
   void update_data() const;
   void connect_on_members() const;
+
+  static unsigned char* create_data(
+          Color const& fbl, Color const& ftl, Color const& ftr, Color const& fbr,
+          Color const& bbl, Color const& btl, Color const& btr, Color const& bbr,
+          int width, int height, int depth);
 };
 
 }

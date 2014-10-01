@@ -156,10 +156,11 @@ void Texture3D::upload_to(RenderContext const& ctx, bool create_mip_maps) const 
     if (create_mip_maps) {
       tex.GenerateMipmap()
          .MinFilter(ose::LinearMipmapLinear());
+    } else {
+      tex.MinFilter(ose::Linear());
     }
 
-    tex.MinFilter(ose::Linear())
-       .MagFilter(ose::Linear())
+    tex.MagFilter(ose::Linear())
        .WrapS(ose::ClampToEdge())
        .WrapT(ose::ClampToEdge())
        .WrapR(ose::ClampToEdge());
