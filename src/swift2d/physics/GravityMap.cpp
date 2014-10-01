@@ -79,7 +79,6 @@ GravityMap::GravityMap(RenderContext const& ctx)
 
 void GravityMap::process(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
   ctx.gl.Disable(oglplus::Capability::Blend);
-  gravity_shader_.use(ctx);
   gravity_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
   ctx.gl.Viewport(ctx.window_size.x()/16, ctx.window_size.y()/16);
 
@@ -93,6 +92,7 @@ void GravityMap::process(ConstSerializedScenePtr const& scene, RenderContext con
     sources.push_back(math::vec3(pos.x(), pos.y(), source->Density() * scale.x() * scale.y()));
   }
 
+  gravity_shader_.use(ctx);
   gravity_shader_.set_uniform_array("gravity_sources", sources);
   gravity_shader_.set_uniform("gravity_source_count", (int)sources.size());
   gravity_shader_.set_uniform("screen_size", ctx.window_size/16);

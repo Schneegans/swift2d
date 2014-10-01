@@ -17,6 +17,7 @@ namespace swift {
 
 TrailSystemComponent::TrailSystemComponent()
   : MaxCount(1000)
+  , Life(1.0)
   , Depth(0.f)
   , StartWidth(1.f),               EndWidth(1.f)
   , StartGlow(0.f),                EndGlow(0.f)
@@ -52,7 +53,6 @@ void TrailSystemComponent::draw(RenderContext const& ctx) {
   if (BlendAdd()) {
     ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
   }
-
 
   if (Texture()) {
     auto& shader(TexturedTrailShader::get());
@@ -107,6 +107,7 @@ void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
   DrawableComponent::accept(visitor);
   visitor.add_member("MaxCount",      MaxCount);
   visitor.add_member("Depth",         Depth);
+  visitor.add_member("Life",          Life);
   visitor.add_member("StartWidth",    StartWidth);
   visitor.add_member("EndWidth",      EndWidth);
   visitor.add_member("StartGlow",     StartGlow);

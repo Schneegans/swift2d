@@ -59,13 +59,11 @@ else(CMAKE_COMPILER_IS_GNUCXX)
   add_definitions(-DNOMINMAX)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
-# add_definitions(-DOGLPLUS_LOW_PROFILE)
+add_definitions(-DOGLPLUS_LOW_PROFILE)
 add_definitions(-DGLEW_STATIC)
 add_definitions(-DBOOST_ASIO_SEPARATE_COMPILATION)
 add_definitions(-DSWIFT_MAKE_LIBRARY)
 add_definitions(-DCURL_STATICLIB)
-
-add_definitions(-DOGLPLUS_LOW_PROFILE)
 
 ################################################################
 # Create libraries
