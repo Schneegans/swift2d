@@ -43,12 +43,12 @@ ParticleUpdateShader::ParticleUpdateShader()
 
       layout(points) in;
       layout(points) out;
-      layout(max_vertices = 30) out;
+      layout(max_vertices = 50) out;
 
-      in vec2  varying_position[];
-      in vec2  varying_velocity[];
-      in vec2  varying_life[];
-      in vec2  varying_rotation[];
+      in vec2 varying_position[];
+      in vec2 varying_velocity[];
+      in vec2 varying_life[];
+      in vec2 varying_rotation[];
 
       // general uniforms
       uniform vec2      time;         // x: frame time  y: total time [millisec]
@@ -56,12 +56,11 @@ ParticleUpdateShader::ParticleUpdateShader()
       // spawn uniforms
       uniform sampler2D noise_tex;
       uniform int       spawn_count;
-      uniform mat3      transform;
-      uniform vec2      life;         // x: life        y: life variance   [sec]
-      uniform vec2      direction;    // x: direction   y: direction variance
-      uniform vec2      velocity;     // x: velocity    y: velocity variance
-      uniform vec2      rotation;     // x: rotation    y: rotation variance
-      uniform float     position_variance;
+      uniform vec3      transform[50];  // xy: pos        z: rot
+      uniform vec2      life;           // x: life        y: life variance   [sec]
+      uniform vec2      velocity;       // x: velocity    y: velocity variance
+      uniform vec2      rotation;       // x: rotation    y: rotation variance
+      uniform vec2      pos_rot_variance;
 
       // update uniforms
       uniform sampler2D gravity_map;
@@ -90,13 +89,13 @@ ParticleUpdateShader::ParticleUpdateShader()
             vec3 random = get_random((i+1)*time.y);
 
             float l = life.x      + random.x * life.y;
-            float d = direction.x + random.y * direction.y;
+            float d = transform[i].z + random.y * pos_rot_variance.y;
             float v = velocity.x  + random.z * velocity.y;
             float r = rotation.x  + random.z * rotation.y;
 
-            out_position = (transform * vec3(random.xy*position_variance, 1)).xy;
+            out_position = transform[i].xy + random.xy*pos_rot_variance.x;
             out_life     = vec2(0, l*1000.0);
-            out_velocity = (transform * vec3(cos(d), sin(d), 0)).xy * v;
+            out_velocity = vec2(cos(d), sin(d)) * v;
             out_rotation = vec2(d, r);
 
             EmitVertex(); EndPrimitive();
@@ -131,12 +130,11 @@ ParticleUpdateShader::ParticleUpdateShader()
   , time(get_uniform<math::vec2>("time"))
   , noise_tex(get_uniform<int>("noise_tex"))
   , spawn_count(get_uniform<int>("spawn_count"))
-  , transform(get_uniform<math::mat3>("transform"))
+  , transform(get_uniform<math::vec3>("transform"))
   , life(get_uniform<math::vec2>("life"))
-  , direction(get_uniform<math::vec2>("direction"))
+  , pos_rot_variance(get_uniform<math::vec2>("pos_rot_variance"))
   , velocity(get_uniform<math::vec2>("velocity"))
   , rotation(get_uniform<math::vec2>("rotation"))
-  , position_variance(get_uniform<float>("position_variance"))
   , gravity_map(get_uniform<int>("gravity_map"))
   , projection(get_uniform<math::mat3>("projection"))
   , dynamics(get_uniform<math::vec3>("dynamics")) {}

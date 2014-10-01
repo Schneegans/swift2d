@@ -38,8 +38,20 @@ class SWIFT_DLL ParticleSystemComponent : public DrawableComponent {
   Int   MaxCount;
   Float Depth;
   Float Mass;
+
+  Float Life;
+  Float LifeVariance;
+
+  Float Velocity;
+  Float VelocityVariance;
   Float LinearDamping;
+
+  Float AngularVelocity;
+  Float AngularVelocityVariance;
   Float AngularDamping;
+
+  Float RotationVariance;
+  Float PositionVariance;
 
   // ----------------------------------------------------- contruction interface
   ParticleSystemComponent();

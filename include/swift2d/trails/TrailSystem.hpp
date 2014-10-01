@@ -23,6 +23,8 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
+class TrailSystemComponent;
+
 class TrailSystem;
 typedef std::shared_ptr<TrailSystem>       TrailSystemPtr;
 typedef std::shared_ptr<const TrailSystem> ConstTrailSystemPtr;
@@ -48,12 +50,12 @@ class TrailSystem {
 
   void update_trails(
     std::vector<SerializedTrailEmitter> const& emitters,
-    bool use_global_texcoords,
+    TrailSystemComponent* system,
     RenderContext const& context);
 
   void draw_trails(
     std::vector<SerializedTrailEmitter> const& emitters,
-    bool use_global_texcoords,
+    TrailSystemComponent* system,
     RenderContext const& context);
 
   double get_total_time() const {

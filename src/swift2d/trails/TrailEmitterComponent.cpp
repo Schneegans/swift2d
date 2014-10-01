@@ -14,8 +14,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 TrailEmitterComponent::TrailEmitterComponent()
-  : Life                   (10.f)
-  , MinSpawnGap       (0.1f)
+  : MinSpawnGap       (0.1f)
   , MaxSpawnGap       (10.f)
   , position_()
   , time_since_last_spawn_(0.f)
@@ -92,9 +91,8 @@ void TrailEmitterComponent::update(double time) {
 
 void TrailEmitterComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
-  visitor.add_member("Life", Life);
-  visitor.add_member("MinSpawnGap", MinSpawnGap);
-  visitor.add_member("MaxSpawnGap", MaxSpawnGap);
+  visitor.add_member("MinSpawnGap",   MinSpawnGap);
+  visitor.add_member("MaxSpawnGap",   MaxSpawnGap);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -102,9 +100,6 @@ void TrailEmitterComponent::accept(SavableObjectVisitor& visitor) {
 SerializedTrailEmitter TrailEmitterComponent::make_serialized_emitter() const {
   SerializedTrailEmitter result;
 
-  result.Life = Life();
-  result.MinSpawnGap = MinSpawnGap();
-  result.MaxSpawnGap = MaxSpawnGap();
   result.Position = position_;
   result.TimeSinceLastSpawn = time_since_last_spawn_;
   result.TimeSincePrev1Spawn = time_since_prev_1_spawn_;

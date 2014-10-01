@@ -23,6 +23,8 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
+class ParticleSystemComponent;
+
 class ParticleSystem;
 typedef std::shared_ptr<ParticleSystem>       ParticleSystemPtr;
 typedef std::shared_ptr<const ParticleSystem> ConstParticleSystemPtr;
@@ -48,7 +50,7 @@ class ParticleSystem {
 
   void update_particles(
     std::vector<SerializedEmitter> const& emitters,
-    float mass, float linear_damping, float angular_damping,
+    ParticleSystemComponent* system,
     RenderContext const& context);
 
   void draw_particles(RenderContext const& context);

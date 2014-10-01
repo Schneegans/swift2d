@@ -26,10 +26,6 @@ typedef std::shared_ptr<const TrailEmitterComponent> ConstTrailEmitterComponentP
 typedef Property<TrailEmitterComponentPtr>           TrailEmitterComponentProperty;
 
 struct SWIFT_DLL SerializedTrailEmitter {
-  float Life;
-  float MaxSpawnGap;
-  float MinSpawnGap;
-
   math::vec2 Position;
   float      TimeSinceLastSpawn;
   float      TimeSincePrev1Spawn;
@@ -50,8 +46,6 @@ class SWIFT_DLL TrailEmitterComponent : public TransformableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float Life;
-
   Float MaxSpawnGap;
   Float MinSpawnGap;
 
@@ -81,7 +75,6 @@ class SWIFT_DLL TrailEmitterComponent : public TransformableComponent {
 
   bool first_frame_;
   bool spawn_new_point_;
-
 };
 
 }

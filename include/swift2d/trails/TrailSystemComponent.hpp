@@ -38,6 +38,7 @@ class SWIFT_DLL TrailSystemComponent : public DrawableComponent {
   // ---------------------------------------------------------------- properties
   Int             MaxCount;
   Float           Depth;
+  Float           Life;
 
   Float           StartWidth, EndWidth;
   Float           StartGlow,  EndGlow;

@@ -18,6 +18,7 @@ namespace swift {
 TrailSystemComponent::TrailSystemComponent()
   : MaxCount(1000)
   , Depth(0.f)
+  , Life(1.f)
   , StartWidth(1.f),               EndWidth(1.f)
   , StartGlow(0.f),                EndGlow(0.f)
   , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 1))
@@ -46,7 +47,7 @@ void TrailSystemComponent::remove_emitter(TrailEmitterComponent const* emitter) 
 ////////////////////////////////////////////////////////////////////////////////
 
 void TrailSystemComponent::draw(RenderContext const& ctx) {
-  trail_system_->update_trails(serialized_emitters_, UseGlobalTexCoords(), ctx);
+  trail_system_->update_trails(serialized_emitters_, this, ctx);
 
   if (BlendAdd())
     ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
@@ -78,7 +79,7 @@ void TrailSystemComponent::draw(RenderContext const& ctx) {
     shader.total_time.            Set(trail_system_->get_total_time() * 1000.0);
   }
 
-  trail_system_->draw_trails(serialized_emitters_, UseGlobalTexCoords(), ctx);
+  trail_system_->draw_trails(serialized_emitters_, this, ctx);
 
   if (BlendAdd())
     ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
@@ -101,6 +102,7 @@ void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
   DrawableComponent::accept(visitor);
   visitor.add_member("MaxCount",      MaxCount);
   visitor.add_member("Depth",         Depth);
+  visitor.add_member("Life",          Life);
   visitor.add_member("StartWidth",    StartWidth);
   visitor.add_member("EndWidth",      EndWidth);
   visitor.add_member("StartGlow",     StartGlow);

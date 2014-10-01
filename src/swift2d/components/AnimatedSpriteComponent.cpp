@@ -41,7 +41,7 @@ void AnimatedSpriteComponent::draw_instanced(RenderContext const& ctx, std::vect
   if (FullScreen()) {
     Material()->draw_fullscreen_quad(ctx, Time());
   } else {
-    
+
     int index(0);
 
     while (index < transforms.size()) {

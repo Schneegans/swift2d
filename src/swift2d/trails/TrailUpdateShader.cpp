@@ -49,7 +49,7 @@ TrailUpdateShader::TrailUpdateShader()
 
       layout(points) in;
       layout(points) out;
-      layout(max_vertices = 30) out;
+      layout(max_vertices = 50) out;
 
       in vec2  varying_position[];
       in vec2  varying_life[];
@@ -62,14 +62,15 @@ TrailUpdateShader::TrailUpdateShader()
       uniform vec2      time;         // x: frame time  y: total time [millisec]
 
       // spawn uniforms
-      uniform int       spawn_count;
-      uniform vec2      position;
-      uniform vec2      prev_1_position;
-      uniform vec2      prev_2_position;
-      uniform vec2      prev_3_position;
-      uniform vec2      time_since_prev_spawns; // x: last  y: prev_1
-      uniform float     life;         //  [millisec]
-      uniform int       use_global_texcoords;
+      uniform vec2  position[50];
+      uniform vec2  prev_1_position[50];
+      uniform vec2  prev_2_position[50];
+      uniform vec2  prev_3_position[50];
+      uniform vec2  time_since_prev_spawns[50]; // x: last  y: prev_1
+
+      uniform int   spawn_count;
+      uniform float life;         //  [millisec]
+      uniform int   use_global_texcoords;
 
 
       out vec2  out_position;
@@ -83,20 +84,20 @@ TrailUpdateShader::TrailUpdateShader()
 
         if (spawn_count >= 0) {
 
-          vec2 texcoords = (-time_since_prev_spawns + time.y) / life;
-
-          if (use_global_texcoords == 0) {
-            texcoords = time_since_prev_spawns/life;
-          }
 
           // spawn new trail points -----------------------------------------------
 
           for (int i=0; i<spawn_count; ++i) {
+            vec2 texcoords = (-time_since_prev_spawns[i] + time.y) / life;
 
-            out_position = position;
-            out_prev_1_position = prev_1_position;
-            out_prev_2_position = prev_2_position;
-            out_prev_3_position = prev_3_position;
+            if (use_global_texcoords == 0) {
+              texcoords = time_since_prev_spawns[i]/life;
+            }
+
+            out_position = position[i];
+            out_prev_1_position = prev_1_position[i];
+            out_prev_2_position = prev_2_position[i];
+            out_prev_3_position = prev_3_position[i];
             out_life     = vec2(0, life);
             out_prev_u_texcoords = texcoords;
 

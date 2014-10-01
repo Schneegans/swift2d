@@ -26,13 +26,8 @@ typedef std::shared_ptr<const ParticleEmitterComponent> ConstParticleEmitterComp
 typedef Property<ParticleEmitterComponentPtr>           ParticleEmitterComponentProperty;
 
 struct SWIFT_DLL SerializedEmitter {
-  float Life,             LifeVariance;
-  float Direction,        DirectionVariance;
-  float Velocity,         VelocityVariance;
-  float AngularVelocity,  AngularVelocityVariance;
-  float PositionVariance;
   float Density;
-  math::mat3 WorldTransform;
+  math::vec3 PosRot;
   ParticleEmitterComponent const* Self;
 };
 
@@ -44,20 +39,6 @@ class SWIFT_DLL ParticleEmitterComponent : public TransformableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float Life;
-  Float LifeVariance;
-
-  Float Direction;
-  Float DirectionVariance;
-
-  Float Velocity;
-  Float VelocityVariance;
-
-  Float AngularVelocity;
-  Float AngularVelocityVariance;
-
-  Float PositionVariance;
-
   Float Density;
 
   // ----------------------------------------------------- contruction interface

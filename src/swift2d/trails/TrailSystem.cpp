@@ -10,6 +10,7 @@
 #include <swift2d/trails/TrailSystem.hpp>
 
 #include <swift2d/physics/Physics.hpp>
+#include <swift2d/trails/TrailSystemComponent.hpp>
 #include <swift2d/trails/TrailUpdateShader.hpp>
 #include <swift2d/textures/NoiseTexture.hpp>
 #include <swift2d/math.hpp>
@@ -83,7 +84,7 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
 
 void TrailSystem::update_trails(
   std::vector<SerializedTrailEmitter> const& emitters,
-  bool use_global_texcoords,
+  TrailSystemComponent* system,
   RenderContext const& ctx) {
 
   bool first_draw(false);
@@ -128,41 +129,56 @@ void TrailSystem::update_trails(
 
   auto& shader(TrailUpdateShader::get());
   shader.use(ctx);
+  math::vec2 time      (frame_time * 1000.0, total_time_ * 1000.0);
+  shader.time.                   Set(time);
+  shader.use_global_texcoords.   Set(system->UseGlobalTexCoords() ? 1 : 0);
+  shader.life.                   Set(system->Life() * 1000.0);
+
+  std::vector<math::vec2> positions0;
+  std::vector<math::vec2> positions1;
+  std::vector<math::vec2> positions2;
+  std::vector<math::vec2> positions3;
+  std::vector<math::vec2> times;
 
   transform_feedbacks_[current_tf()].BeginPoints();
   {
 
     // spawn new particles -----------------------------------------------------
     for (auto const& emitter: emitters) {
-
       if (emitter.SpawnNewPoint) {
-        math::vec2 time      (frame_time * 1000.0, total_time_ * 1000.0);
-        float life           (emitter.Life * 1000.0);
-
-        shader.spawn_count.            Set(1);
-        shader.use_global_texcoords.   Set(use_global_texcoords ? 1 : 0);
-        shader.position.               Set(emitter.LastPosition);
-        shader.time_since_prev_spawns. Set(math::vec2(
-                                            emitter.TimeSincePrev1Spawn * 1000.0,
-                                            emitter.TimeSincePrev2Spawn * 1000.0
-                                           )
-                                          );
-        shader.prev_1_position.        Set(emitter.Prev1Position);
-        shader.prev_2_position.        Set(emitter.Prev2Position);
-        shader.prev_3_position.        Set(emitter.Prev3Position);
-
-        shader.time.                   Set(time);
-        shader.life.                   Set(life);
-
-        ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
+        times.push_back(math::vec2(
+          emitter.TimeSincePrev1Spawn * 1000.0,
+          emitter.TimeSincePrev2Spawn * 1000.0
+        ));
+        positions0.push_back(emitter.LastPosition);
+        positions1.push_back(emitter.Prev1Position);
+        positions2.push_back(emitter.Prev2Position);
+        positions3.push_back(emitter.Prev3Position);
       }
-
     }
+
+    int index(0);
+
+    while (index < positions0.size()) {
+      int count(std::min(50, (int)positions0.size()-index));
+
+      shader.spawn_count.Set(count);
+      shader.time_since_prev_spawns. Set(std::vector<math::vec2>(times.begin() + index, times.begin() + index + count));
+      shader.position.               Set(std::vector<math::vec2>(positions0.begin() + index, positions0.begin() + index + count));
+      shader.prev_1_position.        Set(std::vector<math::vec2>(positions1.begin() + index, positions1.begin() + index + count));
+      shader.prev_2_position.        Set(std::vector<math::vec2>(positions2.begin() + index, positions2.begin() + index + count));
+      shader.prev_3_position.        Set(std::vector<math::vec2>(positions3.begin() + index, positions3.begin() + index + count));
+
+      ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
+      // ctx.gl.DrawArraysInstanced(ogl::PrimitiveType::Points, 0, 1, positions0.size());
+      index += count;
+    }
+
 
     // update existing particles -----------------------------------------------
     if (!first_draw) {
       shader.spawn_count.          Set(-1);
-      shader.use_global_texcoords. Set(use_global_texcoords ? 1 : 0);
+      shader.use_global_texcoords. Set(system->UseGlobalTexCoords() ? 1 : 0);
 
       ctx.gl.DrawTransformFeedback(
         ogl::PrimitiveType::Points, transform_feedbacks_[current_vb()]
@@ -180,7 +196,7 @@ void TrailSystem::update_trails(
 
 void TrailSystem::draw_trails(
   std::vector<SerializedTrailEmitter> const& emitters,
-  bool use_global_texcoords,
+  TrailSystemComponent* system,
   RenderContext const& ctx) {
 
   std::vector<TrailPoint> emitter_points;
@@ -189,20 +205,20 @@ void TrailSystem::draw_trails(
 
     TrailPoint trail_point;
 
-    trail_point.life = math::vec2(0.0, emitter.Life * 1000.0);
+    trail_point.life = math::vec2(0.0, system->Life() * 1000.0);
 
     if (emitter.LastPosition != emitter.Position) {
       auto next_dir(emitter.LastPosition - emitter.Prev1Position);
 
       trail_point.pos = emitter.Position + next_dir;
 
-      if (use_global_texcoords) {
-        trail_point.prev_u_texcoords = 1.0/emitter.Life *
+      if (system->UseGlobalTexCoords()) {
+        trail_point.prev_u_texcoords = 1.0/system->Life() *
                                        math::vec2(total_time_,
                                                   total_time_ -
                                                   emitter.TimeSinceLastSpawn);
       } else {
-        trail_point.prev_u_texcoords = 1.0/emitter.Life *
+        trail_point.prev_u_texcoords = 1.0/system->Life() *
                                        math::vec2(0.0, emitter.TimeSinceLastSpawn);
       }
 
@@ -212,14 +228,14 @@ void TrailSystem::draw_trails(
 
       emitter_points.push_back(trail_point);
 
-      if (use_global_texcoords) {
-        trail_point.prev_u_texcoords = 1.0/emitter.Life *
+      if (system->UseGlobalTexCoords()) {
+        trail_point.prev_u_texcoords = 1.0/system->Life() *
                                        math::vec2(total_time_ -
                                                   emitter.TimeSinceLastSpawn,
                                                   total_time_ -
                                                   emitter.TimeSincePrev1Spawn);
       } else {
-        trail_point.prev_u_texcoords = 1.0/emitter.Life *
+        trail_point.prev_u_texcoords = 1.0/system->Life() *
                                        math::vec2(emitter.TimeSinceLastSpawn,
                                                   emitter.TimeSincePrev1Spawn);
       }
@@ -234,13 +250,13 @@ void TrailSystem::draw_trails(
 
       trail_point.pos = emitter.Position + next_dir;
 
-      if (use_global_texcoords) {
-        trail_point.prev_u_texcoords = 1.0/emitter.Life *
+      if (system->UseGlobalTexCoords()) {
+        trail_point.prev_u_texcoords = 1.0/system->Life() *
                                        math::vec2(total_time_,
                                                   total_time_ -
                                                   emitter.TimeSincePrev1Spawn);
       } else {
-        trail_point.prev_u_texcoords = 1.0/emitter.Life *
+        trail_point.prev_u_texcoords = 1.0/system->Life() *
                                        math::vec2(0.0, emitter.TimeSincePrev1Spawn);
       }
 

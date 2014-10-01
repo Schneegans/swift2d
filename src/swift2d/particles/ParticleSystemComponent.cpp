@@ -14,11 +14,19 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 ParticleSystemComponent::ParticleSystemComponent()
-  : MaxCount(1000)
-  , Depth(0.f)
-  , Mass(0.f)
-  , LinearDamping(0.f)
-  , AngularDamping(0.f)
+  : MaxCount                (1000)
+  , Depth                   (0.f)
+  , Mass                    (0.f)
+  , LinearDamping           (0.f)
+  , AngularDamping          (0.f)
+  , Life                    (10.f)
+  , LifeVariance            (3.f)
+  , RotationVariance        (0.3f)
+  , Velocity                (0.3f)
+  , VelocityVariance        (0.3f)
+  , AngularVelocity         (0.f)
+  , AngularVelocityVariance (0.f)
+  , PositionVariance        (0.0f)
   , particle_system_(ParticleSystem::create(MaxCount())) {
 
   MaxCount.on_change().connect([&](int val){
@@ -47,8 +55,7 @@ void ParticleSystemComponent::spawn_once(SerializedEmitter const& emitter) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void ParticleSystemComponent::update_particles(RenderContext const& ctx) {
-  particle_system_->update_particles(
-    serialized_emitters_, Mass(), LinearDamping(), AngularDamping(), ctx);
+  particle_system_->update_particles(serialized_emitters_, this, ctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,11 +84,19 @@ void ParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
 
 void ParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   DrawableComponent::accept(visitor);
-  visitor.add_member("MaxCount",        MaxCount);
-  visitor.add_member("Depth",           Depth);
-  visitor.add_member("Mass",            Mass);
-  visitor.add_member("LinearDamping",   LinearDamping);
-  visitor.add_member("AngularDamping",  AngularDamping);
+  visitor.add_member("MaxCount",                  MaxCount);
+  visitor.add_member("Depth",                     Depth);
+  visitor.add_member("Mass",                      Mass);
+  visitor.add_member("LinearDamping",             LinearDamping);
+  visitor.add_member("AngularDamping",            AngularDamping);
+  visitor.add_member("Life",                      Life);
+  visitor.add_member("LifeVariance",              LifeVariance);
+  visitor.add_member("RotationVariance",          RotationVariance);
+  visitor.add_member("Velocity",                  Velocity);
+  visitor.add_member("VelocityVariance",          VelocityVariance);
+  visitor.add_member("AngularVelocity",           AngularVelocity);
+  visitor.add_member("AngularVelocityVariance",   AngularVelocityVariance);
+  visitor.add_member("PositionVariance",          PositionVariance);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
