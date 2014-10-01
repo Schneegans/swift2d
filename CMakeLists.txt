@@ -40,7 +40,7 @@ endmacro()
 if(CMAKE_COMPILER_IS_GNUCXX)
   list(APPEND SWIFT_INCLUDE_DIRS "third_party/include/gnucxx")
 else(CMAKE_COMPILER_IS_GNUCXX)
-  list(APPEND SWIFT_INCLUDE_DIRS "third_party/include/msvcxx")
+  list(APPEND SWIFT_INCLUDE_DIRS "third_party/include/mvscxx")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 SwiftLoadSystemLib("OpenGL")
