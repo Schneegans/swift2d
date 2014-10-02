@@ -90,7 +90,6 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   // update window size
   if (needs_reload_) {
-
     window_->get_context().pipeline        = this;
     window_->get_context().shading_quality = SettingsWrapper::get().Settings->ShadingQuality();
     window_->get_context().sub_sampling    = SettingsWrapper::get().Settings->SubSampling();

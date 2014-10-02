@@ -24,27 +24,32 @@ PointParticleSystemComponent::PointParticleSystemComponent()
 ////////////////////////////////////////////////////////////////////////////////
 
 void PointParticleSystemComponent::draw(RenderContext const& ctx) {
+
   SWIFT_PUSH_GL_RANGE("Draw PointParticleSystem");
-  ParticleSystemComponent::update_particles(ctx);
 
-  ctx.gl.Rasterization::PointSize(Scale());
+  if (ParticleSystemComponent::update_particles(ctx) > 0) {
 
-  if (BlendAdd()) {
-    ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
+    ctx.gl.Rasterization::PointSize(Scale());
+
+    if (BlendAdd()) {
+      ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
+    }
+
+    auto& shader(PointParticleShader::get());
+    shader.use(ctx);
+    shader.projection. Set(ctx.projection_matrix);
+    shader.start_color.Set(StartColor().vec4());
+    shader.end_color.  Set(EndColor().vec4());
+    shader.glow.       Set(math::vec2(StartGlow(), EndGlow()));
+
+    ParticleSystemComponent::draw_particles(ctx);
+
+    if (BlendAdd()) {
+      ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
+    }
+
   }
 
-  auto& shader(PointParticleShader::get());
-  shader.use(ctx);
-  shader.projection. Set(ctx.projection_matrix);
-  shader.start_color.Set(StartColor().vec4());
-  shader.end_color.  Set(EndColor().vec4());
-  shader.glow.       Set(math::vec2(StartGlow(), EndGlow()));
-
-  ParticleSystemComponent::draw_particles(ctx);
-
-  if (BlendAdd()) {
-    ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
-  }
   SWIFT_POP_GL_RANGE();
 }
 

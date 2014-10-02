@@ -23,23 +23,27 @@ LightParticleSystemComponent::LightParticleSystemComponent()
 
 void LightParticleSystemComponent::draw(RenderContext const& ctx) {
   SWIFT_PUSH_GL_RANGE("Draw LightParticleSystem");
-  ParticleSystemComponent::update_particles(ctx);
 
-  Texture()->bind(ctx, 0);
+  if (ParticleSystemComponent::update_particles(ctx) > 0) {
 
-  auto& shader(LightParticleShader::get());
-  shader.use(ctx);
-  shader.projection.       Set(ctx.projection_matrix);
-  shader.diffuse.          Set(0);
-  shader.scale.            Set(math::vec2(StartScale(), EndScale()));
-  shader.start_color.      Set(StartColor().vec4());
-  shader.end_color.        Set(EndColor().vec4());
-  shader.screen_size.      Set(ctx.g_buffer_size);
-  shader.g_buffer_diffuse. Set(1);
-  shader.g_buffer_normal.  Set(2);
-  shader.g_buffer_light.   Set(3);
+    Texture()->bind(ctx, 0);
 
-  ParticleSystemComponent::draw_particles(ctx);
+    auto& shader(LightParticleShader::get());
+    shader.use(ctx);
+    shader.projection.       Set(ctx.projection_matrix);
+    shader.diffuse.          Set(0);
+    shader.scale.            Set(math::vec2(StartScale(), EndScale()));
+    shader.start_color.      Set(StartColor().vec4());
+    shader.end_color.        Set(EndColor().vec4());
+    shader.screen_size.      Set(ctx.g_buffer_size);
+    shader.g_buffer_diffuse. Set(1);
+    shader.g_buffer_normal.  Set(2);
+    shader.g_buffer_light.   Set(3);
+
+    ParticleSystemComponent::draw_particles(ctx);
+
+  }
+
   SWIFT_POP_GL_RANGE();
 }
 

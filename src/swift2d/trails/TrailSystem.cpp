@@ -108,7 +108,7 @@ void TrailSystem::update_trails(
       data.front().prev_1_pos = math::vec2(0.f, 0.f);
       data.front().prev_2_pos = math::vec2(0.f, 0.f);
       data.front().prev_3_pos = math::vec2(0.f, 0.f);
-      ogl::Buffer::Data(ose::Array(), data, ose::DynamicDraw());
+      ogl::Buffer::Data(ose::Array(), data, ose::StaticDraw());
     }
 
     update_max_trail_points_ = 0;
@@ -170,21 +170,16 @@ void TrailSystem::update_trails(
       shader.prev_3_position.        Set(std::vector<math::vec2>(positions3.begin() + index, positions3.begin() + index + count));
 
       ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
-      // ctx.gl.DrawArraysInstanced(ogl::PrimitiveType::Points, 0, 1, positions0.size());
       index += count;
     }
 
-
     // update existing particles -----------------------------------------------
     if (!first_draw) {
-      shader.spawn_count.          Set(-1);
-      shader.use_global_texcoords. Set(system->UseGlobalTexCoords() ? 1 : 0);
-
+      shader.spawn_count.Set(-1);
       ctx.gl.DrawTransformFeedback(
         ogl::PrimitiveType::Points, transform_feedbacks_[current_vb()]
       );
     }
-
   }
 
   transform_feedbacks_[current_tf()].End();
@@ -270,13 +265,10 @@ void TrailSystem::draw_trails(
 
   emitter_vao_->Bind();
   emitter_buffer_->Bind(oglplus::Buffer::Target::Array);
-  oglplus::Buffer::Data(oglplus::Buffer::Target::Array, emitter_points);
-
+  oglplus::Buffer::Data(oglplus::Buffer::Target::Array, emitter_points, ose::StreamDraw());
   ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, emitter_points.size());
 
-
   trail_vaos_[current_tf()].Bind();
-
   ctx.gl.DrawTransformFeedback(
     ogl::PrimitiveType::Points, transform_feedbacks_[current_tf()]
   );

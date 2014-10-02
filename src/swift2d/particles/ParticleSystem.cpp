@@ -41,6 +41,12 @@ ParticleSystem::ParticleSystem(int max_count)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+ParticleSystem::~ParticleSystem() {
+  delete query_;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void ParticleSystem::set_max_count(int max_count) {
   update_max_count_ = max_count;
 }
@@ -63,11 +69,13 @@ void ParticleSystem::upload_to(RenderContext const& ctx) {
       ogl::VertexArrayAttrib(i).Enable();
     }
   }
+
+  query_ = new ogl::Query();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystem::update_particles(
+int ParticleSystem::update_particles(
   std::vector<SerializedEmitter> const& emitters, ParticleSystemComponent* system,
   RenderContext const& ctx) {
 
@@ -90,7 +98,7 @@ void ParticleSystem::update_particles(
       data.front().vel  = math::vec2(0.f, 0.f);
       data.front().life = math::vec2(0.f, 0.f);
       data.front().rot  = math::vec2(0.f, 0.f);
-      ogl::Buffer::Data(ose::Array(), data, ose::DynamicDraw());
+      ogl::Buffer::Data(ose::Array(), data, ose::StaticDraw());
     }
 
     update_max_count_ = 0;
@@ -112,21 +120,13 @@ void ParticleSystem::update_particles(
   auto& shader(ParticleUpdateShader::get());
   shader.use(ctx);
 
-  NoiseTexture::get().bind(ctx, 0);
-  shader.noise_tex.        Set(0);
-  math::vec2 time       (frame_time * 1000.0, total_time_ * 1000.0);
-  math::vec2 life       (system->Life(),            system->LifeVariance());
-  math::vec2 pos_rot_variance  (system->PositionVariance(),       system->RotationVariance());
-  math::vec2 velocity   (system->Velocity(),        system->VelocityVariance());
-  math::vec2 rotation   (system->AngularVelocity(), system->AngularVelocityVariance());
+  GLint active_particles(0);
+  query_->Result(active_particles);
 
-  shader.time.             Set(time);
-  shader.life.             Set(life);
-  shader.pos_rot_variance. Set(pos_rot_variance);
-  shader.velocity.         Set(velocity);
-  shader.rotation.         Set(rotation);
+  ogl::Query::Activator qrya(*query_, ose::PrimitivesGenerated());
+  ogl::TransformFeedback::Activator xfba(ogl::TransformFeedbackPrimitiveType::Points);
 
-  std::vector<math::vec3> transforms;
+  std::vector<math::vec3> spawn_positions;
   for (auto const& emitter: emitters) {
 
     // calculate spawn count
@@ -141,42 +141,66 @@ void ParticleSystem::update_particles(
     }
 
     for (int i(0); i<spawn_count; ++i) {
-      transforms.push_back(emitter.PosRot);
+      spawn_positions.push_back(emitter.PosRot);
     }
   }
 
-  transform_feedbacks_[current_tf()].BeginPoints();
-  {
+
+  if (spawn_positions.size() > 0) {
+
+    if (active_particles == 0) {
+      active_particles = spawn_positions.size();
+    }
+
+    NoiseTexture::get().bind(ctx, 0);
+    shader.noise_tex.        Set(0);
+    math::vec2 time       (frame_time * 1000.0, total_time_ * 1000.0);
+    math::vec2 life       (system->Life(),            system->LifeVariance());
+    math::vec2 pos_rot_variance  (system->PositionVariance(),       system->RotationVariance());
+    math::vec2 velocity   (system->Velocity(),        system->VelocityVariance());
+    math::vec2 rotation   (system->AngularVelocity(), system->AngularVelocityVariance());
+
+    shader.time.             Set(time);
+    shader.life.             Set(life);
+    shader.pos_rot_variance. Set(pos_rot_variance);
+    shader.velocity.         Set(velocity);
+    shader.rotation.         Set(rotation);
+
     // spawn new particles -----------------------------------------------------
     int index(0);
 
-    while (index < transforms.size()) {
-      int count(std::min(50, (int)transforms.size()-index));
+    while (index < spawn_positions.size()) {
+      int count(std::min(50, (int)spawn_positions.size()-index));
       shader.spawn_count.Set(count);
-      shader.transform.Set(std::vector<math::vec3>(transforms.begin() + index, transforms.begin() + index + count));
+      shader.transform.Set(std::vector<math::vec3>(spawn_positions.begin() + index, spawn_positions.begin() + index + count));
       ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       index += count;
     }
-
-    shader.spawn_count.Set(-1);
-
-    // update existing particles -----------------------------------------------
-    if (!first_draw) {
-      Physics::get().bind_gravity_map(ctx, 0);
-      math::vec3 dynamics(system->Mass(), system->LinearDamping(), system->AngularDamping());
-
-      shader.gravity_map.Set(0);
-      shader.projection. Set(ctx.projection_matrix);
-      shader.dynamics.   Set(dynamics);
-
-      ctx.gl.DrawTransformFeedback(
-        ogl::PrimitiveType::Points, transform_feedbacks_[current_vb()]
-      );
-    }
   }
-  transform_feedbacks_[current_tf()].End();
 
+  shader.spawn_count.Set(-1);
+
+  // update existing particles -----------------------------------------------
+  if (!first_draw) {
+    Physics::get().bind_gravity_map(ctx, 0);
+    math::vec3 dynamics(system->Mass(), system->LinearDamping(), system->AngularDamping());
+
+    shader.gravity_map.Set(0);
+    shader.projection. Set(ctx.projection_matrix);
+    shader.dynamics.   Set(dynamics);
+
+    ctx.gl.DrawTransformFeedback(
+      ogl::PrimitiveType::Points, transform_feedbacks_[current_vb()]
+    );
+  }
+
+  xfba.Finish();
+  ogl::DefaultTransformFeedback().Bind();
   ctx.gl.Disable(ogl::Capability::RasterizerDiscard);
+
+  qrya.Finish();
+
+  return active_particles;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

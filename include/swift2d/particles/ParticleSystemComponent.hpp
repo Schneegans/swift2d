@@ -62,7 +62,7 @@ class SWIFT_DLL ParticleSystemComponent : public DrawableComponent {
 
   void spawn_once(SerializedEmitter const& emitter);
 
-  void update_particles(RenderContext const& ctx);
+  int  update_particles(RenderContext const& ctx);
   void draw_particles(RenderContext const& ctx);
 
   virtual void serialize(SerializedScenePtr& scene) const;

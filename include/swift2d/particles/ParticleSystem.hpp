@@ -39,6 +39,7 @@ class ParticleSystem {
 
   // ----------------------------------------------------- contruction interface
   ParticleSystem(int max_count);
+  ~ParticleSystem();
 
   // Creates a new component and returns a shared pointer.
   static ParticleSystemPtr create(int max_count) {
@@ -48,7 +49,7 @@ class ParticleSystem {
   // ------------------------------------------------------------ public methods
   void set_max_count(int max_count);
 
-  void update_particles(
+  int update_particles(
     std::vector<SerializedEmitter> const& emitters,
     ParticleSystemComponent* system,
     RenderContext const& context);
@@ -63,9 +64,11 @@ class ParticleSystem {
   inline int current_tf() const { return ping_ ? 1 : 0; }
   inline int current_vb() const { return ping_ ? 0 : 1; }
 
-  std::vector<oglplus::TransformFeedback> transform_feedbacks_;
-  std::vector<oglplus::Buffer>            particle_buffers_;
-  std::vector<oglplus::VertexArray>       particle_vaos_;
+  std::vector<ogl::TransformFeedback> transform_feedbacks_;
+  std::vector<ogl::Buffer>            particle_buffers_;
+  std::vector<ogl::VertexArray>       particle_vaos_;
+
+  ogl::Query* query_;
 
   std::unordered_map<ParticleEmitterComponent const*, float> particles_to_spawn_;
   bool   ping_;

@@ -14,13 +14,13 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 ParticleEmitterComponent::ParticleEmitterComponent()
-  : Density                      (5.f) {}
+  : Density (1.f) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void ParticleEmitterComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
-  visitor.add_member("Density",                   Density);
+  visitor.add_member("Density", Density);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

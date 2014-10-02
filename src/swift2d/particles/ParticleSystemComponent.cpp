@@ -54,8 +54,8 @@ void ParticleSystemComponent::spawn_once(SerializedEmitter const& emitter) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystemComponent::update_particles(RenderContext const& ctx) {
-  particle_system_->update_particles(serialized_emitters_, this, ctx);
+int ParticleSystemComponent::update_particles(RenderContext const& ctx) {
+  return particle_system_->update_particles(serialized_emitters_, this, ctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

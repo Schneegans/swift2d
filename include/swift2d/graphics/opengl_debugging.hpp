@@ -10,14 +10,14 @@
 #define SWIFT2D_OPENGL_DEBUGGING_HPP
 
 // includes  -------------------------------------------------------------------
-#include <nvToolsExt.h>
 
-#if defined( _WIN32 ) 
+#if defined( _WIN32 )
+  #include <nvToolsExt.h>
   #define SWIFT_PUSH_GL_RANGE(name) nvtxRangePushA(name)
   #define SWIFT_POP_GL_RANGE()      nvtxRangePop()
 #else // _WIN32
-  #define SWIFT_PUSH_GL_RANGE(name) 
-  #define SWIFT_POP_GL_RANGE()     
+  #define SWIFT_PUSH_GL_RANGE(name)
+  #define SWIFT_POP_GL_RANGE()
 #endif // else _WIN32
 
 #endif  // SWIFT2D_OPENGL_DEBUGGING_HPP
