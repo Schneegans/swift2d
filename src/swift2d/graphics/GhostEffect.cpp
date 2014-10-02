@@ -68,61 +68,39 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
 
     uniform vec4 scalar;
 
-    out vec2 texcoord1;
-    out vec2 texcoord2;
-    out vec2 texcoord3;
-    out vec2 texcoord4;
+    out vec2 texcoords[4];
 
     void main(void){
-      vec2 texcoord = vec2(position.x + 1.0, 1.0 + position.y) * 0.5;
-      texcoord1 = (texcoord - 0.5) * scalar[0] + 0.5;
-      texcoord2 = (texcoord - 0.5) * scalar[1] + 0.5;
-      texcoord3 = (texcoord - 0.5) * scalar[2] + 0.5;
-      texcoord4 = (texcoord - 0.5) * scalar[3] + 0.5;
+      vec2 t = vec2(position.x + 1.0, 1.0 + position.y) * 0.5;
+      for (int i=0; i<4; ++i) {
+        texcoords[i] = (t - 0.5) * scalar[i] + 0.5;
+      }
       gl_Position = vec4(position, 0.0, 1.0);
     }
   )", R"(
     // fragment shader -------------------------------------------------------
     @include "version"
 
-    in vec2 texcoord1;
-    in vec2 texcoord2;
-    in vec2 texcoord3;
-    in vec2 texcoord4;
+    in vec2 texcoords[4];
 
-    uniform sampler2D input_tex1;
-    uniform sampler2D input_tex2;
-    uniform sampler2D input_tex3;
-
-    uniform vec3 color1;
-    uniform vec3 color2;
-    uniform vec3 color3;
-    uniform vec3 color4;
+    uniform sampler2D inputs[3];
+    uniform vec3 colors[4];
 
     layout (location = 0) out vec3 fragColor;
 
     void main(void) {
-      vec2 fac1 = -pow((texcoord1-0.5)*2, vec2(2)) + 1;
-      vec2 fac2 = -pow((texcoord2-0.5)*2, vec2(2)) + 1;
-      vec2 fac3 = -pow((texcoord3-0.5)*2, vec2(2)) + 1;
-      vec2 fac4 = -pow((texcoord4-0.5)*2, vec2(2)) + 1;
-
-      fragColor = texture2D(input_tex1, texcoord1).rgb * color1 * fac1.x * fac1.y
-                + texture2D(input_tex1, texcoord2).rgb * color2 * fac2.x * fac2.y
-                + texture2D(input_tex2, texcoord3).rgb * color3 * fac3.x * fac3.y
-                + texture2D(input_tex3, texcoord4).rgb * color4 * fac4.x * fac4.y;
+      fragColor = vec3(0);
+      for (int i=0; i<4; ++i) {
+        vec2 fac = -pow((texcoords[i]-0.5)*2, vec2(2)) + 1;
+        fragColor += texture2D(inputs[max(0, i-1)], texcoords[i]).rgb * colors[i] * fac.x * fac.y;
+      }
     }
   )")
   , step_(blur_shader_.get_uniform<math::vec2>("step"))
   , input_tex_(blur_shader_.get_uniform<int>("input_tex"))
   , scalar_(ghost_shader_.get_uniform<math::vec4>("scalar"))
-  , input_tex_1_(ghost_shader_.get_uniform<int>("input_tex1"))
-  , input_tex_2_(ghost_shader_.get_uniform<int>("input_tex2"))
-  , input_tex_3_(ghost_shader_.get_uniform<int>("input_tex3"))
-  , color1_(ghost_shader_.get_uniform<math::vec3>("color1"))
-  , color2_(ghost_shader_.get_uniform<math::vec3>("color2"))
-  , color3_(ghost_shader_.get_uniform<math::vec3>("color3"))
-  , color4_(ghost_shader_.get_uniform<math::vec3>("color4")) {
+  , inputs_(ghost_shader_.get_uniform<int>("inputs"))
+  , colors_(ghost_shader_.get_uniform<math::vec3>("colors")) {
 
   auto create_texture = [&](
     ogl::Texture& tex, int width, int height,
@@ -131,7 +109,7 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
 
     ctx.gl.Bound(ogl::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
-        0, p_format, ogl::PixelDataType::Float, nullptr)
+        0, p_format, ogl::PixelDataType::UnsignedByte, nullptr)
       .MinFilter(ogl::TextureMinFilter::Linear)
       .MagFilter(ogl::TextureMagFilter::Linear)
       .WrapS(ogl::TextureWrap::ClampToBorder)
@@ -142,25 +120,25 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
 
   create_texture(
     buffer_tmp_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataInternalFormat::RGB8,
     ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     blur_buffer_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataInternalFormat::RGB8,
     ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     ghost_buffer_1_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataInternalFormat::RGB8,
     ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     ghost_buffer_2_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataInternalFormat::RGB8,
     ogl::PixelDataFormat::RGB
   );
 
@@ -217,45 +195,43 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
 
   ogl::Texture::Active(4);
   ctx.gl.Bind(ose::_2D(), blur_buffer_);
-  input_tex_1_.Set(4);
 
   ogl::Texture::Active(5);
   ctx.gl.Bind(ose::_2D(), blur_buffer_);
-  input_tex_2_.Set(5);
 
   ogl::Texture::Active(6);
   ctx.gl.Bind(ose::_2D(), blur_buffer_);
-  input_tex_3_.Set(6);
 
+  std::vector<int> inputs = {4, 5, 6};
+  inputs_.Set(inputs);
+
+  std::vector<math::vec3> colors = {
+    math::vec3(0.8, 0.5, 0.5), math::vec3(1.0, 0.2, 0.6),
+    math::vec3(0.1, 0.1, 0.4), math::vec3(0.0, 0.0, 0.5)
+  };
+  colors_.Set(math::vec3(0.8, 0.5, 0.5));
   scalar_.Set(math::vec4(-4.0, 3.0, -2.0, 0.3));
-  color1_.Set(math::vec3(0.8, 0.5, 0.5));
-  color2_.Set(math::vec3(1.0, 0.2, 0.6));
-  color3_.Set(math::vec3(0.1, 0.1, 0.4));
-  color4_.Set(math::vec3(0.0, 0.0, 0.5));
 
   Quad::get().draw(ctx);
-
 
 
   ctx.gl.DrawBuffer(ogl::FramebufferColorAttachment::_3);
 
   ogl::Texture::Active(4);
   ctx.gl.Bind(ose::_2D(), ghost_buffer_1_);
-  input_tex_1_.Set(4);
 
   ogl::Texture::Active(5);
   ctx.gl.Bind(ose::_2D(), ghost_buffer_1_);
-  input_tex_2_.Set(5);
 
   ogl::Texture::Active(6);
   ctx.gl.Bind(ose::_2D(), blur_buffer_);
-  input_tex_3_.Set(6);
 
+  colors = {
+    math::vec3(0.6, 0.2, 0.2), math::vec3(0.2, 0.06, 0.6),
+    math::vec3(0.15, 0.00, 0.1), math::vec3(0.06, 0.00, 0.55)
+  };
+  colors_.Set(colors);
   scalar_.Set(math::vec4(3.6, 2.0, 0.9, -0.55));
-  color1_.Set(math::vec3(0.6, 0.2, 0.2));
-  color2_.Set(math::vec3(0.2, 0.06, 0.6));
-  color3_.Set(math::vec3(0.15, 0.00, 0.1));
-  color4_.Set(math::vec3(0.06, 0.00, 0.55));
 
   Quad::get().draw(ctx);
 }

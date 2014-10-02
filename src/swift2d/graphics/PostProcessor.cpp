@@ -52,14 +52,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       @include "version"
 
       uniform sampler2D g_buffer_shaded;
-      uniform sampler2D glow_buffer_1;
-      uniform sampler2D glow_buffer_2;
-      uniform sampler2D glow_buffer_3;
-      uniform sampler2D glow_buffer_4;
-      uniform sampler2D glow_buffer_5;
-      uniform sampler2D glow_buffer_6;
-      uniform sampler2D glow_buffer_7;
-      uniform sampler2D glow_buffer_8;
+      uniform sampler2D glow_buffers[8];
       uniform sampler2D heat_buffer;
       uniform sampler2D dirt_tex;
       uniform float     dirt_opacity;
@@ -75,14 +68,10 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       @include "get_color_grading"
 
       void main(void) {
-        vec3 glow      = texture2D(glow_buffer_1, texcoords).rgb
-                       + texture2D(glow_buffer_2, texcoords).rgb
-                       + texture2D(glow_buffer_3, texcoords).rgb
-                       + texture2D(glow_buffer_4, texcoords).rgb
-                       + texture2D(glow_buffer_5, texcoords).rgb
-                       + texture2D(glow_buffer_6, texcoords).rgb
-                       + texture2D(glow_buffer_7, texcoords).rgb
-                       + texture2D(glow_buffer_8, texcoords).rgb;
+        vec3 glow = vec3(0);
+        for (int i=0; i<8; ++i) {
+          glow += texture2D(glow_buffers[i], texcoords).rgb;
+        }
 
         vec3 dirt = texture2D(dirt_tex, texcoords).rgb;
 
@@ -149,14 +138,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       }
     )")
   , g_buffer_shaded_(post_fx_shader_.get_uniform<int>("g_buffer_shaded"))
-  , glow_buffer_1_(post_fx_shader_.get_uniform<int>("glow_buffer_1"))
-  , glow_buffer_2_(post_fx_shader_.get_uniform<int>("glow_buffer_2"))
-  , glow_buffer_3_(post_fx_shader_.get_uniform<int>("glow_buffer_3"))
-  , glow_buffer_4_(post_fx_shader_.get_uniform<int>("glow_buffer_4"))
-  , glow_buffer_5_(post_fx_shader_.get_uniform<int>("glow_buffer_5"))
-  , glow_buffer_6_(post_fx_shader_.get_uniform<int>("glow_buffer_6"))
-  , glow_buffer_7_(post_fx_shader_.get_uniform<int>("glow_buffer_7"))
-  , glow_buffer_8_(post_fx_shader_.get_uniform<int>("glow_buffer_8"))
+  , glow_buffers_(post_fx_shader_.get_uniform<int>("glow_buffers"))
   , heat_buffer_(post_fx_shader_.get_uniform<int>("heat_buffer"))
   , dirt_tex_(post_fx_shader_.get_uniform<int>("dirt_tex"))
   , dirt_opacity_(post_fx_shader_.get_uniform<float>("dirt_opacity"))
@@ -304,14 +286,8 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     start = streak_effect_.bind_buffers(start, ctx);
     start = ghost_effect_.bind_buffers(start, ctx);
 
-    glow_buffer_1_.Set(2);
-    glow_buffer_2_.Set(3);
-    glow_buffer_3_.Set(4);
-    glow_buffer_4_.Set(5);
-    glow_buffer_5_.Set(6);
-    glow_buffer_6_.Set(7);
-    glow_buffer_7_.Set(8);
-    glow_buffer_8_.Set(9);
+    std::vector<int> units = {2, 3, 4, 5, 6, 7, 8, 9};
+    glow_buffers_.Set(units);
 
     if (ctx.shading_quality > 2) {
       heat_buffer_.Set(start);

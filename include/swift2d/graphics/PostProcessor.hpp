@@ -47,14 +47,7 @@ class PostProcessor {
   Shader threshold_shader_;
 
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_shaded_;
-  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_1_;
-  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_2_;
-  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_3_;
-  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_4_;
-  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_5_;
-  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_6_;
-  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_7_;
-  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_8_;
+  oglplus::Lazy<oglplus::Uniform<int>> glow_buffers_;
   oglplus::Lazy<oglplus::Uniform<int>> heat_buffer_;
   oglplus::Lazy<oglplus::Uniform<int>> dirt_tex_;
   oglplus::Lazy<oglplus::Uniform<float>> dirt_opacity_;

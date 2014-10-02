@@ -24,16 +24,13 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
 
     uniform vec2 step;
 
-    out vec2 texcoord1;
-    out vec2 texcoord2;
-    out vec2 texcoord3;
-    out vec2 texcoord4;
+    out vec2 texcoords[4];
 
     void main(void){
-      texcoord1 = vec2(position.x + 1.0, 1.0 + position.y) * 0.5;
-      texcoord2 = texcoord1 + step;
-      texcoord3 = texcoord1 + step * 2.0;
-      texcoord4 = texcoord1 + step * 3.0;
+      texcoords[0] = vec2(position.x + 1.0, 1.0 + position.y) * 0.5;
+      texcoords[1] = texcoords[0] + step;
+      texcoords[2] = texcoords[0] + step * 2.0;
+      texcoords[3] = texcoords[0] + step * 3.0;
       gl_Position = vec4(position, 0.0, 1.0);
     }
   )", R"(
@@ -41,31 +38,22 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
     @include "version"
 
     uniform sampler2D input_tex;
-    uniform vec3 color1;
-    uniform vec3 color2;
-    uniform vec3 color3;
-    uniform vec3 color4;
+    uniform vec3 colors[4];
 
-    in vec2 texcoord1;
-    in vec2 texcoord2;
-    in vec2 texcoord3;
-    in vec2 texcoord4;
+    in vec2 texcoords[4];
 
     layout (location = 0) out vec3 fragColor;
 
     void main(void) {
-      fragColor = texture2D(input_tex, texcoord1).rgb * color1
-                + texture2D(input_tex, texcoord2).rgb * color2
-                + texture2D(input_tex, texcoord3).rgb * color3
-                + texture2D(input_tex, texcoord4).rgb * color4;
+      fragColor = vec3(0);
+      for (int i=0; i<4; ++i) {
+        fragColor += texture2D(input_tex, texcoords[i]).rgb * colors[i];
+      }
     }
   )")
   , step_(streak_shader_.get_uniform<math::vec2>("step"))
   , input_tex_(streak_shader_.get_uniform<int>("input_tex"))
-  , color1_(streak_shader_.get_uniform<math::vec3>("color1"))
-  , color2_(streak_shader_.get_uniform<math::vec3>("color2"))
-  , color3_(streak_shader_.get_uniform<math::vec3>("color3"))
-  , color4_(streak_shader_.get_uniform<math::vec3>("color4"))  {
+  , colors_(streak_shader_.get_uniform<math::vec3>("colors"))  {
 
   auto create_texture = [&](
     ogl::Texture& tex, int width, int height,
@@ -74,7 +62,7 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
 
     ctx.gl.Bound(ogl::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
-        0, p_format, ogl::PixelDataType::Float, nullptr)
+        0, p_format, ogl::PixelDataType::UnsignedByte, nullptr)
       .MinFilter(ogl::TextureMinFilter::Linear)
       .MagFilter(ogl::TextureMagFilter::Linear)
       .WrapS(ogl::TextureWrap::ClampToBorder)
@@ -85,43 +73,43 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
 
   create_texture(
     streak_buffer_tmp_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataInternalFormat::RGB8,
     ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     streak_buffer_1_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataInternalFormat::RGB8,
     ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     streak_buffer_2_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataInternalFormat::RGB8,
     ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     streak_buffer_3_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataInternalFormat::RGB8,
     ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     streak_buffer_4_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataInternalFormat::RGB8,
     ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     streak_buffer_5_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataInternalFormat::RGB8,
     ogl::PixelDataFormat::RGB
   );
 
   create_texture(
     streak_buffer_6_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB,
+    ogl::PixelDataInternalFormat::RGB8,
     ogl::PixelDataFormat::RGB
   );
 
@@ -197,11 +185,7 @@ void StreakEffect::process(RenderContext const& ctx, ogl::Texture const& thresho
     ctx.gl.DrawBuffer(output);
     ctx.gl.Bind(ose::_2D(), input);
 
-    color1_.Set(colors_in[0]);
-    color2_.Set(colors_in[1]);
-    color3_.Set(colors_in[2]);
-    color4_.Set(colors_in[3]);
-
+    colors_.Set(colors_in);
     step_.Set(step_dir);
 
     Quad::get().draw(ctx);

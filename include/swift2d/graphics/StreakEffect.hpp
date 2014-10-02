@@ -40,10 +40,7 @@ class StreakEffect {
 
   oglplus::Lazy<oglplus::Uniform<math::vec2>> step_;
   oglplus::Lazy<oglplus::Uniform<int>>        input_tex_;
-  oglplus::Lazy<oglplus::Uniform<math::vec3>> color1_;
-  oglplus::Lazy<oglplus::Uniform<math::vec3>> color2_;
-  oglplus::Lazy<oglplus::Uniform<math::vec3>> color3_;
-  oglplus::Lazy<oglplus::Uniform<math::vec3>> color4_;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>> colors_;
 
   oglplus::Framebuffer streak_fbo_;
   oglplus::Texture     streak_buffer_tmp_;
