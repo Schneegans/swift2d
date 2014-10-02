@@ -51,7 +51,7 @@ void SubSampler::bind(RenderContext const& ctx, bool additive) {
 
   original_framebuffer_ = ctx.gl.Current(ogl::Framebuffer::Target::Draw);
 
-  g_buffer_.bind_for_drawing(ctx);
+  g_buffer_.bind_for_drawing(ctx, true);
 
   if (additive) {
     ctx.gl.BlendFuncSeparate(ose::SrcAlpha(), ose::One(),

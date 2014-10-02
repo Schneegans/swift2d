@@ -91,7 +91,7 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
     oglplus::BlendFunction::OneMinusSrcAlpha
   );
 
-  g_buffer_->bind_for_drawing(ctx);
+  g_buffer_->bind_for_drawing(ctx, false);
 
   for (auto const& container: scene->objects) {
     for (auto const& object: container.second.get_objects()) {
@@ -109,12 +109,10 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
                              RenderContext const& ctx) {
 
   if (ctx.shading_quality > 0) {
-    ctx.gl.BlendFunc(
-      oglplus::BlendFunction::One,
-      oglplus::BlendFunction::OneMinusSrcColor
-    );
 
-    g_buffer_->bind_final_buffer_for_drawing(ctx);
+    ctx.gl.Disable(oglplus::Capability::Blend);
+
+    g_buffer_->bind_final_buffer_for_drawing(ctx, false);
     g_buffer_->bind_diffuse(1);
     g_buffer_->bind_normal(2);
     g_buffer_->bind_light(3);
@@ -139,6 +137,12 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
     background_shader_->set_uniform("light_count",  (int)light_dirs.size());
 
     Quad::get().draw(ctx);
+
+    ctx.gl.Enable(oglplus::Capability::Blend);
+    ctx.gl.BlendFunc(
+      oglplus::BlendFunction::One,
+      oglplus::BlendFunction::OneMinusSrcColor
+    );
 
     for (auto& light: scene->lights) {
       light.second->draw(ctx);

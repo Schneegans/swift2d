@@ -24,7 +24,7 @@ GBuffer::GBuffer(RenderContext const& ctx, bool final_buffer, bool diffuse_alpha
 
     ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
-        0, p_format, oglplus::PixelDataType::Float, nullptr)
+        0, p_format, oglplus::PixelDataType::UnsignedByte, nullptr)
       .MinFilter((ctx.sub_sampling || sub_sample_level_ > 1) ? oglplus::TextureMinFilter::Linear : oglplus::TextureMinFilter::Nearest)
       .MagFilter((ctx.sub_sampling || sub_sample_level_ > 1) ? oglplus::TextureMagFilter::Linear : oglplus::TextureMagFilter::Nearest)
       .WrapS(oglplus::TextureWrap::MirroredRepeat)
@@ -37,13 +37,13 @@ GBuffer::GBuffer(RenderContext const& ctx, bool final_buffer, bool diffuse_alpha
   if (diffuse_alpha) {
     create_texture(
       diffuse_, size.x(), size.y(),
-      oglplus::PixelDataInternalFormat::RGBA,
+      oglplus::PixelDataInternalFormat::RGBA8,
       oglplus::PixelDataFormat::RGBA
     );
   } else {
     create_texture(
       diffuse_, size.x(), size.y(),
-      oglplus::PixelDataInternalFormat::RGB,
+      oglplus::PixelDataInternalFormat::RGB8,
       oglplus::PixelDataFormat::RGB
     );
   }
@@ -51,19 +51,19 @@ GBuffer::GBuffer(RenderContext const& ctx, bool final_buffer, bool diffuse_alpha
   if (ctx.shading_quality > 0) {
     create_texture(
       normal_, size.x(), size.y(),
-      oglplus::PixelDataInternalFormat::RGB,
+      oglplus::PixelDataInternalFormat::RGB8,
       oglplus::PixelDataFormat::RGB
     );
     create_texture(
       light_, size.x(), size.y(),
-      oglplus::PixelDataInternalFormat::RGB,
+      oglplus::PixelDataInternalFormat::RGB8,
       oglplus::PixelDataFormat::RGB
     );
 
     if (final_buffer) {
       create_texture(
         final_, size.x(), size.y(),
-        oglplus::PixelDataInternalFormat::RGB,
+        oglplus::PixelDataInternalFormat::RGB8,
         oglplus::PixelDataFormat::RGB
       );
     }
@@ -93,7 +93,7 @@ GBuffer::GBuffer(RenderContext const& ctx, bool final_buffer, bool diffuse_alpha
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GBuffer::bind_for_drawing(RenderContext const& ctx) {
+void GBuffer::bind_for_drawing(RenderContext const& ctx, bool clear) {
 
   auto size(ctx.g_buffer_size/sub_sample_level_);
   ctx.gl.Viewport(size.x(), size.y());
@@ -107,8 +107,10 @@ void GBuffer::bind_for_drawing(RenderContext const& ctx) {
     };
     ctx.gl.DrawBuffers(draw_buffs);
 
-    GLfloat clear0[4] = {0.f, 0.f, 0.f, 0.f};
-    ctx.gl.ClearColorBuffer(0, clear0);
+    if (clear) {
+      GLfloat clear0[4] = {0.f, 0.f, 0.f, 0.f};
+      ctx.gl.ClearColorBuffer(0, clear0);
+    }
 
   } else {
 
@@ -121,23 +123,28 @@ void GBuffer::bind_for_drawing(RenderContext const& ctx) {
     };
     ctx.gl.DrawBuffers(draw_buffs);
 
-    GLfloat clear0[4] = {0.f, 0.f, 0.f, 0.f};
-    ctx.gl.ClearColorBuffer(0, clear0);
+    if (clear) {
+      GLfloat clear0[4] = {0.f, 0.f, 0.f, 0.f};
+      ctx.gl.ClearColorBuffer(0, clear0);
 
-    GLfloat clear1[3] = {0.5f, 0.5f, 0.f};
-    ctx.gl.ClearColorBuffer(1, clear1);
+      GLfloat clear1[3] = {0.5f, 0.5f, 0.f};
+      ctx.gl.ClearColorBuffer(1, clear1);
 
-    GLfloat clear2[3] = {1.f, 1.f, 0.f};
-    ctx.gl.ClearColorBuffer(2, clear2);
+      GLfloat clear2[3] = {1.f, 1.f, 0.f};
+      ctx.gl.ClearColorBuffer(2, clear2);
+    }
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GBuffer::bind_final_buffer_for_drawing(RenderContext const& ctx) {
+void GBuffer::bind_final_buffer_for_drawing(RenderContext const& ctx, bool clear) {
   ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_3);
-  GLfloat clear[3] = {0.f, 0.f, 0.f};
-  ctx.gl.ClearColorBuffer(0, clear);
+
+  if (clear) {
+    GLfloat clear[3] = {0.f, 0.f, 0.f};
+    ctx.gl.ClearColorBuffer(0, clear);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -249,11 +249,9 @@ void Window::update_joysticks() {
 
           joystick_button_cache_[joy][button] = button_value;
         }
-
       }
     }
   }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////

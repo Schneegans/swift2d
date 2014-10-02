@@ -27,8 +27,8 @@ class GBuffer {
           int sub_sample_level = 1);
 
   // ------------------------------------------------------------ public methods
-  void bind_for_drawing(RenderContext const& ctx);
-  void bind_final_buffer_for_drawing(RenderContext const& ctx);
+  void bind_for_drawing(RenderContext const& ctx, bool clear);
+  void bind_final_buffer_for_drawing(RenderContext const& ctx, bool clear);
 
   void bind_diffuse(int location);
   void bind_normal (int location);
