@@ -31,9 +31,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
       in vec2 texcoords;
       uniform sampler2D g_buffer_shaded;
-      uniform sampler3D color_grading_tex;
       uniform float gamma;
-      uniform bool use_color_grading;
 
       @include "get_vignette"
       @include "get_color_grading"
@@ -41,10 +39,11 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       layout (location = 0) out vec3 fragColor;
 
       void main(void){
+        fragColor = texture2D(g_buffer_shaded, texcoords).rgb;
         if (use_color_grading) {
           fragColor = get_color_grading(fragColor);
         }
-        fragColor = mix(vignette_color.rgb, texture2D(g_buffer_shaded, texcoords).rgb, get_vignette());
+        fragColor = mix(vignette_color.rgb, fragColor, get_vignette());
         fragColor = pow(fragColor, 1.0/vec3(gamma));
       }
     )" : R"(
@@ -161,7 +160,6 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
   // add shader includes -------------------------------------------------------
   ShaderIncludes::get().add_include("get_vignette", R"(
-
     uniform vec4  vignette_color;
     uniform float vignette_coverage;
     uniform float vignette_softness;
@@ -176,7 +174,6 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   )");
 
   ShaderIncludes::get().add_include("get_color_grading", R"(
-
     uniform sampler3D color_grading_tex;
     uniform bool      use_color_grading;
     uniform float     color_grading_intensity;
@@ -194,7 +191,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
     ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
-               0, p_format, oglplus::PixelDataType::Float, nullptr)
+               0, p_format, oglplus::PixelDataType::UnsignedByte, nullptr)
       .MinFilter(oglplus::TextureMinFilter::Linear)
       .MagFilter(oglplus::TextureMagFilter::Linear)
       .WrapS(oglplus::TextureWrap::MirroredRepeat)
@@ -206,7 +203,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
   create_texture(
     threshold_buffer_, size.x(), size.y(),
-    oglplus::PixelDataInternalFormat::RGB,
+    oglplus::PixelDataInternalFormat::RGB8,
     oglplus::PixelDataFormat::RGB
   );
 
@@ -220,23 +217,28 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
 void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext const& ctx,
                             GBuffer* g_buffer) {
-
   post_fx_shader_.use(ctx);
   vignette_softness_.Set(scene->vignette_softness);
   vignette_coverage_.Set(scene->vignette_coverage);
   vignette_color_.Set(scene->vignette_color);
 
-  use_color_grading_.Set(0);
-  color_grading_tex_.Set(1);
-  color_grading_intensity_.Set(0.f);
+  TexturePtr color_map;
+
   if (scene->color_map_name != "") {
-    auto color_map(TextureDatabase::get().lookup(scene->color_map_name));
-    if (color_map) {
-      color_map->bind(ctx, 1);
-      use_color_grading_.Set(1);
-      color_grading_intensity_.Set(scene->color_grading_intensity);
-    }
+    color_map = TextureDatabase::get().lookup(scene->color_map_name);
   }
+
+  color_grading_tex_.Set(1);
+
+  if (color_map) {
+    color_map->bind(ctx, 1);
+    use_color_grading_.Set(1);
+    color_grading_intensity_.Set(scene->color_grading_intensity);
+  } else {
+    use_color_grading_.Set(0);
+    color_grading_intensity_.Set(0.f);
+  }
+
 
   if (ctx.shading_quality <= 1) {
 
