@@ -8,6 +8,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/AnimatedSpriteComponent.hpp>
+#include <swift2d/graphics/RendererPool.hpp>
 
 namespace swift {
 
@@ -27,40 +28,14 @@ void AnimatedSpriteComponent::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void AnimatedSpriteComponent::draw(RenderContext const& ctx) {
-  SWIFT_PUSH_GL_RANGE("Draw AnimatedSprite");
-  if (FullScreen()) {
-    Material()->draw_fullscreen_quad(ctx, Time());
-  } else {
-    Material()->draw_quad(ctx, WorldTransform(), Depth(), Time());
-  }
-  SWIFT_POP_GL_RANGE();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void AnimatedSpriteComponent::draw_instanced(RenderContext const& ctx, std::vector<math::mat3> const& transforms) {
-  if (FullScreen()) {
-    Material()->draw_fullscreen_quad(ctx, Time());
-  } else {
-
-    int index(0);
-
-    while (index < transforms.size()) {
-      int count(std::min(100, (int)transforms.size()-index));
-      Material()->draw_quads(ctx, std::vector<math::mat3>(transforms.begin() + index, transforms.begin() + index + count), Depth(), Time());
-
-      index += count;
-    }
-
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void AnimatedSpriteComponent::serialize(SerializedScenePtr& scene) const {
-  // scene->objects[Depth.get()].add_object(create_copy());
-  scene->objects[Depth.get()].add_instanced_object(Material().get(), create_copy());
+  Serialized s;
+  s.Depth       = Depth();
+  s.Time        = Time();
+  s.Transform   = WorldTransform();
+  s.FullScreen  = FullScreen();
+  s.Material    = Material() ? Material() : CustomMaterial();
+  scene->renderers().animated_sprite_renderer.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -32,6 +32,14 @@ class SWIFT_DLL SpriteParticleSystemComponent : public ParticleSystemComponent {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  struct Serialized : public ParticleSystemComponent::Serialized {
+    math::vec2 StartScale, EndScale;
+    float      StartGlow,  EndGlow;
+    math::vec4 StartColor, EndColor;
+    bool       BlendAdd;
+    int        SubSamplingLevel;
+    TexturePtr Texture;
+  };
 
   // ---------------------------------------------------------------- properties
   Vec2            StartScale, EndScale;
@@ -59,7 +67,6 @@ class SWIFT_DLL SpriteParticleSystemComponent : public ParticleSystemComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "SpriteParticleSystemComponent"; }
 
-  void draw(RenderContext const& ctx);
   void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
 };

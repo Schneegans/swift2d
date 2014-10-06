@@ -51,6 +51,7 @@ void Quad::upload_to(RenderContext const& ctx) const {
 
     // upload the data
     oglplus::Buffer::Data(oglplus::Buffer::Target::Array, rect);
+    oglplus::VertexArrayAttrib(0).Enable();
     oglplus::VertexArrayAttrib(0).Pointer(2, oglplus::DataType::Float, false, sizeof(math::vec2), (void const*)0);
 
     oglplus::NoVertexArray().Bind();
@@ -66,7 +67,6 @@ void Quad::draw(RenderContext const& ctx) const {
   }
 
   rectangle_->Bind();
-  oglplus::VertexArrayAttrib(0).Enable();
   ctx.gl.DrawArrays(oglplus::PrimitiveType::TriangleStrip, 0, 4);
 
   oglplus::NoVertexArray().Bind();

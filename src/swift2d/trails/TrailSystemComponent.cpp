@@ -8,8 +8,8 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/trails/TrailSystemComponent.hpp>
-#include <swift2d/trails/TexturedTrailShader.hpp>
-#include <swift2d/trails/ColoredTrailShader.hpp>
+
+#include <swift2d/graphics/RendererPool.hpp>
 
 namespace swift {
 
@@ -46,65 +46,36 @@ void TrailSystemComponent::remove_emitter(TrailEmitterComponent const* emitter) 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TrailSystemComponent::draw(RenderContext const& ctx) {
-  SWIFT_PUSH_GL_RANGE("Draw TrailSystem");
-  trail_system_->update_trails(serialized_emitters_, this, ctx);
-
-  if (BlendAdd()) {
-    ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
-  }
-
-  if (Texture()) {
-    auto& shader(TexturedTrailShader::get());
-    shader.use(ctx);
-    Texture()->bind(ctx, 0);
-    shader.texture.Set(0);
-    shader.texture_repeat.        Set(TextureRepeat());
-    shader.projection.            Set(ctx.projection_matrix);
-    shader.start_width.           Set(StartWidth());
-    shader.end_width.             Set(EndWidth());
-    shader.start_color.           Set(StartColor().vec4());
-    shader.end_color.             Set(EndColor().vec4());
-    shader.glow.                  Set(math::vec2(StartGlow(), EndGlow()));
-    shader.use_global_texcoords.  Set(UseGlobalTexCoords() ? 1 : 0);
-    shader.total_time.            Set(trail_system_->get_total_time() * 1000.0);
-  } else {
-    auto& shader(ColoredTrailShader::get());
-    shader.use(ctx);
-    shader.projection.            Set(ctx.projection_matrix);
-    shader.start_width.           Set(StartWidth());
-    shader.end_width.             Set(EndWidth());
-    shader.start_color.           Set(StartColor().vec4());
-    shader.end_color.             Set(EndColor().vec4());
-    shader.glow.                  Set(math::vec2(StartGlow(), EndGlow()));
-    shader.use_global_texcoords.  Set(UseGlobalTexCoords() ? 1 : 0);
-    shader.total_time.            Set(trail_system_->get_total_time() * 1000.0);
-  }
-
-  trail_system_->draw_trails(serialized_emitters_, this, ctx);
-
-  if (BlendAdd()) {
-    ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
-  }
-    
-   SWIFT_POP_GL_RANGE();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void TrailSystemComponent::serialize(SerializedScenePtr& scene) const {
-  serialized_emitters_.clear();
+
+  Serialized s;
+
+  s.Depth = Depth();
+  s.Life = Life();
+  s.StartWidth = StartWidth();
+  s.EndWidth = EndWidth();
+  s.StartGlow = StartGlow();
+  s.EndGlow = EndGlow();
+  s.StartColor = StartColor().vec4();
+  s.EndColor = EndColor().vec4();
+  s.Texture = Texture();
+  s.TextureRepeat = TextureRepeat();
+  s.UseGlobalTexCoords = UseGlobalTexCoords();
+  s.BlendAdd = BlendAdd();
+  s.System = trail_system_;
+  s.Emitters.reserve(emitters_.size());
+
   for (auto const& emitter: emitters_) {
-    serialized_emitters_.push_back(emitter->make_serialized_emitter());
+    s.Emitters.push_back(emitter->make_serialized_emitter());
   }
 
-  scene->objects[Depth.get()].add_object(create_copy());
+  scene->renderers().trail_system_renderer.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
-  DrawableComponent::accept(visitor);
+  TransformableComponent::accept(visitor);
   visitor.add_member("MaxCount",      MaxCount);
   visitor.add_member("Depth",         Depth);
   visitor.add_member("Life",          Life);

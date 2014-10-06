@@ -9,7 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/particles/HeatParticleSystemComponent.hpp>
 
-#include <swift2d/particles/HeatParticleShader.hpp>
+#include <swift2d/graphics/RendererPool.hpp>
 
 namespace swift {
 
@@ -21,31 +21,18 @@ HeatParticleSystemComponent::HeatParticleSystemComponent()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void HeatParticleSystemComponent::draw(RenderContext const& ctx) {
-  SWIFT_PUSH_GL_RANGE("Draw HeatParticleSystem");
-
-  if (ParticleSystemComponent::update_particles(ctx) > 0) {
-
-    Texture()->bind(ctx, 0);
-
-    auto& shader(HeatParticleShader::get());
-    shader.use(ctx);
-    shader.projection. Set(ctx.projection_matrix);
-    shader.diffuse.    Set(0);
-    shader.scale.      Set(math::vec2(StartScale(), EndScale()));
-    shader.opacity.    Set(math::vec2(StartOpacity(), EndOpacity()));
-
-    ParticleSystemComponent::draw_particles(ctx);
-  }
-
-  SWIFT_POP_GL_RANGE();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void HeatParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
-  ParticleSystemComponent::serialize(scene);
-  scene->heat_objects.insert(std::make_pair(Depth.get(), create_copy()));
+  Serialized s;
+
+  ParticleSystemComponent::serialize(s);
+
+  s.StartScale = StartScale();
+  s.EndScale = EndScale();
+  s.StartOpacity = StartOpacity();
+  s.EndOpacity = EndOpacity();
+  s.Texture = Texture();
+
+  scene->renderers().heat_particle_system_renderer.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -8,6 +8,8 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/SpriteComponent.hpp>
+#include <swift2d/graphics/SpriteRenderer.hpp>
+#include <swift2d/graphics/RendererPool.hpp>
 
 namespace swift {
 
@@ -21,50 +23,19 @@ SpriteComponent::SpriteComponent()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SpriteComponent::draw(RenderContext const& ctx) {
-  SWIFT_PUSH_GL_RANGE("Draw Sprite");
-  auto& mat(Material() ? Material() : CustomMaterial());
-
-  if (FullScreen()) {
-    mat->draw_fullscreen_quad(ctx);
-  } else {
-    mat->draw_quad(ctx, WorldTransform(), Depth());
-  }
-  SWIFT_POP_GL_RANGE();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void SpriteComponent::draw_instanced(RenderContext const& ctx, std::vector<math::mat3> const& transforms) {
-
-  auto& mat(Material() ? Material() : CustomMaterial());
-
-  if (FullScreen()) {
-    mat->draw_fullscreen_quad(ctx);
-  } else {
-
-    int index(0);
-
-    while (index < transforms.size()) {
-      int count(std::min(100, (int)transforms.size()-index));
-      mat->draw_quads(ctx, std::vector<math::mat3>(transforms.begin() + index, transforms.begin() + index + count), Depth());
-
-      index += count;
-    }
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void SpriteComponent::serialize(SerializedScenePtr& scene) const {
-  // scene->objects[Depth.get()].add_object(create_copy());
-  scene->objects[Depth.get()].add_instanced_object(Material() ? Material().get() : CustomMaterial().get(), create_copy());
+  Serialized s;
+  s.Depth       = Depth();
+  s.Transform   = WorldTransform();
+  s.FullScreen  = FullScreen();
+  s.Material    = Material() ? Material() : CustomMaterial();
+  scene->renderers().sprite_renderer.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void SpriteComponent::accept(SavableObjectVisitor& visitor) {
-  DrawableComponent::accept(visitor);
+  TransformableComponent::accept(visitor);
   visitor.add_member("Depth", Depth);
   visitor.add_member("FullScreen", FullScreen);
   visitor.add_object("Material", Material);

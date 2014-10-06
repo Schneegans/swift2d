@@ -39,7 +39,7 @@ class SWIFT_DLL MaterialBase : public SavableObject {
 
   virtual void draw_quads(
     RenderContext const& ctx, std::vector<math::mat3> const& transforms,
-    float depth, float time = 0.f) = 0;
+    float depth, std::vector<float> const& times = {}) = 0;
 
   virtual void draw_fullscreen_quad(RenderContext const& ctx, float time = 0.f) = 0;
 };

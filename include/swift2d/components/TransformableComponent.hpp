@@ -13,6 +13,8 @@
 #include <swift2d/components/Component.hpp>
 #include <swift2d/math.hpp>
 
+#include <memory>
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////

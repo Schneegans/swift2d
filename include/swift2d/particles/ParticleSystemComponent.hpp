@@ -10,8 +10,8 @@
 #define SWIFT2D_PARTICLE_SYSTEM_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/DrawableComponent.hpp>
-#include <swift2d/particles/ParticleSystem.hpp>
+#include <swift2d/components/TransformableComponent.hpp>
+#include <swift2d/particles/ParticleEmitterComponent.hpp>
 #include <swift2d/textures/Texture.hpp>
 
 #include <unordered_set>
@@ -23,16 +23,40 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class SWIFT_DLL ParticleSystemComponent;
+class ParticleSystem;
+typedef std::shared_ptr<ParticleSystem>       ParticleSystemPtr;
+
+class ParticleSystemComponent;
 typedef std::shared_ptr<ParticleSystemComponent>       ParticleSystemComponentPtr;
 typedef std::shared_ptr<const ParticleSystemComponent> ConstParticleSystemComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL ParticleSystemComponent : public DrawableComponent {
+class SWIFT_DLL ParticleSystemComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
+
  public:
+  struct Serialized : public SerializedComponent {
+    float Mass;
+
+    float Life;
+    float LifeVariance;
+
+    float Velocity;
+    float VelocityVariance;
+    float LinearDamping;
+
+    float AngularVelocity;
+    float AngularVelocityVariance;
+    float AngularDamping;
+
+    float RotationVariance;
+    float PositionVariance;
+
+    std::vector<SerializedEmitter> Emitters;
+    ParticleSystemPtr System;
+  };
 
   // ---------------------------------------------------------------- properties
   Int   MaxCount;
@@ -59,13 +83,9 @@ class SWIFT_DLL ParticleSystemComponent : public DrawableComponent {
   // ------------------------------------------------------------ public methods
   void add_emitter(ParticleEmitterComponent const* emitter);
   void remove_emitter(ParticleEmitterComponent const* emitter);
-
   void spawn_once(SerializedEmitter const& emitter);
 
-  int  update_particles(RenderContext const& ctx);
-  void draw_particles(RenderContext const& ctx);
-
-  virtual void serialize(SerializedScenePtr& scene) const;
+  void serialize(ParticleSystemComponent::Serialized& serialized) const;
   virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -74,7 +94,6 @@ class SWIFT_DLL ParticleSystemComponent : public DrawableComponent {
   ParticleSystemPtr particle_system_;
 
   std::unordered_set<ParticleEmitterComponent const*> emitters_;
-  mutable std::vector<SerializedEmitter>              serialized_emitters_;
   mutable std::vector<SerializedEmitter>              once_emitters_;
 
 };

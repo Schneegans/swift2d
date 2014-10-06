@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/particles/ParticleSystemComponent.hpp>
 #include <swift2d/particles/ParticleEmitterComponent.hpp>
 #include <swift2d/events/Timer.hpp>
 
@@ -23,8 +24,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class ParticleSystemComponent;
-
+class SerializedParticleSystemComponent;
 class ParticleSystem;
 typedef std::shared_ptr<ParticleSystem>       ParticleSystemPtr;
 typedef std::shared_ptr<const ParticleSystem> ConstParticleSystemPtr;
@@ -49,9 +49,7 @@ class ParticleSystem {
   // ------------------------------------------------------------ public methods
   void set_max_count(int max_count);
 
-  int update_particles(
-    std::vector<SerializedEmitter> const& emitters,
-    ParticleSystemComponent* system,
+  int update_particles(ParticleSystemComponent::Serialized const& system,
     RenderContext const& context);
 
   void draw_particles(RenderContext const& context);

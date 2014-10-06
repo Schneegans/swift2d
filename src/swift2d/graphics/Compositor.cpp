@@ -10,6 +10,7 @@
 #include <swift2d/graphics/Compositor.hpp>
 #include <swift2d/components/DrawableComponent.hpp>
 #include <swift2d/components/DirectionalLightComponent.hpp>
+#include <swift2d/graphics/RendererPool.hpp>
 #include <swift2d/geometries/Quad.hpp>
 #include <swift2d/gui/Interface.hpp>
 #include <swift2d/physics/Physics.hpp>
@@ -93,14 +94,7 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
 
   g_buffer_->bind_for_drawing(ctx, false);
 
-  for (auto const& container: scene->objects) {
-    for (auto const& object: container.second.get_objects()) {
-      object->draw(ctx);
-    }
-    for (auto const& object: container.second.get_instanced_objects()) {
-      object.second.first->draw_instanced(ctx, object.second.second);
-    }
-  }
+  scene->renderers().process_objects(ctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

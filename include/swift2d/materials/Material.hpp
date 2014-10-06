@@ -81,7 +81,7 @@ class SWIFT_DLL Material : public MaterialBase {
 
   void draw_quads(
     RenderContext const& ctx, std::vector<math::mat3> const& transforms,
-    float depth, float time = 0.f);
+    float depth, std::vector<float> const& times = {});
 
   void draw_fullscreen_quad(RenderContext const& ctx, float time = 0.f);
 
@@ -91,7 +91,8 @@ class SWIFT_DLL Material : public MaterialBase {
  // ---------------------------------------------------------- private interface
  private:
   void draw_quad_impl(RenderContext const& ctx, std::vector<math::mat3> const& transforms,
-                      math::mat3 const& projection, float depth, float time);
+                      math::mat3 const& projection, float depth,
+                      std::vector<float> const& times);
 
   bool              current_shader_dirty_;
   MaterialShaderPtr current_shader_;

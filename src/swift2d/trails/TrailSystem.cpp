@@ -84,7 +84,7 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
 
 void TrailSystem::update_trails(
   std::vector<SerializedTrailEmitter> const& emitters,
-  TrailSystemComponent* system,
+  TrailSystemComponent::Serialized const& system,
   RenderContext const& ctx) {
 
   bool first_draw(false);
@@ -131,8 +131,8 @@ void TrailSystem::update_trails(
   shader.use(ctx);
   math::vec2 time      (frame_time * 1000.0, total_time_ * 1000.0);
   shader.time.                   Set(time);
-  shader.use_global_texcoords.   Set(system->UseGlobalTexCoords() ? 1 : 0);
-  shader.life.                   Set(system->Life() * 1000.0);
+  shader.use_global_texcoords.   Set(system.UseGlobalTexCoords ? 1 : 0);
+  shader.life.                   Set(system.Life * 1000.0);
 
   std::vector<math::vec2> positions0;
   std::vector<math::vec2> positions1;
@@ -191,7 +191,7 @@ void TrailSystem::update_trails(
 
 void TrailSystem::draw_trails(
   std::vector<SerializedTrailEmitter> const& emitters,
-  TrailSystemComponent* system,
+  TrailSystemComponent::Serialized const& system,
   RenderContext const& ctx) {
 
   std::vector<TrailPoint> emitter_points;
@@ -200,20 +200,20 @@ void TrailSystem::draw_trails(
 
     TrailPoint trail_point;
 
-    trail_point.life = math::vec2(0.0, system->Life() * 1000.0);
+    trail_point.life = math::vec2(0.0, system.Life * 1000.0);
 
     if (emitter.LastPosition != emitter.Position) {
       auto next_dir(emitter.LastPosition - emitter.Prev1Position);
 
       trail_point.pos = emitter.Position + next_dir;
 
-      if (system->UseGlobalTexCoords()) {
-        trail_point.prev_u_texcoords = 1.0/system->Life() *
+      if (system.UseGlobalTexCoords) {
+        trail_point.prev_u_texcoords = 1.0/system.Life *
                                        math::vec2(total_time_,
                                                   total_time_ -
                                                   emitter.TimeSinceLastSpawn);
       } else {
-        trail_point.prev_u_texcoords = 1.0/system->Life() *
+        trail_point.prev_u_texcoords = 1.0/system.Life *
                                        math::vec2(0.0, emitter.TimeSinceLastSpawn);
       }
 
@@ -223,14 +223,14 @@ void TrailSystem::draw_trails(
 
       emitter_points.push_back(trail_point);
 
-      if (system->UseGlobalTexCoords()) {
-        trail_point.prev_u_texcoords = 1.0/system->Life() *
+      if (system.UseGlobalTexCoords) {
+        trail_point.prev_u_texcoords = 1.0/system.Life *
                                        math::vec2(total_time_ -
                                                   emitter.TimeSinceLastSpawn,
                                                   total_time_ -
                                                   emitter.TimeSincePrev1Spawn);
       } else {
-        trail_point.prev_u_texcoords = 1.0/system->Life() *
+        trail_point.prev_u_texcoords = 1.0/system.Life *
                                        math::vec2(emitter.TimeSinceLastSpawn,
                                                   emitter.TimeSincePrev1Spawn);
       }
@@ -245,13 +245,13 @@ void TrailSystem::draw_trails(
 
       trail_point.pos = emitter.Position + next_dir;
 
-      if (system->UseGlobalTexCoords()) {
-        trail_point.prev_u_texcoords = 1.0/system->Life() *
+      if (system.UseGlobalTexCoords) {
+        trail_point.prev_u_texcoords = 1.0/system.Life *
                                        math::vec2(total_time_,
                                                   total_time_ -
                                                   emitter.TimeSincePrev1Spawn);
       } else {
-        trail_point.prev_u_texcoords = 1.0/system->Life() *
+        trail_point.prev_u_texcoords = 1.0/system.Life *
                                        math::vec2(0.0, emitter.TimeSincePrev1Spawn);
       }
 

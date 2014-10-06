@@ -10,7 +10,7 @@
 #define SWIFT2D_SPRITE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/DrawableComponent.hpp>
+#include <swift2d/components/TransformableComponent.hpp>
 #include <swift2d/geometries/Quad.hpp>
 #include <swift2d/materials/Material.hpp>
 
@@ -26,11 +26,16 @@ typedef std::shared_ptr<SpriteComponent>       SpriteComponentPtr;
 typedef std::shared_ptr<const SpriteComponent> ConstSpriteComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL SpriteComponent : public DrawableComponent {
+class SWIFT_DLL SpriteComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  struct Serialized : public SerializedComponent {
+    math::mat3      Transform;
+    bool            FullScreen;
+    MaterialBasePtr Material;
+  };
 
   // ---------------------------------------------------------------- properties
   Float                 Depth;
@@ -56,13 +61,8 @@ class SWIFT_DLL SpriteComponent : public DrawableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "SpriteComponent"; }
 
-  virtual void draw(RenderContext const& ctx);
-  virtual void draw_instanced(RenderContext const& ctx, std::vector<math::mat3> const& transforms);
-
   virtual void serialize(SerializedScenePtr& scene) const;
-
   virtual void accept(SavableObjectVisitor& visitor);
-
 };
 
 // -----------------------------------------------------------------------------

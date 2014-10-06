@@ -59,14 +59,17 @@ ShaderIncludes::ShaderIncludes() {
     // uniforms
     @include "camera_uniforms"
     uniform mat3  transform[100];
+    uniform float time[100];
     uniform float depth;
 
     // varyings
     out vec2 texcoords;
+    flat out int instance_id;
 
     void main(void) {
       vec3 pos    = projection * transform[gl_InstanceID] * vec3(position, 1.0) * pow(parallax, depth);
       texcoords   = vec2(position.x + 1.0, 1.0 - position.y) * 0.5;
+      instance_id = gl_InstanceID;
       gl_Position = vec4(pos.xy, 0.0, 1.0);
     }
   )");

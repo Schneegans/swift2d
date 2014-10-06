@@ -10,6 +10,7 @@
 #include <swift2d/graphics/HeatEffect.hpp>
 
 #include <swift2d/components/DrawableComponent.hpp>
+#include <swift2d/graphics/RendererPool.hpp>
 
 namespace swift {
 
@@ -53,21 +54,22 @@ HeatEffect::HeatEffect(RenderContext const& ctx) {
 void HeatEffect::process(ConstSerializedScenePtr const& scene,
                          RenderContext const& ctx) {
 
-  ctx.gl.BlendFunc(
-    oglplus::BlendFunction::SrcAlpha,
-    oglplus::BlendFunction::OneMinusSrcAlpha
-  );
+  if (!scene->renderers().heat_particle_system_renderer.empty()) {
 
-  ctx.gl.Viewport(ctx.g_buffer_size.x()/8, ctx.g_buffer_size.y()/8);
+    ctx.gl.BlendFunc(
+      oglplus::BlendFunction::SrcAlpha,
+      oglplus::BlendFunction::OneMinusSrcAlpha
+    );
 
-  heat_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
-  ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
+    ctx.gl.Viewport(ctx.g_buffer_size.x()/8, ctx.g_buffer_size.y()/8);
 
-  GLfloat clear[2] = {0.5f, 0.5f};
-  ctx.gl.ClearColorBuffer(0, clear);
+    heat_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
+    ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
 
-  for (auto& object: scene->heat_objects) {
-    object.second->draw(ctx);
+    GLfloat clear[2] = {0.5f, 0.5f};
+    ctx.gl.ClearColorBuffer(0, clear);
+
+    scene->renderers().process_heat(ctx);
   }
 }
 

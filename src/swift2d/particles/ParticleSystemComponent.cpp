@@ -9,6 +9,8 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/particles/ParticleSystemComponent.hpp>
 
+#include <swift2d/particles/ParticleSystem.hpp>
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,28 +56,34 @@ void ParticleSystemComponent::spawn_once(SerializedEmitter const& emitter) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-int ParticleSystemComponent::update_particles(RenderContext const& ctx) {
-  return particle_system_->update_particles(serialized_emitters_, this, ctx);
-}
+void ParticleSystemComponent::serialize(ParticleSystemComponent::Serialized& serialized) const {
 
-////////////////////////////////////////////////////////////////////////////////
+  serialized.Depth = Depth();
+  serialized.Mass = Mass();
 
-void ParticleSystemComponent::draw_particles(RenderContext const& ctx) {
-  particle_system_->draw_particles(ctx);
-}
+  serialized.Life = Life();
+  serialized.LifeVariance = LifeVariance();
 
-////////////////////////////////////////////////////////////////////////////////
+  serialized.Velocity = Velocity();
+  serialized.VelocityVariance = VelocityVariance();
+  serialized.LinearDamping = LinearDamping();
 
-void ParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
-  serialized_emitters_.clear();
-  serialized_emitters_.resize(emitters_.size() + once_emitters_.size());
+  serialized.AngularVelocity = AngularVelocity();
+  serialized.AngularVelocityVariance = AngularVelocityVariance();
+  serialized.AngularDamping = AngularDamping();
+
+  serialized.RotationVariance = RotationVariance();
+  serialized.PositionVariance = PositionVariance();
+
+  serialized.System = particle_system_;
+  serialized.Emitters.resize(emitters_.size() + once_emitters_.size());
 
   int i(0);
   for (auto const& emitter: emitters_) {
-    serialized_emitters_[i++] = emitter->make_serialized_emitter();
+    serialized.Emitters[i++] = emitter->make_serialized_emitter();
   }
   for (auto const& emitter: once_emitters_) {
-    serialized_emitters_[i++] = emitter;
+    serialized.Emitters[i++] = emitter;
   }
   once_emitters_.clear();
 }
@@ -83,7 +91,7 @@ void ParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
 ////////////////////////////////////////////////////////////////////////////////
 
 void ParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
-  DrawableComponent::accept(visitor);
+  TransformableComponent::accept(visitor);
   visitor.add_member("MaxCount",                  MaxCount);
   visitor.add_member("Depth",                     Depth);
   visitor.add_member("Mass",                      Mass);

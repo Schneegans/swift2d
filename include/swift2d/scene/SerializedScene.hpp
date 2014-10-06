@@ -10,7 +10,6 @@
 #define SWIFT2D_SERIALIZED_SCENE_HPP
 
 #include <swift2d/utils/Color.hpp>
-#include <swift2d/scene/SortedObjectContainer.hpp>
 
 #include <memory>
 #include <vector>
@@ -31,6 +30,8 @@ typedef std::shared_ptr<CameraComponent> CameraComponentPtr;
 class DirectionalLightComponent;
 typedef std::shared_ptr<DirectionalLightComponent> DirectionalLightComponentPtr;
 
+class RendererPool;
+
 // shared pointer type definition ----------------------------------------------
 class SerializedScene;
 typedef std::shared_ptr<SerializedScene>       SerializedScenePtr;
@@ -47,11 +48,13 @@ class SWIFT_DLL SerializedScene {
     return std::make_shared<SerializedScene>();
   }
 
-  std::map<float, SortedObjectContainer>              objects;
+  SerializedScene();
+  ~SerializedScene();
+
+  RendererPool& renderers() const { return *renderers_; }
 
   std::multimap<float, DrawableComponentPtr>          lights;
   std::multimap<float, DirectionalLightComponentPtr>  sun_lights;
-  std::multimap<float, DrawableComponentPtr>          heat_objects;
   std::multimap<float, DrawableComponentPtr>          gui_elements;
 
   CameraComponentPtr camera;
@@ -66,6 +69,8 @@ class SWIFT_DLL SerializedScene {
 
   std::vector<GravitySourceComponentPtr> gravity_sources;
 
+ private:
+  RendererPool* renderers_;
 };
 
 }

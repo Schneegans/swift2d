@@ -9,8 +9,8 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/particles/ParticleSystem.hpp>
 
-#include <swift2d/physics/Physics.hpp>
 #include <swift2d/particles/ParticleSystemComponent.hpp>
+#include <swift2d/physics/Physics.hpp>
 #include <swift2d/particles/ParticleUpdateShader.hpp>
 #include <swift2d/textures/NoiseTexture.hpp>
 #include <swift2d/math.hpp>
@@ -75,8 +75,7 @@ void ParticleSystem::upload_to(RenderContext const& ctx) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-int ParticleSystem::update_particles(
-  std::vector<SerializedEmitter> const& emitters, ParticleSystemComponent* system,
+int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& system,
   RenderContext const& ctx) {
 
   bool first_draw(false);
@@ -127,7 +126,7 @@ int ParticleSystem::update_particles(
   ogl::TransformFeedback::Activator xfba(ogl::TransformFeedbackPrimitiveType::Points);
 
   std::vector<math::vec3> spawn_positions;
-  for (auto const& emitter: emitters) {
+  for (auto const& emitter: system.Emitters) {
 
     // calculate spawn count
     int spawn_count(0);
@@ -155,10 +154,10 @@ int ParticleSystem::update_particles(
     NoiseTexture::get().bind(ctx, 0);
     shader.noise_tex.        Set(0);
     math::vec2 time       (frame_time * 1000.0, total_time_ * 1000.0);
-    math::vec2 life       (system->Life(),            system->LifeVariance());
-    math::vec2 pos_rot_variance  (system->PositionVariance(),       system->RotationVariance());
-    math::vec2 velocity   (system->Velocity(),        system->VelocityVariance());
-    math::vec2 rotation   (system->AngularVelocity(), system->AngularVelocityVariance());
+    math::vec2 life       (system.Life,            system.LifeVariance);
+    math::vec2 pos_rot_variance  (system.PositionVariance,       system.RotationVariance);
+    math::vec2 velocity   (system.Velocity,        system.VelocityVariance);
+    math::vec2 rotation   (system.AngularVelocity, system.AngularVelocityVariance);
 
     shader.time.             Set(time);
     shader.life.             Set(life);
@@ -183,7 +182,7 @@ int ParticleSystem::update_particles(
   // update existing particles -----------------------------------------------
   if (!first_draw) {
     Physics::get().bind_gravity_map(ctx, 0);
-    math::vec3 dynamics(system->Mass(), system->LinearDamping(), system->AngularDamping());
+    math::vec3 dynamics(system.Mass, system.LinearDamping, system.AngularDamping);
 
     shader.gravity_map.Set(0);
     shader.projection. Set(ctx.projection_matrix);

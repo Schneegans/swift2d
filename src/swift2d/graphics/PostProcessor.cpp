@@ -260,7 +260,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
   } else {
 
-    if (ctx.shading_quality > 2 && scene->heat_objects.size() > 0) {
+    if (ctx.shading_quality > 2) {
       heat_effect_.process(scene, ctx);
     }
 

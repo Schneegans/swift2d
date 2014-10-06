@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/properties.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
+#include <swift2d/components/SerializedComponent.hpp>
 #include <swift2d/objects/SavableObjectVisitor.hpp>
 #include <swift2d/objects/SavableObject.hpp>
 #include <swift2d/utils/Logger.hpp>

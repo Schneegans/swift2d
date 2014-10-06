@@ -9,7 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/particles/PointParticleSystemComponent.hpp>
 
-#include <swift2d/particles/PointParticleShader.hpp>
+#include <swift2d/graphics/RendererPool.hpp>
 
 namespace swift {
 
@@ -23,41 +23,19 @@ PointParticleSystemComponent::PointParticleSystemComponent()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void PointParticleSystemComponent::draw(RenderContext const& ctx) {
-
-  SWIFT_PUSH_GL_RANGE("Draw PointParticleSystem");
-
-  if (ParticleSystemComponent::update_particles(ctx) > 0) {
-
-    ctx.gl.Rasterization::PointSize(Scale());
-
-    if (BlendAdd()) {
-      ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
-    }
-
-    auto& shader(PointParticleShader::get());
-    shader.use(ctx);
-    shader.projection. Set(ctx.projection_matrix);
-    shader.start_color.Set(StartColor().vec4());
-    shader.end_color.  Set(EndColor().vec4());
-    shader.glow.       Set(math::vec2(StartGlow(), EndGlow()));
-
-    ParticleSystemComponent::draw_particles(ctx);
-
-    if (BlendAdd()) {
-      ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
-    }
-
-  }
-
-  SWIFT_POP_GL_RANGE();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void PointParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
-  ParticleSystemComponent::serialize(scene);
-  scene->objects[Depth.get()].add_object(create_copy());
+  Serialized s;
+
+  ParticleSystemComponent::serialize(s);
+
+  s.Scale = Scale();
+  s.StartGlow = StartGlow();
+  s.EndGlow = EndGlow();
+  s.StartColor = StartColor().vec4();
+  s.EndColor = EndColor().vec4();
+  s.BlendAdd = BlendAdd();
+
+  scene->renderers().point_particle_system_renderer.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -54,20 +54,20 @@ Material::Material()
 
 void Material::draw_quad(RenderContext const& ctx, math::mat3 const& transform,
                          float depth, float time) {
-  draw_quad_impl(ctx, {transform}, ctx.projection_matrix, depth, time);
+  draw_quad_impl(ctx, {transform}, ctx.projection_matrix, depth, {time});
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Material::draw_quads(RenderContext const& ctx, std::vector<math::mat3> const& transforms,
-                         float depth, float time) {
-  draw_quad_impl(ctx, transforms, ctx.projection_matrix, depth, time);
+                         float depth, std::vector<float> const& times) {
+  draw_quad_impl(ctx, transforms, ctx.projection_matrix, depth, times);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Material::draw_fullscreen_quad(RenderContext const& ctx, float time) {
-  draw_quad_impl(ctx, {math::mat3()}, math::mat3(), 1.0f, time);
+  draw_quad_impl(ctx, {math::mat3()}, math::mat3(), 1.0f, {time});
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ void Material::accept(SavableObjectVisitor& visitor) {
 void Material::draw_quad_impl(RenderContext const& ctx,
                               std::vector<math::mat3> const& transforms,
                               math::mat3 const& projection, float depth,
-                              float time) {
+                              std::vector<float> const& times) {
 
   if (current_shader_dirty_) {
     current_shader_dirty_ = false;
@@ -143,8 +143,6 @@ void Material::draw_quad_impl(RenderContext const& ctx,
 
   current_shader_->use(ctx);
   current_shader_->projection.Set(projection);
-  // current_shader_->transform.Set(transforms[0]);
-  current_shader_->transform.Set(transforms);
   current_shader_->depth.Set(depth);
   current_shader_->parallax.Set(ctx.projection_parallax);
 
@@ -207,18 +205,29 @@ void Material::draw_quad_impl(RenderContext const& ctx,
   }
   current_shader_->shinyness.Set(Shinyness());
 
-  if (needs_time) {
-    current_shader_->time.Set(time);
+  bool blend(BlendAdditive());
+
+  if (blend) {
+    ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::One);
   }
 
-  if (BlendAdditive()) {
-    ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::One);
-    // Quad::get().draw(ctx);
-    Quad::get().draw(ctx, transforms.size());
+  int index(0);
+
+  while (index < transforms.size()) {
+    int count(std::min(100, (int)transforms.size()-index));
+
+    current_shader_->transform.Set(std::vector<math::mat3>(transforms.begin() + index, transforms.begin() + index + count));
+    if (needs_time) {
+      current_shader_->time.Set(std::vector<float>(times.begin() + index, times.begin() + index + count));
+    }
+
+    Quad::get().draw(ctx, count);
+    index += count;
+  }
+
+
+  if (blend) {
     ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::OneMinusSrcAlpha);
-  } else {
-    // Quad::get().draw(ctx);
-    Quad::get().draw(ctx, transforms.size());
   }
 }
 

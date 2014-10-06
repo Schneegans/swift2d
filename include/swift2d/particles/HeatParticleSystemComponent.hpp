@@ -31,6 +31,11 @@ class SWIFT_DLL HeatParticleSystemComponent: public ParticleSystemComponent{
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  struct Serialized : public ParticleSystemComponent::Serialized {
+    float StartScale, EndScale;
+    float StartOpacity,  EndOpacity;
+    TexturePtr Texture;
+  };
 
   // ---------------------------------------------------------------- properties
   Float           StartScale,   EndScale;
@@ -55,7 +60,6 @@ class SWIFT_DLL HeatParticleSystemComponent: public ParticleSystemComponent{
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "HeatParticleSystemComponent"; }
 
-  void draw(RenderContext const& ctx);
   void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
 };

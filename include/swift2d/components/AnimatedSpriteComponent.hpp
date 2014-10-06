@@ -29,6 +29,12 @@ class SWIFT_DLL AnimatedSpriteComponent : public SpriteComponent {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  struct Serialized : public SerializedComponent {
+    math::mat3      Transform;
+    bool            FullScreen;
+    float           Time;
+    MaterialBasePtr Material;
+  };
 
   // ---------------------------------------------------------------- properties
   AnimatedFloat Time;
@@ -53,11 +59,7 @@ class SWIFT_DLL AnimatedSpriteComponent : public SpriteComponent {
 
   virtual void update(double time);
 
-  virtual void draw(RenderContext const& ctx);
-  virtual void draw_instanced(RenderContext const& ctx, std::vector<math::mat3> const& transforms);
-
   virtual void serialize(SerializedScenePtr& scene) const;
-
   virtual void accept(SavableObjectVisitor& visitor);
 };
 

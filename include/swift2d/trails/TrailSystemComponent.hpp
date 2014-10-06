@@ -10,8 +10,8 @@
 #define SWIFT2D_TRAIL_SYSTEM_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/DrawableComponent.hpp>
-#include <swift2d/trails/TrailSystem.hpp>
+#include <swift2d/components/TransformableComponent.hpp>
+#include <swift2d/trails/TrailEmitterComponent.hpp>
 #include <swift2d/textures/Texture.hpp>
 #include <swift2d/utils/Color.hpp>
 
@@ -24,16 +24,34 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
+class TrailSystem;
+typedef std::shared_ptr<TrailSystem>       TrailSystemPtr;
+
 class TrailSystemComponent;
 typedef std::shared_ptr<TrailSystemComponent>       TrailSystemComponentPtr;
 typedef std::shared_ptr<const TrailSystemComponent> ConstTrailSystemComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL TrailSystemComponent : public DrawableComponent {
+class SWIFT_DLL TrailSystemComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  struct Serialized : public SerializedComponent {
+    float           Depth;
+    float           Life;
+
+    float           StartWidth, EndWidth;
+    float           StartGlow,  EndGlow;
+    math::vec4      StartColor, EndColor;
+    TexturePtr      Texture;
+    float           TextureRepeat;
+    bool            UseGlobalTexCoords;
+    bool            BlendAdd;
+
+    TrailSystemPtr System;
+    std::vector<SerializedTrailEmitter> Emitters;
+  };
 
   // ---------------------------------------------------------------- properties
   Int             MaxCount;
@@ -65,11 +83,8 @@ class SWIFT_DLL TrailSystemComponent : public DrawableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "TrailSystemComponent"; }
 
-
   void add_emitter(TrailEmitterComponent const* emitter);
   void remove_emitter(TrailEmitterComponent const* emitter);
-
-  void draw(RenderContext const& ctx);
 
   virtual void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
@@ -80,8 +95,6 @@ class SWIFT_DLL TrailSystemComponent : public DrawableComponent {
   TrailSystemPtr trail_system_;
 
   std::unordered_set<TrailEmitterComponent const*> emitters_;
-  mutable std::vector<SerializedTrailEmitter>      serialized_emitters_;
-
 };
 
 // -----------------------------------------------------------------------------

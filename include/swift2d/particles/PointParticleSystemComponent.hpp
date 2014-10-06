@@ -31,6 +31,12 @@ class SWIFT_DLL PointParticleSystemComponent : public ParticleSystemComponent {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  struct Serialized : public ParticleSystemComponent::Serialized {
+    float      Scale;
+    float      StartGlow,  EndGlow;
+    math::vec4 StartColor, EndColor;
+    bool       BlendAdd;
+  };
 
   // ---------------------------------------------------------------- properties
   Float         Scale;
@@ -56,7 +62,6 @@ class SWIFT_DLL PointParticleSystemComponent : public ParticleSystemComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "PointParticleSystemComponent"; }
 
-  void draw(RenderContext const& ctx);
   void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
 };

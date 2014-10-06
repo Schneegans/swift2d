@@ -8,9 +8,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/particles/SpriteParticleSystemComponent.hpp>
-
-#include <swift2d/particles/SpriteParticleShader.hpp>
-#include <swift2d/graphics/Pipeline.hpp>
+#include <swift2d/graphics/RendererPool.hpp>
 
 namespace swift {
 
@@ -25,45 +23,22 @@ SpriteParticleSystemComponent::SpriteParticleSystemComponent()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SpriteParticleSystemComponent::draw(RenderContext const& ctx) {
-  SWIFT_PUSH_GL_RANGE("Draw SpriteParticleSystem");
-
-  if (ParticleSystemComponent::update_particles(ctx) > 0) {
-
-    if (SubSamplingLevel() > 1) {
-      ctx.pipeline->get_sub_sampler(SubSamplingLevel())->bind(ctx, BlendAdd());
-    } else if (BlendAdd()) {
-      ctx.gl.BlendFunc(ose::SrcAlpha(), ose::One());
-    }
-
-    Texture()->bind(ctx, 0);
-
-    auto& shader(SpriteParticleShader::get());
-    shader.use(ctx);
-    shader.projection. Set(ctx.projection_matrix);
-    shader.diffuse.    Set(0);
-    shader.scale.      Set(math::vec4(StartScale().x(), StartScale().y(), EndScale().x(), EndScale().y()));
-    shader.glow.       Set(math::vec2(StartGlow(), EndGlow()));
-    shader.start_color.Set(StartColor().vec4());
-    shader.end_color.  Set(EndColor().vec4());
-
-    ParticleSystemComponent::draw_particles(ctx);
-
-    if (SubSamplingLevel() > 1) {
-      ctx.pipeline->get_sub_sampler(SubSamplingLevel())->draw(ctx, BlendAdd());
-    } else if (BlendAdd()) {
-      ctx.gl.BlendFunc(ose::SrcAlpha(), ose::OneMinusSrcAlpha());
-    }
-  }
-
-  SWIFT_POP_GL_RANGE();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void SpriteParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
-  ParticleSystemComponent::serialize(scene);
-  scene->objects[Depth.get()].add_object(create_copy());
+  Serialized s;
+
+  ParticleSystemComponent::serialize(s);
+
+  s.StartScale = StartScale();
+  s.EndScale = EndScale();
+  s.StartGlow = StartGlow();
+  s.EndGlow = EndGlow();
+  s.StartColor = StartColor().vec4();
+  s.EndColor = EndColor().vec4();
+  s.BlendAdd = BlendAdd();
+  s.SubSamplingLevel = SubSamplingLevel();
+  s.Texture = Texture();
+
+  scene->renderers().sprite_particle_system_renderer.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

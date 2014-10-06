@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
 #include <swift2d/trails/TrailEmitterComponent.hpp>
+#include <swift2d/trails/TrailSystemComponent.hpp>
 #include <swift2d/events/Timer.hpp>
 
 #include <unordered_map>
@@ -23,8 +24,6 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class TrailSystemComponent;
-
 class TrailSystem;
 typedef std::shared_ptr<TrailSystem>       TrailSystemPtr;
 typedef std::shared_ptr<const TrailSystem> ConstTrailSystemPtr;
@@ -50,12 +49,12 @@ class TrailSystem {
 
   void update_trails(
     std::vector<SerializedTrailEmitter> const& emitters,
-    TrailSystemComponent* system,
+    TrailSystemComponent::Serialized const& system,
     RenderContext const& context);
 
   void draw_trails(
     std::vector<SerializedTrailEmitter> const& emitters,
-    TrailSystemComponent* system,
+    TrailSystemComponent::Serialized const& system,
     RenderContext const& context);
 
   double get_total_time() const {

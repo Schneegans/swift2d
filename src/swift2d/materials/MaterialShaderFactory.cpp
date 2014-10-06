@@ -34,9 +34,10 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
   f_shader << R"(
     @include "version"
     in vec2 texcoords;
+    flat in int instance_id;
     @include "write_gbuffer"
 
-    uniform float time;
+    uniform float time[100];
   )";
 
   if (capabilities & ANIMATED_DIFFUSE_TEX) {
@@ -44,7 +45,7 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
       uniform sampler3D diffuse_tex;
       uniform vec4 diffuse;
       vec4 get_diffuse() {
-        vec4 result = texture(diffuse_tex, vec3(texcoords, time));
+        vec4 result = texture(diffuse_tex, vec3(texcoords, time[instance_id]));
         result *= diffuse;
         return result;
       }
@@ -71,10 +72,10 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
   if (capabilities & ANIMATED_NORMAL_TEX) {
     f_shader << R"(
       uniform sampler3D normal_tex;
-      uniform mat3 normal_transform;
+      uniform mat3 normal_transform[100];
       vec4 get_normal() {
-        vec4 result = texture(normal_tex, texcoords, time) - vec4(0.5, 0.5, 0.5, 0);
-        result.xy   = (normal_transform * vec3(result.xy, 0.0)).xy;
+        vec4 result = texture(normal_tex, texcoords, time[instance_id]) - vec4(0.5, 0.5, 0.5, 0);
+        result.xy   = (normal_transform[instance_id] * vec3(result.xy, 0.0)).xy;
         // result.xyz  = normalize(result.xyz);
         return result;
       }
@@ -82,10 +83,10 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
   } else if (capabilities & NORMAL_TEX) {
     f_shader << R"(
       uniform sampler2D normal_tex;
-      uniform mat3 normal_transform;
+      uniform mat3 normal_transform[100];
       vec4 get_normal() {
         vec4 result = texture2D(normal_tex, texcoords) - vec4(0.5, 0.5, 0.5, 0);
-        result.xy   = (normal_transform * vec3(result.xy, 0.0)).xy;
+        result.xy   = (normal_transform[instance_id] * vec3(result.xy, 0.0)).xy;
         // result.xyz  = normalize(result.xyz);
         return result;
       }
@@ -103,7 +104,7 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
       f_shader << "uniform sampler3D " << name << "_tex;"          << std::endl;
       f_shader << "uniform float " << name << ";"                  << std::endl;
       f_shader << "float get_" << name << "() {"                   << std::endl;
-      f_shader << "  return texture(" << name << "_tex, texcoords, time).r * "
+      f_shader << "  return texture(" << name << "_tex, texcoords, time[instance_id]).r * "
                                       << name << ";"               << std::endl;
       f_shader << "}"                                              << std::endl;
     } else if (capabilities & cap) {
