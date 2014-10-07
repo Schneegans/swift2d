@@ -54,6 +54,8 @@ class ParticleSystem {
 
   void draw_particles(RenderContext const& context);
 
+  int get_particle_count() const;
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
@@ -72,6 +74,7 @@ class ParticleSystem {
   bool   ping_;
   double total_time_;
   int    update_max_count_;
+  int    count_;
 
   Timer timer_;
 };

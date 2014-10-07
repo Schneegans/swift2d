@@ -26,7 +26,7 @@ class RenderContext;
 // -----------------------------------------------------------------------------
 class SWIFT_DLL ResourceRendererBase {
  public:
-  virtual bool predraw(float& min_depth) = 0;
+  virtual bool predraw(RenderContext const& ctx, float& min_depth) = 0;
   virtual bool draw(RenderContext const& ctx, float max_depth, float& next_depth) = 0;
 };
 
@@ -39,7 +39,7 @@ class SWIFT_DLL ResourceRenderer : public ResourceRendererBase {
  public:
 
   // ------------------------------------------------------------ public methods
-  bool predraw(float& min_depth) {
+  bool predraw(RenderContext const& ctx, float& min_depth) {
     if (objects.size() == 0) {
       return false;
     }
@@ -49,6 +49,8 @@ class SWIFT_DLL ResourceRenderer : public ResourceRendererBase {
     if (objects[0].Depth < min_depth) {
       min_depth = objects[0].Depth;
     }
+
+    predraw_impl(ctx);
 
     return true;
   }
@@ -89,6 +91,7 @@ class SWIFT_DLL ResourceRenderer : public ResourceRendererBase {
  // -------------------------------------------------------- protected interface
  protected:
   virtual void draw_impl(RenderContext const& ctx, int start, int end) = 0;
+  virtual void predraw_impl(RenderContext const& ctx) {};
 
   std::vector<typename T::Serialized> objects;
 

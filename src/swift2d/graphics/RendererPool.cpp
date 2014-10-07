@@ -53,7 +53,7 @@ void RendererPool::process(RenderContext const& ctx, std::vector<ResourceRendere
   bool any_object(false);
 
   for (auto& renderer: renderers) {
-    any_object |= renderer->predraw(current_depth);
+    any_object |= renderer->predraw(ctx, current_depth);
   }
 
   while(any_object) {

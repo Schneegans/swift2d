@@ -37,7 +37,8 @@ ParticleSystem::ParticleSystem(int max_count)
   , particle_buffers_()
   , ping_(true)
   , total_time_(0.0)
-  , update_max_count_(max_count) {}
+  , update_max_count_(max_count)
+  , count_(0) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -119,8 +120,8 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
   auto& shader(ParticleUpdateShader::get());
   shader.use(ctx);
 
-  GLint active_particles(0);
-  query_->Result(active_particles);
+  count_ = 0;
+  query_->Result(count_);
 
   ogl::Query::Activator qrya(*query_, ose::PrimitivesGenerated());
   ogl::TransformFeedback::Activator xfba(ogl::TransformFeedbackPrimitiveType::Points);
@@ -147,8 +148,8 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
 
   if (spawn_positions.size() > 0) {
 
-    if (active_particles == 0) {
-      active_particles = spawn_positions.size();
+    if (count_ == 0) {
+      count_ = spawn_positions.size();
     }
 
     NoiseTexture::get().bind(ctx, 0);
@@ -199,7 +200,7 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
 
   qrya.Finish();
 
-  return active_particles;
+  return count_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -211,6 +212,12 @@ void ParticleSystem::draw_particles(RenderContext const& ctx) {
   ctx.gl.DrawTransformFeedback(
     ogl::PrimitiveType::Points, transform_feedbacks_[current_tf()]
   );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+int ParticleSystem::get_particle_count() const {
+  return count_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

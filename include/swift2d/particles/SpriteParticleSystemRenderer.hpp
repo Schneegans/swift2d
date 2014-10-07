@@ -24,13 +24,19 @@ namespace swift {
 // -----------------------------------------------------------------------------
 class SWIFT_DLL SpriteParticleSystemRenderer : public ResourceRenderer<SpriteParticleSystemComponent> {
 
+  void predraw_impl(RenderContext const& ctx) {
+    for (auto& object : objects) {
+      object.System->update_particles(object, ctx);
+    }
+  }
+
   void draw_impl(RenderContext const& ctx, int start, int end) {
     for (int i(start); i<end; ++i) {
       auto& o(objects[i]);
 
       SWIFT_PUSH_GL_RANGE("Draw SpriteParticleSystemRenderer");
 
-      if (o.System->update_particles(o, ctx) > 0) {
+      if (o.System->get_particle_count() > 0) {
 
         if (o.SubSamplingLevel > 1) {
           ctx.pipeline->get_sub_sampler(o.SubSamplingLevel)->bind(ctx, o.BlendAdd);
