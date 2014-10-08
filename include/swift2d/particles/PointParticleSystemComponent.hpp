@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/particles/ParticleSystemComponent.hpp>
+#include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/textures/Texture.hpp>
 #include <swift2d/utils/Color.hpp>
 
@@ -31,11 +32,18 @@ class SWIFT_DLL PointParticleSystemComponent : public ParticleSystemComponent {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  // ------------------------------------------------------------- inner classes
   struct Serialized : public ParticleSystemComponent::Serialized {
     float      Scale;
     float      StartGlow,  EndGlow;
     math::vec4 StartColor, EndColor;
     bool       BlendAdd;
+  };
+
+  class Renderer : public ResourceRenderer<PointParticleSystemComponent> {
+    void predraw(RenderContext const& ctx);
+    void draw(RenderContext const& ctx, int start, int end);
   };
 
   // ---------------------------------------------------------------- properties

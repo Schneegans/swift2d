@@ -10,6 +10,8 @@
 #include <swift2d/particles/HeatParticleSystemComponent.hpp>
 
 #include <swift2d/graphics/RendererPool.hpp>
+#include <swift2d/particles/ParticleSystem.hpp>
+#include <swift2d/particles/HeatParticleShader.hpp>
 
 namespace swift {
 
@@ -44,6 +46,42 @@ void HeatParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("StartOpacity",  StartOpacity);
   visitor.add_member("EndOpacity",    EndOpacity);
   visitor.add_object("Texture",       Texture);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void HeatParticleSystemComponent::Renderer::predraw(RenderContext const& ctx) {
+  for (auto& object : objects) {
+    SWIFT_PUSH_GL_RANGE("Update HeatParticleSystem");
+    object.System->update_particles(object, ctx);
+    SWIFT_POP_GL_RANGE();
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void HeatParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int start, int end) {
+  for (int i(start); i<end; ++i) {
+    auto& o(objects[i]);
+
+    SWIFT_PUSH_GL_RANGE("Draw HeatParticleSystem");
+
+    if (o.System->get_particle_count() > 0) {
+
+      o.Texture->bind(ctx, 0);
+
+      auto& shader(HeatParticleShader::get());
+      shader.use(ctx);
+      shader.projection. Set(ctx.projection_matrix);
+      shader.diffuse.    Set(0);
+      shader.scale.      Set(math::vec2(o.StartScale, o.EndScale));
+      shader.opacity.    Set(math::vec2(o.StartOpacity, o.EndOpacity));
+
+      o.System->draw_particles(ctx);
+    }
+
+    SWIFT_POP_GL_RANGE();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

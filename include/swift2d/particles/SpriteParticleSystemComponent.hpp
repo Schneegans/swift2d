@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/particles/ParticleSystemComponent.hpp>
+#include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/textures/Texture.hpp>
 #include <swift2d/utils/Color.hpp>
 #include <swift2d/graphics/SubSampler.hpp>
@@ -32,6 +33,8 @@ class SWIFT_DLL SpriteParticleSystemComponent : public ParticleSystemComponent {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  // ------------------------------------------------------------- inner classes
   struct Serialized : public ParticleSystemComponent::Serialized {
     math::vec2 StartScale, EndScale;
     float      StartGlow,  EndGlow;
@@ -39,6 +42,11 @@ class SWIFT_DLL SpriteParticleSystemComponent : public ParticleSystemComponent {
     bool       BlendAdd;
     int        SubSamplingLevel;
     TexturePtr Texture;
+  };
+
+  class Renderer : public ResourceRenderer<SpriteParticleSystemComponent> {
+    void predraw(RenderContext const& ctx);
+    void draw(RenderContext const& ctx, int start, int end);
   };
 
   // ---------------------------------------------------------------- properties

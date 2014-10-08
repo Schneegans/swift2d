@@ -44,7 +44,7 @@ namespace {
 
       LOG_MESSAGE << "Booting Swift2D..." << std::endl;
 
-      // register all objects ------------------------------------------------
+      // register all objects --------------------------------------------------
       Object::init<AnimatedSpriteComponent>();
       Object::init<Texture3D>();
       Object::init<AudioComponent>();
@@ -81,7 +81,7 @@ namespace {
       Object::init<TrailEmitterComponent>();
       Object::init<TrailSystemComponent>();
 
-      // init glfw -----------------------------------------------------------
+      // init glfw -------------------------------------------------------------
       if (!glfwInit()) {
         LOG_ERROR << "Failed to initialize glfw3!" << std::endl;
       }

@@ -29,10 +29,16 @@ class SWIFT_DLL AnimatedSpriteComponent : public SpriteComponent {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  // ------------------------------------------------------------- inner classes
   struct Serialized : public SerializedComponent {
     math::mat3      Transform;
     float           Time;
     MaterialBasePtr Material;
+  };
+
+  class Renderer : public ResourceRenderer<AnimatedSpriteComponent> {
+    void draw(RenderContext const& ctx, int start, int end);
   };
 
   // ---------------------------------------------------------------- properties

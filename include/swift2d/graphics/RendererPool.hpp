@@ -12,13 +12,13 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/SpriteComponent.hpp>
 #include <swift2d/components/FullscreenSpriteComponent.hpp>
-#include <swift2d/graphics/AnimatedSpriteRenderer.hpp>
+#include <swift2d/components/AnimatedSpriteComponent.hpp>
 
-#include <swift2d/particles/SpriteParticleSystemRenderer.hpp>
-#include <swift2d/particles/PointParticleSystemRenderer.hpp>
-#include <swift2d/particles/HeatParticleSystemRenderer.hpp>
+#include <swift2d/particles/SpriteParticleSystemComponent.hpp>
+#include <swift2d/particles/PointParticleSystemComponent.hpp>
+#include <swift2d/particles/HeatParticleSystemComponent.hpp>
 
-#include <swift2d/trails/TrailSystemRenderer.hpp>
+#include <swift2d/trails/TrailSystemComponent.hpp>
 
 namespace swift {
 
@@ -33,17 +33,17 @@ class SWIFT_DLL RendererPool {
  public:
 
   // ---------------------------------------------------------- object renderers
-  SpriteComponent::Renderer    sprite_renderer;
-  FullscreenSpriteComponent::Renderer    fullscreen_sprite_renderer;
-  AnimatedSpriteRenderer       animated_sprite_renderer;
+  SpriteComponent::               Renderer sprite_renderer;
+  FullscreenSpriteComponent::     Renderer fullscreen_sprite_renderer;
+  AnimatedSpriteComponent::       Renderer animated_sprite_renderer;
 
-  SpriteParticleSystemRenderer sprite_particle_system_renderer;
-  PointParticleSystemRenderer  point_particle_system_renderer;
+  SpriteParticleSystemComponent:: Renderer sprite_particle_system_renderer;
+  PointParticleSystemComponent::  Renderer point_particle_system_renderer;
 
-  TrailSystemRenderer          trail_system_renderer;
+  TrailSystemComponent::          Renderer trail_system_renderer;
 
   // ------------------------------------------------------------ heat renderers
-  HeatParticleSystemRenderer   heat_particle_system_renderer;
+  HeatParticleSystemComponent::   Renderer heat_particle_system_renderer;
 
   // ----------------------------------------------------------- light renderers
 

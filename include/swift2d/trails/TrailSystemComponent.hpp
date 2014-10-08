@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/TransformableComponent.hpp>
 #include <swift2d/trails/TrailEmitterComponent.hpp>
+#include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/textures/Texture.hpp>
 #include <swift2d/utils/Color.hpp>
 
@@ -37,6 +38,8 @@ class SWIFT_DLL TrailSystemComponent : public TransformableComponent {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  // ------------------------------------------------------------- inner classes
   struct Serialized : public SerializedComponent {
     float           Depth;
     float           Life;
@@ -51,6 +54,10 @@ class SWIFT_DLL TrailSystemComponent : public TransformableComponent {
 
     TrailSystemPtr System;
     std::vector<SerializedTrailEmitter> Emitters;
+  };
+
+  class Renderer : public ResourceRenderer<TrailSystemComponent> {
+    void draw(RenderContext const& ctx, int start, int end);
   };
 
   // ---------------------------------------------------------------- properties
