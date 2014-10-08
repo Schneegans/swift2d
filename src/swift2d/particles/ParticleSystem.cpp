@@ -60,15 +60,17 @@ void ParticleSystem::upload_to(RenderContext const& ctx) {
   for (int i(0); i<2; ++i) {
     transform_feedbacks_.push_back(ogl::TransformFeedback());
     particle_buffers_.push_back(ogl::Buffer());
-    particle_vaos_.push_back(ogl::VertexArray());
-
-    particle_vaos_[i].Bind();
     particle_buffers_[i].Bind(ose::Array());
-
+    
+    particle_vaos_.push_back(ogl::VertexArray());
+    particle_vaos_[i].Bind();
+    
     for (long i(0); i<4; ++i) {
       ogl::VertexArrayAttrib(i).Pointer(2, ogl::DataType::Float, false, sizeof(Particle), (void const*) (i*8));
       ogl::VertexArrayAttrib(i).Enable();
     }
+
+    ogl::NoVertexArray().Bind();
   }
 
   query_ = new ogl::Query();
@@ -200,6 +202,8 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
 
   qrya.Finish();
 
+  ogl::NoVertexArray().Bind();
+
   return count_;
 }
 
@@ -212,6 +216,8 @@ void ParticleSystem::draw_particles(RenderContext const& ctx) {
   ctx.gl.DrawTransformFeedback(
     ogl::PrimitiveType::Points, transform_feedbacks_[current_tf()]
   );
+
+  ogl::NoVertexArray().Bind();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -57,6 +57,7 @@ class SWIFT_DLL TrailSystemComponent : public TransformableComponent {
   };
 
   class Renderer : public ResourceRenderer<TrailSystemComponent> {
+    void predraw(RenderContext const& ctx);
     void draw(RenderContext const& ctx, int start, int end);
   };
 

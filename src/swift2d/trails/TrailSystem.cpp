@@ -58,26 +58,31 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
   for (int i(0); i<2; ++i) {
     transform_feedbacks_.push_back(ogl::TransformFeedback());
     trail_buffers_.push_back(ogl::Buffer());
-    trail_vaos_.push_back(ogl::VertexArray());
-
-    trail_vaos_[i].Bind();
     trail_buffers_[i].Bind(ose::Array());
 
+    trail_vaos_.push_back(ogl::VertexArray());
+    trail_vaos_[i].Bind();
+    
     for (long i(0); i<6; ++i) {
       ogl::VertexArrayAttrib(i).Pointer(2, ogl::DataType::Float, false, sizeof(TrailPoint), (void const*) (i*8));
       ogl::VertexArrayAttrib(i).Enable();
     }
+
+    ogl::NoVertexArray().Bind();
   }
 
   emitter_buffer_ = new ogl::Buffer();
-  emitter_vao_    = new ogl::VertexArray();
-
-  emitter_vao_->Bind();
   emitter_buffer_->Bind(ose::Array());
+
+  emitter_vao_    = new ogl::VertexArray();
+  emitter_vao_->Bind();
+  
   for (long i(0); i<6; ++i) {
     ogl::VertexArrayAttrib(i).Pointer(2, ogl::DataType::Float, false, sizeof(TrailPoint), (void const*) (i*8));
     ogl::VertexArrayAttrib(i).Enable();
   }
+
+  ogl::NoVertexArray().Bind();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -263,9 +268,10 @@ void TrailSystem::draw_trails(
     }
   }
 
-  emitter_vao_->Bind();
   emitter_buffer_->Bind(oglplus::Buffer::Target::Array);
   oglplus::Buffer::Data(oglplus::Buffer::Target::Array, emitter_points, ose::StreamDraw());
+
+  emitter_vao_->Bind();
   ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, emitter_points.size());
 
   trail_vaos_[current_tf()].Bind();

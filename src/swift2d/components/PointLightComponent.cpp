@@ -62,7 +62,7 @@ void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, in
     std::vector<math::mat3> transforms;
     std::vector<math::vec4> colors;
 
-    while (objects[start].Texture == tex && start < end) {
+    while (start < end && objects[start].Texture == tex) {
       transforms.push_back(objects[start].Transform);
       colors.push_back(objects[start].Color);
       ++start;

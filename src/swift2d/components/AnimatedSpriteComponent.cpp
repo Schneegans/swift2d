@@ -63,7 +63,7 @@ void AnimatedSpriteComponent::Renderer::draw(RenderContext const& ctx, int start
     std::vector<math::mat3> transforms;
     std::vector<float>      times;
 
-    while (objects[start].Material == mat && start < end) {
+    while (start < end && objects[start].Material == mat) {
       transforms.push_back(objects[start].Transform);
       times.push_back(objects[start].Time);
       ++start;

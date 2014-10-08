@@ -126,8 +126,10 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
       }
     }
 
-    background_shader_->set_uniform_array("light_dirs",   light_dirs);
-    background_shader_->set_uniform_array("light_colors", light_colors);
+    if (light_dirs.size() > 0) {
+      background_shader_->set_uniform_array("light_dirs", light_dirs);
+      background_shader_->set_uniform_array("light_colors", light_colors);
+    }
     background_shader_->set_uniform("light_count",  (int)light_dirs.size());
 
     Quad::get().draw(ctx);
