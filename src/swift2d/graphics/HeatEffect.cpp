@@ -54,7 +54,7 @@ HeatEffect::HeatEffect(RenderContext const& ctx) {
 void HeatEffect::process(ConstSerializedScenePtr const& scene,
                          RenderContext const& ctx) {
 
-  if (!scene->renderers().heat_particle_system_renderer.empty()) {
+  if (!scene->renderers().heat_particle_systems.empty()) {
 
     ctx.gl.BlendFunc(
       oglplus::BlendFunction::SrcAlpha,

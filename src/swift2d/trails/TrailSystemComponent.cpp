@@ -72,7 +72,7 @@ void TrailSystemComponent::serialize(SerializedScenePtr& scene) const {
     s.Emitters.push_back(emitter->make_serialized_emitter());
   }
 
-  scene->renderers().trail_system_renderer.add(std::move(s));
+  scene->renderers().trail_systems.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

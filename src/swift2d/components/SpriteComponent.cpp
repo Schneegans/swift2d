@@ -26,7 +26,7 @@ void SpriteComponent::serialize(SerializedScenePtr& scene) const {
   s.Depth       = Depth();
   s.Transform   = WorldTransform();
   s.Material    = Material() ? Material() : CustomMaterial();
-  scene->renderers().sprite_renderer.add(std::move(s));
+  scene->renderers().sprites.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

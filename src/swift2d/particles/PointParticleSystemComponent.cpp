@@ -37,7 +37,7 @@ void PointParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
   s.EndColor = EndColor().vec4();
   s.BlendAdd = BlendAdd();
 
-  scene->renderers().point_particle_system_renderer.add(std::move(s));
+  scene->renderers().point_particle_systems.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

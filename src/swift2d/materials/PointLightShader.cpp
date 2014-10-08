@@ -17,7 +17,7 @@ PointLightShader::PointLightShader()
   : Shader(
     R"(
       // vertex shader ---------------------------------------------------------
-      @include "quad_vertex_shader"
+      @include "instanced_quad_vertex_shader"
     )",
     R"(
       // fragment shader -------------------------------------------------------
@@ -25,10 +25,11 @@ PointLightShader::PointLightShader()
 
       // varyings
       in vec2 texcoords;
+      flat in int instance_id;
 
       // uniforms
       uniform sampler2D light_tex;
-      uniform vec4      light_color;
+      uniform vec4      light_color[100];
       uniform ivec2     screen_size;
 
       @include "gbuffer_input"
@@ -41,7 +42,7 @@ PointLightShader::PointLightShader()
         vec3 light_dir    = normalize(light.rgb - 0.5);
         float attenuation = light.a;
 
-        fragColor = get_lit_surface_color(gl_FragCoord.xy/screen_size, light_dir, light_color, attenuation);
+        fragColor = get_lit_surface_color(gl_FragCoord.xy/screen_size, light_dir, light_color[instance_id], attenuation);
       }
     )"
   )

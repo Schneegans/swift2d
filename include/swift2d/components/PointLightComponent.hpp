@@ -10,8 +10,8 @@
 #define SWIFT2D_POINT_LIGHT_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/DrawableComponent.hpp>
-#include <swift2d/geometries/Quad.hpp>
+#include <swift2d/components/TransformableComponent.hpp>
+#include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/textures/Texture.hpp>
 #include <swift2d/utils/Color.hpp>
 
@@ -27,11 +27,22 @@ typedef std::shared_ptr<PointLightComponent>       PointLightComponentPtr;
 typedef std::shared_ptr<const PointLightComponent> ConstPointLightComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL PointLightComponent : public DrawableComponent {
+class SWIFT_DLL PointLightComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  // ------------------------------------------------------------- inner classes
+  struct Serialized : public SerializedComponent {
+    math::mat3 Transform;
+    TexturePtr Texture;
+    math::vec4 Color;
+  };
+
+  class Renderer : public ResourceRenderer<PointLightComponent> {
+    void draw(RenderContext const& ctx, int start, int end);
+  };
 
   // ---------------------------------------------------------------- properties
   Float           Depth;
@@ -56,10 +67,7 @@ class SWIFT_DLL PointLightComponent : public DrawableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "PointLightComponent"; }
 
-  void draw(RenderContext const& ctx);
-
   void serialize(SerializedScenePtr& scene) const;
-
   virtual void accept(SavableObjectVisitor& visitor);
 };
 

@@ -41,7 +41,7 @@ void SpriteParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
   s.SubSamplingLevel = SubSamplingLevel();
   s.Texture = Texture();
 
-  scene->renderers().sprite_particle_system_renderer.add(std::move(s));
+  scene->renderers().sprite_particle_systems.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

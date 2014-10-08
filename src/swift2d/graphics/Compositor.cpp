@@ -138,9 +138,7 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
       oglplus::BlendFunction::OneMinusSrcColor
     );
 
-    for (auto& light: scene->lights) {
-      light.second->draw(ctx);
-    }
+    scene->renderers().process_light(ctx);
   }
 }
 

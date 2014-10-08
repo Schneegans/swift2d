@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/particles/ParticleSystemComponent.hpp>
+#include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/textures/Texture.hpp>
 #include <swift2d/utils/Color.hpp>
 
@@ -31,6 +32,18 @@ class SWIFT_DLL LightParticleSystemComponent : public ParticleSystemComponent {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  // ------------------------------------------------------------- inner classes
+  struct Serialized : public ParticleSystemComponent::Serialized {
+    float      StartScale, EndScale;
+    math::vec4 StartColor, EndColor;
+    TexturePtr Texture;
+  };
+
+  class Renderer : public ResourceRenderer<LightParticleSystemComponent> {
+    void predraw(RenderContext const& ctx);
+    void draw(RenderContext const& ctx, int start, int end);
+  };
 
   // ---------------------------------------------------------------- properties
   Float           StartScale, EndScale;
@@ -55,7 +68,6 @@ class SWIFT_DLL LightParticleSystemComponent : public ParticleSystemComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "LightParticleSystemComponent"; }
 
-  void draw(RenderContext const& ctx);
   void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
 };

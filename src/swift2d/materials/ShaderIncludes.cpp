@@ -59,7 +59,6 @@ ShaderIncludes::ShaderIncludes() {
     // uniforms
     @include "camera_uniforms"
     uniform mat3  transform[100];
-    uniform float time[100];
     uniform float depth;
 
     // varyings

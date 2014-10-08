@@ -25,7 +25,7 @@ void FullscreenSpriteComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
   s.Depth       = Depth();
   s.Material    = Material() ? Material() : CustomMaterial();
-  scene->renderers().fullscreen_sprite_renderer.add(std::move(s));
+  scene->renderers().fullscreen_sprites.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -10,6 +10,7 @@
 #include <swift2d/components/PointLightComponent.hpp>
 
 #include <swift2d/materials/PointLightShader.hpp>
+#include <swift2d/graphics/RendererPool.hpp>
 #include <swift2d/geometries/Quad.hpp>
 
 namespace swift {
@@ -22,41 +23,78 @@ PointLightComponent::PointLightComponent()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void PointLightComponent::draw(RenderContext const& ctx) {
-
-  // disable rotation
+void PointLightComponent::serialize(SerializedScenePtr& scene) const {
   auto transform(math::make_translation(math::get_translation(WorldTransform())));
   transform = transform * math::make_scale(math::get_scale(WorldTransform()));
 
-  Texture()->bind(ctx, 0);
-  PointLightShader::get().use(ctx);
-  PointLightShader::get().projection.Set(ctx.projection_matrix);
-  PointLightShader::get().transform.Set(transform);
-  PointLightShader::get().depth.Set(Depth());
-  PointLightShader::get().parallax.Set(ctx.projection_parallax);
-  PointLightShader::get().screen_size.Set(ctx.g_buffer_size);
-  PointLightShader::get().g_buffer_diffuse.Set(1);
-  PointLightShader::get().g_buffer_normal.Set(2);
-  PointLightShader::get().g_buffer_light.Set(3);
-  PointLightShader::get().light_tex.Set(0);
-  PointLightShader::get().light_color.Set(Color().vec4());
-
-  Quad::get().draw(ctx);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void PointLightComponent::serialize(SerializedScenePtr& scene) const {
-  scene->lights.insert(std::make_pair(Depth.get(), create_copy()));
+  Serialized s;
+  s.Depth       = Depth();
+  s.Transform   = transform;
+  s.Texture     = Texture();
+  s.Color       = Color().vec4();
+  scene->renderers().point_lights.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void PointLightComponent::accept(SavableObjectVisitor& visitor) {
-  DrawableComponent::accept(visitor);
+  TransformableComponent::accept(visitor);
   visitor.add_member("Depth", Depth);
   visitor.add_object("Texture", Texture);
   visitor.add_member("Color", Color);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, int end) {
+  std::sort(objects.begin() + start, objects.begin() + end,
+    [](PointLightComponent::Serialized const& a, PointLightComponent::Serialized const& b){
+      return a.Texture.get() < b.Texture.get();
+    });
+
+  while (start < end) {
+
+    auto& object(objects[start]);
+    auto& tex(object.Texture);
+
+    SWIFT_PUSH_GL_RANGE("Draw PointLight");
+
+    std::vector<math::mat3> transforms;
+    std::vector<math::vec4> colors;
+
+    while (objects[start].Texture == tex && start < end) {
+      transforms.push_back(objects[start].Transform);
+      colors.push_back(objects[start].Color);
+      ++start;
+    }
+
+    auto& shader(PointLightShader::get());
+
+    object.Texture->bind(ctx, 0);
+    shader.use(ctx);
+    shader.projection.Set(ctx.projection_matrix);
+    shader.depth.Set(object.Depth);
+    shader.parallax.Set(ctx.projection_parallax);
+    shader.screen_size.Set(ctx.g_buffer_size);
+    shader.g_buffer_diffuse.Set(1);
+    shader.g_buffer_normal.Set(2);
+    shader.g_buffer_light.Set(3);
+    shader.light_tex.Set(0);
+
+    int index(0);
+
+    while (index < transforms.size()) {
+      int count(std::min(100, (int)transforms.size()-index));
+
+      shader.transform.Set(std::vector<math::mat3>(transforms.begin() + index, transforms.begin() + index + count));
+      shader.light_color.Set(std::vector<math::vec4>(colors.begin() + index, colors.begin() + index + count));
+
+      Quad::get().draw(ctx, count);
+      index += count;
+    }
+
+    SWIFT_POP_GL_RANGE();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

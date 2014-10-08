@@ -12,7 +12,6 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/TransformableComponent.hpp>
 #include <swift2d/graphics/ResourceRenderer.hpp>
-#include <swift2d/geometries/Quad.hpp>
 #include <swift2d/materials/Material.hpp>
 
 namespace swift {

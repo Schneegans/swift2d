@@ -53,7 +53,6 @@ class SWIFT_DLL SerializedScene {
 
   RendererPool& renderers() const { return *renderers_; }
 
-  std::multimap<float, DrawableComponentPtr>          lights;
   std::multimap<float, DirectionalLightComponentPtr>  sun_lights;
   std::multimap<float, DrawableComponentPtr>          gui_elements;
 

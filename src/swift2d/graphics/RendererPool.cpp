@@ -16,35 +16,38 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 RendererPool::RendererPool()
-  : object_renderers_({
-      &sprite_renderer,
-      &fullscreen_sprite_renderer,
-      &animated_sprite_renderer,
-      &sprite_particle_system_renderer,
-      &point_particle_system_renderer,
-      &trail_system_renderer
+  : objects_({
+      &sprites,
+      &fullscreen_sprites,
+      &animated_sprites,
+      &sprite_particle_systems,
+      &point_particle_systems,
+      &trail_systems
     })
-  , heat_renderers_({
-      &heat_particle_system_renderer
+  , heats_({
+      &heat_particle_systems
     })
-  , light_renderers_({}) {}
+  , lights_({
+      &point_lights,
+      &light_particle_systems
+    }) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void RendererPool::process_objects(RenderContext const& ctx) {
-  process(ctx, object_renderers_);
+  process(ctx, objects_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void RendererPool::process_heat(RenderContext const& ctx) {
-  process(ctx, heat_renderers_);
+  process(ctx, heats_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void RendererPool::process_light(RenderContext const& ctx) {
-  process(ctx, light_renderers_);
+  process(ctx, lights_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

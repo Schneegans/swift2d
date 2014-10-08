@@ -34,7 +34,7 @@ void HeatParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
   s.EndOpacity = EndOpacity();
   s.Texture = Texture();
 
-  scene->renderers().heat_particle_system_renderer.add(std::move(s));
+  scene->renderers().heat_particle_systems.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
