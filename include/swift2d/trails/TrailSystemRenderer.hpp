@@ -24,7 +24,7 @@ namespace swift {
 // -----------------------------------------------------------------------------
 class SWIFT_DLL TrailSystemRenderer : public ResourceRenderer<TrailSystemComponent> {
 
-  void draw_impl(RenderContext const& ctx, int start, int end) {
+  void draw(RenderContext const& ctx, int start, int end) {
 
     for (int i(start); i<end; ++i) {
       auto& o(objects[i]);

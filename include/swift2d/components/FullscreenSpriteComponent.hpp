@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SPRITE_COMPONENT_HPP
-#define SWIFT2D_SPRITE_COMPONENT_HPP
+#ifndef SWIFT2D_FULLSCREEN_SPRITE_COMPONENT_HPP
+#define SWIFT2D_FULLSCREEN_SPRITE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/TransformableComponent.hpp>
@@ -22,12 +22,12 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class SpriteComponent;
-typedef std::shared_ptr<SpriteComponent>       SpriteComponentPtr;
-typedef std::shared_ptr<const SpriteComponent> ConstSpriteComponentPtr;
+class FullscreenSpriteComponent;
+typedef std::shared_ptr<FullscreenSpriteComponent>       FullscreenSpriteComponentPtr;
+typedef std::shared_ptr<const FullscreenSpriteComponent> ConstFullscreenSpriteComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL SpriteComponent : public TransformableComponent {
+class SWIFT_DLL FullscreenSpriteComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -35,11 +35,10 @@ class SWIFT_DLL SpriteComponent : public TransformableComponent {
 
   // ------------------------------------------------------------- inner classes
   struct Serialized : public SerializedComponent {
-    math::mat3      Transform;
     MaterialBasePtr Material;
   };
 
-  class Renderer : public ResourceRenderer<SpriteComponent> {
+  class Renderer : public ResourceRenderer<FullscreenSpriteComponent> {
     void draw(RenderContext const& ctx, int start, int end);
   };
 
@@ -49,22 +48,22 @@ class SWIFT_DLL SpriteComponent : public TransformableComponent {
   MaterialBaseProperty  CustomMaterial; // used, if the above is not set
 
   // ----------------------------------------------------- contruction interface
-  SpriteComponent();
+  FullscreenSpriteComponent();
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static SpriteComponentPtr create(Args&& ... a) {
-    return std::make_shared<SpriteComponent>(a...);
+  static FullscreenSpriteComponentPtr create(Args&& ... a) {
+    return std::make_shared<FullscreenSpriteComponent>(a...);
   }
 
   // creates a copy from this
-  SpriteComponentPtr create_copy() const {
-    return std::make_shared<SpriteComponent>(*this);
+  FullscreenSpriteComponentPtr create_copy() const {
+    return std::make_shared<FullscreenSpriteComponent>(*this);
   }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "SpriteComponent"; }
+  static  std::string get_type_name_static() { return "FullscreenSpriteComponent"; }
 
   virtual void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
@@ -74,4 +73,4 @@ class SWIFT_DLL SpriteComponent : public TransformableComponent {
 
 }
 
-#endif  // SWIFT2D_SPRITE_COMPONENT_HPP
+#endif  // SWIFT2D_FULLSCREEN_SPRITE_COMPONENT_HPP

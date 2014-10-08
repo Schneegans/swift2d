@@ -50,7 +50,7 @@ class SWIFT_DLL ResourceRenderer : public ResourceRendererBase {
       min_depth = objects[0].Depth;
     }
 
-    predraw_impl(ctx);
+    predraw(ctx);
 
     return true;
   }
@@ -64,7 +64,7 @@ class SWIFT_DLL ResourceRenderer : public ResourceRendererBase {
     }
 
     if (start != cur_index_) {
-      draw_impl(ctx, start, cur_index_);
+      draw(ctx, start, cur_index_);
     }
 
     if (cur_index_ < objects.size()) {
@@ -90,8 +90,8 @@ class SWIFT_DLL ResourceRenderer : public ResourceRendererBase {
  ///////////////////////////////////////////////////////////////////////////////
  // -------------------------------------------------------- protected interface
  protected:
-  virtual void draw_impl(RenderContext const& ctx, int start, int end) = 0;
-  virtual void predraw_impl(RenderContext const& ctx) {};
+  virtual void draw(RenderContext const& ctx, int start, int end) = 0;
+  virtual void predraw(RenderContext const& ctx) {};
 
   std::vector<typename T::Serialized> objects;
 

@@ -21,7 +21,7 @@ namespace swift {
 // -----------------------------------------------------------------------------
 class SWIFT_DLL AnimatedSpriteRenderer : public ResourceRenderer<AnimatedSpriteComponent> {
 
-  void draw_impl(RenderContext const& ctx, int start, int end) {
+  void draw(RenderContext const& ctx, int start, int end) {
 
     std::sort(objects.begin() + start, objects.begin() + end,
       [](AnimatedSpriteComponent::Serialized const& a, AnimatedSpriteComponent::Serialized const& b){
@@ -35,22 +35,17 @@ class SWIFT_DLL AnimatedSpriteRenderer : public ResourceRenderer<AnimatedSpriteC
 
       SWIFT_PUSH_GL_RANGE("Draw AnimatedSprite");
 
-      if (object.FullScreen) {
-        mat->draw_fullscreen_quad(ctx, object.Time);
+      std::vector<math::mat3> transforms;
+      std::vector<float>      times;
+
+      while (objects[start].Material == mat && start < end) {
+        transforms.push_back(objects[start].Transform);
+        times.push_back(objects[start].Time);
         ++start;
-
-      } else {
-        std::vector<math::mat3> transforms;
-        std::vector<float>      times;
-
-        while (objects[start].Material == mat && start < end) {
-          transforms.push_back(objects[start].Transform);
-          times.push_back(objects[start].Time);
-          ++start;
-        }
-
-        mat->draw_quads(ctx, transforms, object.Depth, times);
       }
+
+      mat->draw_quads(ctx, transforms, object.Depth, times);
+
       SWIFT_POP_GL_RANGE();
     }
   }

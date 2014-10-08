@@ -31,7 +31,6 @@ class SWIFT_DLL AnimatedSpriteComponent : public SpriteComponent {
  public:
   struct Serialized : public SerializedComponent {
     math::mat3      Transform;
-    bool            FullScreen;
     float           Time;
     MaterialBasePtr Material;
   };

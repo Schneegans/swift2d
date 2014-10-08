@@ -73,6 +73,7 @@ namespace {
       Object::init<SceneObject>();
       Object::init<Sound>();
       Object::init<SpriteComponent>();
+      Object::init<FullscreenSpriteComponent>();
       Object::init<SpriteParticleSystemComponent>();
       Object::init<StaticBodyComponent>();
       Object::init<Texture>();

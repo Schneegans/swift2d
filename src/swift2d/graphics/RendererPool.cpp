@@ -18,6 +18,7 @@ namespace swift {
 RendererPool::RendererPool()
   : object_renderers_({
       &sprite_renderer,
+      &fullscreen_sprite_renderer,
       &animated_sprite_renderer,
       &sprite_particle_system_renderer,
       &point_particle_system_renderer,

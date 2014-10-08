@@ -24,13 +24,13 @@ namespace swift {
 // -----------------------------------------------------------------------------
 class SWIFT_DLL SpriteParticleSystemRenderer : public ResourceRenderer<SpriteParticleSystemComponent> {
 
-  void predraw_impl(RenderContext const& ctx) {
+  void predraw(RenderContext const& ctx) {
     for (auto& object : objects) {
       object.System->update_particles(object, ctx);
     }
   }
 
-  void draw_impl(RenderContext const& ctx, int start, int end) {
+  void draw(RenderContext const& ctx, int start, int end) {
     for (int i(start); i<end; ++i) {
       auto& o(objects[i]);
 

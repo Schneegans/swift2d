@@ -10,7 +10,8 @@
 #define SWIFT2D_RENDERER_POOL_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/graphics/SpriteRenderer.hpp>
+#include <swift2d/components/SpriteComponent.hpp>
+#include <swift2d/components/FullscreenSpriteComponent.hpp>
 #include <swift2d/graphics/AnimatedSpriteRenderer.hpp>
 
 #include <swift2d/particles/SpriteParticleSystemRenderer.hpp>
@@ -32,7 +33,8 @@ class SWIFT_DLL RendererPool {
  public:
 
   // ---------------------------------------------------------- object renderers
-  SpriteRenderer               sprite_renderer;
+  SpriteComponent::Renderer    sprite_renderer;
+  FullscreenSpriteComponent::Renderer    fullscreen_sprite_renderer;
   AnimatedSpriteRenderer       animated_sprite_renderer;
 
   SpriteParticleSystemRenderer sprite_particle_system_renderer;

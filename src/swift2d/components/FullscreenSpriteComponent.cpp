@@ -7,32 +7,31 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/SpriteComponent.hpp>
+#include <swift2d/components/FullscreenSpriteComponent.hpp>
 #include <swift2d/graphics/RendererPool.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SpriteComponent::SpriteComponent()
+FullscreenSpriteComponent::FullscreenSpriteComponent()
   : Depth(0.f)
   , Material(nullptr)
   , CustomMaterial(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SpriteComponent::serialize(SerializedScenePtr& scene) const {
+void FullscreenSpriteComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
   s.Depth       = Depth();
-  s.Transform   = WorldTransform();
   s.Material    = Material() ? Material() : CustomMaterial();
-  scene->renderers().sprite_renderer.add(std::move(s));
+  scene->renderers().fullscreen_sprite_renderer.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SpriteComponent::accept(SavableObjectVisitor& visitor) {
-  TransformableComponent::accept(visitor);
+void FullscreenSpriteComponent::accept(SavableObjectVisitor& visitor) {
+  Component::accept(visitor);
   visitor.add_member("Depth", Depth);
   visitor.add_object("Material", Material);
   visitor.add_object("CustomMaterial", CustomMaterial);
@@ -40,28 +39,16 @@ void SpriteComponent::accept(SavableObjectVisitor& visitor) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SpriteComponent::Renderer::draw(RenderContext const& ctx, int start, int end) {
+void FullscreenSpriteComponent::Renderer::draw(RenderContext const& ctx, int start, int end) {
   std::sort(objects.begin() + start, objects.begin() + end,
-    [](SpriteComponent::Serialized const& a, SpriteComponent::Serialized const& b){
+    [](FullscreenSpriteComponent::Serialized const& a, FullscreenSpriteComponent::Serialized const& b){
       return a.Material.get() < b.Material.get();
     });
 
-  while (start < end) {
-
-    auto& object(objects[start]);
-    auto& mat(object.Material);
-
-    SWIFT_PUSH_GL_RANGE("Draw Sprite");
-
-    std::vector<math::mat3> transforms;
-
-    while (objects[start].Material == mat && start < end) {
-      transforms.push_back(objects[start].Transform);
-      ++start;
-    }
-
-    mat->draw_quads(ctx, transforms, object.Depth);
-
+  for (int i(start); i<end; ++i) {
+    SWIFT_PUSH_GL_RANGE("Draw FullscreenSprite");
+    objects[i].Material->draw_fullscreen_quad(ctx);
+    ++start;
     SWIFT_POP_GL_RANGE();
   }
 }
