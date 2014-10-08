@@ -44,8 +44,6 @@ Compositor::Compositor(RenderContext const& ctx)
 
         in vec2 texcoords;
 
-        @include "get_lit_surface_color"
-
         layout (location = 0) out vec3 fragColor;
 
         void main(void){
@@ -111,6 +109,8 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
     g_buffer_->bind_normal(2);
     g_buffer_->bind_light(3);
 
+    SWIFT_PUSH_GL_RANGE("Draw SunLights");
+
     background_shader_->use(ctx);
     background_shader_->set_uniform("g_buffer_diffuse", 1);
     background_shader_->set_uniform("g_buffer_normal",  2);
@@ -133,6 +133,8 @@ void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
     background_shader_->set_uniform("light_count",  (int)light_dirs.size());
 
     Quad::get().draw(ctx);
+
+    SWIFT_POP_GL_RANGE();
 
     ctx.gl.Enable(oglplus::Capability::Blend);
     ctx.gl.BlendFunc(

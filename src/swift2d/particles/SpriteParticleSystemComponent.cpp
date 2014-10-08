@@ -81,6 +81,8 @@ void SpriteParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int
 
     if (o.System->get_particle_count() > 0) {
 
+      SWIFT_PUSH_GL_RANGE("Draw");
+
       if (o.SubSamplingLevel > 1) {
         ctx.pipeline->get_sub_sampler(o.SubSamplingLevel)->bind(ctx, o.BlendAdd);
       } else if (o.BlendAdd) {
@@ -100,11 +102,16 @@ void SpriteParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int
 
       o.System->draw_particles(ctx);
 
+      SWIFT_POP_GL_RANGE();
+      SWIFT_PUSH_GL_RANGE("Blit");
+
       if (o.SubSamplingLevel > 1) {
         ctx.pipeline->get_sub_sampler(o.SubSamplingLevel)->draw(ctx, o.BlendAdd);
       } else if (o.BlendAdd) {
         ctx.gl.BlendFunc(ose::SrcAlpha(), ose::OneMinusSrcAlpha());
       }
+
+      SWIFT_POP_GL_RANGE();
     }
 
     SWIFT_POP_GL_RANGE();

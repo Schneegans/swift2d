@@ -165,6 +165,8 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   // finish frame
   window_->display();
+
+  SWIFT_POP_GL_RANGE();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

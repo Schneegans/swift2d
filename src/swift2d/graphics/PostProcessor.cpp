@@ -217,32 +217,36 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
 void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext const& ctx,
                             GBuffer* g_buffer) {
-  post_fx_shader_.use(ctx);
-  vignette_softness_.Set(scene->vignette_softness);
-  vignette_coverage_.Set(scene->vignette_coverage);
-  vignette_color_.Set(scene->vignette_color);
 
-  TexturePtr color_map;
+  auto use_postfx_shader = [&]() {
+    post_fx_shader_.use(ctx);
+    vignette_softness_.Set(scene->vignette_softness);
+    vignette_coverage_.Set(scene->vignette_coverage);
+    vignette_color_.Set(scene->vignette_color);
 
-  if (scene->color_map_name != "") {
-    color_map = TextureDatabase::get().lookup(scene->color_map_name);
-  }
+    TexturePtr color_map;
 
-  color_grading_tex_.Set(1);
+    if (scene->color_map_name != "") {
+      color_map = TextureDatabase::get().lookup(scene->color_map_name);
+    }
 
-  if (color_map) {
-    color_map->bind(ctx, 1);
-    use_color_grading_.Set(1);
-    color_grading_intensity_.Set(scene->color_grading_intensity);
-  } else {
-    use_color_grading_.Set(0);
-    color_grading_intensity_.Set(0.f);
-  }
+    color_grading_tex_.Set(1);
 
-
+    if (color_map) {
+      color_map->bind(ctx, 1);
+      use_color_grading_.Set(1);
+      color_grading_intensity_.Set(scene->color_grading_intensity);
+    } else {
+      use_color_grading_.Set(0);
+      color_grading_intensity_.Set(0.f);
+    }
+  };
+  
   if (ctx.shading_quality <= 1) {
 
     ctx.gl.Disable(oglplus::Capability::Blend);
+
+    SWIFT_PUSH_GL_RANGE("Composite");
 
     ctx.gl.Viewport(ctx.window_size.x(), ctx.window_size.y());
     oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
@@ -252,16 +256,23 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     } else {
       g_buffer->bind_final(1);
     }
+
+    use_postfx_shader();
+
     post_fx_shader_.set_uniform("g_buffer_shaded", 1);
     gamma_.Set(SettingsWrapper::get().Settings->Gamma());
     Quad::get().draw(ctx);
+
+    SWIFT_POP_GL_RANGE();
 
     ctx.gl.Enable(oglplus::Capability::Blend);
 
   } else {
 
     if (ctx.shading_quality > 2) {
+      SWIFT_PUSH_GL_RANGE("Heat");
       heat_effect_.process(scene, ctx);
+      SWIFT_POP_GL_RANGE();
     }
 
     ctx.gl.Disable(oglplus::Capability::Blend);
@@ -270,18 +281,26 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     g_buffer->bind_light(1);
 
     // thresholding
+    SWIFT_PUSH_GL_RANGE("Thresholding");
     generate_threshold_buffer(ctx);
+    SWIFT_POP_GL_RANGE();
 
     // streaks
+    SWIFT_PUSH_GL_RANGE("Streaks");
     streak_effect_.process(ctx, threshold_buffer_);
+    SWIFT_POP_GL_RANGE();
 
     // ghosts
+    SWIFT_PUSH_GL_RANGE("Ghosts");
     ghost_effect_.process(ctx, threshold_buffer_);
+    SWIFT_POP_GL_RANGE();
 
+    SWIFT_PUSH_GL_RANGE("Composite");
     ctx.gl.Viewport(ctx.window_size.x(), ctx.window_size.y());
     oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
 
-    post_fx_shader_.use(ctx);
+    use_postfx_shader();
+
     g_buffer_shaded_.Set(0);
 
     int start(2);
@@ -306,6 +325,8 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     dirt_opacity_.Set(scene->dirt_opacity);
 
     Quad::get().draw(ctx);
+
+    SWIFT_POP_GL_RANGE();
 
     ctx.gl.Enable(oglplus::Capability::Blend);
   }
