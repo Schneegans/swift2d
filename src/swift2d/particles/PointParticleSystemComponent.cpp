@@ -21,7 +21,9 @@ PointParticleSystemComponent::PointParticleSystemComponent()
   : Scale(1.f)
   , StartGlow(0.f),                EndGlow(0.f)
   , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 0))
-  , BlendAdd(false) {}
+  , BlendAdd(false) {
+  Enabled = false;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -55,7 +55,7 @@ void SpriteComponent::Renderer::draw(RenderContext const& ctx, int start, int en
 
     std::vector<math::mat3> transforms;
 
-    while (objects[start].Material == mat && start < end) {
+    while (start < end && objects[start].Material == mat) {
       transforms.push_back(objects[start].Transform);
       ++start;
     }

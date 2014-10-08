@@ -22,7 +22,9 @@ SpriteParticleSystemComponent::SpriteParticleSystemComponent()
   , StartGlow(0.f),                   EndGlow(0.f)
   , StartColor(Color(1, 1, 1, 1)),    EndColor(Color(1, 1, 1, 0))
   , BlendAdd(false)
-  , SubSamplingLevel(1) {}
+  , SubSamplingLevel(1) {
+  Enabled = false; 
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -96,13 +96,23 @@ void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void TrailSystemComponent::Renderer::predraw(RenderContext const& ctx) {
+  for (auto& object : objects) {
+    SWIFT_PUSH_GL_RANGE("Update TrailSystem");
+    object.System->update_trails(object.Emitters, object, ctx);
+    SWIFT_POP_GL_RANGE();
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void TrailSystemComponent::Renderer::draw(RenderContext const& ctx, int start, int end) {
 
   for (int i(start); i<end; ++i) {
     auto& o(objects[i]);
 
     SWIFT_PUSH_GL_RANGE("Draw TrailSystem");
-    o.System->update_trails(o.Emitters, o, ctx);
+    
 
     if (o.BlendAdd) {
       ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
