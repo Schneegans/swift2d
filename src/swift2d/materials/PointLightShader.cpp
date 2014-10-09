@@ -38,11 +38,22 @@ PointLightShader::PointLightShader()
       layout (location = 0) out vec3 fragColor;
 
       void main(void){
+
+        vec3  light_info  = get_light_info(gl_FragCoord.xy/screen_size);
+        float emit        = light_info.r;
+
+        if (emit >= 1.0) {
+          discard;
+        }
+
+        float gloss       = light_info.g;
         vec4 light        = texture2D(light_tex, texcoords);
         vec3 light_dir    = normalize(light.rgb - 0.5);
         float attenuation = light.a;
 
-        fragColor = get_lit_surface_color(gl_FragCoord.xy/screen_size, light_dir, light_color[instance_id], attenuation);
+        fragColor = get_lit_surface_color(
+          gl_FragCoord.xy/screen_size, light_dir,
+          light_color[instance_id], gloss, emit, attenuation);
       }
     )"
   )

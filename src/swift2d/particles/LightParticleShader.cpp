@@ -49,13 +49,25 @@ LightParticleShader::LightParticleShader()
       layout (location = 0) out vec3 fragColor;
 
       void main(void) {
+
+        vec3  light_info  = get_light_info(gl_FragCoord.xy/screen_size);
+        float emit        = light_info.r;
+
+        if (emit >= 1.0) {
+          discard;
+        }
+
+        float gloss       = light_info.g;
+
         vec4  c = mix(start_color, end_color, age);
 
         vec4 light        = texture2D(diffuse, texcoords);
         vec3 light_dir    = normalize(light.rgb - 0.5);
         float attenuation = light.a * c.a;
 
-        fragColor = get_lit_surface_color(gl_FragCoord.xy/screen_size, light_dir, c, attenuation);
+        fragColor = get_lit_surface_color(
+          gl_FragCoord.xy/screen_size, light_dir, c,
+          gloss, emit, attenuation);
       }
     )",
 
