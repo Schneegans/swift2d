@@ -16,6 +16,7 @@
 #include <swift2d/graphics/GhostEffect.hpp>
 #include <swift2d/graphics/HeatEffect.hpp>
 #include <swift2d/graphics/GBuffer.hpp>
+#include <swift2d/graphics/LBuffer.hpp>
 #include <swift2d/textures/Texture.hpp>
 
 namespace swift {
@@ -36,7 +37,7 @@ class PostProcessor {
 
   // ------------------------------------------------------------ public methods
   void process(ConstSerializedScenePtr const& scene, RenderContext const& ctx,
-               GBuffer* g_buffer);
+               GBuffer* g_buffer, LBuffer* l_buffer);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
@@ -46,7 +47,8 @@ class PostProcessor {
   Shader post_fx_shader_;
   Shader threshold_shader_;
 
-  oglplus::Lazy<oglplus::Uniform<int>> g_buffer_shaded_;
+  oglplus::Lazy<oglplus::Uniform<int>> g_buffer_diffuse_;
+  oglplus::Lazy<oglplus::Uniform<int>> l_buffer_;
   oglplus::Lazy<oglplus::Uniform<int>> glow_buffers_;
   oglplus::Lazy<oglplus::Uniform<int>> heat_buffer_;
   oglplus::Lazy<oglplus::Uniform<int>> dirt_tex_;
@@ -57,7 +59,7 @@ class PostProcessor {
   oglplus::Lazy<oglplus::Uniform<float>> vignette_softness_;
   oglplus::Lazy<oglplus::Uniform<float>> vignette_coverage_;
   oglplus::Lazy<oglplus::Uniform<math::vec2i>> screen_size_;
-  oglplus::Lazy<oglplus::Uniform<int>> g_buffer_diffuse_;
+  oglplus::Lazy<oglplus::Uniform<int>> g_buffer_diffuse_threshold_;
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_light_;
   oglplus::Lazy<oglplus::Uniform<int>> use_color_grading_;
   oglplus::Lazy<oglplus::Uniform<int>> color_grading_tex_;

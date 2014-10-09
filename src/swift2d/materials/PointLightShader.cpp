@@ -33,9 +33,9 @@ PointLightShader::PointLightShader()
       uniform ivec2     screen_size;
 
       @include "gbuffer_input"
-      @include "get_lit_surface_color"
+      @include "get_light"
 
-      layout (location = 0) out vec3 fragColor;
+      layout (location = 0) out vec4 fragLight;
 
       void main(void){
 
@@ -51,7 +51,7 @@ PointLightShader::PointLightShader()
         vec3 light_dir    = normalize(light.rgb - 0.5);
         float attenuation = light.a;
 
-        fragColor = get_lit_surface_color(
+        fragLight = get_light(
           gl_FragCoord.xy/screen_size, light_dir,
           light_color[instance_id], gloss, emit, attenuation);
       }
@@ -62,7 +62,6 @@ PointLightShader::PointLightShader()
   , depth(get_uniform<float>("depth"))
   , parallax(get_uniform<float>("parallax"))
   , screen_size(get_uniform<math::vec2i>("screen_size"))
-  , g_buffer_diffuse(get_uniform<int>("g_buffer_diffuse"))
   , g_buffer_normal(get_uniform<int>("g_buffer_normal"))
   , g_buffer_light(get_uniform<int>("g_buffer_light"))
   , light_tex(get_uniform<int>("light_tex"))

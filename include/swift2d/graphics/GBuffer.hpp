@@ -22,29 +22,22 @@ class GBuffer {
  public:
 
   // ---------------------------------------------------- construction interface
-  GBuffer(RenderContext const& ctx,
-          bool final_buffer, bool diffuse_alpha = false,
-          int sub_sample_level = 1);
+  GBuffer(RenderContext const& ctx);
 
   // ------------------------------------------------------------ public methods
-  void bind_for_drawing(RenderContext const& ctx, bool clear);
-  void bind_final_buffer_for_drawing(RenderContext const& ctx, bool clear);
+  void bind_for_drawing(RenderContext const& ctx);
 
   void bind_diffuse(int location);
   void bind_normal (int location);
   void bind_light  (int location);
-  void bind_final  (int location);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  int sub_sample_level_;
-
   ogl::Framebuffer fbo_;
   ogl::Texture     diffuse_;
   ogl::Texture     normal_;
   ogl::Texture     light_;
-  ogl::Texture     final_;
 };
 
 }

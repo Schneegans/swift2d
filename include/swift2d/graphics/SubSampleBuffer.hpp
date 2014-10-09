@@ -6,41 +6,42 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_SUB_SAMPLER_HPP
-#define SWIFT2D_SUB_SAMPLER_HPP
+#ifndef SWIFT2D_SUB_SAMPLE_BUFFER_HPP
+#define SWIFT2D_SUB_SAMPLE_BUFFER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/graphics/SubSampleBuffer.hpp>
-#include <swift2d/materials/Shader.hpp>
+#include <swift2d/graphics/RenderContext.hpp>
 
 namespace swift {
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
 // -----------------------------------------------------------------------------
-class SubSampler {
+class SubSampleBuffer {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ----------------------------------------------------- contruction interface
-  SubSampler(RenderContext const& ctx, int level);
+  // ---------------------------------------------------- construction interface
+  SubSampleBuffer(RenderContext const& ctx, int sub_sample_level = 1);
 
-  void bind(RenderContext const& context, bool additive);
-  void draw(RenderContext const& context, bool additive);
+  // ------------------------------------------------------------ public methods
+  void bind_for_drawing(RenderContext const& ctx);
+
+  void bind_diffuse(int location);
+  void bind_normal (int location);
+  void bind_light  (int location);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  Shader shader_;
-  int    level_;
+  int sub_sample_level_;
 
-  oglplus::Reference<ogl::Framebuffer> original_framebuffer_;
-  SubSampleBuffer buffer_;
+  ogl::Framebuffer fbo_;
+  ogl::Texture     diffuse_;
+  ogl::Texture     normal_;
+  ogl::Texture     light_;
 };
 
 }
 
-#endif // SWIFT2D_SUB_SAMPLER_HPP
+#endif // SWIFT2D_SUB_SAMPLE_BUFFER_HPP

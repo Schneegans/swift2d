@@ -10,7 +10,8 @@
 #define SWIFT2D_DIRECTIONAL_LIGHT_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/DrawableComponent.hpp>
+#include <swift2d/components/TransformableComponent.hpp>
+#include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/geometries/Quad.hpp>
 #include <swift2d/textures/Texture.hpp>
 #include <swift2d/utils/Color.hpp>
@@ -27,14 +28,24 @@ typedef std::shared_ptr<DirectionalLightComponent>       DirectionalLightCompone
 typedef std::shared_ptr<const DirectionalLightComponent> ConstDirectionalLightComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL DirectionalLightComponent : public DrawableComponent {
+class SWIFT_DLL DirectionalLightComponent : public TransformableComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
+  // ------------------------------------------------------------- inner classes
+  struct Serialized : public SerializedComponent {
+    math::vec3 Direction;
+    math::vec4 Color;
+  };
+
+  class Renderer : public ResourceRenderer<DirectionalLightComponent> {
+    void draw(RenderContext const& ctx, int start, int end);
+    void draw_no_objects(RenderContext const& ctx);
+  };
+
   // ---------------------------------------------------------------- properties
-  Float         Depth;
   Vec3          Direction;
   ColorProperty Color;
 
@@ -56,10 +67,7 @@ class SWIFT_DLL DirectionalLightComponent : public DrawableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "DirectionalLightComponent"; }
 
-  void draw(RenderContext const& ctx);
-
   void serialize(SerializedScenePtr& scene) const;
-
   virtual void accept(SavableObjectVisitor& visitor);
 };
 

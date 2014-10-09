@@ -61,10 +61,10 @@ void ParticleSystem::upload_to(RenderContext const& ctx) {
     transform_feedbacks_.push_back(ogl::TransformFeedback());
     particle_buffers_.push_back(ogl::Buffer());
     particle_buffers_[i].Bind(ose::Array());
-    
+
     particle_vaos_.push_back(ogl::VertexArray());
     particle_vaos_[i].Bind();
-    
+
     for (long i(0); i<4; ++i) {
       ogl::VertexArrayAttrib(i).Pointer(2, ogl::DataType::Float, false, sizeof(Particle), (void const*) (i*8));
       ogl::VertexArrayAttrib(i).Enable();

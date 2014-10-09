@@ -134,13 +134,13 @@ ShaderIncludes::ShaderIncludes() {
   )");
 
   // ---------------------------------------------------------------------------
-  add_include("get_lit_surface_color", R"(
-    vec3 get_lit_surface_color(vec2 texcoords, vec3 dir, vec4 color, float gloss, float emit, float attenuation) {
+  add_include("get_light", R"(
+    vec4 get_light(vec2 texcoords, vec3 dir, vec4 color, float gloss, float emit, float attenuation) {
       vec3  normal      = get_normal(texcoords);
       float specular    = pow(max(0, dot(normal, normalize(dir + vec3(0, 0, -1)))), gloss*100 + 1) * gloss;
       float diffuse     = max(0, dot(dir, normal));
-      vec3  light       = (diffuse*get_diffuse(texcoords) + specular) * color.rgb * color.a;
-      return (1.0-emit) * attenuation * light;
+      vec3  light       = diffuse * color.rgb;
+      return (1.0-emit) * attenuation * vec4(light, specular) * color.a;
     }
   )");
 

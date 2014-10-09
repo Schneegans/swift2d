@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/PostProcessor.hpp>
 #include <swift2d/graphics/GBuffer.hpp>
+#include <swift2d/graphics/LBuffer.hpp>
 #include <swift2d/materials/Shader.hpp>
 #include <swift2d/properties.hpp>
 
@@ -38,7 +39,7 @@ class Compositor {
  // ---------------------------------------------------------- private interface
  private:
   GBuffer*       g_buffer_;
-  Shader*        background_shader_;
+  LBuffer*       l_buffer_;
   PostProcessor* post_processor_;
 };
 

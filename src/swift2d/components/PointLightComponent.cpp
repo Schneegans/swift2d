@@ -68,18 +68,23 @@ void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, in
       ++start;
     }
 
+    ctx.gl.BlendFunc(
+      oglplus::BlendFunction::One,
+      oglplus::BlendFunction::One
+      // oglplus::BlendFunction::OneMinusSrcColor
+    );
+
     auto& shader(PointLightShader::get());
 
-    object.Texture->bind(ctx, 0);
+    object.Texture->bind(ctx, 3);
     shader.use(ctx);
     shader.projection.Set(ctx.projection_matrix);
     shader.depth.Set(object.Depth);
     shader.parallax.Set(ctx.projection_parallax);
-    shader.screen_size.Set(ctx.g_buffer_size);
-    shader.g_buffer_diffuse.Set(1);
-    shader.g_buffer_normal.Set(2);
-    shader.g_buffer_light.Set(3);
-    shader.light_tex.Set(0);
+    shader.screen_size.Set(ctx.g_buffer_size/4);
+    shader.g_buffer_normal.Set(1);
+    shader.g_buffer_light.Set(2);
+    shader.light_tex.Set(3);
 
     int index(0);
 
@@ -90,6 +95,7 @@ void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, in
       shader.light_color.Set(std::vector<math::vec4>(colors.begin() + index, colors.begin() + index + count));
 
       Quad::get().draw(ctx, count);
+
       index += count;
     }
 

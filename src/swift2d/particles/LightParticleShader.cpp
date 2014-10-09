@@ -44,9 +44,9 @@ LightParticleShader::LightParticleShader()
       uniform ivec2     screen_size;
 
       @include "gbuffer_input"
-      @include "get_lit_surface_color"
+      @include "get_light"
 
-      layout (location = 0) out vec3 fragColor;
+      layout (location = 0) out vec4 fragLight;
 
       void main(void) {
 
@@ -65,7 +65,7 @@ LightParticleShader::LightParticleShader()
         vec3 light_dir    = normalize(light.rgb - 0.5);
         float attenuation = light.a * c.a;
 
-        fragColor = get_lit_surface_color(
+        fragLight = get_light(
           gl_FragCoord.xy/screen_size, light_dir, c,
           gloss, emit, attenuation);
       }
@@ -101,7 +101,6 @@ LightParticleShader::LightParticleShader()
   , start_color(get_uniform<math::vec4>("start_color"))
   , end_color(get_uniform<math::vec4>("end_color"))
   , screen_size(get_uniform<math::vec2i>("screen_size"))
-  , g_buffer_diffuse(get_uniform<int>("g_buffer_diffuse"))
   , g_buffer_normal(get_uniform<int>("g_buffer_normal"))
   , g_buffer_light(get_uniform<int>("g_buffer_light")) {}
 

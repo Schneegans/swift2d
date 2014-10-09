@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_POINT_LIGHT_SHADER_HPP
-#define SWIFT2D_POINT_LIGHT_SHADER_HPP
+#ifndef SWIFT2D_DIRECTIONAL_LIGHT_SHADER_HPP
+#define SWIFT2D_DIRECTIONAL_LIGHT_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Shader.hpp>
@@ -19,36 +19,32 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class PointLightShader : public Shader,
-                         public Singleton<PointLightShader> {
+class DirectionalLightShader : public Shader,
+                               public Singleton<DirectionalLightShader> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ------------------------------------------------------------------ uniforms
-  oglplus::Lazy<oglplus::Uniform<math::mat3>>   projection;
-  oglplus::Lazy<oglplus::Uniform<math::mat3>>   transform;
-  oglplus::Lazy<oglplus::Uniform<float>>        depth;
-  oglplus::Lazy<oglplus::Uniform<float>>        parallax;
-  oglplus::Lazy<oglplus::Uniform<math::vec2i>>  screen_size;
   oglplus::Lazy<oglplus::Uniform<int>>          g_buffer_normal;
   oglplus::Lazy<oglplus::Uniform<int>>          g_buffer_light;
-  oglplus::Lazy<oglplus::Uniform<int>>          light_tex;
-  oglplus::Lazy<oglplus::Uniform<math::vec4>>   light_color;
+  oglplus::Lazy<oglplus::Uniform<int>>          light_count;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>   light_colors;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>>   light_dirs;
 
-  friend class Singleton<PointLightShader>;
+  friend class Singleton<DirectionalLightShader>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  PointLightShader();
-  ~PointLightShader() {};
+  DirectionalLightShader();
+  ~DirectionalLightShader() {};
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_POINT_LIGHT_SHADER_HPP
+#endif // SWIFT2D_DIRECTIONAL_LIGHT_SHADER_HPP

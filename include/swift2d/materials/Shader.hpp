@@ -39,8 +39,8 @@ class SWIFT_DLL Shader {
     return std::make_shared<Shader>(a...);
   }
 
-  Shader(std::string const& v_source,
-         std::string const& f_source,
+  Shader(std::string const& v_source = "",
+         std::string const& f_source = "",
          std::string const& g_source = "",
          std::vector<std::string> const& transform_feedback_varyings = {});
 

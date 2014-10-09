@@ -41,6 +41,7 @@ class SWIFT_DLL ResourceRenderer : public ResourceRendererBase {
   // ------------------------------------------------------------ public methods
   bool predraw(RenderContext const& ctx, float& min_depth) {
     if (objects.size() == 0) {
+      draw_no_objects(ctx);
       return false;
     }
 
@@ -91,6 +92,7 @@ class SWIFT_DLL ResourceRenderer : public ResourceRendererBase {
  // -------------------------------------------------------- protected interface
  protected:
   virtual void draw(RenderContext const& ctx, int start, int end) = 0;
+  virtual void draw_no_objects(RenderContext const& ctx) {};
   virtual void predraw(RenderContext const& ctx) {};
 
   std::vector<typename T::Serialized> objects;

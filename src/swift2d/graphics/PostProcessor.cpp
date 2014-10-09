@@ -24,13 +24,13 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       // vertex shader ---------------------------------------------------------
       @include "fullscreen_quad_vertex_shader"
     )",
-    ctx.shading_quality <= 1 ?
+    ctx.shading_quality == 0 ?
     R"(
       // fragment shader -------------------------------------------------------
       @include "version"
 
       in vec2 texcoords;
-      uniform sampler2D g_buffer_shaded;
+      uniform sampler2D g_buffer_diffuse;
       uniform float gamma;
 
       @include "get_vignette"
@@ -39,7 +39,30 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       layout (location = 0) out vec3 fragColor;
 
       void main(void){
-        fragColor = texture2D(g_buffer_shaded, texcoords).rgb;
+        fragColor = texture2D(g_buffer_diffuse, texcoords).rgb;
+        if (use_color_grading) {
+          fragColor = get_color_grading(fragColor);
+        }
+        fragColor = mix(vignette_color.rgb, fragColor, get_vignette());
+        fragColor = pow(fragColor, 1.0/vec3(gamma));
+      }
+    )"
+    : (ctx.shading_quality == 1 ?
+    R"(
+      // fragment shader -------------------------------------------------------
+      @include "version"
+
+      in vec2 texcoords;
+      uniform float gamma;
+
+      @include "get_vignette"
+      @include "get_color_grading"
+      @include "get_lighting"
+
+      layout (location = 0) out vec3 fragColor;
+
+      void main(void){
+        fragColor = get_lighting(texcoords);
         if (use_color_grading) {
           fragColor = get_color_grading(fragColor);
         }
@@ -50,7 +73,6 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       // fragment shader -------------------------------------------------------
       @include "version"
 
-      uniform sampler2D g_buffer_shaded;
       uniform sampler2D glow_buffers[8];
       uniform sampler2D heat_buffer;
       uniform sampler2D dirt_tex;
@@ -65,6 +87,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
       @include "get_vignette"
       @include "get_color_grading"
+      @include "get_lighting"
 
       void main(void) {
         vec3 glow = vec3(0);
@@ -80,15 +103,17 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
           shifted_texcoords   += offset;
         }
 
-        fragColor = texture2D(g_buffer_shaded, shifted_texcoords).rgb;
-        fragColor = fragColor + (glow + 0.1) * dirt * dirt_opacity;
+        vec3 output = get_lighting(shifted_texcoords);
+        output = output + (glow + 0.1) * dirt * dirt_opacity;
         if (use_color_grading) {
-          fragColor = get_color_grading(fragColor);
+          output = get_color_grading(output);
         }
-        fragColor = mix(vignette_color.rgb, fragColor, get_vignette());
-        fragColor = pow(fragColor, 1.0/vec3(gamma));
+        output = mix(vignette_color.rgb, output, get_vignette());
+        output = pow(output, 1.0/vec3(gamma));
+
+        fragColor = output;
       }
-    )")
+    )"))
   , threshold_shader_(R"(
       // vertex shader ---------------------------------------------------------
       @include "version"
@@ -136,7 +161,8 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
         fragColor = pow(glow * color / 16.0, vec3(2));
       }
     )")
-  , g_buffer_shaded_(post_fx_shader_.get_uniform<int>("g_buffer_shaded"))
+  , g_buffer_diffuse_(post_fx_shader_.get_uniform<int>("g_buffer_diffuse"))
+  , l_buffer_(post_fx_shader_.get_uniform<int>("l_buffer"))
   , glow_buffers_(post_fx_shader_.get_uniform<int>("glow_buffers"))
   , heat_buffer_(post_fx_shader_.get_uniform<int>("heat_buffer"))
   , dirt_tex_(post_fx_shader_.get_uniform<int>("dirt_tex"))
@@ -150,7 +176,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   , color_grading_tex_(post_fx_shader_.get_uniform<int>("color_grading_tex"))
   , color_grading_intensity_(post_fx_shader_.get_uniform<float>("color_grading_intensity"))
   , screen_size_(threshold_shader_.get_uniform<math::vec2i>("screen_size"))
-  , g_buffer_diffuse_(threshold_shader_.get_uniform<int>("g_buffer_diffuse"))
+  , g_buffer_diffuse_threshold_(threshold_shader_.get_uniform<int>("g_buffer_diffuse"))
   , g_buffer_light_(threshold_shader_.get_uniform<int>("g_buffer_light"))
   , streak_effect_(ctx)
   , ghost_effect_(ctx)
@@ -180,6 +206,16 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
     vec3 get_color_grading(vec3 color_in) {
       return mix(color_in, texture(color_grading_tex, color_in).xyz, color_grading_intensity);
+    }
+  )");
+
+  ShaderIncludes::get().add_include("get_lighting", R"(
+    uniform sampler2D l_buffer;
+    uniform sampler2D g_buffer_diffuse;
+
+    vec3 get_lighting(vec2 texcoords) {
+      vec4 light = texture2D(l_buffer, texcoords);
+      return light.rgb * texture2D(g_buffer_diffuse, texcoords).rgb + light.a;
     }
   )");
 
@@ -216,7 +252,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 ////////////////////////////////////////////////////////////////////////////////
 
 void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext const& ctx,
-                            GBuffer* g_buffer) {
+                            GBuffer* g_buffer, LBuffer* l_buffer) {
 
   auto use_postfx_shader = [&]() {
     post_fx_shader_.use(ctx);
@@ -241,7 +277,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
       color_grading_intensity_.Set(0.f);
     }
   };
-  
+
   if (ctx.shading_quality <= 1) {
 
     ctx.gl.Disable(oglplus::Capability::Blend);
@@ -251,15 +287,11 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     ctx.gl.Viewport(ctx.window_size.x(), ctx.window_size.y());
     oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
 
-    if (ctx.shading_quality == 0) {
-      g_buffer->bind_diffuse(1);
-    } else {
-      g_buffer->bind_final(1);
-    }
+    g_buffer->bind_diffuse(1);
 
     use_postfx_shader();
 
-    post_fx_shader_.set_uniform("g_buffer_shaded", 1);
+    post_fx_shader_.set_uniform("g_buffer_diffuse", 1);
     gamma_.Set(SettingsWrapper::get().Settings->Gamma());
     Quad::get().draw(ctx);
 
@@ -277,8 +309,8 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
     ctx.gl.Disable(oglplus::Capability::Blend);
 
-    g_buffer->bind_final(0);
-    g_buffer->bind_light(1);
+    g_buffer->bind_diffuse(0);
+    l_buffer->bind(2);
 
     // thresholding
     SWIFT_PUSH_GL_RANGE("Thresholding");
@@ -301,13 +333,14 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
     use_postfx_shader();
 
-    g_buffer_shaded_.Set(0);
+    g_buffer_diffuse_.Set(0);
+    l_buffer_.Set(2);
 
-    int start(2);
+    int start(3);
     start = streak_effect_.bind_buffers(start, ctx);
     start = ghost_effect_.bind_buffers(start, ctx);
 
-    std::vector<int> units = {2, 3, 4, 5, 6, 7, 8, 9};
+    std::vector<int> units = {3, 4, 5, 6, 7, 8, 9, 10};
     glow_buffers_.Set(units);
 
     if (ctx.shading_quality > 2) {
@@ -344,7 +377,7 @@ void PostProcessor::generate_threshold_buffer(RenderContext const& ctx) {
   ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
 
   threshold_shader_.use(ctx);
-  g_buffer_diffuse_.Set(0);
+  g_buffer_diffuse_threshold_.Set(0);
   g_buffer_light_.Set(1);
   screen_size_.Set(size/6);
 

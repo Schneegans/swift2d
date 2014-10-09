@@ -7,13 +7,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/graphics/GBuffer.hpp>
+#include <swift2d/graphics/SubSampleBuffer.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GBuffer::GBuffer(RenderContext const& ctx) {
+SubSampleBuffer::SubSampleBuffer(RenderContext const& ctx, int sub_sample_level)
+  : sub_sample_level_(sub_sample_level) {
 
   auto create_texture = [&](
     oglplus::Texture& tex, int width, int height,
@@ -23,19 +24,19 @@ GBuffer::GBuffer(RenderContext const& ctx) {
     ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
         0, p_format, oglplus::PixelDataType::UnsignedByte, nullptr)
-      .MinFilter(ctx.sub_sampling ? oglplus::TextureMinFilter::Linear : oglplus::TextureMinFilter::Nearest)
-      .MagFilter(ctx.sub_sampling ? oglplus::TextureMagFilter::Linear : oglplus::TextureMagFilter::Nearest)
+      .MinFilter((ctx.sub_sampling || sub_sample_level_ > 1) ? oglplus::TextureMinFilter::Linear : oglplus::TextureMinFilter::Nearest)
+      .MagFilter((ctx.sub_sampling || sub_sample_level_ > 1) ? oglplus::TextureMagFilter::Linear : oglplus::TextureMagFilter::Nearest)
       .WrapS(oglplus::TextureWrap::MirroredRepeat)
       .WrapT(oglplus::TextureWrap::MirroredRepeat);
   };
 
-  auto size(ctx.g_buffer_size);
-
   // create textures -----------------------------------------------------------
+  auto size(ctx.g_buffer_size/sub_sample_level);
+
   create_texture(
     diffuse_, size.x(), size.y(),
-    oglplus::PixelDataInternalFormat::RGB8,
-    oglplus::PixelDataFormat::RGB
+    oglplus::PixelDataInternalFormat::RGBA8,
+    oglplus::PixelDataFormat::RGBA
   );
 
   if (ctx.shading_quality > 0) {
@@ -70,9 +71,9 @@ GBuffer::GBuffer(RenderContext const& ctx) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GBuffer::bind_for_drawing(RenderContext const& ctx) {
+void SubSampleBuffer::bind_for_drawing(RenderContext const& ctx) {
 
-  auto size(ctx.g_buffer_size);
+  auto size(ctx.g_buffer_size/sub_sample_level_);
   ctx.gl.Viewport(size.x(), size.y());
 
   if (ctx.shading_quality == 0) {
@@ -83,6 +84,8 @@ void GBuffer::bind_for_drawing(RenderContext const& ctx) {
       oglplus::FramebufferColorAttachment::_0
     };
     ctx.gl.DrawBuffers(draw_buffs);
+    ctx.gl.ClearColor(0.f, 0.f, 0.f, 0.f);
+    ctx.gl.Clear().ColorBuffer();
 
   } else {
 
@@ -94,26 +97,28 @@ void GBuffer::bind_for_drawing(RenderContext const& ctx) {
       oglplus::FramebufferColorAttachment::_2
     };
     ctx.gl.DrawBuffers(draw_buffs);
+    ctx.gl.ClearColor(0.f, 0.f, 0.f, 0.f);
+    ctx.gl.Clear().ColorBuffer();
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GBuffer::bind_diffuse(int location) {
+void SubSampleBuffer::bind_diffuse(int location) {
   oglplus::Texture::Active(location);
   diffuse_.Bind(oglplus::Texture::Target::_2D);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GBuffer::bind_normal(int location) {
+void SubSampleBuffer::bind_normal(int location) {
   oglplus::Texture::Active(location);
   normal_.Bind(oglplus::Texture::Target::_2D);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GBuffer::bind_light(int location) {
+void SubSampleBuffer::bind_light(int location) {
   oglplus::Texture::Active(location);
   light_.Bind(oglplus::Texture::Target::_2D);
 }

@@ -70,19 +70,24 @@ void LightParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int 
 
     if (o.System->get_particle_count() > 0) {
 
-      o.Texture->bind(ctx, 0);
+      o.Texture->bind(ctx, 3);
+
+      ctx.gl.BlendFunc(
+        oglplus::BlendFunction::One,
+        // oglplus::BlendFunction::OneMinusSrcColor
+        oglplus::BlendFunction::One
+      );
 
       auto& shader(LightParticleShader::get());
       shader.use(ctx);
       shader.projection.       Set(ctx.projection_matrix);
-      shader.diffuse.          Set(0);
+      shader.diffuse.          Set(3);
       shader.scale.            Set(math::vec2(o.StartScale, o.EndScale));
       shader.start_color.      Set(o.StartColor);
       shader.end_color.        Set(o.EndColor);
-      shader.screen_size.      Set(ctx.g_buffer_size);
-      shader.g_buffer_diffuse. Set(1);
-      shader.g_buffer_normal.  Set(2);
-      shader.g_buffer_light.   Set(3);
+      shader.screen_size.      Set(ctx.g_buffer_size/4);
+      shader.g_buffer_normal.  Set(1);
+      shader.g_buffer_light.   Set(2);
 
       o.System->draw_particles(ctx);
     }

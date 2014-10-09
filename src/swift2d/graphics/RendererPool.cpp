@@ -28,6 +28,7 @@ RendererPool::RendererPool()
       &heat_particle_systems
     })
   , lights_({
+      &directional_lights,
       &point_lights,
       &light_particle_systems
     }) {}

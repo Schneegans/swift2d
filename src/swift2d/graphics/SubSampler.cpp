@@ -40,7 +40,7 @@ SubSampler::SubSampler(RenderContext const& ctx, int level)
   )")
   , level_(level)
   , original_framebuffer_(ctx.gl.Current(ogl::Framebuffer::Target::Draw))
-  , g_buffer_(ctx, false, true, level) {
+  , buffer_(ctx, level) {
 
   original_framebuffer_.Bind(ogl::Framebuffer::Target::Draw);
 }
@@ -51,7 +51,7 @@ void SubSampler::bind(RenderContext const& ctx, bool additive) {
 
   original_framebuffer_ = ctx.gl.Current(ogl::Framebuffer::Target::Draw);
 
-  g_buffer_.bind_for_drawing(ctx, true);
+  buffer_.bind_for_drawing(ctx);
 
   if (additive) {
     ctx.gl.BlendFuncSeparate(ose::SrcAlpha(), ose::One(),
@@ -68,8 +68,8 @@ void SubSampler::draw(RenderContext const& ctx, bool additive) {
   original_framebuffer_.Bind(ogl::Framebuffer::Target::Draw);
   ctx.gl.Viewport(ctx.g_buffer_size.x(), ctx.g_buffer_size.y());
 
-  g_buffer_.bind_diffuse(10);
-  g_buffer_.bind_light(11);
+  buffer_.bind_diffuse(10);
+  buffer_.bind_light(11);
 
   shader_.use(ctx);
   shader_.set_uniform("g_buffer_diffuse", 10);

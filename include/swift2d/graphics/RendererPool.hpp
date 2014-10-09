@@ -13,6 +13,7 @@
 #include <swift2d/components/SpriteComponent.hpp>
 #include <swift2d/components/FullscreenSpriteComponent.hpp>
 #include <swift2d/components/AnimatedSpriteComponent.hpp>
+#include <swift2d/components/DirectionalLightComponent.hpp>
 #include <swift2d/components/PointLightComponent.hpp>
 
 #include <swift2d/particles/SpriteParticleSystemComponent.hpp>
@@ -48,8 +49,9 @@ class SWIFT_DLL RendererPool {
   HeatParticleSystemComponent::   Renderer heat_particle_systems;
 
   // ----------------------------------------------------------- light renderers
-  LightParticleSystemComponent::  Renderer light_particle_systems;
+  DirectionalLightComponent::     Renderer directional_lights;
   PointLightComponent::           Renderer point_lights;
+  LightParticleSystemComponent::  Renderer light_particle_systems;
 
   // ---------------------------------------------------- construction interface
   RendererPool();
