@@ -310,6 +310,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     ctx.gl.Disable(oglplus::Capability::Blend);
 
     g_buffer->bind_diffuse(0);
+    g_buffer->bind_light(1);
     l_buffer->bind(2);
 
     // thresholding

@@ -85,7 +85,7 @@ void LightParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int 
       shader.scale.            Set(math::vec2(o.StartScale, o.EndScale));
       shader.start_color.      Set(o.StartColor);
       shader.end_color.        Set(o.EndColor);
-      shader.screen_size.      Set(ctx.g_buffer_size/4);
+      shader.screen_size.      Set(ctx.g_buffer_size/(ctx.shading_quality > 4 ? 1 : 4));
       shader.g_buffer_normal.  Set(1);
       shader.g_buffer_light.   Set(2);
 
