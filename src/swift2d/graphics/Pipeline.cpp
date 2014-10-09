@@ -163,10 +163,10 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
     max_load_amount_ = -1;
   }
 
+  SWIFT_POP_GL_RANGE();
+
   // finish frame
   window_->display();
-
-  SWIFT_POP_GL_RANGE();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

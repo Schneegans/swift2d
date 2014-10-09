@@ -108,8 +108,8 @@ void GBuffer::bind_for_drawing(RenderContext const& ctx, bool clear) {
     ctx.gl.DrawBuffers(draw_buffs);
 
     if (clear) {
-      GLfloat clear0[4] = {0.f, 0.f, 0.f, 0.f};
-      ctx.gl.ClearColorBuffer(0, clear0);
+      ctx.gl.ClearColor(0.f, 0.f, 0.f, 0.f);
+      ctx.gl.Clear().ColorBuffer();
     }
 
   } else {
@@ -124,14 +124,8 @@ void GBuffer::bind_for_drawing(RenderContext const& ctx, bool clear) {
     ctx.gl.DrawBuffers(draw_buffs);
 
     if (clear) {
-      GLfloat clear0[4] = {0.f, 0.f, 0.f, 0.f};
-      ctx.gl.ClearColorBuffer(0, clear0);
-
-      GLfloat clear1[3] = {0.5f, 0.5f, 0.f};
-      ctx.gl.ClearColorBuffer(1, clear1);
-
-      GLfloat clear2[3] = {1.f, 1.f, 0.f};
-      ctx.gl.ClearColorBuffer(2, clear2);
+      ctx.gl.ClearColor(0.f, 0.f, 0.f, 0.f);
+      ctx.gl.Clear().ColorBuffer();
     }
   }
 }
