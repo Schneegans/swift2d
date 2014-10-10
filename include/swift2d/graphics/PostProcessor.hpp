@@ -48,6 +48,8 @@ class PostProcessor {
   Shader threshold_shader_;
 
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_diffuse_;
+  oglplus::Lazy<oglplus::Uniform<int>> g_buffer_normal_;
+  oglplus::Lazy<oglplus::Uniform<math::vec2i>> screen_size_;
   oglplus::Lazy<oglplus::Uniform<int>> l_buffer_;
   oglplus::Lazy<oglplus::Uniform<int>> glow_buffers_;
   oglplus::Lazy<oglplus::Uniform<int>> heat_buffer_;
@@ -58,7 +60,7 @@ class PostProcessor {
   oglplus::Lazy<oglplus::Uniform<math::vec4>> vignette_color_;
   oglplus::Lazy<oglplus::Uniform<float>> vignette_softness_;
   oglplus::Lazy<oglplus::Uniform<float>> vignette_coverage_;
-  oglplus::Lazy<oglplus::Uniform<math::vec2i>> screen_size_;
+  oglplus::Lazy<oglplus::Uniform<math::vec2i>> screen_size_threshold_;
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_diffuse_threshold_;
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_light_;
   oglplus::Lazy<oglplus::Uniform<int>> use_color_grading_;

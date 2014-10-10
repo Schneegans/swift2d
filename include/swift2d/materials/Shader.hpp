@@ -45,6 +45,10 @@ class SWIFT_DLL Shader {
          std::vector<std::string> const& transform_feedback_varyings = {});
 
   // ------------------------------------------------------------ public methods
+  void set_sources(std::string const& v_source = "",
+         std::string const& f_source = "",
+         std::string const& g_source = "",
+         std::vector<std::string> const& transform_feedback_varyings = {});
 
   // uses the Shader on the given context.
   void use(RenderContext const& ctx) const;

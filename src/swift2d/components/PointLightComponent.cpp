@@ -71,7 +71,6 @@ void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, in
     ctx.gl.BlendFunc(
       oglplus::BlendFunction::One,
       oglplus::BlendFunction::One
-      // oglplus::BlendFunction::OneMinusSrcColor
     );
 
     auto& shader(PointLightShader::get());
@@ -81,7 +80,7 @@ void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, in
     shader.projection.Set(ctx.projection_matrix);
     shader.depth.Set(object.Depth);
     shader.parallax.Set(ctx.projection_parallax);
-    shader.screen_size.Set(ctx.g_buffer_size/(ctx.shading_quality > 4 ? 1 : 4));
+    shader.screen_size.Set(ctx.g_buffer_size/(ctx.light_sub_sampling ? 2 : 1));
     shader.g_buffer_normal.Set(1);
     shader.g_buffer_light.Set(2);
     shader.light_tex.Set(3);

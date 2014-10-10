@@ -31,7 +31,7 @@ LBuffer::LBuffer(RenderContext const& ctx) {
 
   // create textures -----------------------------------------------------------
   if (ctx.shading_quality > 0) {
-    auto size(ctx.g_buffer_size/(ctx.shading_quality > 4 ? 1 : 4));
+    auto size(ctx.g_buffer_size/(ctx.light_sub_sampling ? 2 : 1));
 
     create_texture(
       buffer_, size.x(), size.y(),
@@ -53,7 +53,7 @@ LBuffer::LBuffer(RenderContext const& ctx) {
 void LBuffer::bind_for_drawing(RenderContext const& ctx) {
 
   if (ctx.shading_quality > 0) {
-    auto size(ctx.g_buffer_size/(ctx.shading_quality > 4 ? 1 : 4));
+    auto size(ctx.g_buffer_size/(ctx.light_sub_sampling ? 2 : 1));
     ctx.gl.Viewport(size.x(), size.y());
 
     fbo_.Bind(ogl::Framebuffer::Target::Draw);

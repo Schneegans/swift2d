@@ -37,6 +37,7 @@ class SWIFT_DLL EngineSettings : public SavableObject {
   // 3: heat
   Int   ShadingQuality;
   Bool  SubSampling;
+  Bool  LightSubSampling;
   Float Gamma;
 
   // ----------------------------------------------------- contruction interface

@@ -34,6 +34,7 @@ struct RenderContext {
 
   int  shading_quality;
   bool sub_sampling;
+  bool light_sub_sampling;
 
   mutable int upload_budget;
   mutable int upload_remaining;

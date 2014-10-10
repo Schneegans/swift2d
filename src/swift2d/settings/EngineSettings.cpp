@@ -20,6 +20,7 @@ EngineSettings::EngineSettings()
   , Fullscreen(false)
   , ShadingQuality(5)
   , SubSampling(false)
+  , LightSubSampling(false)
   , Gamma(1.f) {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -29,6 +30,7 @@ void EngineSettings::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Fullscreen", Fullscreen);
   visitor.add_member("ShadingQuality", ShadingQuality);
   visitor.add_member("SubSampling", SubSampling);
+  visitor.add_member("LightSubSampling", LightSubSampling);
   visitor.add_member("Gamma", Gamma);
 }
 

@@ -27,6 +27,20 @@ Shader::Shader(std::string const& v_source,
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Shader::set_sources(std::string const& v_source,
+         std::string const& f_source,
+         std::string const& g_source,
+         std::vector<std::string> const& transform_feedback_varyings) {
+
+  dirty_ = true;
+  v_source_ = v_source;
+  f_source_ = f_source;
+  g_source_ = g_source;
+  transform_feedback_varyings_ = transform_feedback_varyings;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Shader::upload_to(RenderContext const& ctx) const {
 
   dirty_ = false;

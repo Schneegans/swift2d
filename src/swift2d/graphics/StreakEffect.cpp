@@ -204,20 +204,20 @@ void StreakEffect::process(RenderContext const& ctx, ogl::Texture const& thresho
   pass(step_dir*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_2, streak_colors_3_);
 
   step_dir = math::vec2(-0.7*4.0/ctx.g_buffer_size.x(), -0.9*4.0/ctx.g_buffer_size.y());
-  pass(step_dir*5, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
-  pass(step_dir*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_3, streak_colors_3_);
+  pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
+  pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_3, streak_colors_3_);
 
   step_dir = math::vec2(0.7*4.0/ctx.g_buffer_size.x(), -0.9*4.0/ctx.g_buffer_size.y());
-  pass(step_dir*5, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
-  pass(step_dir*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_4, streak_colors_3_);
+  pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
+  pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_4, streak_colors_3_);
 
   step_dir = math::vec2(-0.7*4.0/ctx.g_buffer_size.x(), 0.9*4.0/ctx.g_buffer_size.y());
-  pass(step_dir*5, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
-  pass(step_dir*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_5, streak_colors_3_);
+  pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
+  pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_5, streak_colors_3_);
 
   step_dir = math::vec2(0.7*4.0/ctx.g_buffer_size.x(), 0.9*4.0/ctx.g_buffer_size.y());
-  pass(step_dir*5, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
-  pass(step_dir*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_6, streak_colors_3_);
+  pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
+  pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_6, streak_colors_3_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
