@@ -68,7 +68,7 @@ Network::Network()
   peer_->SetMaximumIncomingConnections(8);
   peer_->SetTimeoutTime(1000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 
-  // connect("natpunch.jenkinssoftware.com", 61111);
+  connect(0);
 
   LOG_MESSAGE << "I'm " << get_own_id() << std::endl;
 }
@@ -98,7 +98,8 @@ void Network::connect(math::uint64 guid) {
     host_guid_ = guid;
     phase_ = CONNECTING_TO_NAT_SERVER;
 
-    RakNet::ConnectionAttemptResult car = peer_->Connect("natpunch.jenkinssoftware.com", 61111, 0, 0);
+    RakNet::ConnectionAttemptResult car = peer_->Connect("127.0.0.1", 61111, 0, 0);
+    // RakNet::ConnectionAttemptResult car = peer_->Connect("natpunch.jenkinssoftware.com", 61111, 0, 0);
     if (car != RakNet::CONNECTION_ATTEMPT_STARTED) {
       LOG_WARNING << "Failed to connect! Code=" << car << std::endl;
     }

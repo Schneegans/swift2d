@@ -41,7 +41,6 @@ class SWIFT_DLL TrailSystemComponent : public TransformableComponent {
 
   // ------------------------------------------------------------- inner classes
   struct Serialized : public SerializedComponent {
-    float           Depth;
     float           Life;
 
     float           StartWidth, EndWidth;
