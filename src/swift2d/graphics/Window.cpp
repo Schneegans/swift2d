@@ -134,21 +134,23 @@ void Window::init_context() {
     debug_ = new ogl::Debug();
 
     log_sink_ = new ogl::Debug::LogSink([](ogl::Debug::CallbackData const& data) {
-      switch(data.severity) {
+      if (data.id != 131217 && data.id != 131184 && data.id != 131185 && data.id != 131204) {
+        switch (data.severity) {
         case ogl::Debug::Severity::High:
-          LOG_ERROR   <<  "[" << data.id << "] " << data.message << std::endl;
+          LOG_ERROR << "[" << data.id << "] " << data.message << std::endl;
           break;
         case ogl::Debug::Severity::Medium:
-          LOG_WARNING <<  "[" << data.id << "] " << data.message << std::endl;
+          LOG_WARNING << "[" << data.id << "] " << data.message << std::endl;
           break;
         case ogl::Debug::Severity::Low:
-          LOG_MESSAGE <<  "[" << data.id << "] " << data.message << std::endl;
+          LOG_MESSAGE << "[" << data.id << "] " << data.message << std::endl;
           break;
         case ogl::Debug::Severity::Notification:
-          LOG_DEBUG   <<  "[" << data.id << "] " << data.message << std::endl;
+          LOG_DEBUG << "[" << data.id << "] " << data.message << std::endl;
           break;
         default:
-          LOG_TRACE   <<  "[" << data.id << "] " << data.message << std::endl;
+          LOG_TRACE << "[" << data.id << "] " << data.message << std::endl;
+        }
       }
     });
 
@@ -161,6 +163,7 @@ void Window::init_context() {
 
     render_context_.gl.Disable(ogl::Capability::DepthTest);
     render_context_.gl.DepthMask(false);
+    render_context_.gl.Disable(ogl::Capability::Multisample);
 
     render_context_.ready = true;
   }

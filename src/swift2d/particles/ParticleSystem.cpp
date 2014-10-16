@@ -60,14 +60,14 @@ void ParticleSystem::upload_to(RenderContext const& ctx) {
   for (int i(0); i<2; ++i) {
     transform_feedbacks_.push_back(ogl::TransformFeedback());
     particle_buffers_.push_back(ogl::Buffer());
+    particle_vaos_.push_back(ogl::VertexArray());
+    
+    particle_vaos_[i].Bind();
     particle_buffers_[i].Bind(ose::Array());
 
-    particle_vaos_.push_back(ogl::VertexArray());
-    particle_vaos_[i].Bind();
-
-    for (long i(0); i<4; ++i) {
-      ogl::VertexArrayAttrib(i).Pointer(2, ogl::DataType::Float, false, sizeof(Particle), (void const*) (i*8));
-      ogl::VertexArrayAttrib(i).Enable();
+    for (long j(0); j<4; ++j) {
+      ogl::VertexArrayAttrib(j).Enable();
+      ogl::VertexArrayAttrib(j).Pointer(2, ogl::DataType::Float, false, sizeof(Particle), (void const*) (j*2*sizeof(float)));
     }
 
     ogl::NoVertexArray().Bind();
@@ -100,7 +100,7 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
       data.front().vel  = math::vec2(0.f, 0.f);
       data.front().life = math::vec2(0.f, 0.f);
       data.front().rot  = math::vec2(0.f, 0.f);
-      ogl::Buffer::Data(ose::Array(), data, ose::StaticDraw());
+      ogl::Buffer::Data(ose::Array(), data, ose::StaticCopy());
     }
 
     update_max_count_ = 0;

@@ -57,29 +57,29 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
   // allocate GPU resources
   for (int i(0); i<2; ++i) {
     transform_feedbacks_.push_back(ogl::TransformFeedback());
-    trail_buffers_.push_back(ogl::Buffer());
-    trail_buffers_[i].Bind(ose::Array());
-
     trail_vaos_.push_back(ogl::VertexArray());
-    trail_vaos_[i].Bind();
+    trail_buffers_.push_back(ogl::Buffer());
     
-    for (long i(0); i<6; ++i) {
-      ogl::VertexArrayAttrib(i).Pointer(2, ogl::DataType::Float, false, sizeof(TrailPoint), (void const*) (i*8));
-      ogl::VertexArrayAttrib(i).Enable();
+    trail_vaos_[i].Bind();
+    trail_buffers_[i].Bind(ose::Array());
+    
+    for (long j(0); j<6; ++j) {
+      ogl::VertexArrayAttrib(j).Enable();
+      ogl::VertexArrayAttrib(j).Pointer(2, ogl::DataType::Float, false, sizeof(TrailPoint), (void const*)(j*2*sizeof(float)));
     }
 
     ogl::NoVertexArray().Bind();
   }
 
   emitter_buffer_ = new ogl::Buffer();
-  emitter_buffer_->Bind(ose::Array());
-
-  emitter_vao_    = new ogl::VertexArray();
-  emitter_vao_->Bind();
+  emitter_vao_ = new ogl::VertexArray();
   
-  for (long i(0); i<6; ++i) {
-    ogl::VertexArrayAttrib(i).Pointer(2, ogl::DataType::Float, false, sizeof(TrailPoint), (void const*) (i*8));
-    ogl::VertexArrayAttrib(i).Enable();
+  emitter_vao_->Bind();
+  emitter_buffer_->Bind(ose::Array());
+  
+  for (long j(0); j<6; ++j) {
+    ogl::VertexArrayAttrib(j).Enable();
+    ogl::VertexArrayAttrib(j).Pointer(2, ogl::DataType::Float, false, sizeof(TrailPoint), (void const*)(j*2*sizeof(float)));
   }
 
   ogl::NoVertexArray().Bind();
@@ -113,7 +113,7 @@ void TrailSystem::update_trails(
       data.front().prev_1_pos = math::vec2(0.f, 0.f);
       data.front().prev_2_pos = math::vec2(0.f, 0.f);
       data.front().prev_3_pos = math::vec2(0.f, 0.f);
-      ogl::Buffer::Data(ose::Array(), data, ose::StaticDraw());
+      ogl::Buffer::Data(ose::Array(), data, ose::StaticCopy());
     }
 
     update_max_trail_points_ = 0;
@@ -189,7 +189,9 @@ void TrailSystem::update_trails(
 
   transform_feedbacks_[current_tf()].End();
 
+  ogl::DefaultTransformFeedback().Bind();
   ctx.gl.Disable(ogl::Capability::RasterizerDiscard);
+  ogl::NoVertexArray().Bind();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
