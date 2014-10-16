@@ -14,6 +14,7 @@
 #include <oglplus/all.hpp>
 #include <oglplus/opt/smart_enums.hpp>
 #include <oglplus/bound/texture.hpp>
+#include <oglplus/opt/debug_output.hpp>
 
 #include <swift2d/graphics/opengl_debugging.hpp>
 

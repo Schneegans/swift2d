@@ -18,9 +18,11 @@ namespace swift {
 EngineSettings::EngineSettings()
   : VSync(true)
   , Fullscreen(false)
-  , ShadingQuality(5)
+  , DynamicLighting(true)
   , SubSampling(false)
   , LightSubSampling(false)
+  , LensFlares(true)
+  , HeatEffect(true)
   , Gamma(1.f) {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,9 +30,11 @@ EngineSettings::EngineSettings()
 void EngineSettings::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("VSync", VSync);
   visitor.add_member("Fullscreen", Fullscreen);
-  visitor.add_member("ShadingQuality", ShadingQuality);
+  visitor.add_member("DynamicLighting", DynamicLighting);
   visitor.add_member("SubSampling", SubSampling);
   visitor.add_member("LightSubSampling", LightSubSampling);
+  visitor.add_member("LensFlares", LensFlares);
+  visitor.add_member("HeatEffect", HeatEffect);
   visitor.add_member("Gamma", Gamma);
 }
 

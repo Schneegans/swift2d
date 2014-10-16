@@ -33,7 +33,9 @@ Window::Window()
                            JoystickButtonId::JOYSTICK_BUTTON_NUM)))
   , vsync_dirty_(true)
   , fullscreen_dirty_(false)
-  , init_glew_(true) {
+  , init_glew_(true)
+  , debug_(nullptr)
+  , log_sink_(nullptr) {
 
   Open.on_change().connect([this](bool val) {
     if (val) open();
@@ -54,6 +56,9 @@ Window::Window()
 Window::~Window() {
   close();
   glfwDestroyWindow(window_);
+
+  delete debug_;
+  delete log_sink_;
 }
 
 
@@ -126,7 +131,35 @@ void Window::init_context() {
     glewExperimental = GL_TRUE;
     glewInit(); glGetError();
 
-    render_context_.gl.Disable(oglplus::Capability::DepthTest);
+    debug_ = new ogl::Debug();
+
+    log_sink_ = new ogl::Debug::LogSink([](ogl::Debug::CallbackData const& data) {
+      switch(data.severity) {
+        case ogl::Debug::Severity::High:
+          LOG_ERROR   <<  "[" << data.id << "] " << data.message << std::endl;
+          break;
+        case ogl::Debug::Severity::Medium:
+          LOG_WARNING <<  "[" << data.id << "] " << data.message << std::endl;
+          break;
+        case ogl::Debug::Severity::Low:
+          LOG_MESSAGE <<  "[" << data.id << "] " << data.message << std::endl;
+          break;
+        case ogl::Debug::Severity::Notification:
+          LOG_DEBUG   <<  "[" << data.id << "] " << data.message << std::endl;
+          break;
+        default:
+          LOG_TRACE   <<  "[" << data.id << "] " << data.message << std::endl;
+      }
+    });
+
+    debug_->MessageControl(
+      ogl::Debug::Source::DontCare,
+      ogl::Debug::Type::DontCare,
+      ogl::Debug::Severity::Low,
+      true
+    );
+
+    render_context_.gl.Disable(ogl::Capability::DepthTest);
     render_context_.gl.DepthMask(false);
 
     render_context_.ready = true;
@@ -151,11 +184,9 @@ void Window::open() {
       render_context_.window_size = Size();
     }
 
-    // glfwWindowHint(GLFW_DECORATED, false);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
     window_ = glfwCreateWindow(
       render_context_.window_size.x(), render_context_.window_size.y(),

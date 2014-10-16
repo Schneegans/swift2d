@@ -94,6 +94,9 @@ class SWIFT_DLL Window {
   bool vsync_dirty_;
   bool fullscreen_dirty_;
   bool init_glew_;
+
+  ogl::Debug*           debug_;
+  ogl::Debug::LogSink*  log_sink_;
 };
 
 }

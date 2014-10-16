@@ -32,9 +32,11 @@ struct RenderContext {
   float       projection_parallax;
   bool        ready;
 
-  int  shading_quality;
   bool sub_sampling;
+  bool dynamic_lighting;
   bool light_sub_sampling;
+  bool lens_flares;
+  bool heat_effect;
 
   mutable int upload_budget;
   mutable int upload_remaining;

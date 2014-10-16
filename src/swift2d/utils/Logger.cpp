@@ -15,7 +15,7 @@
 #include <boost/filesystem.hpp>
 
 // no colors on windows!
-#if defined( _WIN32 ) 
+#if defined( _WIN32 )
 #define PRINT_RED ""
 #define PRINT_GREEN ""
 #define PRINT_YELLOW ""
@@ -64,12 +64,11 @@ namespace {
   std::ostream                      dev_null(&null_buffer);
 
   std::string location_string(const char* f, int l) {
-    
+
     boost::filesystem::path p(f);
 
     std::stringstream sstr;
     sstr << "[" << p.filename() << "]";
-    // sstr << "[" << file << ":" << l << "]";
     return sstr.str();
   }
 

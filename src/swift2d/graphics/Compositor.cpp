@@ -52,7 +52,7 @@ void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContex
 void Compositor::draw_lights(ConstSerializedScenePtr const& scene,
                              RenderContext const& ctx) {
 
-  if (ctx.shading_quality > 0) {
+  if (ctx.dynamic_lighting) {
     l_buffer_->bind_for_drawing(ctx);
     g_buffer_->bind_normal(1);
     g_buffer_->bind_light(2);

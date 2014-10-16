@@ -17,7 +17,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 HeatEffect::HeatEffect(RenderContext const& ctx) {
-  if (ctx.shading_quality > 2) {
+  if (ctx.heat_effect) {
 
     auto create_texture = [&](
       oglplus::Texture& tex, int width, int height,

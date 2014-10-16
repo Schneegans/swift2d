@@ -33,13 +33,19 @@ Pipeline::Pipeline()
   , current_load_amount_(0)
   , needs_reload_(true) {
 
-  SettingsWrapper::get().Settings->ShadingQuality.on_change().connect([this](int) {
+  SettingsWrapper::get().Settings->DynamicLighting.on_change().connect([this](int) {
     needs_reload_ = true;
   });
   SettingsWrapper::get().Settings->SubSampling.on_change().connect([this](bool) {
     needs_reload_ = true;
   });
   SettingsWrapper::get().Settings->LightSubSampling.on_change().connect([this](bool) {
+    needs_reload_ = true;
+  });
+  SettingsWrapper::get().Settings->LensFlares.on_change().connect([this](bool) {
+    needs_reload_ = true;
+  });
+  SettingsWrapper::get().Settings->HeatEffect.on_change().connect([this](bool) {
     needs_reload_ = true;
   });
   SettingsWrapper::get().Settings->Fullscreen.on_change().connect([this](bool) {
@@ -94,9 +100,11 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
   // update window size
   if (needs_reload_) {
     window_->get_context().pipeline           = this;
-    window_->get_context().shading_quality    = SettingsWrapper::get().Settings->ShadingQuality();
     window_->get_context().sub_sampling       = SettingsWrapper::get().Settings->SubSampling();
+    window_->get_context().dynamic_lighting   = SettingsWrapper::get().Settings->DynamicLighting();
     window_->get_context().light_sub_sampling = SettingsWrapper::get().Settings->LightSubSampling();
+    window_->get_context().lens_flares        = SettingsWrapper::get().Settings->LensFlares();
+    window_->get_context().heat_effect        = SettingsWrapper::get().Settings->HeatEffect();
 
     if (window_->get_context().sub_sampling) {
       window_->get_context().g_buffer_size = window_->get_context().window_size / 2;

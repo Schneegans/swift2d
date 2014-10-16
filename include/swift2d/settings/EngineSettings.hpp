@@ -31,13 +31,11 @@ class SWIFT_DLL EngineSettings : public SavableObject {
   Bool  VSync;
   Bool  Fullscreen;
 
-  // 0: no eye candy
-  // 1: lighting
-  // 2: blur + lens flares
-  // 3: heat
-  Int   ShadingQuality;
   Bool  SubSampling;
+  Bool  DynamicLighting;
   Bool  LightSubSampling;
+  Bool  LensFlares;
+  Bool  HeatEffect;
   Float Gamma;
 
   // ----------------------------------------------------- contruction interface

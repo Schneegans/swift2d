@@ -192,13 +192,13 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
     )";
   // }
 
-  if (ctx.shading_quality == 0) {
+  if (!ctx.dynamic_lighting) {
     f_source << R"(
       vec3 get_color(vec2 texcoords) {
         return get_diffuse(texcoords);
       }
     )";
-  } else if (ctx.shading_quality == 1) {
+  } else if (!ctx.lens_flares) {
     f_source << R"(
       vec3 get_color(vec2 texcoords) {
         return get_lighting(texcoords);
@@ -309,7 +309,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     }
   };
 
-  if (ctx.shading_quality == 0) {
+  if (!ctx.dynamic_lighting) {
 
     ctx.gl.Disable(oglplus::Capability::Blend);
 
@@ -332,7 +332,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
   } else {
 
-    if (ctx.shading_quality > 2) {
+    if (ctx.heat_effect) {
       SWIFT_PUSH_GL_RANGE("Heat");
       heat_effect_.process(scene, ctx);
       SWIFT_POP_GL_RANGE();
@@ -345,7 +345,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     g_buffer->bind_normal(2);
     l_buffer->bind(3);
 
-    if (ctx.shading_quality > 1) {
+    if (ctx.heat_effect) {
       // thresholding
       SWIFT_PUSH_GL_RANGE("Thresholding");
       generate_threshold_buffer(ctx);
@@ -377,7 +377,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     l_buffer_.Set(3);
     gamma_.Set(SettingsWrapper::get().Settings->Gamma());
 
-    if (ctx.shading_quality > 1) {
+    if (ctx.lens_flares) {
       int start(4);
       start = streak_effect_.bind_buffers(start, ctx);
       start = ghost_effect_.bind_buffers(start, ctx);
@@ -385,7 +385,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
       std::vector<int> units = {4, 5, 6, 7, 8, 9, 10, 11};
       glow_buffers_.Set(units);
 
-      if (ctx.shading_quality > 2) {
+      if (ctx.heat_effect) {
         heat_buffer_.Set(start);
         start = heat_effect_.bind_buffers(start, ctx);
         use_heat_.Set(1);

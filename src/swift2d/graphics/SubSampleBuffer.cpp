@@ -39,7 +39,7 @@ SubSampleBuffer::SubSampleBuffer(RenderContext const& ctx, int sub_sample_level)
     oglplus::PixelDataFormat::RGBA
   );
 
-  if (ctx.shading_quality > 0) {
+  if (ctx.dynamic_lighting) {
     create_texture(
       normal_, size.x(), size.y(),
       oglplus::PixelDataInternalFormat::RGB8,
@@ -59,7 +59,7 @@ SubSampleBuffer::SubSampleBuffer(RenderContext const& ctx, int sub_sample_level)
     oglplus::Framebuffer::Target::Draw, 0, diffuse_, 0
   );
 
-  if (ctx.shading_quality > 0) {
+  if (ctx.dynamic_lighting) {
     oglplus::Framebuffer::AttachColorTexture(
       oglplus::Framebuffer::Target::Draw, 1, normal_, 0
     );
@@ -76,18 +76,7 @@ void SubSampleBuffer::bind_for_drawing(RenderContext const& ctx) {
   auto size(ctx.g_buffer_size/sub_sample_level_);
   ctx.gl.Viewport(size.x(), size.y());
 
-  if (ctx.shading_quality == 0) {
-
-    fbo_.Bind(oglplus::Framebuffer::Target::Draw);
-
-    oglplus::Context::ColorBuffer draw_buffs[1] =  {
-      oglplus::FramebufferColorAttachment::_0
-    };
-    ctx.gl.DrawBuffers(draw_buffs);
-    ctx.gl.ClearColor(0.f, 0.f, 0.f, 0.f);
-    ctx.gl.Clear().ColorBuffer();
-
-  } else {
+  if (ctx.dynamic_lighting) {
 
     fbo_.Bind(oglplus::Framebuffer::Target::Draw);
 
@@ -95,6 +84,16 @@ void SubSampleBuffer::bind_for_drawing(RenderContext const& ctx) {
       oglplus::FramebufferColorAttachment::_0,
       oglplus::FramebufferColorAttachment::_1,
       oglplus::FramebufferColorAttachment::_2
+    };
+    ctx.gl.DrawBuffers(draw_buffs);
+    ctx.gl.ClearColor(0.f, 0.f, 0.f, 0.f);
+    ctx.gl.Clear().ColorBuffer();
+
+  } else {
+    fbo_.Bind(oglplus::Framebuffer::Target::Draw);
+
+    oglplus::Context::ColorBuffer draw_buffs[1] =  {
+      oglplus::FramebufferColorAttachment::_0
     };
     ctx.gl.DrawBuffers(draw_buffs);
     ctx.gl.ClearColor(0.f, 0.f, 0.f, 0.f);

@@ -38,7 +38,7 @@ GBuffer::GBuffer(RenderContext const& ctx) {
     oglplus::PixelDataFormat::RGB
   );
 
-  if (ctx.shading_quality > 0) {
+  if (ctx.dynamic_lighting) {
     create_texture(
       normal_, size.x(), size.y(),
       oglplus::PixelDataInternalFormat::RGB8,
@@ -58,7 +58,7 @@ GBuffer::GBuffer(RenderContext const& ctx) {
     oglplus::Framebuffer::Target::Draw, 0, diffuse_, 0
   );
 
-  if (ctx.shading_quality > 0) {
+  if (ctx.dynamic_lighting) {
     oglplus::Framebuffer::AttachColorTexture(
       oglplus::Framebuffer::Target::Draw, 1, normal_, 0
     );
@@ -75,23 +75,20 @@ void GBuffer::bind_for_drawing(RenderContext const& ctx) {
   auto size(ctx.g_buffer_size);
   ctx.gl.Viewport(size.x(), size.y());
 
-  if (ctx.shading_quality == 0) {
-
-    fbo_.Bind(oglplus::Framebuffer::Target::Draw);
-
-    oglplus::Context::ColorBuffer draw_buffs[1] =  {
-      oglplus::FramebufferColorAttachment::_0
-    };
-    ctx.gl.DrawBuffers(draw_buffs);
-
-  } else {
-
+  if (ctx.dynamic_lighting) {
     fbo_.Bind(oglplus::Framebuffer::Target::Draw);
 
     oglplus::Context::ColorBuffer draw_buffs[3] =  {
       oglplus::FramebufferColorAttachment::_0,
       oglplus::FramebufferColorAttachment::_1,
       oglplus::FramebufferColorAttachment::_2
+    };
+    ctx.gl.DrawBuffers(draw_buffs);
+  } else {
+    fbo_.Bind(oglplus::Framebuffer::Target::Draw);
+
+    oglplus::Context::ColorBuffer draw_buffs[1] =  {
+      oglplus::FramebufferColorAttachment::_0
     };
     ctx.gl.DrawBuffers(draw_buffs);
   }
