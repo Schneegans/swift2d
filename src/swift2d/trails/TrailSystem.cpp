@@ -59,10 +59,10 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
     transform_feedbacks_.push_back(ogl::TransformFeedback());
     trail_vaos_.push_back(ogl::VertexArray());
     trail_buffers_.push_back(ogl::Buffer());
-    
+
     trail_vaos_[i].Bind();
     trail_buffers_[i].Bind(ose::Array());
-    
+
     for (long j(0); j<6; ++j) {
       ogl::VertexArrayAttrib(j).Enable();
       ogl::VertexArrayAttrib(j).Pointer(2, ogl::DataType::Float, false, sizeof(TrailPoint), (void const*)(j*2*sizeof(float)));
@@ -73,10 +73,10 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
 
   emitter_buffer_ = new ogl::Buffer();
   emitter_vao_ = new ogl::VertexArray();
-  
+
   emitter_vao_->Bind();
   emitter_buffer_->Bind(ose::Array());
-  
+
   for (long j(0); j<6; ++j) {
     ogl::VertexArrayAttrib(j).Enable();
     ogl::VertexArrayAttrib(j).Pointer(2, ogl::DataType::Float, false, sizeof(TrailPoint), (void const*)(j*2*sizeof(float)));
@@ -113,7 +113,7 @@ void TrailSystem::update_trails(
       data.front().prev_1_pos = math::vec2(0.f, 0.f);
       data.front().prev_2_pos = math::vec2(0.f, 0.f);
       data.front().prev_3_pos = math::vec2(0.f, 0.f);
-      ogl::Buffer::Data(ose::Array(), data, ose::StaticCopy());
+      ogl::Buffer::Data(ose::Array(), data, ose::StreamCopy());
     }
 
     update_max_trail_points_ = 0;

@@ -14,7 +14,7 @@
 #define OGLPLUS_ERROR_BASIC_1107121317_HPP
 
 #include <oglplus/config/error.hpp>
-#include <oglplus/enumerations.hpp>
+#include <oglplus/error/code.hpp>
 #include <oglplus/string/def.hpp>
 #include <oglplus/string/ref.hpp>
 #include <oglplus/string/empty.hpp>
@@ -85,7 +85,7 @@ public:
 	}
 
 	/// Returns the GL error code related to the error
-	GLenum Code(void) const { return _code; }
+	ErrorCode Code(void) const { return ErrorCode(_code); }
 
 	Error& SourceFile(const char* file)
 	{
@@ -381,21 +381,11 @@ inline void HandleError(ErrorType& error)
 		ERROR_INFO.GLFunc(FUNC_NAME)\
 	)
 
-// disable gl runtime error checking on low profile --- added by simon
-#if !OGLPLUS_LOW_PROFILE
 #define OGLPLUS_CHECK(GLFUNC, ERROR, ERROR_INFO) \
 	OGLPLUS_GLFUNC_CHECK(#GLFUNC, ERROR, ERROR_INFO)
-#else
-#define OGLPLUS_CHECK(GLFUNC, ERROR, ERROR_INFO)
-#endif
 
-#if !OGLPLUS_LOW_PROFILE
 #define OGLPLUS_CHECK_CTXT(ERROR, ERROR_INFO) \
 	OGLPLUS_GLFUNC_CHECK(_errinf_glfn(), ERROR, ERROR_INFO)
-#else
-#define OGLPLUS_CHECK_CTXT(ERROR, ERROR_INFO)
-#endif
-// ----
 
 #define OGLPLUS_CHECK_SIMPLE(GLFUNC) \
 	OGLPLUS_CHECK(GLFUNC, Error, NoInfo())

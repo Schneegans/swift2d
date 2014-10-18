@@ -14,7 +14,7 @@
 #define OGLPLUS_VECTOR_1107121519_HPP
 
 #include <oglplus/config/compiler.hpp>
-#include <oglplus/detail/nothing.hpp>
+#include <oglplus/utils/nothing.hpp>
 #include <oglplus/fwd.hpp>
 #include <cassert>
 #include <cmath>
@@ -165,7 +165,7 @@ protected:
 	VectorBase(
 		const VectorBase<U, M>& v,
 		typename std::enable_if<
-			(N <= M) and not(std::is_same<T, U>())
+			(N <= M) && (!std::is_same<T, U>::value)
 		>::type* = nullptr
 	)
 	{
@@ -283,28 +283,28 @@ public:
 	}
 
 	/// Multiplies this vector by a scalar value
-	void MultiplyBy(T v)
+	void Multiply(T v)
 	{
 		for(std::size_t i=0; i!=N; ++i)
 			_elem[i] *= v;
 	}
 
 	/// Multiplies the elements of this and that vector
-	void MultiplyBy(const VectorBase& that)
+	void Multiply(const VectorBase& that)
 	{
 		for(std::size_t i=0; i!=N; ++i)
 			_elem[i] *= that._elem[i];
 	}
 
 	/// Divides this vector by a scalar value
-	void DivideBy(T v)
+	void Divide(T v)
 	{
 		for(std::size_t i=0; i!=N; ++i)
 			_elem[i] /= v;
 	}
 
 	/// Divides the elements of this and that vector
-	void DivideBy(const VectorBase& that)
+	void Divide(const VectorBase& that)
 	{
 		for(std::size_t i=0; i!=N; ++i)
 			_elem[i] /= that._elem[i];
@@ -327,7 +327,7 @@ public:
 	{
 		T l = Length();
 		if(l != T(0) && l != T(1))
-			 MultiplyBy(T(1) / l);
+			 Multiply(T(1) / l);
 	}
 
 	/// Computes the dot product of vectors @p a and @p b

@@ -39,7 +39,7 @@ template <>
 class ObjGenDelOps<tag::Shader>
 {
 protected:
-	static void Gen(GLsizei count, GLuint* names, GLenum type)
+	static void Gen(tag::Create, GLsizei count, GLuint* names, GLenum type)
 	{
 		assert(names != nullptr);
 		for(GLsizei i=0; i<count; ++i)
@@ -51,9 +51,9 @@ protected:
 
 	GLenum _type;
 
-	void Gen(GLsizei count, GLuint* names) const
+	void Gen(tag::Create create, GLsizei count, GLuint* names) const
 	{
-		Gen(count, names, _type);
+		Gen(create, count, names, _type);
 	}
 
 	static void Delete(GLsizei count, GLuint* names)
@@ -73,6 +73,12 @@ protected:
 		OGLPLUS_VERIFY_SIMPLE(IsShader);
 		return result;
 	}
+};
+
+template <>
+struct ObjGenTag<tag::DirectState, tag::Shader>
+{
+	typedef tag::Create Type;
 };
 
 /// Common shader operations
@@ -468,7 +474,7 @@ public:
 };
 
 /// Base template for specialized shader types
-template <typename enums::EnumValueType<ShaderType>::Type ShType>
+template <ShaderType ShType>
 class SpecShader
  : public Shader
 {
@@ -534,6 +540,7 @@ public:
  */
 typedef SpecShader<ShaderType::Vertex> VertexShader;
 
+#if OGLPLUS_DOCUMENTATION_ONLY || GL_GEOMETRY_SHADER
 /// Geometry shader wrapper
 /**
  *  @see Shader
@@ -541,6 +548,7 @@ typedef SpecShader<ShaderType::Vertex> VertexShader;
  *  @ingroup oglplus_objects
  */
 typedef SpecShader<ShaderType::Geometry> GeometryShader;
+#endif
 
 /// Fragment shader wrapper
 /**

@@ -16,15 +16,27 @@
 #include <oglplus/object/desc.hpp>
 #include <oglplus/object/name_tpl.hpp>
 #include <oglplus/object/seq_tpl.hpp>
-#include <oglplus/detail/nothing.hpp>
+#include <oglplus/utils/nothing.hpp>
 #include <type_traits>
 #include <cassert>
 
 namespace oglplus {
+namespace tag {
+
+struct Generate { };
+struct Create { };
+
+} // namespace tag
 
 template <typename ObjTag>
 struct ObjectSubtype : Nothing
 { };
+
+template <typename OpsTag, typename ObjTag>
+struct ObjGenTag
+{
+	typedef tag::Generate Type;
+};
 
 template <typename ObjTag>
 class ObjGenDelOps;
@@ -82,23 +94,16 @@ protected:
 	ObjectOps(void) { }
 };
 
-/// Template for GL/AL/etc. objects wrappers.
-/** The main purpose of Object is to do lifetime management of the underlying
- *  GL/AL/etc. object. It uses the @c ObjGenDelOps template to create
- *  new instance in the constructor and delete it in the destructor.
- *
- *  Since GL/AL don't support object copying @c Object is also non-copyable.
- */
-template <typename OpsTag, typename ObjTag>
-class Object<ObjectOps<OpsTag, ObjTag>>
- : public ObjectOps<OpsTag, ObjTag>
+template <typename ObjTag, typename NameHolder>
+class ObjectTpl
+ : public NameHolder
  , public ObjGenDelOps<ObjTag>
 {
 private:
 	typedef typename ObjTag::NameType NameT;
 
 	// Object is not copy-constructible
-	Object(const Object&);
+	ObjectTpl(const ObjectTpl&);
 
 	void _describe(ObjectDesc&& description)
 	{
@@ -117,19 +122,20 @@ private:
 		);
 	}
 
-	void _init(Nothing)
+	template <typename GenTag>
+	void _init(GenTag gen_tag, Nothing)
 	{
-		ObjGenDelOps<ObjTag>::Gen(1, &this->_name);
+		ObjGenDelOps<ObjTag>::Gen(gen_tag, 1, &this->_name);
 	}
 
-	template <typename ObjectSubtype>
-	void _init(ObjectSubtype type)
+	template <typename GenTag, typename ObjectSubtype>
+	void _init(GenTag gen_tag, ObjectSubtype type)
 	{
 		this->_type = GLenum(type);
-		_init(Nothing());
+		_init(gen_tag, Nothing());
 	}
 
-	void _move_in(Object&& temp)
+	void _move_in(ObjectTpl&& temp)
 	OGLPLUS_NOEXCEPT(true)
 	{
 		this->_name = temp._name;
@@ -147,61 +153,55 @@ private:
 protected:
 	struct Uninitialized_ { };
 
-	Object(Uninitialized_) { }
+	ObjectTpl(Uninitialized_) { }
 
-	Object(NameT name)
+	ObjectTpl(ObjectName<ObjTag> name)
 	{
-		this->_name = name;
+		this->_name = GetName(name);
 	}
 
-	Object(NameT name, ObjectDesc&& description)
+	ObjectTpl(ObjectName<ObjTag> name, ObjectDesc&& description)
 	{
-		this->_name = name;
+		this->_name = GetName(name);
 		_describe(std::move(description));
 	}
 public:
-	static Object FromRawName(ObjectName<ObjTag> name)
+	template <typename GenTag>
+	ObjectTpl(GenTag gen_tag)
 	{
-		return Object(GetName(name));
+		_init(gen_tag, Nothing());
 	}
 
-	/// Most object types are default-constructible
-	Object(void)
+	template <typename GenTag>
+	ObjectTpl(GenTag gen_tag, ObjectDesc&& description)
 	{
-		_init(Nothing());
-	}
-
-	/// A textual description can be attached to objects
-	Object(ObjectDesc&& description)
-	{
-		_init(Nothing());
+		_init(gen_tag, Nothing());
 		_describe(std::move(description));
 	}
 
-	/// Construction with subtype specification
-	Object(typename ObjectSubtype<ObjTag>::Type type)
+	typedef typename ObjectSubtype<ObjTag>::Type Subtype;
+
+	template <typename GenTag>
+	ObjectTpl(GenTag gen_tag, Subtype subtype)
 	{
-		_init(type);
+		_init(gen_tag, subtype);
 	}
 
-	/// A textual description can be attached to objects
-	Object(
-		typename ObjectSubtype<ObjTag>::Type type,
-		ObjectDesc&& description
-	)
+	template <typename GenTag>
+	ObjectTpl(GenTag gen_tag, Subtype subtype, ObjectDesc&& description)
 	{
-		_init(type);
+		_init(gen_tag, subtype);
 		_describe(std::move(description));
 	}
 
 	/// Objects are movable
-	Object(Object&& temp)
+	ObjectTpl(ObjectTpl&& temp)
 	OGLPLUS_NOEXCEPT(true)
 	{
 		_move_in(std::move(temp));
 	}
 
-	~Object(void)
+	~ObjectTpl(void)
 	OGLPLUS_NOEXCEPT(true)
 	{
 		try { _cleanup(); }
@@ -209,7 +209,7 @@ public:
 	}
 
 	/// Objects are move-assignable
-	Object& operator = (Object&& temp)
+	ObjectTpl& operator = (ObjectTpl&& temp)
 	{
 		_cleanup();
 		_move_in(std::move(temp));
@@ -225,7 +225,6 @@ public:
 		);
 	}
 
-
 	Sequence<ObjectName<ObjTag>> seq(void) const
 	{
 		return Sequence<ObjectName<ObjTag>>(&this->_name, 1);
@@ -239,7 +238,161 @@ public:
 	{
 		return seq();
 	}
+};
 
+/// Template
+template <typename ObjTag>
+class ObjHandle
+ : public ObjectTpl<ObjTag, ObjectName<ObjTag>>
+{
+private:
+	typedef ObjectTpl<ObjTag, ObjectName<ObjTag>> Base_;
+	ObjHandle(const ObjHandle&);
+public:
+	/// Construction with a specific method of object creation
+	ObjHandle(tag::Generate generate)
+	 : Base_(generate)
+	{ }
+
+	/// Construction with a specific method of object creation
+	ObjHandle(tag::Create create)
+	 : Base_(create)
+	{ }
+
+	ObjHandle(tag::Generate generate, ObjectDesc&& description)
+	 : Base_(generate, std::move(description))
+	{ }
+
+	ObjHandle(tag::Create create, ObjectDesc&& description)
+	 : Base_(create, std::move(description))
+	{ }
+
+	/// Object subtype
+	typedef typename ObjectSubtype<ObjTag>::Type Subtype;
+
+	ObjHandle(tag::Generate generate, Subtype subtype)
+	 : Base_(generate, subtype)
+	{ }
+
+	ObjHandle(tag::Create create, Subtype subtype)
+	 : Base_(create, subtype)
+	{ }
+
+	/// Object handles are move constructible
+	ObjHandle(ObjHandle&& temp)
+	 : Base_(static_cast<Base_&&>(temp))
+	{ }
+
+	/// Object handles are move assignable
+	ObjHandle& operator = (ObjHandle&& temp)
+	{
+		Base_::operator = (static_cast<Base_&&>(temp));
+		return *this;
+	}
+};
+
+/// Template for GL/AL/etc. objects wrappers.
+/** The main purpose of Object is to do lifetime management of the underlying
+ *  GL/AL/etc. object. It uses the @c ObjGenDelOps template to create
+ *  new instance in the constructor and delete it in the destructor.
+ *
+ *  Since GL/AL don't support object copying @c Object is also non-copyable.
+ */
+template <typename OpsTag, typename ObjTag>
+class Object<ObjectOps<OpsTag, ObjTag>>
+ : public ObjectTpl<ObjTag, ObjectOps<OpsTag, ObjTag>>
+{
+private:
+	typedef typename ObjGenTag<OpsTag, ObjTag>::Type DefGenTag;
+	typedef ObjectTpl<ObjTag, ObjectOps<OpsTag, ObjTag>> Base_;
+
+	Object(const Object&);
+protected:
+	Object(typename Base_::Uninitialized_ uninit)
+	 : Base_(uninit)
+	{ }
+
+	Object(ObjectName<ObjTag> name)
+	 : Base_(name)
+	{ }
+
+	Object(ObjectName<ObjTag> name, ObjectDesc&& description)
+	 : Base_(name, std::move(description))
+	{ }
+public:
+	static Object FromRawName(ObjectName<ObjTag> name)
+	{
+		return Object(name);
+	}
+
+	/// Most objects are default constructible
+	Object(void)
+	 : Base_(DefGenTag())
+	{ }
+
+	/// Construction with a specific method of object creation
+	Object(tag::Generate generate)
+	 : Base_(generate)
+	{ }
+
+	/// Construction with a specific method of object creation
+	Object(tag::Create create)
+	 : Base_(create)
+	{ }
+
+	/// A textual description can be attached to objects
+	Object(ObjectDesc&& description)
+	 : Base_(DefGenTag(), std::move(description))
+	{ }
+
+	Object(tag::Generate generate, ObjectDesc&& description)
+	 : Base_(generate, std::move(description))
+	{ }
+
+	Object(tag::Create create, ObjectDesc&& description)
+	 : Base_(create, std::move(description))
+	{ }
+
+	/// Object subtype
+	typedef typename ObjectSubtype<ObjTag>::Type Subtype;
+
+	/// Construction with subtype specification
+	Object(Subtype subtype)
+	 : Base_(DefGenTag(), subtype)
+	{ }
+
+	Object(tag::Generate generate, Subtype subtype)
+	 : Base_(generate, subtype)
+	{ }
+
+	Object(tag::Create create, Subtype subtype)
+	 : Base_(create, subtype)
+	{ }
+
+	/// A textual description can be attached to objects
+	Object(Subtype subtype, ObjectDesc&& description)
+	 : Base_(DefGenTag(), subtype, std::move(description))
+	{ }
+
+	Object(tag::Generate generate, Subtype subtype, ObjectDesc&& description)
+	 : Base_(generate, subtype, std::move(description))
+	{ }
+
+	Object(tag::Create create, Subtype subtype, ObjectDesc&& description)
+	 : Base_(create, subtype, std::move(description))
+	{ }
+
+	/// Objects are move constructible
+	Object(Object&& temp)
+	 : Base_(static_cast<Base_&&>(temp))
+	{ }
+
+	/// Objects are move assignable
+	Object& operator = (Object&& temp)
+	{
+		Base_::operator = (static_cast<Base_&&>(temp));
+		return *this;
+	}
 };
 
 template <typename OpsTg, typename ObjTg>

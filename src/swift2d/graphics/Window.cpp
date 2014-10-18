@@ -18,7 +18,7 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Window::Window()
+Window::Window(bool debug)
   : Open(false)
   , HideCursor(false)
   , Title("Swift2D")
@@ -34,8 +34,9 @@ Window::Window()
   , vsync_dirty_(true)
   , fullscreen_dirty_(false)
   , init_glew_(true)
-  , debug_(nullptr)
-  , log_sink_(nullptr) {
+  , debugger_(nullptr)
+  , log_sink_(nullptr)
+  , debug_(debug) {
 
   Open.on_change().connect([this](bool val) {
     if (val) open();
@@ -57,7 +58,7 @@ Window::~Window() {
   close();
   glfwDestroyWindow(window_);
 
-  delete debug_;
+  delete debugger_;
   delete log_sink_;
 }
 
@@ -131,35 +132,37 @@ void Window::init_context() {
     glewExperimental = GL_TRUE;
     glewInit(); glGetError();
 
-    debug_ = new ogl::Debug();
+    if (debug_) {
+      debugger_ = new ogl::Debug();
 
-    log_sink_ = new ogl::Debug::LogSink([](ogl::Debug::CallbackData const& data) {
-      if (data.id != 131217 && data.id != 131184 && data.id != 131185 && data.id != 131204) {
-        switch (data.severity) {
-        case ogl::Debug::Severity::High:
-          LOG_ERROR << "[" << data.id << "] " << data.message << std::endl;
-          break;
-        case ogl::Debug::Severity::Medium:
-          LOG_WARNING << "[" << data.id << "] " << data.message << std::endl;
-          break;
-        case ogl::Debug::Severity::Low:
-          LOG_MESSAGE << "[" << data.id << "] " << data.message << std::endl;
-          break;
-        case ogl::Debug::Severity::Notification:
-          LOG_DEBUG << "[" << data.id << "] " << data.message << std::endl;
-          break;
-        default:
-          LOG_TRACE << "[" << data.id << "] " << data.message << std::endl;
+      log_sink_ = new ogl::Debug::LogSink([](ogl::Debug::CallbackData const& data) {
+        if (data.id != 131185 && data.id != 131204) {
+          switch (data.severity) {
+          case ogl::Debug::Severity::High:
+            LOG_ERROR << "[" << data.id << "] " << data.message << std::endl;
+            break;
+          case ogl::Debug::Severity::Medium:
+            LOG_WARNING << "[" << data.id << "] " << data.message << std::endl;
+            break;
+          case ogl::Debug::Severity::Low:
+            LOG_MESSAGE << "[" << data.id << "] " << data.message << std::endl;
+            break;
+          case ogl::Debug::Severity::Notification:
+            LOG_DEBUG << "[" << data.id << "] " << data.message << std::endl;
+            break;
+          default:
+            LOG_TRACE << "[" << data.id << "] " << data.message << std::endl;
+          }
         }
-      }
-    });
+      });
 
-    debug_->MessageControl(
-      ogl::Debug::Source::DontCare,
-      ogl::Debug::Type::DontCare,
-      ogl::Debug::Severity::Low,
-      true
-    );
+      debugger_->MessageControl(
+        ogl::Debug::Source::DontCare,
+        ogl::Debug::Type::DontCare,
+        ogl::Debug::Severity::Low,
+        true
+      );
+    }
 
     render_context_.gl.Disable(ogl::Capability::DepthTest);
     render_context_.gl.DepthMask(false);
@@ -189,7 +192,10 @@ void Window::open() {
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+
+    if (debug_) {
+      glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+    }
 
     window_ = glfwCreateWindow(
       render_context_.window_size.x(), render_context_.window_size.y(),

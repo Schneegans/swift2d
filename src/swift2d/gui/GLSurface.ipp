@@ -33,14 +33,15 @@ class GLSurface : public Awesomium::Surface {
     tex_ = new oglplus::Texture();
     oglplus::Texture::Active(0);
     ctx.gl.Bound(oglplus::Texture::Target::_2D, *tex_)
-      .MinFilter(oglplus::TextureMinFilter::Linear)
-      .MagFilter(oglplus::TextureMagFilter::Linear)
-      .WrapS(oglplus::TextureWrap::ClampToEdge)
-      .WrapT(oglplus::TextureWrap::ClampToEdge)
       .Image2D(0, oglplus::PixelDataInternalFormat::RGBA, width_, height_,
         0, oglplus::PixelDataFormat::BGRA,
         oglplus::PixelDataType::UnsignedByte, &buffer_.front()
-      );
+      )
+      .MaxLevel(0)
+      .MinFilter(oglplus::TextureMinFilter::Linear)
+      .MagFilter(oglplus::TextureMagFilter::Linear)
+      .WrapS(oglplus::TextureWrap::ClampToEdge)
+      .WrapT(oglplus::TextureWrap::ClampToEdge);
   }
 
   //////////////////////////////////////////////////////////////////////////////

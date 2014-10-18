@@ -1,14 +1,14 @@
-/*
- *  .file oglplus/enums/capability_names.ipp
- *
- *  Automatically generated header file. DO NOT modify manually,
- *  edit 'source/enums/oglplus/capability.txt' instead.
- *
- *  Copyright 2010-2014 Matus Chochlik. Distributed under the Boost
- *  Software License, Version 1.0. (See accompanying file
- *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
- */
-
+//  File implement/oglplus/enums/capability_names.ipp
+//
+//  Automatically generated file, DO NOT modify manually.
+//  Edit the source 'source/enums/oglplus/capability.txt'
+//  or the 'source/enums/make_enum.py' script instead.
+//
+//  Copyright 2010-2014 Matus Chochlik.
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
+//
 namespace enums {
 OGLPLUS_LIB_FUNC StrCRef ValueName_(
 	Capability*,
@@ -83,11 +83,20 @@ switch(value)
 #if defined GL_SAMPLE_COVERAGE
 	case GL_SAMPLE_COVERAGE: return StrCRef("SAMPLE_COVERAGE");
 #endif
+#if defined GL_SAMPLE_MASK
+	case GL_SAMPLE_MASK: return StrCRef("SAMPLE_MASK");
+#endif
 #if defined GL_FRAMEBUFFER_SRGB
 	case GL_FRAMEBUFFER_SRGB: return StrCRef("FRAMEBUFFER_SRGB");
 #endif
+#if defined GL_DEBUG_OUTPUT_SYNCHRONOUS
+	case GL_DEBUG_OUTPUT_SYNCHRONOUS: return StrCRef("DEBUG_OUTPUT_SYNCHRONOUS");
+#endif
 #if defined GL_STREAM_RASTERIZATION_AMD
 	case GL_STREAM_RASTERIZATION_AMD: return StrCRef("STREAM_RASTERIZATION_AMD");
+#endif
+#if defined GL_BLEND_ADVANCED_COHERENT_KHR
+	case GL_BLEND_ADVANCED_COHERENT_KHR: return StrCRef("BLEND_ADVANCED_COHERENT_KHR");
 #endif
 	default:;
 }

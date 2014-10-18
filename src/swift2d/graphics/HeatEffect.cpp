@@ -27,6 +27,7 @@ HeatEffect::HeatEffect(RenderContext const& ctx) {
       ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
         .Image2D(0, i_format, width, height,
           0, p_format, oglplus::PixelDataType::Float, nullptr)
+        .MaxLevel(0)
         .MinFilter(oglplus::TextureMinFilter::Linear)
         .MagFilter(oglplus::TextureMagFilter::Linear)
         .WrapS(oglplus::TextureWrap::MirroredRepeat)

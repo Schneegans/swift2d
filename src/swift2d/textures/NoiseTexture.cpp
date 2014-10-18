@@ -43,6 +43,7 @@ void NoiseTexture::upload_to(RenderContext const& context) const {
 
   context.gl.Bound(ose::_2D(), *texture_)
     .Image2D(oglplus::images::RandomRGBUByte(256, 256))
+    .MaxLevel(0)
     .MinFilter(ose::Linear())
     .MagFilter(ose::Linear())
     .WrapS(ose::Repeat())

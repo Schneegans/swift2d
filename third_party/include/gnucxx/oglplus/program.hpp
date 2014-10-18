@@ -47,7 +47,7 @@ template <>
 class ObjGenDelOps<tag::Program>
 {
 protected:
-	static void Gen(GLsizei count, GLuint* names)
+	static void Gen(tag::Create, GLsizei count, GLuint* names)
 	{
 		assert(names != nullptr);
 		for(GLsizei i=0; i<count; ++i)
@@ -74,6 +74,12 @@ protected:
 		OGLPLUS_VERIFY_SIMPLE(IsProgram);
 		return result;
 	}
+};
+
+template <>
+struct ObjGenTag<tag::DirectState, tag::Program>
+{
+	typedef tag::Create Type;
 };
 
 /// Program binding operations
@@ -979,14 +985,14 @@ class ShaderProgram
  : public Program
 {
 private:
-	static GLuint _make(
+	static ProgramName _make(
 		ShaderType shader_type,
 		GLsizei count,
 		const GLchar* const* strings
 	);
 
 	template <typename Src>
-	static GLuint _make(ShaderType shader_type, const Src& source)
+	static ProgramName _make(ShaderType shader_type, const Src& source)
 	{
 		return _make(shader_type, source.Count(), source.Parts());
 	}

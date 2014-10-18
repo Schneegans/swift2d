@@ -23,6 +23,7 @@ GBuffer::GBuffer(RenderContext const& ctx) {
     ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
         0, p_format, oglplus::PixelDataType::UnsignedByte, nullptr)
+      .MaxLevel(0)
       .MinFilter(ctx.sub_sampling ? oglplus::TextureMinFilter::Linear : oglplus::TextureMinFilter::Nearest)
       .MagFilter(ctx.sub_sampling ? oglplus::TextureMagFilter::Linear : oglplus::TextureMagFilter::Nearest)
       .WrapS(oglplus::TextureWrap::MirroredRepeat)

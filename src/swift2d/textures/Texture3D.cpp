@@ -116,12 +116,16 @@ void Texture3D::upload_to(RenderContext const& ctx, bool create_mip_maps) const 
     auto internal_format(channels_ > 3 ? ogl::InternalFormat::RGBA : ogl::InternalFormat::RGB);
     auto format(channels_ > 3 ? ogl::Format::RGBA : ogl::Format::RGB);
 
-
     texture_ = new ogl::Texture();
 
     auto tex = ctx.gl.Bound(ose::_3D(), *texture_);
     tex.Image3D(0, internal_format, tile_width, tile_height, tile_count, 0,
                 format, ogl::DataType::UnsignedByte, nullptr);
+    if (create_mip_maps) {
+      tex.MaxLevel(1000);
+    } else {
+      tex.MaxLevel(0);
+    }
 
 
     for (int tile_y(0); tile_y<TilesY(); ++tile_y) {

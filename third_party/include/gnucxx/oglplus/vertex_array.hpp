@@ -32,12 +32,20 @@ template <>
 class ObjGenDelOps<tag::VertexArray>
 {
 protected:
-	static void Gen(GLsizei count, GLuint* names)
+	static void Gen(tag::Generate, GLsizei count, GLuint* names)
 	{
 		assert(names != nullptr);
 		OGLPLUS_GLFUNC(GenVertexArrays)(count, names);
 		OGLPLUS_CHECK_SIMPLE(GenVertexArrays);
 	}
+#if GL_VERSION_4_5 || GL_ARB_direct_state_access
+	static void Gen(tag::Create, GLsizei count, GLuint* names)
+	{
+		assert(names != nullptr);
+		OGLPLUS_GLFUNC(CreateVertexArrays)(count, names);
+		OGLPLUS_CHECK_SIMPLE(CreateVertexArrays);
+	}
+#endif
 
 	static void Delete(GLsizei count, GLuint* names)
 	{
@@ -124,15 +132,15 @@ public:
 };
 
 
-/// VertexArray operations with explicit selector
-typedef ObjectOps<tag::ExplicitSel, tag::VertexArray>
+/// VertexArray operations with implicit selector
+typedef ObjectOps<tag::ImplicitSel, tag::VertexArray>
 	VertexArrayOps;
 
 /// An @ref oglplus_object encapsulating vertex array zero functionality
 /**
  *  @ingroup oglplus_objects
  */
-typedef ObjectZero<ObjZeroOps<tag::ExplicitSel, tag::VertexArray>>
+typedef ObjectZero<ObjZeroOps<tag::ImplicitSel, tag::VertexArray>>
 	NoVertexArray;
 
 /// An @ref oglplus_object encapsulating vertex array object functionality

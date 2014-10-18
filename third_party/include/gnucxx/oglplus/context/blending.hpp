@@ -14,7 +14,7 @@
 #define OGLPLUS_CONTEXT_BLENDING_1201040722_HPP
 
 #include <oglplus/glfunc.hpp>
-#include <oglplus/blend_func.hpp>
+#include <oglplus/blend_function.hpp>
 
 namespace oglplus {
 namespace context {
@@ -26,12 +26,34 @@ namespace context {
 class Blending
 {
 public:
+
+#if OGLPLUS_DOCUMENTATION_ONLY || GL_KHR_blend_equation_advanced
+	/// Specified boundaries between blending passes
+	/**
+	 *  @glsymbols
+	 *  @glfunref{BlendBarrierKHR}
+	 */
+	static void BlendBarrier(void)
+	{
+		OGLPLUS_GLFUNC(BlendBarrierKHR)();
+		OGLPLUS_VERIFY_SIMPLE(BlendBarrierKHR);
+	}
+#endif
+
 	/// Sets the blend equation
 	/**
 	 *  @glsymbols
 	 *  @glfunref{BlendEquation}
 	 */
-	static void BlendEquation(oglplus::BlendEquation eq)
+	static void BlendEquation(
+		OneOf<
+			GLenum,
+			std::tuple<
+				oglplus::BlendEquation,
+				oglplus::BlendEquationAdvanced
+			>
+		> eq
+	)
 	{
 		OGLPLUS_GLFUNC(BlendEquation)(GLenum(eq));
 		OGLPLUS_VERIFY_SIMPLE(BlendEquation);
@@ -61,7 +83,16 @@ public:
 	 *  @glsymbols
 	 *  @glfunref{BlendEquationi}
 	 */
-	static void BlendEquation(GLuint buffer, oglplus::BlendEquation eq)
+	static void BlendEquation(
+		GLuint buffer,
+		OneOf<
+			GLenum,
+			std::tuple<
+				oglplus::BlendEquation,
+				oglplus::BlendEquationAdvanced
+			>
+		> eq
+	)
 	{
 		OGLPLUS_GLFUNC(BlendEquationi)(buffer, GLenum(eq));
 		OGLPLUS_VERIFY(

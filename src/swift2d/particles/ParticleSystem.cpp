@@ -61,7 +61,7 @@ void ParticleSystem::upload_to(RenderContext const& ctx) {
     transform_feedbacks_.push_back(ogl::TransformFeedback());
     particle_buffers_.push_back(ogl::Buffer());
     particle_vaos_.push_back(ogl::VertexArray());
-    
+
     particle_vaos_[i].Bind();
     particle_buffers_[i].Bind(ose::Array());
 
@@ -100,7 +100,7 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
       data.front().vel  = math::vec2(0.f, 0.f);
       data.front().life = math::vec2(0.f, 0.f);
       data.front().rot  = math::vec2(0.f, 0.f);
-      ogl::Buffer::Data(ose::Array(), data, ose::StaticCopy());
+      ogl::Buffer::Data(ose::Array(), data, ose::StreamCopy());
     }
 
     update_max_count_ = 0;
@@ -123,10 +123,9 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
   shader.use(ctx);
 
   count_ = 0;
-  query_->Result(count_);
-
-  ogl::Query::Activator qrya(*query_, ose::PrimitivesGenerated());
-  ogl::TransformFeedback::Activator xfba(ogl::TransformFeedbackPrimitiveType::Points);
+  if (!first_draw) {
+    query_->Result(count_);
+  }
 
   std::vector<math::vec3> spawn_positions;
   for (auto const& emitter: system.Emitters) {
@@ -147,6 +146,8 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
     }
   }
 
+  ogl::Query::Activator qrya(*query_, ose::PrimitivesGenerated());
+  ogl::TransformFeedback::Activator xfba(ogl::TransformFeedbackPrimitiveType::Points);
 
   if (spawn_positions.size() > 0) {
 

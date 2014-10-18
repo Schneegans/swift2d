@@ -23,6 +23,7 @@ LBuffer::LBuffer(RenderContext const& ctx) {
     ctx.gl.Bound(ogl::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
         0, p_format, ogl::PixelDataType::UnsignedByte, nullptr)
+      .MaxLevel(0)
       .MinFilter(ogl::TextureMinFilter::Linear)
       .MagFilter(ogl::TextureMagFilter::Linear)
       .WrapS(ogl::TextureWrap::MirroredRepeat)

@@ -19,7 +19,7 @@
 #include <oglplus/math/vector.hpp>
 #include <oglplus/object/sequence.hpp>
 #include <oglplus/object/wrapper.hpp>
-#include <oglplus/compare_func.hpp>
+#include <oglplus/compare_function.hpp>
 #include <oglplus/data_type.hpp>
 #include <oglplus/pixel_data.hpp>
 #include <oglplus/access_specifier.hpp>
@@ -30,6 +30,7 @@
 #include <oglplus/texture_wrap.hpp>
 #include <oglplus/texture_unit.hpp>
 #include <oglplus/one_of.hpp>
+#include <oglplus/output_data.hpp>
 #include <oglplus/images/fwd.hpp>
 #include <cassert>
 
@@ -50,12 +51,32 @@ template <>
 class ObjGenDelOps<tag::Texture>
 {
 protected:
-	static void Gen(GLsizei count, GLuint* names)
+	static void Gen(tag::Generate, GLsizei count, GLuint* names)
 	{
 		assert(names != nullptr);
 		OGLPLUS_GLFUNC(GenTextures)(count, names);
 		OGLPLUS_CHECK_SIMPLE(GenTextures);
 	}
+#if GL_VERSION_4_5 || GL_ARB_direct_state_access
+	static void Gen(
+		tag::Create,
+		GLenum target,
+		GLsizei count,
+		GLuint* names
+	)
+	{
+		assert(names != nullptr);
+		OGLPLUS_GLFUNC(CreateTextures)(target, count, names);
+		OGLPLUS_CHECK_SIMPLE(CreateTextures);
+	}
+
+	GLenum _type;
+
+	void Gen(tag::Create create, GLsizei count, GLuint* names)
+	{
+		Gen(create, _type, count, names);
+	}
+#endif
 
 	static void Delete(GLsizei count, GLuint* names)
 	{
@@ -71,6 +92,12 @@ protected:
 		OGLPLUS_VERIFY_SIMPLE(IsTexture);
 		return result;
 	}
+};
+
+template <>
+struct ObjectSubtype<tag::Texture>
+{
+	typedef TextureTarget Type;
 };
 
 /// Texture binding operations
@@ -887,9 +914,7 @@ public:
 		Target target,
 		GLint level,
 		PixelDataFormat format,
-		Property::PixDataType type,
-		GLsizei size,
-		GLvoid* buffer
+		const OutputData& dest
 	);
 
 	/// Allows to obtain the texture image in uncompressed form
@@ -907,24 +932,33 @@ public:
 	 *  @glsymbols
 	 *  @glfunref{GetTexImage}
 	 */
-	template <typename T>
 	static void GetImage(
 		Target target,
 		GLint level,
 		PixelDataFormat format,
-		std::vector<T>& dest
+		Property::PixDataType type,
+		GLsizei size,
+		GLvoid* buffer
 	)
 	{
-		GetImage(
-			target,
-			level,
-			format,
-			GetDataType<T>(),
-			dest.size()*sizeof(T),
-			dest.data()
-		);
+		GetImage(target, level, format, OutputData(type, size, buffer));
 	}
 
+	/// Allows to obtain the texture image in compressed form
+	/** This function stores the image of the texture bound to
+	 *  the specified texture @p target with the specified @p level
+	 *  of detail in compressed form into the @p dest buffer.
+	 *  This function automatically resizes the buffer so that
+	 *  it can accomodate the texture data.
+	 *
+	 *  @glsymbols
+	 *  @glfunref{GetCompressedTexImage}
+	 */
+	static void GetCompressedImage(
+		Target target,
+		GLint level,
+		const OutputData& dest
+	);
 
 	/// Allows to obtain the texture image in compressed form
 	/** This function stores the image of the texture bound to
@@ -941,7 +975,10 @@ public:
 		GLint level,
 		GLsizei size,
 		GLubyte* buffer
-	);
+	)
+	{
+		GetCompressedImage(target, level, OutputData(size, buffer));
+	}
 
 	/// Allows to obtain the texture image in compressed form
 	/** This function stores the image of the texture bound to
@@ -2906,7 +2943,10 @@ public:
 	}
 #endif
 
-#if OGLPLUS_DOCUMENTATION_ONLY || GL_NV_texture_barrier
+#if OGLPLUS_DOCUMENTATION_ONLY || \
+	GL_VERSION_4_5 || \
+	GL_ARB_texture_barrier || \
+	GL_NV_texture_barrier
 	/// Ensures that texture writes have been completed
 	/**
 	 *  @glextreq{NV,texture_barrier}
@@ -2915,8 +2955,13 @@ public:
 	 */
 	static void Barrier(void)
 	{
+#if GL_VERSION_4_5 || GL_ARB_texture_barrier
+		OGLPLUS_GLFUNC(TextureBarrier)();
+		OGLPLUS_VERIFY_SIMPLE(TextureBarrier);
+#elif GL_NV_texture_barrier
 		OGLPLUS_GLFUNC(TextureBarrierNV)();
 		OGLPLUS_VERIFY_SIMPLE(TextureBarrierNV);
+#endif
 	}
 #endif
 

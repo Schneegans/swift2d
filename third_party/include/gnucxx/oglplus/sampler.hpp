@@ -19,7 +19,7 @@
 #include <oglplus/object/wrapper.hpp>
 #include <oglplus/object/sequence.hpp>
 #include <oglplus/data_type.hpp>
-#include <oglplus/compare_func.hpp>
+#include <oglplus/compare_function.hpp>
 #include <oglplus/texture_wrap.hpp>
 #include <oglplus/texture_compare.hpp>
 #include <oglplus/texture_filter.hpp>
@@ -44,12 +44,20 @@ template <>
 class ObjGenDelOps<tag::Sampler>
 {
 protected:
-	static void Gen(GLsizei count, GLuint* names)
+	static void Gen(tag::Generate, GLsizei count, GLuint* names)
 	{
 		assert(names != nullptr);
 		OGLPLUS_GLFUNC(GenSamplers)(count, names);
 		OGLPLUS_CHECK_SIMPLE(GenSamplers);
 	}
+#if GL_VERSION_4_5 || GL_ARB_direct_state_access
+	static void Gen(tag::Create, GLsizei count, GLuint* names)
+	{
+		assert(names != nullptr);
+		OGLPLUS_GLFUNC(CreateSamplers)(count, names);
+		OGLPLUS_CHECK_SIMPLE(CreateSamplers);
+	}
+#endif
 
 	static void Delete(GLsizei count, GLuint* names)
 	{

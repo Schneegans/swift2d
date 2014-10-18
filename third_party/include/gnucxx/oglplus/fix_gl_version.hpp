@@ -12,6 +12,9 @@
  */
 #ifndef OGLPLUS_FIX_GL_VERSION_1312210942_HPP
 #define OGLPLUS_FIX_GL_VERSION_1312210942_HPP
+#ifdef GL_VERSION_4_5
+#undef GL_VERSION_4_5
+#endif //GL_VERSION_4_5
 #ifdef GL_VERSION_4_4
 #undef GL_VERSION_4_4
 #endif //GL_VERSION_4_4
@@ -27,13 +30,13 @@
 #ifdef GL_VERSION_4_0
 #undef GL_VERSION_4_0
 #endif //GL_VERSION_4_0
-#ifdef GL_VERSION_3_3
-#undef GL_VERSION_3_3
-#endif //GL_VERSION_3_3
-#ifdef GL_VERSION_3_2
-#undef GL_VERSION_3_2
-#endif //GL_VERSION_3_2
-#ifdef GL_VERSION_3_1
-#undef GL_VERSION_3_1
-#endif //GL_VERSION_3_1
+// #ifdef GL_VERSION_3_3
+// #undef GL_VERSION_3_3
+// #endif //GL_VERSION_3_3
+// #ifdef GL_VERSION_3_2
+// #undef GL_VERSION_3_2
+// #endif //GL_VERSION_3_2
+// #ifdef GL_VERSION_3_1
+// #undef GL_VERSION_3_1
+// #endif //GL_VERSION_3_1
 #endif //include guard

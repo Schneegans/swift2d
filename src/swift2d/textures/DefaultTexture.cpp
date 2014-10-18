@@ -44,7 +44,12 @@ void DefaultTexture::upload_to(RenderContext const& context) const {
   context.gl.Bound(ose::_2D(), *texture_)
     .Image2D(0, oglplus::PixelDataInternalFormat::RGBA, 1, 1,
              0, oglplus::PixelDataFormat::RGBA,
-             oglplus::PixelDataType::UnsignedByte, &data.front());
+             oglplus::PixelDataType::UnsignedByte, &data.front())
+    .MaxLevel(0)
+    .MinFilter(ose::Linear())
+    .MagFilter(ose::Linear())
+    .WrapS(ose::Repeat())
+    .WrapT(ose::Repeat());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -58,11 +58,11 @@ class SWIFT_DLL Window {
   Signal<JoystickId, JoystickButtonId>        on_joystick_button_released;
 
   // ---------------------------------------------------- construction interface
-  Window();
+  Window(bool debug);
   ~Window();
 
-  static WindowPtr create() {
-    return std::make_shared<Window>();
+  static WindowPtr create(bool debug) {
+    return std::make_shared<Window>(debug);
   }
 
   // ------------------------------------------------------------ public methods
@@ -94,8 +94,9 @@ class SWIFT_DLL Window {
   bool vsync_dirty_;
   bool fullscreen_dirty_;
   bool init_glew_;
+  bool debug_;
 
-  ogl::Debug*           debug_;
+  ogl::Debug*           debugger_;
   ogl::Debug::LogSink*  log_sink_;
 };
 

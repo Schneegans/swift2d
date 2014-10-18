@@ -110,6 +110,7 @@ void Texture::upload_to(RenderContext const& ctx) const {
     ctx.gl.Bound(ose::_2D(), *texture_)
       .Image2D(0, internal_format, width_, height_, 0, format,
                ogl::DataType::UnsignedByte, data_)
+      .MaxLevel(1000)
       .GenerateMipmap()
       .MinFilter(ose::LinearMipmapLinear())
       .MagFilter(ose::Linear())
@@ -132,7 +133,7 @@ void Texture::load_texture_data() const {
     loading_ = true;
 
     f = Paths::get().make_absolute(f);
-    
+
     std::thread load([this, f](){
       int w(0), h(0), c(0);
       auto d(stbi_load(f.c_str(), &w, &h, &c, STBI_default));

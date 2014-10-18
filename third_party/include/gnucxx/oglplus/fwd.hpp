@@ -87,6 +87,9 @@ struct ObjectOps;
 struct Object;
 struct ProgVar;
 
+struct Generate;
+struct Create;
+
 struct Renderbuffer;
 struct Framebuffer;
 struct Texture;
@@ -121,6 +124,7 @@ struct NoTypecheck;
 struct ExplicitSel;
 struct ImplicitSel;
 struct DirectState;
+struct DirectStateEXT;
 struct CurrentBound;
 } // namespace tag
 
@@ -136,6 +140,9 @@ class Sequence;
 
 template <typename ObjTag>
 class ObjGenDelOps;
+
+template <typename OpsTag, typename ObjTag>
+struct ObjGenTag;
 
 template <typename ObjTag>
 class ObjBindingOps;

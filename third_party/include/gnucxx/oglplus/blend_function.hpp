@@ -1,10 +1,10 @@
 /**
- *  @file oglplus/blend_func.hpp
+ *  @file oglplus/blend_function.hpp
  *  @brief OpenGL blending function and equation enumeration
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2010-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2010-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -60,6 +60,28 @@ OGLPLUS_ENUM_CLASS_END(BlendEquation)
 
 /// Alternative name for the BlendEquation enumeration
 typedef BlendEquation BlendEq;
+
+/// Advanced blend equation enumeration
+/**
+ *  @ingroup enumerations
+ *
+ *  @glsymbols
+ *  @glfunref{BlendEquationAdvanced}
+ */
+OGLPLUS_ENUM_CLASS_BEGIN(BlendEquationAdvanced, GLenum)
+#include <oglplus/enums/blend_equation_advanced.ipp>
+OGLPLUS_ENUM_CLASS_END(BlendEquationAdvanced)
+
+#if !OGLPLUS_NO_ENUM_VALUE_NAMES
+#include <oglplus/enums/blend_equation_advanced_names.ipp>
+#endif
+
+#if !OGLPLUS_ENUM_VALUE_RANGES
+#include <oglplus/enums/blend_equation_advanced_range.ipp>
+#endif
+
+/// Alternative name for the BlendEquationAdvanced enumeration
+typedef BlendEquationAdvanced BlendEqAdv;
 
 } // namespace oglplus
 
