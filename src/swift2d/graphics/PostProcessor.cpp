@@ -162,7 +162,6 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       uniform bool      use_heat;
 
       vec3 get_color(vec2 texcoords) {
-
         vec3 glow = texture2D(glow_buffer, texcoords).rgb;
         vec3 dirt = texture2D(dirt_tex, texcoords).rgb;
 
@@ -173,8 +172,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
         }
 
         vec3 output = get_lighting(shifted_texcoords);
-        output = output + glow * dirt * dirt_opacity;
-        return output;
+        return output + glow * dirt * dirt_opacity;
       }
     )";
   }
@@ -259,7 +257,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     l_buffer->bind(3);
 
     if (ctx.lens_flares) {
-      SWIFT_PUSH_GL_RANGE("Streaks");
+      SWIFT_PUSH_GL_RANGE("Lens Flares");
       lens_flare_effect_.process(ctx);
       SWIFT_POP_GL_RANGE();
     }
