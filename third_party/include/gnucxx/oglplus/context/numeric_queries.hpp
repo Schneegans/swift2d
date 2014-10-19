@@ -117,23 +117,25 @@ public:
 	}
 #endif
 
-#if OGLPLUS_DOCUMENTATION_ONLY || GL_VERSION_4_5 || GL_KHR_context_flush_control
+#if GL_CONTEXT_RELEASE_BEHAVIOR && \
+	(OGLPLUS_DOCUMENTATION_ONLY || GL_VERSION_4_5 || GL_KHR_context_flush_control)
 	/// Query the flush control behavior
 	/**
 	 *  @glsymbols
 	 *  @glfunref{Get}
 	 *  @gldefref{CONTEXT_RELEASE_BEHAVIOR}
 	 */
-	// static ContextReleaseBehavior ReleaseBehavior(void)
-	// {
-	// 	GLint result = 0;
-	// 	OGLPLUS_GLFUNC(GetIntegerv)(GL_CONTEXT_RELEASE_BEHAVIOR, &result);
-	// 	OGLPLUS_VERIFY_SIMPLE(GetIntegerv);
-	// 	return ContextReleaseBehavior (result);
-	// }
+	static ContextReleaseBehavior ReleaseBehavior(void)
+	{
+		GLint result = 0;
+		OGLPLUS_GLFUNC(GetIntegerv)(GL_CONTEXT_RELEASE_BEHAVIOR, &result);
+		OGLPLUS_VERIFY_SIMPLE(GetIntegerv);
+		return ContextReleaseBehavior (result);
+	}
 #endif
 
-#if OGLPLUS_DOCUMENTATION_ONLY || GL_VERSION_4_5
+#if GL_CONTEXT_RELEASE_BEHAVIOR && \
+	(OGLPLUS_DOCUMENTATION_ONLY || GL_VERSION_4_5)
 	/// Returns the context graphics reset notification strategy
 	/**
 	 *  @glsymbols
@@ -157,13 +159,13 @@ public:
 	 *  @glsymbols
 	 *  @glfunref{GetGraphicsResetStatusARB}
 	 */
-	// static oglplus::GraphicsResetStatus
-	// GraphicsResetStatus(void)
-	// {
-	// 	GLenum result = OGLPLUS_GLFUNC(GetGraphicsResetStatus)();
-	// 	OGLPLUS_VERIFY_SIMPLE(GetGraphicsResetStatus);
-	// 	return oglplus::GraphicsResetStatus(result);
-	// }
+	static oglplus::GraphicsResetStatus
+	GraphicsResetStatus(void)
+	{
+		GLenum result = OGLPLUS_GLFUNC(GetGraphicsResetStatus)();
+		OGLPLUS_VERIFY_SIMPLE(GetGraphicsResetStatus);
+		return oglplus::GraphicsResetStatus(result);
+	}
 #endif
 };
 
