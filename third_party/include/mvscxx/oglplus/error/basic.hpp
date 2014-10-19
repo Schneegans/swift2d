@@ -381,21 +381,11 @@ inline void HandleError(ErrorType& error)
 		ERROR_INFO.GLFunc(FUNC_NAME)\
 	)
 
-// disable gl runtime error checking on low profile --- added by simon
-#if !OGLPLUS_LOW_PROFILE
 #define OGLPLUS_CHECK(GLFUNC, ERROR, ERROR_INFO) \
 	OGLPLUS_GLFUNC_CHECK(#GLFUNC, ERROR, ERROR_INFO)
-#else
-#define OGLPLUS_CHECK(GLFUNC, ERROR, ERROR_INFO)
-#endif
 
-#if !OGLPLUS_LOW_PROFILE
 #define OGLPLUS_CHECK_CTXT(ERROR, ERROR_INFO) \
 	OGLPLUS_GLFUNC_CHECK(_errinf_glfn(), ERROR, ERROR_INFO)
-#else
-#define OGLPLUS_CHECK_CTXT(ERROR, ERROR_INFO)
-#endif
-// ----
 
 #define OGLPLUS_CHECK_SIMPLE(GLFUNC) \
 	OGLPLUS_CHECK(GLFUNC, Error, NoInfo())

@@ -136,7 +136,7 @@ void Window::init_context() {
       debugger_ = new ogl::Debug();
 
       log_sink_ = new ogl::Debug::LogSink([](ogl::Debug::CallbackData const& data) {
-        if (data.id != 131185 && data.id != 131204) {
+        if (data.id != 131185 && data.id != 131204 && data.id != 131184 && data.id != 131076) {
           switch (data.severity) {
           case ogl::Debug::Severity::High:
             LOG_ERROR << "[" << data.id << "] " << data.message << std::endl;
