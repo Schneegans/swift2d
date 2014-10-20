@@ -87,10 +87,10 @@ class SWIFT_DLL Steam : public Singleton<Steam> {
 
   math::uint64 current_room_;
 
-  SteamCallback<LobbyChatUpdate_t>*     chat_update_;
-  SteamCallback<LobbyChatMsg_t>*        chat_message_;
-  SteamCallback<LobbyEnter_t>*          lobby_enter_;
-  SteamCallback<PersonaStateChange_t>*  persona_change_;
+  SteamCallback<LobbyChatUpdate_t>*    chat_update_;
+  SteamCallback<LobbyChatMsg_t>*       chat_message_;
+  SteamCallback<LobbyEnter_t>*         lobby_enter_;
+  SteamCallback<PersonaStateChange_t>* persona_change_;
 
   std::unordered_map<math::uint64, std::string> avatar_cache_;
 };

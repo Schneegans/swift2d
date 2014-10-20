@@ -88,10 +88,22 @@ Network::~Network() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Network::connect(math::uint64 guid) {
+void Network::connect(std::string const& other) {
   if (phase_ == STARTED) {
-    host_guid_ = guid;
-    // phase_ = NAT_PUNCH_TO_HOST;
+
+    auto o(RakNet::SystemAddress(other.c_str()));
+    auto host(o.ToString(false));
+
+    LOG_MESSAGE << "Connecting to " << host << "." << std::endl;
+
+    if (is_in_same_network(other)) {
+      phase_ = CONNECTING_TO_HOST;
+      peer_->Connect(host, o.GetPort(), 0, 0);
+    } else {
+      phase_ = NAT_PUNCH_TO_HOST;
+      npt_->OpenNAT(peer_->GetGuidFromSystemAddress(o),
+                    RakNet::SystemAddress(nat_server_address_.c_str()));
+    }
   }
 }
 
@@ -142,9 +154,12 @@ void Network::update() {
 
         } else if (phase_ == NAT_PUNCH_TO_HOST) {
 
-          // nar punch was successfull, we got a connection!
+          // nat punch was successfull, we got a connection!
           phase_ = CONNECTING_TO_HOST;
-          // request_join(packet->guid.g);
+          request_join(packet->guid.g);
+
+        } else if (phase_ == CONNECTING_TO_HOST) {
+          request_join(packet->guid.g);
         }
 
         break;
@@ -219,11 +234,11 @@ void Network::update() {
 
       //   } break;
 
-      // // -----------------------------------------------------------------------
-      // case (ID_USER_PACKET_ENUM + REQUEST_JOIN):
-      //   Logger::LOG_MESSAGE << "Got join request from " << packet->guid.ToString() << "." << std::endl;
-      //   start_join(packet->guid.g);
-      //   break;
+      // -----------------------------------------------------------------------
+      case (ID_USER_PACKET_ENUM + REQUEST_JOIN):
+        Logger::LOG_MESSAGE << "Got join request from " << packet->guid.ToString() << "." << std::endl;
+        start_join(packet->guid.g);
+        break;
 
       // // -----------------------------------------------------------------------
       // case ID_FCM2_VERIFIED_JOIN_CAPABLE:
@@ -264,12 +279,12 @@ void Network::update() {
       //   Logger::LOG_MESSAGE << "Join failed." << std::endl;
       //   break;
 
-      // // -----------------------------------------------------------------------
-      // case ID_FCM2_VERIFIED_JOIN_START:
-      //   Logger::LOG_MESSAGE << "Connecting to other peers..." << std::endl;
-      //   enter_phase(CONNECTING_TO_PEERS);
-      //   join(packet->guid.g, nat_server_address_);
-      //   break;
+      // -----------------------------------------------------------------------
+      case ID_FCM2_VERIFIED_JOIN_START:
+        Logger::LOG_MESSAGE << "Connecting to other peers..." << std::endl;
+        // enter_phase(CONNECTING_TO_PEERS);
+        // join(packet->guid.g, nat_server_address_);
+        break;
 
       // ##################### OTHER PACKETS ###################################
       // -----------------------------------------------------------------------
@@ -298,6 +313,18 @@ bool Network::is_in_same_network(std::string const& other) const {
     }
   }
   return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::string const& Network::get_internal_address() const {
+  return internal_id_;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::string const& Network::get_external_address() const {
+  return external_id_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -363,23 +390,23 @@ void Network::enter_phase(Phase phase) {
   // }
 }
 
-// ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
-// void Network::request_join(math::uint64 guid) {
-//   mesh_->ResetHostCalculation();
+void Network::request_join(math::uint64 guid) {
+  mesh_->ResetHostCalculation();
 
-//   RakNet::BitStream message;
-//   message.Write((RakNet::MessageID)(ID_USER_PACKET_ENUM + Network::REQUEST_JOIN));
-//   peer_->Send(&message, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::RakNetGUID(guid), false);
-// }
+  RakNet::BitStream message;
+  message.Write((RakNet::MessageID)(ID_USER_PACKET_ENUM + Network::REQUEST_JOIN));
+  peer_->Send(&message, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::RakNetGUID(guid), false);
+}
 
-// ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
-// void Network::start_join(math::uint64 guid) {
-//   mesh_->StartVerifiedJoin(RakNet::RakNetGUID(guid));
-// }
+void Network::start_join(math::uint64 guid) {
+  mesh_->StartVerifiedJoin(RakNet::RakNetGUID(guid));
+}
 
-// ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 // void Network::join(math::uint64 guid, std::string const& nat_server) {
 //   DataStructures::List<RakNet::SystemAddress> addresses;

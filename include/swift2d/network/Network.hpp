@@ -53,19 +53,14 @@ class SWIFT_DLL Network : public Singleton<Network> {
     replica_->register_object(type, [](){ return new T(); });
   };
 
+  void connect(std::string const& other);
   void distribute_object(NetworkObjectBase* object);
 
-  std::string const& get_internal_address() const {
-    return internal_id_;
-  }
-
-  std::string const& get_external_address() const {
-    return external_id_;
-  }
+  std::string const& get_internal_address() const;
+  std::string const& get_external_address() const;
 
   bool is_in_same_network(std::string const& other) const;
   bool is_host() const;
-  void connect(math::uint64 guid);
 
   friend class UpnpOpener;
   friend class Singleton<Network>;
@@ -82,24 +77,20 @@ class SWIFT_DLL Network : public Singleton<Network> {
   void start_join(math::uint64 guid);
   void join(math::uint64 guid, std::string const& nat_server);
 
-  RakNet::RakPeerInterface*             peer_;
-  RakNet::ConnectionGraph2*             graph_;
-  RakNet::FullyConnectedMesh2*          mesh_;
-  RakNet::NatPunchthroughClient*        npt_;
-  RakNet::NetworkIDManager*             id_manager_;
+  RakNet::RakPeerInterface*      peer_;
+  RakNet::ConnectionGraph2*      graph_;
+  RakNet::FullyConnectedMesh2*   mesh_;
+  RakNet::NatPunchthroughClient* npt_;
+  RakNet::NetworkIDManager*      id_manager_;
 
-  ReplicationManager*                   replica_;
+  ReplicationManager*            replica_;
 
-  UpnpOpener      upnp_;
+  Phase                          phase_;
 
-  Phase           phase_;
-  std::string     game_ID_;
+  std::string                    nat_server_address_;
 
-  math::uint64    host_guid_;
-  std::string     nat_server_address_;
-
-  std::string    internal_id_;
-  std::string    external_id_;
+  std::string                    internal_id_;
+  std::string                    external_id_;
 };
 
 }
