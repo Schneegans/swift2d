@@ -63,6 +63,8 @@ Network::Network()
 
   RakNet::StartupResult sr = peer_->Startup(8, &sd, 1);
 
+
+
   if (sr != RakNet::RAKNET_STARTED) {
     LOG_ERROR << "Failed to start peer!" << std::endl;
   }
@@ -89,21 +91,17 @@ Network::~Network() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Network::connect(std::string const& other) {
-  if (phase_ == STARTED) {
+  auto o(RakNet::SystemAddress(other.c_str()));
 
-    auto o(RakNet::SystemAddress(other.c_str()));
-    auto host(o.ToString(false));
-
-    LOG_MESSAGE << "Connecting to " << host << "." << std::endl;
-
-    if (is_in_same_network(other)) {
-      phase_ = CONNECTING_TO_HOST;
-      peer_->Connect(host, o.GetPort(), 0, 0);
-    } else {
-      phase_ = NAT_PUNCH_TO_HOST;
-      npt_->OpenNAT(peer_->GetGuidFromSystemAddress(o),
-                    RakNet::SystemAddress(nat_server_address_.c_str()));
-    }
+  if (is_in_same_network(other)) {
+    phase_ = CONNECTING_TO_HOST;
+    LOG_MESSAGE << "Connecting to " << o.ToString() << " via LAN..." << std::endl;
+    peer_->Connect(o.ToString(false), o.GetPort(), 0, 0);
+  } else {
+    phase_ = NAT_PUNCH_TO_HOST;
+    LOG_MESSAGE << "Connecting to " << o.ToString() << " via NatPunch..." << std::endl;
+    npt_->OpenNAT(peer_->GetGuidFromSystemAddress(o),
+                  RakNet::SystemAddress(nat_server_address_.c_str()));
   }
 }
 
@@ -145,6 +143,7 @@ void Network::update() {
           // the nat server accepted our connection
           LOG_MESSAGE << "Connected to NAT server." << std::endl;
           nat_server_address_ = packet->systemAddress.ToString();
+          peer_->CloseConnection(packet->systemAddress, true);
 
           // save external ip
           external_id_ = peer_->GetExternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString();
@@ -173,10 +172,10 @@ void Network::update() {
 
         break;
 
-      // // -----------------------------------------------------------------------
-      // case ID_DISCONNECTION_NOTIFICATION:
-      //   Logger::LOG_MESSAGE << packet->guid.ToString() << " disconnected." << std::endl;
-      //   break;
+      // -----------------------------------------------------------------------
+      case ID_DISCONNECTION_NOTIFICATION:
+        Logger::LOG_MESSAGE << packet->guid.ToString() << " disconnected." << std::endl;
+        break;
 
       // // ################ NAT PUNCH THROUGH PACKETS ############################
       // // -----------------------------------------------------------------------
