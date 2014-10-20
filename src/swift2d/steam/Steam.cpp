@@ -14,6 +14,7 @@
 #include <swift2d/steam/SteamOnceCallback.hpp>
 #include <swift2d/steam/SteamCallback.hpp>
 #include <swift2d/utils/Logger.hpp>
+#include <swift2d/utils/stl_helpers.hpp>
 
 #include <stb_image/stb_image_write.h>
 
@@ -185,10 +186,10 @@ void Steam::create_room(std::string const& name) {
       [this, name](LobbyCreated_t *result, bool f) {
 
       if (result->m_eResult == k_EResultOK) {
-        LOG_WARNING << "created " << result->m_ulSteamIDLobby << std::endl;
         current_room_ = result->m_ulSteamIDLobby;
 
-        SteamMatchmaking()->SetLobbyData(current_room_, "name", name.c_str());
+        set_room_data("name", name.c_str());
+        set_room_data("owner_network_id", std::to_string(Network::get().get_own_id()));
       } else {
         LOG_WARNING << "failed to create lobby" << std::endl;
       }
@@ -213,8 +214,20 @@ std::string Steam::get_room_data(std::string const& key) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-math::uint64 Steam::get_room_owner() {
+math::uint64 Steam::get_room_owner_id() {
   return SteamMatchmaking()->GetLobbyOwner(current_room_).ConvertToUint64();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+math::uint64 Steam::get_room_owner_network_id() {
+  std::string owner_network_id(get_room_data("owner_network_id"));
+
+  if (owner_network_id == "") {
+    return 0;
+  }
+
+  return std::from_string<math::uint64>(owner_network_id);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

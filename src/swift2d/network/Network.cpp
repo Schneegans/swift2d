@@ -68,8 +68,6 @@ Network::Network()
   peer_->SetMaximumIncomingConnections(8);
   peer_->SetTimeoutTime(1000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 
-  connect(0);
-
   LOG_MESSAGE << "I'm " << get_own_id() << std::endl;
 }
 

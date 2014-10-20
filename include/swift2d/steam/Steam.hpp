@@ -54,23 +54,24 @@ class SWIFT_DLL Steam : public Singleton<Steam> {
   bool init();
   void update();
 
-  void        update_room_list();
-  math::uint64    get_room_id();
+  void         update_room_list();
+  math::uint64 get_room_id();
 
-  void        create_room(std::string const& name);
-  void        join_room(math::uint64 room_id);
-  void        leave_room();
+  void         create_room(std::string const& name);
+  void         join_room(math::uint64 room_id);
+  void         leave_room();
 
-  void        set_room_data(std::string const& key, std::string const& value);
-  std::string get_room_data(std::string const& key);
-  math::uint64    get_room_owner();
+  void         set_room_data(std::string const& key, std::string const& value);
+  std::string  get_room_data(std::string const& key);
+  math::uint64 get_room_owner_id();
+  math::uint64 get_room_owner_network_id();
 
-  void        send_chat_message(std::string const& message);
+  void         send_chat_message(std::string const& message);
 
-  math::uint64    get_user_id();
-  std::string get_user_name();
-  std::string get_user_name(math::uint64 steam_id);
-  std::string get_user_avatar(math::uint64 steam_id);
+  math::uint64 get_user_id();
+  std::string  get_user_name();
+  std::string  get_user_name(math::uint64 steam_id);
+  std::string  get_user_avatar(math::uint64 steam_id);
 
   friend class Singleton<Steam>;
 
