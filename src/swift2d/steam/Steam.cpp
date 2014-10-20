@@ -115,7 +115,6 @@ Steam::Steam()
 
 Steam::~Steam() {
   SteamAPI_Shutdown();
-
   if(chat_update_)    delete chat_update_;
   if(chat_message_)   delete chat_message_;
   if(lobby_enter_)    delete lobby_enter_;
