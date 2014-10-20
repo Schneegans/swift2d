@@ -93,6 +93,7 @@ Physics::Physics()
   , gravity_map_(nullptr) {
 
   world_->SetContactListener(contact_listener_);
+  world_->SetAllowSleeping(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
