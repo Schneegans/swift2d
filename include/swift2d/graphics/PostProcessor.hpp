@@ -12,8 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Shader.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
-#include <swift2d/graphics/StreakEffect.hpp>
-#include <swift2d/graphics/GhostEffect.hpp>
+#include <swift2d/graphics/LensFlareEffect.hpp>
 #include <swift2d/graphics/HeatEffect.hpp>
 #include <swift2d/graphics/GBuffer.hpp>
 #include <swift2d/graphics/LBuffer.hpp>
@@ -42,16 +41,13 @@ class PostProcessor {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void generate_threshold_buffer(RenderContext const& ctx);
-
   Shader post_fx_shader_;
-  Shader threshold_shader_;
 
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_diffuse_;
   oglplus::Lazy<oglplus::Uniform<int>> g_buffer_normal_;
   oglplus::Lazy<oglplus::Uniform<math::vec2i>> screen_size_;
   oglplus::Lazy<oglplus::Uniform<int>> l_buffer_;
-  oglplus::Lazy<oglplus::Uniform<int>> glow_buffers_;
+  oglplus::Lazy<oglplus::Uniform<int>> glow_buffer_;
   oglplus::Lazy<oglplus::Uniform<int>> heat_buffer_;
   oglplus::Lazy<oglplus::Uniform<int>> dirt_tex_;
   oglplus::Lazy<oglplus::Uniform<float>> dirt_opacity_;
@@ -60,19 +56,12 @@ class PostProcessor {
   oglplus::Lazy<oglplus::Uniform<math::vec4>> vignette_color_;
   oglplus::Lazy<oglplus::Uniform<float>> vignette_softness_;
   oglplus::Lazy<oglplus::Uniform<float>> vignette_coverage_;
-  oglplus::Lazy<oglplus::Uniform<math::vec2i>> screen_size_threshold_;
-  oglplus::Lazy<oglplus::Uniform<int>> g_buffer_diffuse_threshold_;
-  oglplus::Lazy<oglplus::Uniform<int>> g_buffer_light_;
   oglplus::Lazy<oglplus::Uniform<int>> use_color_grading_;
   oglplus::Lazy<oglplus::Uniform<int>> color_grading_tex_;
   oglplus::Lazy<oglplus::Uniform<float>> color_grading_intensity_;
 
-  oglplus::Framebuffer threshold_fbo_;
-  oglplus::Texture     threshold_buffer_;
-
-  StreakEffect         streak_effect_;
-  GhostEffect          ghost_effect_;
-  HeatEffect           heat_effect_;
+  HeatEffect      heat_effect_;
+  LensFlareEffect lens_flare_effect_;
 
   Texture   dirt_;
 };

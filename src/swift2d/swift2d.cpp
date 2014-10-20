@@ -115,7 +115,6 @@ namespace {
       TexturedTrailShader::destroy_instance();
       ColoredTrailShader::destroy_instance();
       TrailUpdateShader::destroy_instance();
-      Steam::destroy_instance();
       SettingsWrapper::destroy_instance();
       Application::destroy_instance();
       Paths::destroy_instance();
@@ -130,6 +129,9 @@ namespace {
       glfwTerminate();
 
       LOG_MESSAGE << "Bye!" << std::endl;
+      // Leave at this position! SteamAPI_Shutdown() seems to kill the process
+      // under some conditions.
+      Steam::destroy_instance();
     }
 
     oalplus::Device audio_device_;
