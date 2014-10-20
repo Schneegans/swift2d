@@ -90,18 +90,18 @@ Network::~Network() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Network::connect(std::string const& other) {
+void Network::connect(std::string const& other, bool natpunch) {
   auto o(RakNet::SystemAddress(other.c_str()));
 
-  if (is_in_same_network(other)) {
-    phase_ = CONNECTING_TO_HOST;
-    LOG_MESSAGE << "Connecting to " << o.ToString() << " via LAN..." << std::endl;
-    peer_->Connect(o.ToString(false), o.GetPort(), 0, 0);
-  } else {
+  if (natpunch) {
     phase_ = NAT_PUNCH_TO_HOST;
     LOG_MESSAGE << "Connecting to " << o.ToString() << " via NatPunch..." << std::endl;
     npt_->OpenNAT(peer_->GetGuidFromSystemAddress(o),
                   RakNet::SystemAddress(nat_server_address_.c_str()));
+  } else {
+    phase_ = CONNECTING_TO_HOST;
+    LOG_MESSAGE << "Connecting to " << o.ToString() << " via LAN..." << std::endl;
+    peer_->Connect(o.ToString(false), o.GetPort(), 0, 0);
   }
 }
 
@@ -117,19 +117,19 @@ void Network::connect(std::string const& other) {
   //   enter_phase(OPENING_UPNP);
   // });
 
-  // enter_phase(HOSTING_INSTANCE);
+  // enter_phase(HOSTING);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Network::update() {
 
-  // auto register_new_peer = [&](RakNet::RakNetGUID guid){
-  //   RakNet::Connection_RM3 *connection = replica_->AllocConnection(peer_->GetSystemAddressFromGuid(guid), guid);
-  //   if (replica_->PushConnection(connection) == false) {
-  //     replica_->DeallocConnection(connection);
-  //   }
-  // };
+  auto register_new_peer = [&](RakNet::RakNetGUID guid){
+    RakNet::Connection_RM3 *connection = replica_->AllocConnection(peer_->GetSystemAddressFromGuid(guid), guid);
+    if (replica_->PushConnection(connection) == false) {
+      replica_->DeallocConnection(connection);
+    }
+  };
 
   for (RakNet::Packet* packet=peer_->Receive(); packet; peer_->DeallocatePacket(packet), packet=peer_->Receive()) {
     switch (packet->data[0]) {
@@ -200,38 +200,39 @@ void Network::update() {
       //   else          enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
       //   } break;
 
-      // // ################## FULLY CONNECTED MESH ###############################
-      // // -----------------------------------------------------------------------
-      // case ID_FCM2_NEW_HOST: {
-      //   RakNet::BitStream bs(packet->data, packet->length, false);
-      //   bs.IgnoreBytes(1);
-      //   RakNet::RakNetGUID old_host;
-      //   bs.Read(old_host);
+      // ################## FULLY CONNECTED MESH ###############################
+      // -----------------------------------------------------------------------
+      case ID_FCM2_NEW_HOST: {
+        RakNet::BitStream bs(packet->data, packet->length, false);
+        bs.IgnoreBytes(1);
+        RakNet::RakNetGUID old_host;
+        bs.Read(old_host);
 
-      //   if (packet->guid.g == peer_->GetMyGUID().g) {
-      //     if (phase_ != HOSTING_INSTANCE) {
-      //       enter_phase(HOSTING_INSTANCE);
-      //     }
-      //   } else {
-      //     Logger::LOG_MESSAGE << packet->guid.ToString() << " is host now." << std::endl;
+        if (packet->guid.g == peer_->GetMyGUID().g) {
+          if (phase_ != HOSTING) {
+            phase_ = HOSTING;
+            Logger::LOG_MESSAGE << "I'm host now." << std::endl;
+          }
+        } else {
+          Logger::LOG_MESSAGE << packet->guid.ToString() << " is host now." << std::endl;
 
 
-      //     if (old_host != RakNet::UNASSIGNED_RAKNET_GUID) {
-      //       Logger::LOG_MESSAGE << "Old host was " << old_host.ToString() << std::endl;
-      //     } else {
-      //       Logger::LOG_MESSAGE << "There was no host before." << std::endl;
-      //     }
-      //   }
+          if (old_host != RakNet::UNASSIGNED_RAKNET_GUID) {
+            Logger::LOG_MESSAGE << "Old host was " << old_host.ToString() << std::endl;
+          } else {
+            Logger::LOG_MESSAGE << "There was no host before." << std::endl;
+          }
+        }
 
-      //   if (old_host == RakNet::UNASSIGNED_RAKNET_GUID) {
-      //     DataStructures::List<RakNet::RakNetGUID> peers;
-      //     mesh_->GetParticipantList(peers);
-      //     for (unsigned int i=0; i < peers.Size(); i++) {
-      //       register_new_peer(peers[i]);
-      //     }
-      //   }
+        if (old_host == RakNet::UNASSIGNED_RAKNET_GUID) {
+          DataStructures::List<RakNet::RakNetGUID> peers;
+          mesh_->GetParticipantList(peers);
+          for (unsigned int i=0; i < peers.Size(); i++) {
+            register_new_peer(peers[i]);
+          }
+        }
 
-      //   } break;
+        } break;
 
       // -----------------------------------------------------------------------
       case (ID_USER_PACKET_ENUM + REQUEST_JOIN):
@@ -239,44 +240,44 @@ void Network::update() {
         start_join(packet->guid.g);
         break;
 
-      // // -----------------------------------------------------------------------
-      // case ID_FCM2_VERIFIED_JOIN_CAPABLE:
-      //   mesh_->RespondOnVerifiedJoinCapable(packet, true, 0);
-      //   break;
+      // -----------------------------------------------------------------------
+      case ID_FCM2_VERIFIED_JOIN_CAPABLE:
+        mesh_->RespondOnVerifiedJoinCapable(packet, true, 0);
+        break;
 
-      // // -----------------------------------------------------------------------
-      // case ID_FCM2_VERIFIED_JOIN_ACCEPTED: {
-      //   DataStructures::List<RakNet::RakNetGUID> peers;
-      //   bool this_was_accepted;
-      //   mesh_->GetVerifiedJoinAcceptedAdditionalData(packet, &this_was_accepted, peers, 0);
-      //   if (this_was_accepted) {
-      //     Logger::LOG_MESSAGE << "Join accepted." << std::endl;
-      //   } else {
-      //     Logger::LOG_MESSAGE << "Peer " << peers[0].ToString() << " joined the game." << std::endl;
-      //   }
+      // -----------------------------------------------------------------------
+      case ID_FCM2_VERIFIED_JOIN_ACCEPTED: {
+        DataStructures::List<RakNet::RakNetGUID> peers;
+        bool this_was_accepted;
+        mesh_->GetVerifiedJoinAcceptedAdditionalData(packet, &this_was_accepted, peers, 0);
+        if (this_was_accepted) {
+          Logger::LOG_MESSAGE << "Join accepted." << std::endl;
+        } else {
+          Logger::LOG_MESSAGE << "Peer " << peers[0].ToString() << " joined the game." << std::endl;
+        }
 
-      //   if (mesh_->GetConnectedHost() != RakNet::UNASSIGNED_RAKNET_GUID) {
-      //     for (unsigned int i=0; i < peers.Size(); i++) {
-      //       register_new_peer(peers[i]);
-      //     }
-      //   }
+        if (mesh_->GetConnectedHost() != RakNet::UNASSIGNED_RAKNET_GUID) {
+          for (unsigned int i=0; i < peers.Size(); i++) {
+            register_new_peer(peers[i]);
+          }
+        }
 
-      //   if (this_was_accepted) {
-      //     enter_phase(PARTICIPATING);
-      //   }
+        if (this_was_accepted) {
+          Logger::LOG_MESSAGE << "Joined the game." << std::endl;
+        }
 
-      // } break;
+      } break;
 
-      // // -----------------------------------------------------------------------
-      // case ID_FCM2_VERIFIED_JOIN_REJECTED:
-      //   Logger::LOG_MESSAGE << "Join rejected." << std::endl;
-      //   peer_->CloseConnection(packet->guid, true);
-      //   break;
+      // -----------------------------------------------------------------------
+      case ID_FCM2_VERIFIED_JOIN_REJECTED:
+        Logger::LOG_MESSAGE << "Join rejected." << std::endl;
+        peer_->CloseConnection(packet->guid, true);
+        break;
 
-      // // -----------------------------------------------------------------------
-      // case ID_FCM2_VERIFIED_JOIN_FAILED:
-      //   Logger::LOG_MESSAGE << "Join failed." << std::endl;
-      //   break;
+      // -----------------------------------------------------------------------
+      case ID_FCM2_VERIFIED_JOIN_FAILED:
+        Logger::LOG_MESSAGE << "Join failed." << std::endl;
+        break;
 
       // -----------------------------------------------------------------------
       case ID_FCM2_VERIFIED_JOIN_START:
@@ -376,7 +377,7 @@ void Network::enter_phase(Phase phase) {
   //     break;
 
   //   // -------------------------------------------------------------------------
-  //   case HOSTING_INSTANCE:
+  //   case HOSTING:
   //     Logger::LOG_MESSAGE << "I'm host now." << std::endl;
   //     // register_game();
   //     // update_timer_.reset();

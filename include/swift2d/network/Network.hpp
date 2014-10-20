@@ -40,7 +40,8 @@ class SWIFT_DLL Network : public Singleton<Network> {
     STARTED,
     CONNECTING_TO_NAT_SERVER,
     NAT_PUNCH_TO_HOST,
-    CONNECTING_TO_HOST
+    CONNECTING_TO_HOST,
+    HOSTING
   };
 
   enum PacketID {
@@ -53,7 +54,7 @@ class SWIFT_DLL Network : public Singleton<Network> {
     replica_->register_object(type, [](){ return new T(); });
   };
 
-  void connect(std::string const& other);
+  void connect(std::string const& other, bool natpunch);
   void distribute_object(NetworkObjectBase* object);
 
   std::string const& get_internal_address() const;
