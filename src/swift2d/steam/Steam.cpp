@@ -188,9 +188,10 @@ void Steam::create_room(std::string const& name) {
         current_room_ = result->m_ulSteamIDLobby;
 
         set_room_data("name", name.c_str());
-        set_room_data("owner_network_id", std::to_string(Network::get().get_own_id()));
+        set_room_data("owner_internal_ip", Network::get().get_internal_address());
+        set_room_data("owner_external_ip", Network::get().get_external_address());
       } else {
-        LOG_WARNING << "failed to create lobby" << std::endl;
+        LOG_WARNING << "Failed to create lobby" << std::endl;
       }
     });
 
@@ -219,14 +220,14 @@ math::uint64 Steam::get_room_owner_id() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-math::uint64 Steam::get_room_owner_network_id() {
-  std::string owner_network_id(get_room_data("owner_network_id"));
+std::string Steam::get_room_owner_internal_ip() {
+  return get_room_data("owner_internal_ip");
+}
 
-  if (owner_network_id == "") {
-    return 0;
-  }
+////////////////////////////////////////////////////////////////////////////////
 
-  return std::from_string<math::uint64>(owner_network_id);
+std::string Steam::get_room_owner_external_ip() {
+  return get_room_data("owner_external_ip");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
