@@ -33,6 +33,8 @@ class SWIFT_DLL TransformableComponent : public Component {
  // ----------------------------------------------------------- public interface
  public:
 
+  TransformableComponent() : Component() {};
+
   // ---------------------------------------------------------------- properties
   Mat3 Transform;
   Mat3 WorldTransform;

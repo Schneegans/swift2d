@@ -19,9 +19,7 @@ namespace swift {
 
 LightParticleSystemComponent::LightParticleSystemComponent()
   : StartScale(1.f),               EndScale(1.f)
-  , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 0)) {
-  Enabled = false;
-}
+  , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 0)) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 

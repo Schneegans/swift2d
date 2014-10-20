@@ -16,7 +16,8 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 ParticleSystemComponent::ParticleSystemComponent()
-  : MaxCount                (1000)
+  : TransformableComponent()
+  , MaxCount                (1000)
   , Depth                   (0.f)
   , Mass                    (0.f)
   , LinearDamping           (0.f)

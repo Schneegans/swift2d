@@ -19,9 +19,7 @@ namespace swift {
 
 HeatParticleSystemComponent::HeatParticleSystemComponent()
   : StartScale(1.f),    EndScale(1.f)
-  , StartOpacity(1.f),  EndOpacity(0.f) {
-  Enabled = false;
-}
+  , StartOpacity(1.f),  EndOpacity(0.f) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
