@@ -42,7 +42,9 @@ Network::Network()
   , mesh_             (RakNet::FullyConnectedMesh2::GetInstance())
   , npt_              (RakNet::NatPunchthroughClient::GetInstance())
   , id_manager_       (new RakNet::NetworkIDManager())
-  , replica_          (new ReplicationManager()) {
+  , replica_          (new ReplicationManager())
+  , internal_id_      ("")
+  , external_id_      ("") {
 
   peer_->AttachPlugin(mesh_);
   peer_->AttachPlugin(graph_);
@@ -68,7 +70,8 @@ Network::Network()
   peer_->SetMaximumIncomingConnections(8);
   peer_->SetTimeoutTime(1000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 
-  LOG_MESSAGE << "I'm " << get_own_id() << std::endl;
+  phase_ = CONNECTING_TO_NAT_SERVER;
+  RakNet::ConnectionAttemptResult car = peer_->Connect("natpunch.jenkinssoftware.com", 61111, 0, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -85,22 +88,10 @@ Network::~Network() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-math::uint64 Network::get_own_id() {
-  return peer_->GetMyGUID().g;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void Network::connect(math::uint64 guid) {
   if (phase_ == STARTED) {
     host_guid_ = guid;
-    phase_ = CONNECTING_TO_NAT_SERVER;
-
-    RakNet::ConnectionAttemptResult car = peer_->Connect("127.0.0.1", 61111, 0, 0);
-    // RakNet::ConnectionAttemptResult car = peer_->Connect("natpunch.jenkinssoftware.com", 61111, 0, 0);
-    if (car != RakNet::CONNECTION_ATTEMPT_STARTED) {
-      LOG_WARNING << "Failed to connect! Code=" << car << std::endl;
-    }
+    // phase_ = NAT_PUNCH_TO_HOST;
   }
 }
 
@@ -142,15 +133,27 @@ void Network::update() {
           // the nat server accepted our connection
           LOG_MESSAGE << "Connected to NAT server." << std::endl;
           nat_server_address_ = packet->systemAddress.ToString();
-          phase_ = NAT_PUNCH_TO_HOST;
 
-          npt_->OpenNAT(RakNet::RakNetGUID(host_guid_), RakNet::SystemAddress(nat_server_address_.c_str()));
+          // save external ip
+          external_id_ = peer_->GetExternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString();
+
+          // broadcast on LAN to get internal ip
+          peer_->AdvertiseSystem("255.255.255.255", peer_->GetInternalID().GetPort(), 0, 0);
 
         } else if (phase_ == NAT_PUNCH_TO_HOST) {
 
           // nar punch was successfull, we got a connection!
           phase_ = CONNECTING_TO_HOST;
           // request_join(packet->guid.g);
+        }
+
+        break;
+
+      // -----------------------------------------------------------------------
+      case ID_ADVERTISE_SYSTEM:
+        if (packet->guid.g == peer_->GetMyGUID().g) {
+          // save internal ip
+          internal_id_ = packet->systemAddress.ToString();
         }
 
         break;
@@ -191,7 +194,7 @@ void Network::update() {
       //   RakNet::RakNetGUID old_host;
       //   bs.Read(old_host);
 
-      //   if (packet->guid.g == get_own_id()) {
+      //   if (packet->guid.g == peer_->GetMyGUID().g) {
       //     if (phase_ != HOSTING_INSTANCE) {
       //       enter_phase(HOSTING_INSTANCE);
       //     }
@@ -284,7 +287,20 @@ void Network::distribute_object(NetworkObjectBase* object) {
   replica_->Reference(object);
 }
 
-// ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+bool Network::is_in_same_network(std::string const& other) const {
+  RakNet::SystemAddress o;
+  RakNet::SystemAddress self;
+  if (o.FromString(other.c_str()) && self.FromString(external_id_.c_str())) {
+    if (o.EqualsExcludingPort(self)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 bool Network::is_host() const {
   return mesh_->IsConnectedHost();
@@ -347,7 +363,7 @@ void Network::enter_phase(Phase phase) {
   // }
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////////
 
 // void Network::request_join(math::uint64 guid) {
 //   mesh_->ResetHostCalculation();

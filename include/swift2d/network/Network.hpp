@@ -47,8 +47,6 @@ class SWIFT_DLL Network : public Singleton<Network> {
     REQUEST_JOIN
   };
 
-  math::uint64 get_own_id();
-
   void update();
 
   template<typename T> void register_type(RakNet::RakString const& type) {
@@ -57,6 +55,15 @@ class SWIFT_DLL Network : public Singleton<Network> {
 
   void distribute_object(NetworkObjectBase* object);
 
+  std::string const& get_internal_address() const {
+    return internal_id_;
+  }
+
+  std::string const& get_external_address() const {
+    return external_id_;
+  }
+
+  bool is_in_same_network(std::string const& other) const;
   bool is_host() const;
   void connect(math::uint64 guid);
 
@@ -90,6 +97,9 @@ class SWIFT_DLL Network : public Singleton<Network> {
 
   math::uint64    host_guid_;
   std::string     nat_server_address_;
+
+  std::string    internal_id_;
+  std::string    external_id_;
 };
 
 }
