@@ -85,7 +85,7 @@ class SWIFT_DLL ParticleSystemComponent : public TransformableComponent {
   void remove_emitter(ParticleEmitterComponent const* emitter);
   void spawn_once(SerializedEmitter const& emitter);
 
-  void serialize(ParticleSystemComponent::Serialized& serialized) const;
+  virtual void serialize(ParticleSystemComponent::Serialized& serialized) const;
   virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////

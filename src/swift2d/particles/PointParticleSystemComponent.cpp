@@ -13,17 +13,18 @@
 #include <swift2d/particles/ParticleSystem.hpp>
 #include <swift2d/particles/PointParticleShader.hpp>
 
+#include <swift2d/scene/SceneObject.hpp>
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
 PointParticleSystemComponent::PointParticleSystemComponent()
-  : Scale(1.f)
+  : ParticleSystemComponent()
+  , Scale(1.f)
   , StartGlow(0.f),                EndGlow(0.f)
   , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 0))
-  , BlendAdd(false) {
-  Enabled = false;
-}
+  , BlendAdd(false) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
