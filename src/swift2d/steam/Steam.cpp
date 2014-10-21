@@ -39,23 +39,23 @@ Steam::Steam()
     std::string what;
 
     if (result->m_rgfChatMemberStateChange == k_EChatMemberStateChangeEntered) {
-      what = "entered the room";
+      what = "join";
     }
 
     if (result->m_rgfChatMemberStateChange == k_EChatMemberStateChangeLeft) {
-      what = "left the room";
+      what = "leave";
     }
 
     if (result->m_rgfChatMemberStateChange == k_EChatMemberStateChangeDisconnected) {
-      what = "disconnected";
+      what = "disconnect";
     }
 
     if (result->m_rgfChatMemberStateChange == k_EChatMemberStateChangeKicked) {
-      what = "was kicked";
+      what = "kick";
     }
 
     if (result->m_rgfChatMemberStateChange == k_EChatMemberStateChangeBanned) {
-      what = "was banned";
+      what = "bann";
     }
 
     on_message.emit(MessageType::MSG_CHAT_UPDATE, result->m_ulSteamIDUserChanged, what);
@@ -90,7 +90,7 @@ Steam::Steam()
     int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
     for (int i(0); i<user_count; ++i) {
       auto user = SteamMatchmaking()->GetLobbyMemberByIndex(current_room_, i);
-      on_message.emit(MessageType::MSG_CHAT_UPDATE, user.ConvertToUint64(), "is in this room");
+      on_message.emit(MessageType::MSG_CHAT_UPDATE, user.ConvertToUint64(), "join");
     }
   });
 
