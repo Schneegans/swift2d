@@ -90,7 +90,7 @@ Steam::Steam()
     int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
     for (int i(0); i<user_count; ++i) {
       auto user = SteamMatchmaking()->GetLobbyMemberByIndex(current_room_, i);
-      on_message.emit(MessageType::MSG_CHAT_UPDATE, user.ConvertToUint64(), "join");
+      on_message.emit(MessageType::MSG_CHAT_UPDATE, user.ConvertToUint64(), "exist");
     }
   });
 
