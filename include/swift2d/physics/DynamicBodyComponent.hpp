@@ -77,8 +77,11 @@ class SWIFT_DLL DynamicBodyComponent : public Component {
 
   void       set_linear_velocity(math::vec2 const& val);
   math::vec2 get_linear_velocity();
+
   void       set_angular_velocity(float val);
   float      get_angular_velocity();
+
+  void       set_transform(math::vec2 const& pos, float rot);
 
   virtual void update(double time);
 

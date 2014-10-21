@@ -108,6 +108,13 @@ float DynamicBodyComponent::get_angular_velocity() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void DynamicBodyComponent::set_transform(math::vec2 const& pos, float rot) {
+  init();
+  body_->SetTransform(b2Vec2(pos.x(), pos.y()), rot);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void DynamicBodyComponent::update(double time) {
 
   init();
