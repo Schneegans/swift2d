@@ -28,6 +28,7 @@ b2Shape* CircleCollisionShape::get_shape(math::mat3 const& body_transform) const
 
   auto shape(new b2CircleShape());
   shape->m_radius = Radius * scale;
+
   return shape;
 }
 

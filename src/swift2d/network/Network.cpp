@@ -159,6 +159,17 @@ void Network::update() {
       //   else          enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
       //   } break;
 
+      // ##################### TRACE PACKETS ###################################
+      // -----------------------------------------------------------------------
+      case ID_REPLICA_MANAGER_SERIALIZE:
+      case ID_REPLICA_MANAGER_SCOPE_CHANGE:
+      case ID_REPLICA_MANAGER_DOWNLOAD_STARTED:
+      case ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE:
+      case ID_REPLICA_MANAGER_CONSTRUCTION:
+        LOG_TRACE << "Got " << RakNet::PacketLogger::BaseIDTOString(packet->data[0])
+                            << " from " << packet->guid.ToString() << std::endl;
+        break;
+
       // ##################### OTHER PACKETS ###################################
       // -----------------------------------------------------------------------
       default:
