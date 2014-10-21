@@ -63,9 +63,13 @@ class SWIFT_DLL Steam : public Singleton<Steam> {
 
   void         set_room_data(std::string const& key, std::string const& value);
   std::string  get_room_data(std::string const& key);
+
+  void         set_user_data(std::string const& key, std::string const& value);
+  std::string  get_user_data(std::string const& key, math::uint64 user);
+
   math::uint64 get_room_owner_id();
-  std::string  get_room_owner_internal_ip();
-  std::string  get_room_owner_external_ip();
+  std::string  get_internal_ip(math::uint64 user);
+  std::string  get_external_ip(math::uint64 user);
 
   void         send_chat_message(std::string const& message);
 

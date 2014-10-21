@@ -37,16 +37,14 @@ class SWIFT_DLL Network : public Singleton<Network> {
  // ----------------------------------------------------------- public interface
  public:
   enum Phase {
-    STARTED,
-    CONNECTING_TO_NAT_SERVER,
-    NAT_PUNCH_TO_HOST,
-    CONNECTING_TO_HOST,
-    HOSTING
+    GETTING_EXTERNAL_IP,
+    GETTING_INTERNAL_IP,
+    READY
   };
 
-  enum PacketID {
-    REQUEST_JOIN
-  };
+  // enum PacketID {
+  //   REQUEST_JOIN
+  // };
 
   void update();
 
@@ -61,7 +59,7 @@ class SWIFT_DLL Network : public Singleton<Network> {
   std::string const& get_external_address() const;
 
   bool is_in_same_network(std::string const& other) const;
-  bool is_host() const;
+  // bool is_host() const;
 
   friend class UpnpOpener;
   friend class Singleton<Network>;
@@ -69,8 +67,6 @@ class SWIFT_DLL Network : public Singleton<Network> {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void enter_phase(Phase phase);
-
   Network();
   ~Network();
 
@@ -79,8 +75,8 @@ class SWIFT_DLL Network : public Singleton<Network> {
   void join(math::uint64 guid, std::string const& nat_server);
 
   RakNet::RakPeerInterface*      peer_;
-  RakNet::ConnectionGraph2*      graph_;
-  RakNet::FullyConnectedMesh2*   mesh_;
+  // RakNet::ConnectionGraph2*      graph_;
+  // RakNet::FullyConnectedMesh2*   mesh_;
   RakNet::NatPunchthroughClient* npt_;
   RakNet::NetworkIDManager*      id_manager_;
 

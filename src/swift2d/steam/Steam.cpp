@@ -84,6 +84,9 @@ Steam::Steam()
 
     on_message.emit(MessageType::MSG_JOIN, get_user_id(), "joined " + name);
 
+    set_user_data("internal_ip", Network::get().get_internal_address());
+    set_user_data("external_ip", Network::get().get_external_address());
+
     int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
     for (int i(0); i<user_count; ++i) {
       auto user = SteamMatchmaking()->GetLobbyMemberByIndex(current_room_, i);
@@ -125,7 +128,6 @@ Steam::~Steam() {
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Steam::init() {
-
   if (!SteamAPI_IsSteamRunning()) {
     LOG_WARNING << "Steam is not running." << std::endl;
     LOG_WARNING << "Please start Steam before running the game." << std::endl;
@@ -136,7 +138,6 @@ bool Steam::init() {
     LOG_WARNING << "Failed to initialized Steam!" << std::endl;
     return false;
   }
-
 
   return true;
 }
@@ -188,8 +189,7 @@ void Steam::create_room(std::string const& name) {
         current_room_ = result->m_ulSteamIDLobby;
 
         set_room_data("name", name.c_str());
-        set_room_data("owner_internal_ip", Network::get().get_internal_address());
-        set_room_data("owner_external_ip", Network::get().get_external_address());
+
       } else {
         LOG_WARNING << "Failed to create lobby" << std::endl;
       }
@@ -208,8 +208,20 @@ void Steam::set_room_data(std::string const& key, std::string const& value) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Steam::set_user_data(std::string const& key, std::string const& value) {
+  SteamMatchmaking()->SetLobbyMemberData(current_room_, key.c_str(), value.c_str());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 std::string Steam::get_room_data(std::string const& key) {
   return SteamMatchmaking()->GetLobbyData(current_room_, key.c_str());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::string Steam::get_user_data(std::string const& key, math::uint64 user) {
+  return SteamMatchmaking()->GetLobbyMemberData(current_room_, user, key.c_str());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -220,14 +232,14 @@ math::uint64 Steam::get_room_owner_id() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::string Steam::get_room_owner_internal_ip() {
-  return get_room_data("owner_internal_ip");
+std::string Steam::get_internal_ip(math::uint64 user) {
+  return get_user_data("internal_ip", user);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::string Steam::get_room_owner_external_ip() {
-  return get_room_data("owner_external_ip");
+std::string Steam::get_external_ip(math::uint64 user) {
+  return get_user_data("external_ip", user);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
