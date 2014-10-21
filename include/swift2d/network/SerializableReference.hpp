@@ -18,7 +18,7 @@
 #include <boost/any.hpp>
 
 #include <raknet/VariableDeltaSerializer.h>
-
+#include <type_traits>
 
 namespace swift {
 
@@ -70,7 +70,9 @@ struct SerializerImpl: Serializer {
 
   void deserialize(std::string const& name, boost::property_tree::ptree const& tree,
                  boost::any const& a) const {
-    a = tree.get<T>(name);
+
+    T target(boost::any_cast<T>(a));
+    *target = tree.get<typename std::remove_pointer<T>::type>(name);
   }
 
   Serializer* clone() const {
