@@ -42,10 +42,6 @@ class SWIFT_DLL Network : public Singleton<Network> {
     READY
   };
 
-  // enum PacketID {
-  //   REQUEST_JOIN
-  // };
-
   void update();
 
   template<typename T> void register_type(RakNet::RakString const& type) {
@@ -59,9 +55,7 @@ class SWIFT_DLL Network : public Singleton<Network> {
   std::string const& get_external_address() const;
 
   bool is_in_same_network(std::string const& other) const;
-  // bool is_host() const;
 
-  friend class UpnpOpener;
   friend class Singleton<Network>;
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -70,16 +64,9 @@ class SWIFT_DLL Network : public Singleton<Network> {
   Network();
   ~Network();
 
-  void request_join(math::uint64 guid);
-  void start_join(math::uint64 guid);
-  void join(math::uint64 guid, std::string const& nat_server);
-
   RakNet::RakPeerInterface*      peer_;
-  // RakNet::ConnectionGraph2*      graph_;
-  // RakNet::FullyConnectedMesh2*   mesh_;
   RakNet::NatPunchthroughClient* npt_;
   RakNet::NetworkIDManager*      id_manager_;
-
   ReplicationManager*            replica_;
 
   Phase                          phase_;

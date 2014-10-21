@@ -28,8 +28,7 @@ class SWIFT_DLL ReplicationManager : public RakNet::ReplicaManager3 {
  public:
 
   /*virtual*/ RakNet::Connection_RM3* AllocConnection(RakNet::SystemAddress const& systemAddress, RakNet::RakNetGUID rakNetGUID) const;
-
-  /*virtual*/ void DeallocConnection(RakNet::Connection_RM3 *connection) const;
+  /*virtual*/ void                    DeallocConnection(RakNet::Connection_RM3 *connection) const;
 
   void register_object(RakNet::RakString const& name, std::function<NetworkObjectBase*()> const& factory);
   NetworkObjectBase* create_object(RakNet::RakString const& name) const;
