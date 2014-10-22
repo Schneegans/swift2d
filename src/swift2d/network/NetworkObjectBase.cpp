@@ -37,7 +37,6 @@ bool NetworkObjectBase::QueryRemoteConstruction(RakNet::Connection_RM3 *sourceCo
 ////////////////////////////////////////////////////////////////////////////////
 
 void NetworkObjectBase::SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {
-  std::cout << "SerializeConstruction" << std::endl;
   vd_serializer_.AddRemoteSystemVariableHistory(destinationConnection->GetRakNetGUID());
   constructionBitstream->Write(get_type() + RakNet::RakString(" SerializeConstruction"));
 }
@@ -45,7 +44,6 @@ void NetworkObjectBase::SerializeConstruction(RakNet::BitStream *constructionBit
 ////////////////////////////////////////////////////////////////////////////////
 
 bool NetworkObjectBase::DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {
-  std::cout << "DeserializeConstruction" << std::endl;
   print_bitstream(constructionBitstream);
   return true;
 }
@@ -53,7 +51,6 @@ bool NetworkObjectBase::DeserializeConstruction(RakNet::BitStream *constructionB
 ////////////////////////////////////////////////////////////////////////////////
 
 void NetworkObjectBase::SerializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *destinationConnection) {
-  std::cout << "SerializeDestruction" << std::endl;
   vd_serializer_.RemoveRemoteSystemVariableHistory(destinationConnection->GetRakNetGUID());
   destructionBitstream->Write(get_type() + RakNet::RakString(" SerializeDestruction"));
 }
@@ -61,7 +58,6 @@ void NetworkObjectBase::SerializeDestruction(RakNet::BitStream *destructionBitst
 ////////////////////////////////////////////////////////////////////////////////
 
 bool NetworkObjectBase::DeserializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *sourceConnection) {
-  std::cout << "DeserializeDestruction" << std::endl;
   print_bitstream(destructionBitstream);
   return true;
 }
