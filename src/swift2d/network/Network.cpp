@@ -77,18 +77,20 @@ Network::~Network() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Network::connect(std::string const& other, math::uint64 uuid, bool natpunch) {
+void Network::connect(std::string const& other) {
   auto o(RakNet::SystemAddress(other.c_str()));
 
-  if (natpunch) {
-    // phase_ = NAT_PUNCH_TO_HOST;
-    LOG_MESSAGE << "Connecting to " << o.ToString() << " via NatPunch..." << std::endl;
-    npt_->OpenNAT(RakNet::RakNetGUID(uuid), RakNet::SystemAddress(nat_server_address_.c_str()));
-  } else {
-    // phase_ = CONNECTING_TO_HOST;
-    LOG_MESSAGE << "Connecting to " << o.ToString() << " via LAN..." << std::endl;
-    peer_->Connect(o.ToString(false), o.GetPort(), 0, 0);
-  }
+  // phase_ = CONNECTING_TO_HOST;
+  LOG_MESSAGE << "Connecting to " << o.ToString() << " via LAN..." << std::endl;
+  peer_->Connect(o.ToString(false), o.GetPort(), 0, 0);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Network::natpunch(math::uint64 uuid) {
+  // phase_ = NAT_PUNCH_TO_HOST;
+  LOG_MESSAGE << "Connecting to " << uuid << " via NatPunch..." << std::endl;
+  npt_->OpenNAT(RakNet::RakNetGUID(uuid), RakNet::SystemAddress(nat_server_address_.c_str()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
