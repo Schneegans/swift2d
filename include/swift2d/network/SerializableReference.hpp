@@ -25,19 +25,16 @@ namespace swift {
 // ---------------------------------------------------------------------------
 struct Serializer {
   virtual void serialize(RakNet::VariableDeltaSerializer::SerializationContext* ctx,
-                 RakNet::VariableDeltaSerializer* s,
-                 boost::any const& a) const = 0;
-
+                 RakNet::VariableDeltaSerializer* s, boost::any const& a) const = 0;
   virtual void deserialize(RakNet::VariableDeltaSerializer::DeserializationContext* ctx,
-                 RakNet::VariableDeltaSerializer* s,
-                 boost::any const& a) const = 0;
+                 RakNet::VariableDeltaSerializer* s, boost::any const& a) const = 0;
 
-  virtual void serialize(std::string const& name,
-                 boost::property_tree::ptree& tree,
-                 boost::any const& a) const = 0;
+  virtual void serialize(RakNet::BitStream* stream, boost::any const& a) const = 0;
+  virtual void deserialize(RakNet::BitStream* stream, boost::any const& a) const = 0;
 
-  virtual void deserialize(std::string const& name,
-                 boost::property_tree::ptree const& tree,
+  virtual void serialize(std::string const& name, boost::property_tree::ptree& tree,
+                 boost::any const& a) const = 0;
+  virtual void deserialize(std::string const& name, boost::property_tree::ptree const& tree,
                  boost::any const& a) const = 0;
 
   virtual Serializer* clone() const = 0;
@@ -61,6 +58,15 @@ struct SerializerImpl: Serializer {
 
     T target(boost::any_cast<T>(a));
     s->DeserializeVariable(ctx, *target);
+  }
+
+  virtual void serialize(RakNet::BitStream* stream, boost::any const& a) const {
+    stream->Write(*boost::any_cast<T>(a));
+  }
+
+  virtual void deserialize(RakNet::BitStream* stream, boost::any const& a) const {
+    T target(boost::any_cast<T>(a));
+    stream->Read(*target);
   }
 
   void serialize(std::string const& name, boost::property_tree::ptree& tree,
@@ -101,6 +107,17 @@ struct SerializerImpl<Property<T>*>: Serializer {
     }
   }
 
+  virtual void serialize(RakNet::BitStream* stream, boost::any const& a) const {
+    stream->Write(boost::any_cast<Property<T>*>(a)->get());
+  }
+
+  virtual void deserialize(RakNet::BitStream* stream, boost::any const& a) const {
+    T val;
+    if (stream->Read(val)) {
+      boost::any_cast<Property<T>*>(a)->set(val);
+    }
+  }
+
   void serialize(std::string const& name, boost::property_tree::ptree& tree,
                  boost::any const& a) const {
 
@@ -134,6 +151,17 @@ struct SerializerImpl<AnimatedProperty<T>*>: Serializer {
 
     T val;
     if (s->DeserializeVariable(ctx, val)) {
+      boost::any_cast<AnimatedProperty<T>*>(a)->set(val);
+    }
+  }
+
+  virtual void serialize(RakNet::BitStream* stream, boost::any const& a) const {
+    stream->Write(boost::any_cast<AnimatedProperty<T>*>(a)->get());
+  }
+
+  virtual void deserialize(RakNet::BitStream* stream, boost::any const& a) const {
+    T val;
+    if (stream->Read(val)) {
       boost::any_cast<AnimatedProperty<T>*>(a)->set(val);
     }
   }
@@ -193,6 +221,14 @@ class SerializableReference {
   void deserialize(RakNet::VariableDeltaSerializer::DeserializationContext* ctx,
                    RakNet::VariableDeltaSerializer* serilizer) {
     serializer_->deserialize(ctx, serilizer, value_);
+  }
+
+  void serialize(RakNet::BitStream* stream) {
+    serializer_->serialize(stream, value_);
+  }
+
+  void deserialize(RakNet::BitStream* stream) {
+    serializer_->deserialize(stream, value_);
   }
 
   void serialize(std::string const& name, boost::property_tree::ptree& tree) {

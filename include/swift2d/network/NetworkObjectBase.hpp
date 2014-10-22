@@ -29,16 +29,16 @@ class SWIFT_DLL NetworkObjectBase : public RakNet::Replica3 {
   virtual RakNet::RakString const& get_type() const = 0;
   virtual void on_remote_delete() = 0;
 
-  virtual void WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const;
-  virtual RakNet::RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, RakNet::ReplicaManager3 *replicaManager3);
-  virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection);
-  virtual void SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection);
-  virtual bool DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection);
-  virtual void SerializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *destinationConnection);
-  virtual bool DeserializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *sourceConnection);
-  virtual RakNet::RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3 *droppedConnection) const;
-  virtual void DeallocReplica(RakNet::Connection_RM3 *sourceConnection);
-  virtual RakNet::RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3 *destinationConnection);
+  virtual void WriteAllocationID(RakNet::Connection_RM3 *con, RakNet::BitStream* stream) const;
+  virtual RakNet::RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *con, RakNet::ReplicaManager3 *replicaManager3);
+  virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *con);
+  virtual void SerializeConstruction(RakNet::BitStream* stream, RakNet::Connection_RM3 *con);
+  virtual bool DeserializeConstruction(RakNet::BitStream* stream, RakNet::Connection_RM3 *con);
+  virtual void SerializeDestruction(RakNet::BitStream* stream, RakNet::Connection_RM3 *con);
+  virtual bool DeserializeDestruction(RakNet::BitStream* stream, RakNet::Connection_RM3 *con);
+  virtual RakNet::RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3 *con) const;
+  virtual void DeallocReplica(RakNet::Connection_RM3 *con);
+  virtual RakNet::RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3 *con);
   virtual RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters *serializeParameters);
   virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters);
   virtual void OnUserReplicaPreSerializeTick();
@@ -48,9 +48,6 @@ class SWIFT_DLL NetworkObjectBase : public RakNet::Replica3 {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-
-  void print_bitstream(RakNet::BitStream *bs);
-
   std::vector<SerializableReference> distributed_members_;
 
   RakNet::VariableDeltaSerializer vd_serializer_;
