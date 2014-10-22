@@ -26,6 +26,9 @@ class SWIFT_DLL NetworkObject : public NetworkObjectBase {
  // ----------------------------------------------------------- public interface
  public:
 
+  NetworkObject(bool is_local)
+    : NetworkObjectBase(is_local) {}
+
   static void init(std::string const& type_name) {
     if (!initialized_) {
       initialized_ = true;

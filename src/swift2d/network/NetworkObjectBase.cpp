@@ -18,6 +18,23 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+NetworkObjectBase::NetworkObjectBase(bool is_local)
+  : is_local_(is_local) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+NetworkObjectBase::~NetworkObjectBase() {
+  if (is_local_) BroadcastDestruction();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool NetworkObjectBase::is_local() const {
+  return is_local_;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void NetworkObjectBase::WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const {
   allocationIdBitstream->Write(get_type());
 }
