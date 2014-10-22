@@ -25,11 +25,6 @@ class SWIFT_DLL NetworkObjectBase : public RakNet::Replica3 {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-  NetworkObjectBase(bool is_local);
-
-  virtual ~NetworkObjectBase();
-
-  bool is_local() const;
 
   virtual RakNet::RakString const& get_type() const = 0;
   virtual void on_remote_delete() = 0;
@@ -53,7 +48,6 @@ class SWIFT_DLL NetworkObjectBase : public RakNet::Replica3 {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  bool is_local_;
 
   void print_bitstream(RakNet::BitStream *bs);
 

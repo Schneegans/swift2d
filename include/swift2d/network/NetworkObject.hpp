@@ -27,7 +27,8 @@ class SWIFT_DLL NetworkObject : public NetworkObjectBase {
  public:
 
   NetworkObject(bool is_local)
-    : NetworkObjectBase(is_local) {}
+    : NetworkObjectBase()
+    , is_local_(is_local) {}
 
   static void init(std::string const& type_name) {
     if (!initialized_) {
@@ -41,14 +42,24 @@ class SWIFT_DLL NetworkObject : public NetworkObjectBase {
     return type_name_;
   };
 
+  bool is_local() const {
+    return is_local_;
+  }
+
   void distribute() {
-    Network::get().distribute_object(this);
+    if (is_local_) Network::get().distribute_object(this);
+  }
+
+  void undistribute() {
+    if (is_local_) BroadcastDestruction();
   }
 
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  bool is_local_;
+
   static RakNet::RakString type_name_;
   static bool              initialized_;
 };
