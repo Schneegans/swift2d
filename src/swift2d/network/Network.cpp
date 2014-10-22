@@ -138,28 +138,17 @@ void Network::update() {
         LOG_MESSAGE << packet->guid.ToString() << " disconnected." << std::endl;
         break;
 
-      // // ################ NAT PUNCH THROUGH PACKETS ############################
-      // // -----------------------------------------------------------------------
-      // case ID_NAT_PUNCHTHROUGH_SUCCEEDED:
-      //   if (phase_ == CONNECTING_TO_HOST || phase_ == CONNECTING_TO_PEERS) {
-      //     LOG_MESSAGE << "NAT punch succeeded. Connecting..." << std::endl;
-      //     connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort());
-      //   }
-      //   break;
+      // ################ NAT PUNCH THROUGH PACKETS ############################
+      // -----------------------------------------------------------------------
+      case ID_NAT_PUNCHTHROUGH_SUCCEEDED:
+        LOG_MESSAGE << "NAT punch succeeded. Connecting..." << std::endl;
+        peer_->Connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort(), 0, 0);
+        break;
 
-      // // -----------------------------------------------------------------------
-      // case ID_NAT_PUNCHTHROUGH_FAILED:
-      //   LOG_MESSAGE << "NAT punch through failed." << std::endl;
-      //   break;
-
-      // // -----------------------------------------------------------------------
-      // case ID_NAT_TYPE_DETECTION_RESULT: {
-      //   auto type = (RakNet::NATTypeDetectionResult) packet->data[1];
-      //   LOG_MESSAGE << "NAT Type is " << RakNet::NATTypeDetectionResultToString(type) << " (" << RakNet::NATTypeDetectionResultToStringFriendly(type) << ")" << std::endl;
-
-      //   if (USE_UPNP) enter_phase(OPENING_UPNP);
-      //   else          enter_phase(SEARCHING_FOR_OTHER_INSTANCES);
-      //   } break;
+      // -----------------------------------------------------------------------
+      case ID_NAT_PUNCHTHROUGH_FAILED:
+        LOG_MESSAGE << "NAT punch through failed." << std::endl;
+        break;
 
       // ##################### TRACE PACKETS ###################################
       // -----------------------------------------------------------------------
