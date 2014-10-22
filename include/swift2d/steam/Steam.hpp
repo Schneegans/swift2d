@@ -70,6 +70,7 @@ class SWIFT_DLL Steam : public Singleton<Steam> {
   math::uint64 get_room_owner_id();
   std::string  get_internal_ip(math::uint64 user);
   std::string  get_external_ip(math::uint64 user);
+  math::uint64 get_network_id(math::uint64 user);
 
   void         send_chat_message(std::string const& message);
 

@@ -77,14 +77,13 @@ Network::~Network() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Network::connect(std::string const& other, bool natpunch) {
+void Network::connect(std::string const& other, math::uint64 uuid, bool natpunch) {
   auto o(RakNet::SystemAddress(other.c_str()));
 
   if (natpunch) {
     // phase_ = NAT_PUNCH_TO_HOST;
     LOG_MESSAGE << "Connecting to " << o.ToString() << " via NatPunch..." << std::endl;
-    npt_->OpenNAT(peer_->GetGuidFromSystemAddress(o),
-                  RakNet::SystemAddress(nat_server_address_.c_str()));
+    npt_->OpenNAT(RakNet::RakNetGUID(uuid), RakNet::SystemAddress(nat_server_address_.c_str()));
   } else {
     // phase_ = CONNECTING_TO_HOST;
     LOG_MESSAGE << "Connecting to " << o.ToString() << " via LAN..." << std::endl;
@@ -108,7 +107,7 @@ void Network::update() {
           // the nat server accepted our connection
           LOG_MESSAGE << "Connected to NAT server." << std::endl;
           nat_server_address_ = packet->systemAddress.ToString();
-          peer_->CloseConnection(packet->systemAddress, true);
+          // peer_->CloseConnection(packet->systemAddress, true);
 
           // save external ip
           external_id_ = peer_->GetExternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString();
@@ -201,5 +200,13 @@ std::string const& Network::get_internal_address() const {
 std::string const& Network::get_external_address() const {
   return external_id_;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+math::uint64 Network::get_network_id() const {
+  return peer_->GetMyGUID().g;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 }

@@ -86,6 +86,7 @@ Steam::Steam()
 
     set_user_data("internal_ip", Network::get().get_internal_address());
     set_user_data("external_ip", Network::get().get_external_address());
+    set_user_data("network_id",  std::to_string(Network::get().get_network_id()));
 
     int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
     for (int i(0); i<user_count; ++i) {
@@ -240,6 +241,12 @@ std::string Steam::get_internal_ip(math::uint64 user) {
 
 std::string Steam::get_external_ip(math::uint64 user) {
   return get_user_data("external_ip", user);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+math::uint64 Steam::get_network_id(math::uint64 user) {
+  return std::from_string<math::uint64>(get_user_data("network_id", user));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

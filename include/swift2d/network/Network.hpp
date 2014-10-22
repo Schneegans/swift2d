@@ -48,11 +48,12 @@ class SWIFT_DLL Network : public Singleton<Network> {
     replica_->register_object(type, [](){ return new T(); });
   };
 
-  void connect(std::string const& other, bool natpunch);
+  void connect(std::string const& other, math::uint64 uuid, bool natpunch);
   void distribute_object(NetworkObjectBase* object);
 
   std::string const& get_internal_address() const;
   std::string const& get_external_address() const;
+  math::uint64       get_network_id() const;
 
   bool is_in_same_network(std::string const& other) const;
 
