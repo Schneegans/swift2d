@@ -28,6 +28,10 @@ class SWIFT_DLL NetworkObjectBase : public RakNet::Replica3 {
   virtual RakNet::RakString const& get_type() const = 0;
   virtual void on_remote_delete() = 0;
 
+  virtual ~NetworkObjectBase() {
+    std::cout << "~NetworkObjectBase" << std::endl;
+  }
+
   virtual void WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const;
   virtual RakNet::RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, RakNet::ReplicaManager3 *replicaManager3);
   virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection);
