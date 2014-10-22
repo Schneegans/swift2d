@@ -112,6 +112,7 @@ void Network::update() {
 
           // save external ip
           external_id_ = peer_->GetExternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString();
+          LOG_MESSAGE << "My external IP is " << external_id_ << std::endl;
 
           // broadcast on LAN to get internal ip
           phase_ = GETTING_INTERNAL_IP;
@@ -126,6 +127,7 @@ void Network::update() {
         if (packet->guid.g == peer_->GetMyGUID().g) {
           // save internal ip
           internal_id_ = packet->systemAddress.ToString();
+          LOG_MESSAGE << "My internal IP is " << internal_id_ << std::endl;
           phase_ = READY;
         }
 
