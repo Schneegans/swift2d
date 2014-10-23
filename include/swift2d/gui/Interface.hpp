@@ -37,7 +37,7 @@ class SWIFT_DLL Interface : public Singleton<Interface> {
 
   void update() const;
 
-  friend class GuiElement;
+  friend class GuiComponent;
   friend class Singleton<Interface>;
 
  ///////////////////////////////////////////////////////////////////////////////

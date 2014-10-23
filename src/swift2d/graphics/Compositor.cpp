@@ -80,9 +80,7 @@ void Compositor::draw_gui(ConstSerializedScenePtr const& scene, RenderContext co
     oglplus::BlendFunction::OneMinusSrcAlpha
   );
 
-  for (auto& gui: scene->gui_elements) {
-    gui.second->draw(ctx);
-  }
+  scene->renderers().process_gui(ctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

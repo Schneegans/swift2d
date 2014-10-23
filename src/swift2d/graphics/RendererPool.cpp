@@ -31,6 +31,9 @@ RendererPool::RendererPool()
       &directional_lights,
       &point_lights,
       &light_particle_systems
+    })
+  , guis_({
+      &gui_elements
     }) {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,6 +53,13 @@ void RendererPool::process_heat(RenderContext const& ctx) {
 void RendererPool::process_light(RenderContext const& ctx) {
   process(ctx, lights_);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+void RendererPool::process_gui(RenderContext const& ctx) {
+  process(ctx, guis_);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

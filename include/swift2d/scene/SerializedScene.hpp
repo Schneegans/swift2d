@@ -18,9 +18,6 @@
 namespace swift {
 
 // forward declares ------------------------------------------------------------
-class DrawableComponent;
-typedef std::shared_ptr<DrawableComponent> DrawableComponentPtr;
-
 class GravitySourceComponent;
 typedef std::shared_ptr<GravitySourceComponent> GravitySourceComponentPtr;
 
@@ -54,7 +51,6 @@ class SWIFT_DLL SerializedScene {
   RendererPool& renderers() const { return *renderers_; }
 
   std::multimap<float, DirectionalLightComponentPtr>  sun_lights;
-  std::multimap<float, DrawableComponentPtr>          gui_elements;
 
   CameraComponentPtr camera;
 

@@ -10,11 +10,16 @@
 #define SWIFT2D_GUI_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/DrawableComponent.hpp>
-#include <swift2d/gui/GuiElement.hpp>
+#include <swift2d/components/Component.hpp>
+#include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/gui/Interface.hpp>
 
 #include <unordered_map>
+
+namespace Awesomium {
+  class WebView;
+  class JSValue;
+}
 
 namespace swift {
 
@@ -27,11 +32,23 @@ typedef std::shared_ptr<GuiComponent>       GuiComponentPtr;
 typedef std::shared_ptr<const GuiComponent> ConstGuiComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL GuiComponent : public DrawableComponent {
+class SWIFT_DLL GuiComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  // ------------------------------------------------------------- inner classes
+  struct Serialized : public SerializedComponent {
+    math::vec2i   Size;
+    math::vec2    Anchor;
+    math::vec2    Offset;
+    Awesomium::WebView* View;
+  };
+
+  class Renderer : public ResourceRenderer<GuiComponent> {
+    void draw(RenderContext const& ctx, int start, int end);
+  };
 
   // ---------------------------------------------------------------- properties
   Float  Depth;
@@ -47,6 +64,7 @@ class SWIFT_DLL GuiComponent : public DrawableComponent {
 
   // ---------------------------------------------------- construction interface
   GuiComponent();
+  ~GuiComponent();
 
   static GuiComponentPtr create() {
     return std::make_shared<GuiComponent>();
@@ -62,6 +80,7 @@ class SWIFT_DLL GuiComponent : public DrawableComponent {
   static  std::string get_type_name_static() { return "GuiComponent"; }
 
   void reload();
+  void focus();
 
   void call_javascript(std::string const& method) const;
   void call_javascript(std::string const& method, std::string const& arg) const;
@@ -70,10 +89,7 @@ class SWIFT_DLL GuiComponent : public DrawableComponent {
   void add_javascript_callback(std::string const& name);
   void add_javascript_getter(std::string const& name, std::function<std::string()> callback);
 
-  void draw(RenderContext const& ctx);
-
   void serialize(SerializedScenePtr& scene) const;
-
   virtual void accept(SavableObjectVisitor& visitor);
 
   std::unordered_map<std::string, std::function<std::string()>> const& get_result_callbacks() const {
@@ -83,8 +99,14 @@ class SWIFT_DLL GuiComponent : public DrawableComponent {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  void update_mouse_position(math::vec2 const& pos) const;
+  void add_javascript_callback(std::string const& callback, bool with_result);
+
   std::unordered_map<std::string, std::function<std::string()>> result_callbacks_;
-  GuiElementPtr gui_element_;
+  Awesomium::WebView* view_;
+  Awesomium::JSValue* js_window_;
+  std::vector<int>    callbacks_;
+  bool                interactive_;
 };
 
 // -----------------------------------------------------------------------------
