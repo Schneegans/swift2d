@@ -145,7 +145,7 @@ void GuiComponent::Renderer::draw(RenderContext const& ctx, int start, int end) 
   for (int i(start); i<end; ++i) {
     auto& o(objects[i]);
 
-    if (Interface::get().bind(o.View, ctx, 0)) {
+    if (Interface::get().bind(o.Self->view_, ctx, 0)) {
       GuiShader::get().use(ctx);
 
       math::vec2 size(
@@ -220,11 +220,11 @@ void GuiComponent::add_javascript_getter(std::string const& name, std::function<
 
 void GuiComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
-  s.Depth = Depth();
-  s.Size = Size();
+  s.Depth  = Depth();
+  s.Size   = Size();
   s.Anchor = Anchor();
   s.Offset = Offset();
-  s.View = view_;
+  s.Self   = shared_from_this();
   scene->renderers().gui_elements.add(std::move(s));
 }
 
@@ -232,11 +232,11 @@ void GuiComponent::serialize(SerializedScenePtr& scene) const {
 
 void GuiComponent::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
-  visitor.add_member("Depth", Depth);
-  visitor.add_member("Resource", Resource);
-  visitor.add_member("Size", Size);
-  visitor.add_member("Anchor", Anchor);
-  visitor.add_member("Offset", Offset);
+  visitor.add_member("Depth",       Depth);
+  visitor.add_member("Resource",    Resource);
+  visitor.add_member("Size",        Size);
+  visitor.add_member("Anchor",      Anchor);
+  visitor.add_member("Offset",      Offset);
   visitor.add_member("Interactive", Interactive);
 }
 

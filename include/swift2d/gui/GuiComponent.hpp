@@ -32,7 +32,8 @@ typedef std::shared_ptr<GuiComponent>       GuiComponentPtr;
 typedef std::shared_ptr<const GuiComponent> ConstGuiComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL GuiComponent : public Component {
+class SWIFT_DLL GuiComponent : public Component,
+                               public std::enable_shared_from_this<GuiComponent> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -40,10 +41,10 @@ class SWIFT_DLL GuiComponent : public Component {
 
   // ------------------------------------------------------------- inner classes
   struct Serialized : public SerializedComponent {
-    math::vec2i   Size;
-    math::vec2    Anchor;
-    math::vec2    Offset;
-    Awesomium::WebView* View;
+    math::vec2i          Size;
+    math::vec2           Anchor;
+    math::vec2           Offset;
+    ConstGuiComponentPtr Self;
   };
 
   class Renderer : public ResourceRenderer<GuiComponent> {
