@@ -39,26 +39,17 @@ bool NetworkObjectBase::QueryRemoteConstruction(RakNet::Connection_RM3 *con) {
 void NetworkObjectBase::SerializeConstruction(RakNet::BitStream* stream, RakNet::Connection_RM3 *con) {
   vd_serializer_.AddRemoteSystemVariableHistory(con->GetRakNetGUID());
 
-  std::cout << "SerializeConstruction Begin" << std::endl;
   for (auto& member: distributed_members_) {
-    member.print(std::cout);
-    std::cout << std::endl;
     member.serialize(stream);
   }
-  std::cout << "SerializeConstruction End" << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool NetworkObjectBase::DeserializeConstruction(RakNet::BitStream* stream, RakNet::Connection_RM3 *con) {
-  std::cout << "DeserializeConstruction Begin" << std::endl;
   for (auto& member: distributed_members_) {
-    member.print(std::cout);
-    std::cout << std::endl;
     member.deserialize(stream);
   }
-
-  std::cout << "DeserializeConstruction End" << std::endl;
 
   return true;
 }
