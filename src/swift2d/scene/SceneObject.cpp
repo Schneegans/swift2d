@@ -203,6 +203,20 @@ void SceneObject::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void SceneObject::update_world_transform() {
+
+  if (Enabled()) {
+    if (Parent.get()) {
+      Parent.get()->update_world_transform();
+      WorldTransform = Parent.get()->WorldTransform.get() * Transform.get();
+    } else {
+      WorldTransform = Transform.get();
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void SceneObject::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Transform", Transform);
   visitor.add_member("Label",     Label);

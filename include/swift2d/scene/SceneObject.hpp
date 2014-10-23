@@ -159,6 +159,8 @@ class SWIFT_DLL SceneObject : public SavableObject {
   // calls update() on all components and objects
   virtual void update(double time);
 
+  virtual void update_world_transform();
+
   virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
