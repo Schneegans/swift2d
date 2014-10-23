@@ -24,18 +24,16 @@ namespace swift {
 
 // ---------------------------------------------------------------------------
 struct Serializer {
-  virtual void serialize(RakNet::VariableDeltaSerializer::SerializationContext* ctx,
-                 RakNet::VariableDeltaSerializer* s, boost::any const& a) const = 0;
-  virtual void deserialize(RakNet::VariableDeltaSerializer::DeserializationContext* ctx,
-                 RakNet::VariableDeltaSerializer* s, boost::any const& a) const = 0;
+  virtual void serialize(RakNet::VariableDeltaSerializer::SerializationContext* ctx, RakNet::VariableDeltaSerializer* s, boost::any const& a) const = 0;
+  virtual void deserialize(RakNet::VariableDeltaSerializer::DeserializationContext* ctx, RakNet::VariableDeltaSerializer* s, boost::any const& a) const = 0;
 
   virtual void serialize(RakNet::BitStream* stream, boost::any const& a) const = 0;
   virtual void deserialize(RakNet::BitStream* stream, boost::any const& a) const = 0;
 
-  virtual void serialize(std::string const& name, boost::property_tree::ptree& tree,
-                 boost::any const& a) const = 0;
-  virtual void deserialize(std::string const& name, boost::property_tree::ptree const& tree,
-                 boost::any const& a) const = 0;
+  virtual void serialize(std::string const& name, boost::property_tree::ptree& tree, boost::any const& a) const = 0;
+  virtual void deserialize(std::string const& name, boost::property_tree::ptree const& tree, boost::any const& a) const = 0;
+
+  virtual void print(std::ostream& stream, boost::any const& a) const = 0;
 
   virtual Serializer* clone() const = 0;
 };
@@ -79,6 +77,10 @@ struct SerializerImpl: Serializer {
 
     T target(boost::any_cast<T>(a));
     *target = tree.get<typename std::remove_pointer<T>::type>(name);
+  }
+
+  void print(std::ostream& stream, boost::any const& a) const {
+    stream << *boost::any_cast<T>(a);
   }
 
   Serializer* clone() const {
@@ -129,6 +131,10 @@ struct SerializerImpl<Property<T>*>: Serializer {
     boost::any_cast<Property<T>*>(a)->set(tree.get<T>(name));
   }
 
+  void print(std::ostream& stream, boost::any const& a) const {
+    stream << boost::any_cast<Property<T>*>(a)->get();
+  }
+
   Serializer* clone() const {
     return new SerializerImpl<Property<T>*>();
   }
@@ -173,7 +179,11 @@ struct SerializerImpl<AnimatedProperty<T>*>: Serializer {
 
   void deserialize(std::string const& name, boost::property_tree::ptree const& tree,
                  boost::any const& a) const {
-    boost::any_cast<Property<T>*>(a)->set(tree.get<T>(name));
+    boost::any_cast<AnimatedProperty<T>*>(a)->set(tree.get<T>(name));
+  }
+
+  void print(std::ostream& stream, boost::any const& a) const {
+    stream << boost::any_cast<AnimatedProperty<T>*>(a)->get();
   }
 
   Serializer* clone() const {
@@ -237,6 +247,10 @@ class SerializableReference {
 
   void deserialize(std::string const& name, boost::property_tree::ptree const& tree) {
     serializer_->deserialize(name, tree, value_);
+  }
+
+  void print(std::ostream& in) const {
+    serializer_->print(in, value_);
   }
 
  ///////////////////////////////////////////////////////////////////////////////

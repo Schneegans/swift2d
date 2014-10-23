@@ -38,10 +38,11 @@ bool NetworkObjectBase::QueryRemoteConstruction(RakNet::Connection_RM3 *con) {
 
 void NetworkObjectBase::SerializeConstruction(RakNet::BitStream* stream, RakNet::Connection_RM3 *con) {
   vd_serializer_.AddRemoteSystemVariableHistory(con->GetRakNetGUID());
-  
+
   std::cout << "SerializeConstruction Begin" << std::endl;
   for (auto& member: distributed_members_) {
-    std::cout << "membaa" << std::endl;
+    member.print(std::cout);
+    std::cout << std::endl;
     member.serialize(stream);
   }
   std::cout << "SerializeConstruction End" << std::endl;
@@ -52,7 +53,8 @@ void NetworkObjectBase::SerializeConstruction(RakNet::BitStream* stream, RakNet:
 bool NetworkObjectBase::DeserializeConstruction(RakNet::BitStream* stream, RakNet::Connection_RM3 *con) {
   std::cout << "DeserializeConstruction Begin" << std::endl;
   for (auto& member: distributed_members_) {
-    std::cout << "membaa" << std::endl;
+    member.print(std::cout);
+    std::cout << std::endl;
     member.deserialize(stream);
   }
 
@@ -65,7 +67,7 @@ bool NetworkObjectBase::DeserializeConstruction(RakNet::BitStream* stream, RakNe
 
 void NetworkObjectBase::SerializeDestruction(RakNet::BitStream* stream, RakNet::Connection_RM3 *con) {
   vd_serializer_.RemoveRemoteSystemVariableHistory(con->GetRakNetGUID());
-  
+
   for (auto& member: distributed_members_) {
     member.serialize(stream);
   }
