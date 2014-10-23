@@ -45,6 +45,7 @@ Renderer::Renderer(Pipeline& pipeline)
       updating_scene_ = SceneManager::get().current()->serialize();
       {
         std::unique_lock<std::mutex> lock(mutex_);
+        last_rendered_scene_ = nullptr;
         updated_scene_ = updating_scene_;
       }
       Application::get().AppFPS.step();
@@ -58,10 +59,11 @@ Renderer::Renderer(Pipeline& pipeline)
 
   forever_ = boost::thread([&]() {
     while (running_) {
-      if (!started_rendering_) {
+      if (updated_scene_) {
         {
           std::unique_lock<std::mutex> lock(mutex_);
-          std::swap(rendered_scene_, updated_scene_);
+          last_rendered_scene_ = rendered_scene_;
+          rendered_scene_ = updated_scene_;
           started_rendering_ = true;
         }
 

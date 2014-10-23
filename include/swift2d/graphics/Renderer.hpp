@@ -61,6 +61,7 @@ class SWIFT_DLL Renderer {
  private:
 
   ConstSerializedScenePtr rendered_scene_;
+  ConstSerializedScenePtr last_rendered_scene_;
   ConstSerializedScenePtr updating_scene_;
   ConstSerializedScenePtr updated_scene_;
 
