@@ -56,6 +56,10 @@ void DirectionalLightComponent::Renderer::draw(RenderContext const& ctx, int sta
     if (light_dirs.size() < 10) {
       light_dirs.push_back(objects[i].Direction);
       light_colors.push_back(objects[i].Color);
+    } else {
+      LOG_WARNING << "There can only be at most 10 directional light sources in"
+                  << " one scene!" << std::endl;
+      break;
     }
   }
 
@@ -67,12 +71,12 @@ void DirectionalLightComponent::Renderer::draw(RenderContext const& ctx, int sta
   shader.use(ctx);
 
   if (light_dirs.size() > 0) {
-    shader.set_uniform_array("light_dirs", light_dirs);
-    shader.set_uniform_array("light_colors", light_colors);
+    shader.light_dirs.Set(light_dirs);
+    shader.light_colors.Set(light_colors);
   }
-  shader.set_uniform("light_count",  (int)light_dirs.size());
-  shader.set_uniform("g_buffer_normal", 1);
-  shader.set_uniform("g_buffer_light", 2);
+  shader.light_count.Set(light_dirs.size());
+  shader.g_buffer_normal.Set(1);
+  shader.g_buffer_light.Set(2);
 
   Quad::get().draw(ctx);
 

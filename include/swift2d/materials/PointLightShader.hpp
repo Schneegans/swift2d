@@ -27,15 +27,12 @@ class PointLightShader : public Shader,
  public:
 
   // ------------------------------------------------------------------ uniforms
-  oglplus::Lazy<oglplus::Uniform<math::mat3>>   projection;
-  oglplus::Lazy<oglplus::Uniform<math::mat3>>   transform;
-  oglplus::Lazy<oglplus::Uniform<float>>        depth;
-  oglplus::Lazy<oglplus::Uniform<float>>        parallax;
-  oglplus::Lazy<oglplus::Uniform<math::vec2i>>  screen_size;
-  oglplus::Lazy<oglplus::Uniform<int>>          g_buffer_normal;
-  oglplus::Lazy<oglplus::Uniform<int>>          g_buffer_light;
-  oglplus::Lazy<oglplus::Uniform<int>>          light_tex;
-  oglplus::Lazy<oglplus::Uniform<math::vec4>>   light_color;
+   oglplus::Lazy<oglplus::Uniform<int>>          g_buffer_normal;
+   oglplus::Lazy<oglplus::Uniform<int>>          g_buffer_light;
+   oglplus::Lazy<oglplus::Uniform<int>>          light_count;
+   oglplus::Lazy<oglplus::Uniform<math::vec4>>   light_colors;
+   oglplus::Lazy<oglplus::Uniform<math::vec3>>   light_pos_radius;
+   oglplus::Lazy<oglplus::Uniform<math::vec2i>>  screen_size;
 
   friend class Singleton<PointLightShader>;
 

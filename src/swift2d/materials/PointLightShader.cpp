@@ -11,62 +11,58 @@
 
 namespace swift {
 
-////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////
 
-PointLightShader::PointLightShader()
-  : Shader(
+  PointLightShader::PointLightShader()
+    : Shader(
     R"(
       // vertex shader ---------------------------------------------------------
-      @include "instanced_quad_vertex_shader"
+      @include "fullscreen_quad_vertex_shader"
     )",
     R"(
-      // fragment shader -------------------------------------------------------
+      // fragment shader -----------------------------------------------------
       @include "version"
 
-      // varyings
-      in vec2 texcoords;
-      flat in int instance_id;
-
-      // uniforms
-      uniform sampler2D light_tex;
-      uniform vec4      light_color[100];
-      uniform ivec2     screen_size;
-
       @include "gbuffer_input"
-      @include "get_light"
+      
+      uniform vec2 screen_size;
+      uniform vec3 light_pos_radius[100];
+      uniform vec4 light_colors[100];
+      uniform int  light_count;
+
+      in vec2 texcoords;
 
       layout (location = 0) out vec4 fragLight;
 
       void main(void){
+        vec3  light_info = get_light_info(texcoords);
+        float emit       = light_info.r;
+        vec4 output      = vec4(vec3(emit), 0);
 
-        vec3  light_info  = get_light_info(gl_FragCoord.xy/screen_size);
-        float emit        = light_info.r;
+        if (emit < 1) {
+          vec3  normal     = get_normal(texcoords);
+          float gloss      = light_info.g;
+          vec2  frag_pos   = gl_FragCoord.xy/screen_size.x;
 
-        if (emit >= 1.0) {
-          discard;
+          for (int i=0; i<light_count; ++i) {
+            vec3 light_dir = vec3(frag_pos - light_pos_radius[i].xy, -1);
+            float specular = max(0, pow(dot(normal, light_dir), gloss*100 + 1) * gloss);
+            float diffuse  = max(0, dot(light_dir, normal));
+            output        += (1-emit) * vec4(diffuse*light_colors[i].rgb, specular) * light_colors[i].a;
+          }
         }
 
-        float gloss       = light_info.g;
-        vec4 light        = texture2D(light_tex, texcoords);
-        vec3 light_dir    = normalize(light.rgb - 0.5);
-        float attenuation = light.a;
-
-        fragLight = get_light(
-          gl_FragCoord.xy/screen_size, light_dir,
-          light_color[instance_id], gloss, emit, attenuation);
+        fragLight = output;
       }
     )"
-  )
-  , projection(get_uniform<math::mat3>("projection"))
-  , transform(get_uniform<math::mat3>("transform"))
-  , depth(get_uniform<float>("depth"))
-  , parallax(get_uniform<float>("parallax"))
-  , screen_size(get_uniform<math::vec2i>("screen_size"))
-  , g_buffer_normal(get_uniform<int>("g_buffer_normal"))
-  , g_buffer_light(get_uniform<int>("g_buffer_light"))
-  , light_tex(get_uniform<int>("light_tex"))
-  , light_color(get_uniform<math::vec4>("light_color")) {}
+    )
+    , g_buffer_normal(get_uniform<int>("g_buffer_normal"))
+    , g_buffer_light(get_uniform<int>("g_buffer_light"))
+    , light_count(get_uniform<int>("light_count"))
+    , light_colors(get_uniform<math::vec4>("light_colors"))
+    , light_pos_radius(get_uniform<math::vec3>("light_pos_radius"))
+    , screen_size(get_uniform<math::vec2i>("screen_size")) {}
 
-////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////
 
 }

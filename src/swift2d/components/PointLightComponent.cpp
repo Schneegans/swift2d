@@ -47,26 +47,38 @@ void PointLightComponent::accept(SavableObjectVisitor& visitor) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, int end) {
-  std::sort(objects.begin() + start, objects.begin() + end,
-    [](PointLightComponent::Serialized const& a, PointLightComponent::Serialized const& b){
-      return a.Texture.get() < b.Texture.get();
-    });
+  
+  std::vector<math::vec3> light_pos_radius;
+  std::vector<math::vec4> light_colors;
 
-  while (start < end) {
+  for (int i(start); i<end; ++i) {
+    if (light_pos_radius.size() < 100) {
 
-    auto& object(objects[start]);
-    auto& tex(object.Texture);
+      auto mat(ctx.projection_matrix * objects[i].Transform);
 
-    SWIFT_PUSH_GL_RANGE("Draw PointLight");
+      math::vec3 pos(0.f, 0.f, 1.f);
+      pos = mat * pos * std::pow(ctx.projection_parallax, objects[i].Depth);
+      pos /= pos.z();
 
-    std::vector<math::mat3> transforms;
-    std::vector<math::vec4> colors;
+      math::vec3 dir(1.f, 0.f, 0.f);
+      dir = mat * dir * std::pow(ctx.projection_parallax, objects[i].Depth);
 
-    while (start < end && objects[start].Texture == tex) {
-      transforms.push_back(objects[start].Transform);
-      colors.push_back(objects[start].Color);
-      ++start;
+      pos[2] = dir.x()*dir.x() + dir.y()*dir.y();
+
+      light_pos_radius.push_back(pos);
+      light_colors.push_back(objects[i].Color);
+    } else {
+      LOG_WARNING << "There can only be at most 100 point light sources in"
+                  << " one scene!" << std::endl;
+      break;
     }
+  }
+
+  std::cout << light_pos_radius.size()  << std::endl;
+
+  if (light_pos_radius.size() > 0) {
+
+    SWIFT_PUSH_GL_RANGE("Draw PointLights");
 
     ctx.gl.BlendFunc(
       oglplus::BlendFunction::One,
@@ -74,29 +86,14 @@ void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, in
     );
 
     auto& shader(PointLightShader::get());
-
-    object.Texture->bind(ctx, 3);
-    shader.use(ctx);
-    shader.projection.Set(ctx.projection_matrix);
-    shader.depth.Set(object.Depth);
-    shader.parallax.Set(ctx.projection_parallax);
-    shader.screen_size.Set(ctx.g_buffer_size/(ctx.light_sub_sampling ? 2 : 1));
+    shader.light_pos_radius.Set(light_pos_radius);
+    shader.light_colors.Set(light_colors);
+    shader.light_count.Set(light_pos_radius.size());
     shader.g_buffer_normal.Set(1);
     shader.g_buffer_light.Set(2);
-    shader.light_tex.Set(3);
+    shader.screen_size.Set(ctx.g_buffer_size);
 
-    int index(0);
-
-    while (index < transforms.size()) {
-      int count(std::min(100, (int)transforms.size()-index));
-
-      shader.transform.Set(std::vector<math::mat3>(transforms.begin() + index, transforms.begin() + index + count));
-      shader.light_color.Set(std::vector<math::vec4>(colors.begin() + index, colors.begin() + index + count));
-
-      Quad::get().draw(ctx, count);
-
-      index += count;
-    }
+    Quad::get().draw(ctx);
 
     SWIFT_POP_GL_RANGE();
   }
