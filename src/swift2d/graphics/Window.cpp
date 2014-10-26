@@ -18,7 +18,7 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Window::Window(bool debug)
+Window::Window()
   : Open(false)
   , HideCursor(false)
   , Title("Swift2D")
@@ -36,7 +36,7 @@ Window::Window(bool debug)
   , init_glew_(true)
   , debugger_(nullptr)
   , log_sink_(nullptr)
-  , debug_(debug) {
+  , debug_(true) {
 
   Open.on_change().connect([this](bool val) {
     if (val) open();

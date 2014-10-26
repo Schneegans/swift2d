@@ -47,9 +47,9 @@ void PointLightComponent::accept(SavableObjectVisitor& visitor) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, int end) {
-  
-  std::vector<math::vec3> light_pos_radius;
-  std::vector<math::vec4> light_colors;
+  int count(end-start);
+  std::vector<math::vec3> light_pos_radius(count);
+  std::vector<math::vec4> light_colors(count);
 
   for (int i(start); i<end; ++i) {
     if (light_pos_radius.size() < 100) {
@@ -65,8 +65,8 @@ void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, in
 
       pos[2] = dir.x()*dir.x() + dir.y()*dir.y();
 
-      light_pos_radius.push_back(pos);
-      light_colors.push_back(objects[i].Color);
+      light_pos_radius[i-start] = pos;
+      light_colors[i-start] = objects[i].Color;
     } else {
       LOG_WARNING << "There can only be at most 100 point light sources in"
                   << " one scene!" << std::endl;
@@ -74,9 +74,7 @@ void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, in
     }
   }
 
-  std::cout << light_pos_radius.size()  << std::endl;
-
-  if (light_pos_radius.size() > 0) {
+  if (count > 0) {
 
     SWIFT_PUSH_GL_RANGE("Draw PointLights");
 
@@ -86,6 +84,7 @@ void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, in
     );
 
     auto& shader(PointLightShader::get());
+    shader.use(ctx);
     shader.light_pos_radius.Set(light_pos_radius);
     shader.light_colors.Set(light_colors);
     shader.light_count.Set(light_pos_radius.size());

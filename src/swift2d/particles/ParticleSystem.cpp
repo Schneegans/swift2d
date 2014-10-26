@@ -146,8 +146,8 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
     }
   }
 
-  ogl::Query::Activator qrya(*query_, ose::PrimitivesGenerated());
-  ogl::TransformFeedback::Activator xfba(ogl::TransformFeedbackPrimitiveType::Points);
+  query_->Begin(ose::PrimitivesGenerated());
+  transform_feedbacks_[current_tf()].BeginPoints();
 
   if (spawn_positions.size() > 0) {
 
@@ -197,11 +197,12 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
     );
   }
 
-  xfba.Finish();
+  transform_feedbacks_[current_tf()].End();
+
   ogl::DefaultTransformFeedback().Bind();
   ctx.gl.Disable(ogl::Capability::RasterizerDiscard);
 
-  qrya.Finish();
+  query_->End(ose::PrimitivesGenerated());
 
   ogl::NoVertexArray().Bind();
 
