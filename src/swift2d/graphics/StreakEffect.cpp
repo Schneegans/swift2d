@@ -47,7 +47,7 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
     void main(void) {
       fragColor = vec3(0);
       for (int i=0; i<4; ++i) {
-        fragColor += texture2D(input_tex, texcoords[i]).rgb * colors[i];
+        fragColor += texture(input_tex, texcoords[i]).rgb * colors[i];
       }
     }
   )")

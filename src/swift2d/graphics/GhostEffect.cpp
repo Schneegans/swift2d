@@ -53,11 +53,11 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
     layout (location = 0) out vec3 fragColor;
 
     void main(void) {
-      fragColor = texture2D(input_tex, texcoord1).rgb * 0.1
-                + texture2D(input_tex, texcoord2).rgb * 0.2
-                + texture2D(input_tex, texcoord3).rgb * 0.4
-                + texture2D(input_tex, texcoord4).rgb * 0.2
-                + texture2D(input_tex, texcoord5).rgb * 0.1;
+      fragColor = texture(input_tex, texcoord1).rgb * 0.1
+                + texture(input_tex, texcoord2).rgb * 0.2
+                + texture(input_tex, texcoord3).rgb * 0.4
+                + texture(input_tex, texcoord4).rgb * 0.2
+                + texture(input_tex, texcoord5).rgb * 0.1;
     }
   )")
   , ghost_shader_(R"(
@@ -92,7 +92,7 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
       fragColor = vec3(0);
       for (int i=0; i<4; ++i) {
         vec2 fac = -pow((texcoords[i]-0.5)*2, vec2(2)) + 1;
-        fragColor += texture2D(inputs[max(0, i-1)], texcoords[i]).rgb * colors[i] * fac.x * fac.y;
+        fragColor += texture(inputs[max(0, i-1)], texcoords[i]).rgb * colors[i] * fac.x * fac.y;
       }
     }
   )")

@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <GL/glew.h>
+#include <oglplus/fix_gl_version.hpp>
 #include <oglplus/all.hpp>
 #include <oglplus/opt/smart_enums.hpp>
 #include <oglplus/bound/texture.hpp>

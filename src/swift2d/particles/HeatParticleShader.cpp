@@ -46,7 +46,7 @@ HeatParticleShader::HeatParticleShader()
 
       void main(void) {
         float o = mix(opacity.x, opacity.y, age);
-        fragColor = texture2D(diffuse, texcoords) * vec4(1, 1, 1, o);
+        fragColor = texture(diffuse, texcoords) * vec4(1, 1, 1, o);
       }
     )",
 

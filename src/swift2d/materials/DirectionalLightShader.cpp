@@ -36,7 +36,7 @@ DirectionalLightShader::DirectionalLightShader()
       void main(void){
         vec3  light_info = get_light_info(texcoords);
         float emit       = light_info.r;
-        vec4 output      = vec4(vec3(emit), 0);
+        vec4 result      = vec4(vec3(emit), 0);
 
         if (light_count > 0) {
           if (emit < 1) {
@@ -46,14 +46,12 @@ DirectionalLightShader::DirectionalLightShader()
             for (int i=0; i<light_count; ++i) {
               float specular = max(0, pow(dot(normal, normalize(light_dirs[i] + vec3(0, 0, -1))), gloss*100 + 1) * gloss);
               float diffuse  = max(0, dot(light_dirs[i], normal));
-              output        += (1-emit) * vec4(diffuse*light_colors[i].rgb, specular) * light_colors[i].a;
+              result        += (1-emit) * vec4(diffuse*light_colors[i].rgb, specular) * light_colors[i].a;
             }
           }
-        // } else {
-          // output = vec4(vec3(emit), 0);
         }
 
-        fragLight = output;
+        fragLight = result;
       }
     )"
   )
