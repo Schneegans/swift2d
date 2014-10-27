@@ -34,8 +34,8 @@ Window::Window(bool debug)
   , vsync_dirty_(true)
   , fullscreen_dirty_(false)
   , init_glew_(true)
-  , debugger_(nullptr)
-  , log_sink_(nullptr)
+  //, debugger_(nullptr)
+  //, log_sink_(nullptr)
   , debug_(debug) {
 
   Open.on_change().connect([this](bool val) {
@@ -58,8 +58,8 @@ Window::~Window() {
   close();
   glfwDestroyWindow(window_);
 
-  delete debugger_;
-  delete log_sink_;
+  //delete debugger_;
+  //delete log_sink_;
 }
 
 
@@ -130,10 +130,17 @@ void Window::init_context() {
 
     // init glew... seems a bit hacky, but works this way
     glewExperimental = GL_TRUE;
-    glewInit(); glGetError();
+    auto e = glewInit();
+    if (e != GLEW_OK) {
+      LOG_ERROR << "Failed to initialize glew: " << glewGetErrorString(e) << std::endl;
+    } else {
+      LOG_MESSAGE << "Initialized OpenGL successfully." << std::endl;
+    }
+
+    glGetError();
 
     if (debug_) {
-      debugger_ = new ogl::Debug();
+      /*debugger_ = new ogl::Debug();
 
       log_sink_ = new ogl::Debug::LogSink([](ogl::Debug::CallbackData const& data) {
         if (data.id != 131185 && data.id != 131204 && data.id != 131184 && data.id != 131076) {
@@ -161,7 +168,7 @@ void Window::init_context() {
         ogl::Debug::Type::DontCare,
         ogl::Debug::Severity::Low,
         true
-      );
+      );*/
     }
 
     render_context_.gl.Disable(ogl::Capability::DepthTest);
@@ -190,8 +197,8 @@ void Window::open() {
       render_context_.window_size = Size();
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
     if (debug_) {
       glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);

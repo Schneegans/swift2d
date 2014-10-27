@@ -124,8 +124,8 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
   //       lookup = lookup / (fac_00 + fac_01 + fac_10 + fac_11);
 
-  //       vec4 light = texture2D(l_buffer, lookup*0.001 + texcoords);
-  //       return light.rgb * texture2D(g_buffer_diffuse, texcoords).rgb + light.a * light.rgb;
+  //       vec4 light = texture(l_buffer, lookup*0.001 + texcoords);
+  //       return light.rgb * texture(g_buffer_diffuse, texcoords).rgb + light.a * light.rgb;
   //     }
   //   )";
   // } else {
@@ -134,8 +134,8 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       uniform sampler2D l_buffer;
 
       vec3 get_lighting(vec2 texcoords) {
-        vec4 light = texture2D(l_buffer, texcoords);
-        return light.rgb * texture2D(g_buffer_diffuse, texcoords).rgb + light.a * light.rgb;
+        vec4 light = texture(l_buffer, texcoords);
+        return light.rgb * texture(g_buffer_diffuse, texcoords).rgb + light.a * light.rgb;
       }
     )";
   // }
@@ -162,29 +162,29 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       uniform bool      use_heat;
 
       vec3 get_color(vec2 texcoords) {
-        vec3 glow = texture2D(glow_buffer, texcoords).rgb;
-        vec3 dirt = texture2D(dirt_tex, texcoords).rgb;
+        vec3 glow = texture(glow_buffer, texcoords).rgb;
+        vec3 dirt = texture(dirt_tex, texcoords).rgb;
 
         vec2 shifted_texcoords = texcoords;
         if (use_heat) {
-          vec2 offset = (texture2D(heat_buffer, texcoords).rg - 0.5) * 0.2;
+          vec2 offset = (texture(heat_buffer, texcoords).rg - 0.5) * 0.2;
           shifted_texcoords   += offset;
         }
 
-        vec3 output = get_lighting(shifted_texcoords);
-        return output + glow * dirt * dirt_opacity;
+        vec3 result = get_lighting(shifted_texcoords);
+        return result + glow * dirt * dirt_opacity;
       }
     )";
   }
 
   f_source << R"(
     void main(void){
-      vec3 output = get_color(texcoords);
-      output = apply_color_grading(output);
-      output = apply_vignette(output);
-      output = apply_gamma(output);
+      vec3 result = get_color(texcoords);
+      result = apply_color_grading(result);
+      result = apply_vignette(result);
+      result = apply_gamma(result);
 
-      fragColor = output;
+      fragColor = result;
     }
   )";
 

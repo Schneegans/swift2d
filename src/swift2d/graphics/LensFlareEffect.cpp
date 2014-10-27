@@ -32,7 +32,7 @@ LensFlareEffect::LensFlareEffect(RenderContext const& ctx)
     vec3 color = vec3(0);
 
 	for (int i=0; i<8; ++i) {
-		color += texture2D(inputs[i], texcoords).rgb;
+		color += texture(inputs[i], texcoords).rgb;
 	}
 
     fragColor = color;
@@ -73,15 +73,15 @@ LensFlareEffect::LensFlareEffect(RenderContext const& ctx)
     layout (location = 0) out vec3 fragColor;
 
     void main(void) {
-    vec3 color = texture2D(g_buffer_diffuse, texcoord1).rgb
-                + texture2D(g_buffer_diffuse, texcoord2).rgb
-                + texture2D(g_buffer_diffuse, texcoord3).rgb
-                + texture2D(g_buffer_diffuse, texcoord4).rgb;
+    vec3 color = texture(g_buffer_diffuse, texcoord1).rgb
+                + texture(g_buffer_diffuse, texcoord2).rgb
+                + texture(g_buffer_diffuse, texcoord3).rgb
+                + texture(g_buffer_diffuse, texcoord4).rgb;
 
-    float glow = texture2D(g_buffer_light, texcoord1).b
-                + texture2D(g_buffer_light, texcoord2).b
-                + texture2D(g_buffer_light, texcoord3).b
-                + texture2D(g_buffer_light, texcoord4).b;
+    float glow = texture(g_buffer_light, texcoord1).b
+                + texture(g_buffer_light, texcoord2).b
+                + texture(g_buffer_light, texcoord3).b
+                + texture(g_buffer_light, texcoord4).b;
 
     fragColor = pow(glow * color / 16.0, vec3(2));
     }

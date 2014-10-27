@@ -47,7 +47,10 @@ GravityMap::GravityMap(RenderContext const& ctx)
           fragColor += dir;
         }
       }
-  )") {
+  )")
+  , gravity_sources_(gravity_shader_.get_uniform<math::vec3>("gravity_sources"))
+  , screen_size_(gravity_shader_.get_uniform<math::vec2i>("screen_size"))
+  , gravity_source_count_(gravity_shader_.get_uniform<int>("gravity_source_count")) {
 
   auto create_texture = [&](
     oglplus::Texture& tex, int width, int height,
@@ -94,9 +97,12 @@ void GravityMap::process(ConstSerializedScenePtr const& scene, RenderContext con
   }
 
   gravity_shader_.use(ctx);
-  gravity_shader_.set_uniform_array("gravity_sources", sources);
-  gravity_shader_.set_uniform("gravity_source_count", (int)sources.size());
-  gravity_shader_.set_uniform("screen_size", ctx.window_size/16);
+  screen_size_.Set(ctx.window_size / 16);
+  gravity_source_count_.Set((int)sources.size());
+
+  if (sources.size() > 0) {
+    gravity_sources_.Set(sources);
+  }
 
   Quad::get().draw(ctx);
 

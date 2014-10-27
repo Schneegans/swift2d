@@ -96,8 +96,8 @@ class SWIFT_DLL Window {
   bool init_glew_;
   bool debug_;
 
-  ogl::Debug*           debugger_;
-  ogl::Debug::LogSink*  log_sink_;
+  //ogl::Debug*           debugger_;
+  //ogl::Debug::LogSink*  log_sink_;
 };
 
 }

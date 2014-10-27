@@ -55,12 +55,12 @@ class SWIFT_DLL Shader {
 
   template<typename T>
   void set_uniform(std::string name, T const& val) {
-    oglplus::ProgramUniform<T>(program_, name).Set(val);
+    oglplus::Uniform<T>(program_, name).Set(val);
   }
 
   template<typename T>
   void set_uniform_array(std::string name, std::vector<T> const& val) {
-    oglplus::ProgramUniform<T>(program_, name).Set(val.size(), val.data());
+    oglplus::Uniform<T>(program_, name).Set(val.size(), val.data());
   }
 
   template<typename T>

@@ -55,7 +55,7 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
       uniform sampler2D diffuse_tex;
       uniform vec4 diffuse;
       vec4 get_diffuse() {
-        vec4 result = texture2D(diffuse_tex, texcoords);
+        vec4 result = texture(diffuse_tex, texcoords);
         result *= diffuse;
         return result;
       }
@@ -85,7 +85,7 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
       uniform sampler2D normal_tex;
       uniform mat3 normal_transform[100];
       vec4 get_normal() {
-        vec4 result = texture2D(normal_tex, texcoords) - vec4(0.5, 0.5, 0.5, 0);
+        vec4 result = texture(normal_tex, texcoords) - vec4(0.5, 0.5, 0.5, 0);
         result.xy   = (normal_transform[instance_id] * vec3(result.xy, 0.0)).xy;
         // result.xyz  = normalize(result.xyz);
         return result;
@@ -111,7 +111,7 @@ MaterialShaderPtr MaterialShaderFactory::get_shader(int capabilities) {
       f_shader << "uniform sampler2D " << name << "_tex;"          << std::endl;
       f_shader << "uniform float " << name << ";"                  << std::endl;
       f_shader << "float get_" << name << "() {"                   << std::endl;
-      f_shader << "  return texture2D(" << name << "_tex, texcoords).r * "
+      f_shader << "  return texture(" << name << "_tex, texcoords).r * "
                                         << name << ";"             << std::endl;
       f_shader << "}"                                              << std::endl;
     } else {

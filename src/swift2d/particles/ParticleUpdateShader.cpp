@@ -112,7 +112,7 @@ ParticleUpdateShader::ParticleUpdateShader()
             float clip_dist = 0.3;
 
             if (texcoords.x > -clip_dist && texcoords.y > -clip_dist && texcoords.x < 1+clip_dist && texcoords.y < 1+clip_dist) {
-              vec2 gravity = (texture2D(gravity_map, texcoords).rg - 0.5) * dynamics.x;
+              vec2 gravity = (texture(gravity_map, texcoords).rg - 0.5) * dynamics.x;
 
               out_position = varying_position[0] + varying_velocity[0] * time.x / 1000;
               out_life     = vec2(varying_life[0].x + time.x/varying_life[0].y, varying_life[0].y);

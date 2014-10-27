@@ -53,7 +53,7 @@ SpriteParticleShader::SpriteParticleShader()
         vec4  c = mix(start_color, end_color, age);
         float g = mix(glow.x,      glow.y,    age);
 
-        write_gbuffer(texture2D(diffuse, texcoords) * c, g);
+        write_gbuffer(texture(diffuse, texcoords) * c, g);
       }
     )",
 

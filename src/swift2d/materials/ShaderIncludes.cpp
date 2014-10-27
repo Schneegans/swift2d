@@ -120,15 +120,15 @@ ShaderIncludes::ShaderIncludes() {
     uniform sampler2D g_buffer_light;
 
     vec3 get_normal(vec2 texcoords) {
-      return normalize(texture2D(g_buffer_normal, texcoords).rgb * 2 - 1);
+      return normalize(texture(g_buffer_normal, texcoords).rgb * 2 - 1);
     }
 
     vec3 get_diffuse(vec2 texcoords) {
-      return texture2D(g_buffer_diffuse, texcoords).rgb;
+      return texture(g_buffer_diffuse, texcoords).rgb;
     }
 
     vec3 get_light_info(vec2 texcoords) {
-      return texture2D(g_buffer_light, texcoords).rgb;
+      return texture(g_buffer_light, texcoords).rgb;
     }
 
   )");

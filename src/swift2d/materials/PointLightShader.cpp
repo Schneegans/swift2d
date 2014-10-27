@@ -47,7 +47,7 @@ PointLightShader::PointLightShader()
         }
 
         float gloss       = light_info.g;
-        vec4 light        = texture2D(light_tex, texcoords);
+        vec4 light        = texture(light_tex, texcoords);
         vec3 light_dir    = normalize(light.rgb - 0.5);
         float attenuation = light.a;
 
