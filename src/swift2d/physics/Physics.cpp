@@ -149,6 +149,7 @@ b2Body* Physics::add(DynamicBodyComponent* body) {
   fixtureDef.density = body->Density();
   fixtureDef.friction = body->Friction();
   fixtureDef.restitution = body->Restitution();
+  fixtureDef.filter.groupIndex = body->Group();
   fixtureDef.shape = shape;
 
   b2BodyDef bodyDef;
@@ -186,6 +187,7 @@ b2Body* Physics::add(StaticBodyComponent* body) {
   b2FixtureDef fixtureDef;
   fixtureDef.friction = body->Friction();
   fixtureDef.restitution = body->Restitution();
+  fixtureDef.filter.groupIndex = body->Group();
 
   b2Shape* shape;
 

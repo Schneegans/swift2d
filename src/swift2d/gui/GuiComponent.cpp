@@ -180,21 +180,7 @@ void GuiComponent::focus() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GuiComponent::call_javascript(std::string const& method) const {
-  std::vector<std::string> args;
-  call_javascript(method, args);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void GuiComponent::call_javascript(std::string const& method, std::string const& arg) const {
-  std::vector<std::string> args = {arg};
-  call_javascript(method, args);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void GuiComponent::call_javascript(std::string const& method, std::vector<std::string> const& args) const {
+void GuiComponent::call_javascript_impl(std::string const& method, std::vector<std::string> const& args) const {
   Awesomium::JSArray j_args;
   for (auto const& arg: args) {
     j_args.Push(Awesomium::JSValue(Awesomium::ToWebString(arg)));

@@ -13,6 +13,7 @@
 #include <swift2d/components/Component.hpp>
 #include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/gui/Interface.hpp>
+#include <swift2d/utils/stl_helpers.hpp>
 
 #include <unordered_map>
 
@@ -83,9 +84,11 @@ class SWIFT_DLL GuiComponent : public Component,
   void reload();
   void focus();
 
-  void call_javascript(std::string const& method) const;
-  void call_javascript(std::string const& method, std::string const& arg) const;
-  void call_javascript(std::string const& method, std::vector<std::string> const& args) const;
+  template<typename ...Args>
+  void call_javascript(std::string const& method, Args&& ... a) const {
+    std::vector<std::string> args = {(to_string(a))...};
+    call_javascript_impl(method, args);
+  }
 
   void add_javascript_callback(std::string const& name);
   void add_javascript_getter(std::string const& name, std::function<std::string()> callback);
@@ -100,6 +103,7 @@ class SWIFT_DLL GuiComponent : public Component,
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  void call_javascript_impl(std::string const& method, std::vector<std::string> const& args) const;
   void update_mouse_position(math::vec2 const& pos) const;
   void add_javascript_callback(std::string const& callback, bool with_result);
 
