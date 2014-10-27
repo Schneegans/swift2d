@@ -22,6 +22,13 @@ void SavableObject::save_to_file(std::string const& path) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void SavableObject::load_from_file(std::string const& path) {
+  SavableObjectVisitor visitor;
+  visitor.read_json(path, this);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 SavableObjectPtr SavableObject::create_from_file(std::string const& path) {
   SavableObjectVisitor visitor;
   visitor.read_json(path);
