@@ -46,9 +46,9 @@ namespace swift {
 
           for (int i=0; i<light_count; ++i) {
             vec2 dir = (frag_pos - light_pos_radius[i].xy) * screen_size / screen_size.x;
-            float attenuation = max(0, (light_pos_radius[i].z - dir.x*dir.x + dir.y*dir.y) / light_pos_radius[i].z);
+            float attenuation = max(0, (light_pos_radius[i].z) - (dir.x*dir.x+dir.y*dir.y)) / (light_pos_radius[i].z);
+            vec3 light_dir = normalize(vec3(dir, -0.1*attenuation));
 
-            vec3 light_dir = normalize(vec3(dir, -1));
             float specular = attenuation * max(0, pow(dot(normal, light_dir), gloss*100 + 1) * gloss);
             float diffuse  = attenuation * max(0, dot(light_dir, normal));
             output        += (1-emit) * vec4(diffuse*light_colors[i].rgb, specular) * light_colors[i].a;

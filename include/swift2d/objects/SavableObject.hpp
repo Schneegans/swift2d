@@ -40,6 +40,7 @@ class SWIFT_DLL SavableObject : public Object {
  public:
 
   void save_to_file(std::string const& path);
+  void load_from_file(std::string const& path);
   static SavableObjectPtr create_from_file(std::string const& path);
 
   virtual void accept(SavableObjectVisitor& to) {};

@@ -14,11 +14,15 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SavableObjectVisitor::SavableObjectVisitor() {}
+SavableObjectVisitor::SavableObjectVisitor()
+  : loaded_object_(nullptr)
+  , loaded_object_raw_(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SavableObjectVisitor::SavableObjectVisitor(std::string const& name) {
+SavableObjectVisitor::SavableObjectVisitor(std::string const& name)
+  : loaded_object_(nullptr)
+  , loaded_object_raw_(nullptr) {
   json_.put("Type", name);
 }
 
@@ -38,7 +42,23 @@ void SavableObjectVisitor::read_json(std::string const& path) {
       Object::create(json_.get<std::string>("Type"))
     );
 
+    loaded_object_raw_ = loaded_object_.get();
+
     loaded_object_->accept(*this);
+  } catch(...) {}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void SavableObjectVisitor::read_json(std::string const& path, SavableObject* target) {
+  try {
+    boost::property_tree::read_json(path, json_);
+
+    if (json_.get<std::string>("Type") == target->get_type_name()) {
+      loaded_object_raw_ = target;
+      target->accept(*this);
+    }
+
   } catch(...) {}
 }
 
@@ -50,6 +70,8 @@ void SavableObjectVisitor::read_json(boost::property_tree::ptree const& json) {
   loaded_object_ = std::dynamic_pointer_cast<SavableObject>(
     Object::create(json_.get<std::string>("Type"))
   );
+
+  loaded_object_raw_ = loaded_object_.get();
 
   loaded_object_->accept(*this);
 }

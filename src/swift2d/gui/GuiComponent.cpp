@@ -41,8 +41,20 @@ GuiComponent::GuiComponent()
   , Anchor(math::vec2i(0,0))
   , Interactive(true)
   , view_(nullptr)
+  , js_window_(nullptr)
   , callbacks_(5)
   , interactive_(true) {
+
+  on_loaded.connect([this]() {
+    js_window_ = new Awesomium::JSValue();
+    *js_window_ = view_->ExecuteJavascriptWithResult(
+      Awesomium::WSLit("window"), Awesomium::WSLit("")
+    );
+
+    if (!js_window_->IsObject()) {
+      LOG_WARNING << "Failed to initialize GuiComponent!" << std::endl;
+    }
+  });
 
   view_ = Interface::get().create_webview(Size().x(), Size().y());
   view_->SetTransparent(true);
@@ -51,11 +63,6 @@ GuiComponent::GuiComponent()
   view_->set_load_listener(new AweLoadListener(this));
   view_->set_process_listener(new AweProcessListener());
   view_->set_js_method_handler(new AweJSMethodHandler(this));
-
-  js_window_ = new Awesomium::JSValue();
-  *js_window_ = view_->ExecuteJavascriptWithResult(
-    Awesomium::WSLit("window"), Awesomium::WSLit("")
-  );
 
   auto window = WindowManager::get().current();
 
@@ -136,7 +143,9 @@ GuiComponent::~GuiComponent() {
   window->on_char.disconnect(callbacks_[3]);
   window->on_key_press.disconnect(callbacks_[4]);
 
-  delete js_window_;
+  if (js_window_) {
+    delete js_window_;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -180,26 +189,16 @@ void GuiComponent::focus() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GuiComponent::call_javascript(std::string const& method) const {
-  std::vector<std::string> args;
-  call_javascript(method, args);
-}
+void GuiComponent::call_javascript_impl(std::string const& method, std::vector<std::string> const& args) const {
 
-////////////////////////////////////////////////////////////////////////////////
+  if (!js_window_) {
+    return;
+  }
 
-void GuiComponent::call_javascript(std::string const& method, std::string const& arg) const {
-  std::vector<std::string> args = {arg};
-  call_javascript(method, args);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void GuiComponent::call_javascript(std::string const& method, std::vector<std::string> const& args) const {
   Awesomium::JSArray j_args;
   for (auto const& arg: args) {
     j_args.Push(Awesomium::JSValue(Awesomium::ToWebString(arg)));
   }
-
   js_window_->ToObject().Invoke(Awesomium::ToWebString(method), j_args);
 }
 

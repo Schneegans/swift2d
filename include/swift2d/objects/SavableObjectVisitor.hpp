@@ -34,6 +34,7 @@ class SWIFT_DLL SavableObjectVisitor {
 
   void write_json(std::string const& path);
   void read_json(std::string const& path);
+  void read_json(std::string const& path, SavableObject* target);
   void read_json(boost::property_tree::ptree const& json);
 
   boost::property_tree::ptree to_json();
@@ -41,7 +42,7 @@ class SWIFT_DLL SavableObjectVisitor {
 
   template <class T>
   void add_object(std::string const& name, T& target) {
-    if (loaded_object_) {
+    if (loaded_object_raw_) {
       auto child(json_.get_child_optional(name));
 
       if (child) {
@@ -59,7 +60,7 @@ class SWIFT_DLL SavableObjectVisitor {
 
   template <class T>
   void add_member(std::string const& name, T& value) {
-    if (loaded_object_) {
+    if (loaded_object_raw_) {
       auto value_tmp = json_.get_optional<T>(name);
       if (value_tmp) {
         value = value_tmp.get();
@@ -71,7 +72,7 @@ class SWIFT_DLL SavableObjectVisitor {
 
   template <class T>
   void add_array(std::string const& name, T& container) {
-    if (loaded_object_) {
+    if (loaded_object_raw_) {
       auto array(json_.get_child_optional(name));
       if (array) {
         for (auto const& elem : array.get()) {
@@ -99,7 +100,8 @@ class SWIFT_DLL SavableObjectVisitor {
  private:
 
   boost::property_tree::ptree json_;
-  SavableObjectPtr loaded_object_;
+  SavableObjectPtr            loaded_object_;
+  SavableObject*              loaded_object_raw_;
 };
 
 }

@@ -33,9 +33,9 @@ SubSampler::SubSampler(RenderContext const& ctx, int level)
       layout (location = 2) out vec4 fragLight;
 
       void main(void) {
-        fragColor  = texture2D(g_buffer_diffuse, texcoords);
+        fragColor  = texture(g_buffer_diffuse, texcoords);
         fragNormal = vec4(0.5, 0.5, 0, 0);
-        fragLight  = texture2D(g_buffer_light, texcoords) * vec4(1, 1, 1, 0) + vec4(0, 0, 0, fragColor.a);
+        fragLight  = texture(g_buffer_light, texcoords) * vec4(1, 1, 1, 0) + vec4(0, 0, 0, fragColor.a);
       }
   )")
   , level_(level)

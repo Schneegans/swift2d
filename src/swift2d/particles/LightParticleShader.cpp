@@ -61,7 +61,7 @@ LightParticleShader::LightParticleShader()
 
         vec4  c = mix(start_color, end_color, age);
 
-        vec4 light        = texture2D(diffuse, texcoords);
+        vec4 light        = texture(diffuse, texcoords);
         vec3 light_dir    = normalize(light.rgb - 0.5);
         float attenuation = light.a * c.a;
 

@@ -49,7 +49,7 @@ GuiShader::GuiShader()
       @include "write_gbuffer"
 
       void main(void){
-        vec4 color = texture2D(diffuse, tex_coords);
+        vec4 color = texture(diffuse, tex_coords);
         color.rgb /= color.a;
         write_gbuffer(color);
       }

@@ -23,6 +23,7 @@ StaticBodyComponent::StaticBodyComponent()
   : Density(1.0f)
   , Friction(0.5f)
   , Restitution(0.5f)
+  , Group(0)
   , body_(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,6 +54,11 @@ void StaticBodyComponent::update(double time) {
     Restitution.on_change().connect([&](float val){
       body_->GetFixtureList()->SetRestitution(val);
     });
+    Group.on_change().connect([&](short val){
+      b2Filter f;
+      f.groupIndex = val;
+      body_->GetFixtureList()->SetFilterData(f);
+    });
   }
 }
 
@@ -64,6 +70,7 @@ void StaticBodyComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Density", Density);
   visitor.add_member("Friction", Friction);
   visitor.add_member("Restitution", Restitution);
+  visitor.add_member("Group", Group);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

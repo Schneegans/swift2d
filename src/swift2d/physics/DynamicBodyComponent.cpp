@@ -25,6 +25,7 @@ DynamicBodyComponent::DynamicBodyComponent()
   , Restitution(0.5f)
   , LinearDamping(0.5f)
   , AngularDamping(0.5f)
+  , Group(0)
   , body_(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -140,6 +141,7 @@ void DynamicBodyComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Restitution", Restitution);
   visitor.add_member("LinearDamping", LinearDamping);
   visitor.add_member("AngularDamping", AngularDamping);
+  visitor.add_member("Group", Group);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -167,6 +169,11 @@ void DynamicBodyComponent::init() {
     });
     AngularDamping.on_change().connect([&](float val){
       body_->SetAngularDamping(val);
+    });
+    Group.on_change().connect([&](short val){
+      b2Filter f;
+      f.groupIndex = val;
+      body_->GetFixtureList()->SetFilterData(f);
     });
   }
 }

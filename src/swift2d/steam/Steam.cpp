@@ -246,7 +246,7 @@ std::string Steam::get_external_ip(math::uint64 user) {
 ////////////////////////////////////////////////////////////////////////////////
 
 math::uint64 Steam::get_network_id(math::uint64 user) {
-  return std::from_string<math::uint64>(get_user_data("network_id", user));
+  return from_string<math::uint64>(get_user_data("network_id", user));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

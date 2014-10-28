@@ -21,6 +21,7 @@ typedef SWIFT_DLL Property<double>         Double;
 typedef SWIFT_DLL Property<float>          Float;
 typedef SWIFT_DLL Property<int>            Int;
 typedef SWIFT_DLL Property<char>           Char;
+typedef SWIFT_DLL Property<short>          Short;
 typedef SWIFT_DLL Property<unsigned>       UInt;
 typedef SWIFT_DLL Property<unsigned char>  UChar;
 
