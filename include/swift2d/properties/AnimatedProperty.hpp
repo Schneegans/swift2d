@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Logger.hpp>
+#include <swift2d/utils/stl_helpers.hpp>
 #include <swift2d/properties.hpp>
 
 namespace swift {
@@ -151,15 +152,15 @@ class AnimatedProperty : public Property<T> {
  // ---------------------------------------------------------- private interface
  private:
   T updateLinear(T const& t, T const& s, double e) {
-    return (s + t * (e-s));
+    return clamp((T)(s + t * (e-s)), start_, end_);
   }
 
   T updateEaseIn(T const& t, T const& s, double e) {
-    return (s + (t * t * ((exp_+1) * t - exp_)) * (e-s));
+    return clamp((T)(s + (t * t * ((exp_+1) * t - exp_)) * (e-s)), start_, end_);
   }
 
   T updateEaseOut(T const& t, T const& s, double e) {
-    return (s + ((t-1) * (t-1) * ((exp_+1) * (t-1) + exp_) + 1) * (e-s));
+    return clamp((T)(s + ((t-1) * (t-1) * ((exp_+1) * (t-1) + exp_) + 1) * (e-s)), start_, end_);
   }
 
   T updateEaseInOut(T const& t, T const& s, double e) {

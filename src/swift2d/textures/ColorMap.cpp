@@ -149,46 +149,57 @@ void ColorMap::update_data() const {
 void ColorMap::connect_on_members() const {
   FrontBottomLeft.on_change().connect([&](Color const&){
     update_data_ = true;
+    return true;
   });
 
   FrontTopLeft.on_change().connect([&](Color const&){
     update_data_ = true;
+    return true;
   });
 
   FrontTopRight.on_change().connect([&](Color const&){
     update_data_ = true;
+    return true;
   });
 
   FrontBottomRight.on_change().connect([&](Color const&){
     update_data_ = true;
+    return true;
   });
 
   BackBottomLeft.on_change().connect([&](Color const&){
     update_data_ = true;
+    return true;
   });
 
   BackTopLeft.on_change().connect([&](Color const&){
     update_data_ = true;
+    return true;
   });
 
   BackTopRight.on_change().connect([&](Color const&){
     update_data_ = true;
+    return true;
   });
 
   BackBottomRight.on_change().connect([&](Color const&){
     update_data_ = true;
+    return true;
   });
 
   Width.on_change().connect([&](int){
     update_data_ = true;
+    return true;
   });
 
   Height.on_change().connect([&](int){
     update_data_ = true;
+    return true;
   });
 
   Depth.on_change().connect([&](int){
     update_data_ = true;
+    return true;
   });
 }
 

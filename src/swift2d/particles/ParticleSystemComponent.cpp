@@ -34,6 +34,7 @@ ParticleSystemComponent::ParticleSystemComponent()
 
   MaxCount.on_change().connect([&](int val){
     particle_system_->set_max_count(val);
+    return true;
   });
 }
 

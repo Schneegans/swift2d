@@ -38,8 +38,9 @@ void ShapeTrigger::set_shapes(CircularShapePtr const& a, CircularShapePtr const&
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ShapeTrigger::callback(math::mat3 const& v) {
+bool ShapeTrigger::callback(math::mat3 const& v) {
   check();
+  return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

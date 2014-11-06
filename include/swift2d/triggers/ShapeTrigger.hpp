@@ -39,7 +39,7 @@ class SWIFT_DLL ShapeTrigger {
  // ---------------------------------------------------------- private interface
  private:
   void check();
-  void callback(math::mat3 const& v);
+  bool callback(math::mat3 const& v);
 
   CircularShapePtr a_, b_;
   int a_callback_, b_callback_;

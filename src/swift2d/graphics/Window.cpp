@@ -41,14 +41,17 @@ Window::Window(bool debug)
   Open.on_change().connect([this](bool val) {
     if (val) open();
     else     close();
+    return true;
   });
 
   SettingsWrapper::get().Settings->VSync.on_change().connect([this](bool) {
     vsync_dirty_ = true;
+    return true;
   });
 
   SettingsWrapper::get().Settings->Fullscreen.on_change().connect([this](bool) {
     fullscreen_dirty_ = true;
+    return true;
   });
 }
 
@@ -244,6 +247,7 @@ void Window::open() {
     // hide cursor -------------------------------------------------------------
     auto on_hide_cursor_change = [&](bool val) {
       glfwSetInputMode(window_, GLFW_CURSOR, val ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
+      return true;
     };
     on_hide_cursor_change(HideCursor.get());
     HideCursor.on_change().connect(on_hide_cursor_change);

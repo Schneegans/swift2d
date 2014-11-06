@@ -35,13 +35,13 @@ class SWIFT_DLL DeleteOnLeaveBehavior : public Component {
 
   // ----------------------------------------------------- constrution interface
   DeleteOnLeaveBehavior() {
-    int callback;
-    callback = trigger_.on_leave.connect([&](){
+    trigger_.on_leave.connect([&](){
       if (get_user()) {
         on_delete.emit();
-        trigger_.on_leave.disconnect(callback);
         get_user()->detach();
       }
+
+      return false;
     });
   }
 

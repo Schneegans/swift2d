@@ -19,6 +19,7 @@ namespace swift {
 Sound::Sound() {
   FileName.on_change().connect([this](std::string const& file) {
     load_from_file(file);
+    return true;
   });
 }
 

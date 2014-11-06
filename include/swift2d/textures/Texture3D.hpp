@@ -50,7 +50,8 @@ class SWIFT_DLL Texture3D : public Texture {
   static  std::string get_type_name_static() { return "Texture3D"; }
 
   // Binds the texture on the given context to the given location.
-  virtual void bind(RenderContext const& context, unsigned location) const;
+  virtual void bind(RenderContext const& context, unsigned location,
+                    bool async_loading = true) const;
 
   virtual void accept(SavableObjectVisitor& visitor);
 
@@ -65,7 +66,7 @@ class SWIFT_DLL Texture3D : public Texture {
   void set_data(unsigned char* data) const;
 
   virtual void upload_to(RenderContext const& context,
-                         bool create_mip_maps = true) const;
+                         bool create_mip_maps = true, bool async_loading = true) const;
 
 };
 

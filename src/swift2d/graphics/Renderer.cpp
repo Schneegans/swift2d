@@ -54,6 +54,8 @@ Renderer::Renderer(Pipeline& pipeline)
 
       pipeline.update();
     }
+
+    return true;
   });
   ticker_->start();
 
@@ -69,6 +71,7 @@ Renderer::Renderer(Pipeline& pipeline)
 
         Application::get().RenderFPS.step();
         pipeline.draw(rendered_scene_);
+        // std::cout << "########" << std::endl;
       } else {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
       }

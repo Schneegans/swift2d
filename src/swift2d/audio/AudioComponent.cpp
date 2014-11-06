@@ -24,18 +24,22 @@ AudioComponent::AudioComponent()
 
   Sound.on_change().connect([&](AudioBufferPtr const& val) {
     stop();
+    return true;
   });
 
   Volume.on_change().connect([&](float val) {
     source_->Gain(val);
+    return true;
   });
 
   Pitch.on_change().connect([&](float val) {
     source_->Pitch(val);
+    return true;
   });
 
   Loop.on_change().connect([&](bool val) {
     source_->Looping(val);
+    return true;
   });
 }
 

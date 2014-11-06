@@ -19,6 +19,13 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
+T clamp(T val, T a, T b) {
+  return std::min(std::max(val, a<b?a:b), a<b?b:a);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename T>
 T from_string(std::string const& v) {
   std::istringstream iss(v);
   T result;

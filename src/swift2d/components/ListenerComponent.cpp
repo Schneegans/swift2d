@@ -18,6 +18,7 @@ ListenerComponent::ListenerComponent() {
 
   Volume.on_change().connect([&](float val){
     listener_.Gain(val);
+    return true;
   });
 
   Volume = 1.0f;

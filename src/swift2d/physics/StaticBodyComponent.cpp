@@ -43,21 +43,26 @@ void StaticBodyComponent::update(double time) {
     Shape.on_change().connect([&](CollisionShapePtr const&){
       LOG_WARNING << "Updating collision shapes is not implmented yet!"
                           << std::endl;
+      return true;
     });
     Density.on_change().connect([&](float val){
       body_->GetFixtureList()->SetDensity(val);
       body_->ResetMassData();
+      return true;
     });
     Friction.on_change().connect([&](float val){
       body_->GetFixtureList()->SetFriction(val);
+      return true;
     });
     Restitution.on_change().connect([&](float val){
       body_->GetFixtureList()->SetRestitution(val);
+      return true;
     });
     Group.on_change().connect([&](short val){
       b2Filter f;
       f.groupIndex = val;
       body_->GetFixtureList()->SetFilterData(f);
+      return true;
     });
   }
 }

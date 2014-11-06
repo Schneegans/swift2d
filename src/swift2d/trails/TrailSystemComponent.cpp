@@ -32,6 +32,7 @@ TrailSystemComponent::TrailSystemComponent()
 
   MaxCount.on_change().connect([&](int val){
     trail_system_->set_max_trail_points(val);
+    return true;
   });
 }
 
@@ -112,7 +113,7 @@ void TrailSystemComponent::Renderer::draw(RenderContext const& ctx, int start, i
     auto& o(objects[i]);
 
     SWIFT_PUSH_GL_RANGE("Draw TrailSystem");
-    
+
 
     if (o.BlendAdd) {
       ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);

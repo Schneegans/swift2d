@@ -57,6 +57,8 @@ class SWIFT_DLL Material : public MaterialBase {
 
   Bool                    BlendAdditive;
 
+  Bool                    AsyncLoading;
+
   // ----------------------------------------------------- contruction interface
   Material();
 

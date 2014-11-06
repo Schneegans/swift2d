@@ -22,31 +22,38 @@ Material::Material()
   , Glow(0.0)
   , Shinyness(1.0)
   , BlendAdditive(false)
+  , AsyncLoading(true)
   , current_shader_dirty_(true)
   , current_shader_(nullptr) {
 
   AnimatedDiffuseTexture.on_change().connect([&](TexturePtr const& val){
     current_shader_dirty_ = true;
+    return true;
   });
 
   DiffuseTexture.on_change().connect([&](TexturePtr const& val){
     current_shader_dirty_ = true;
+    return true;
   });
 
   NormalTexture.on_change().connect([&](TexturePtr const& val){
     current_shader_dirty_ = true;
+    return true;
   });
 
   EmitTexture.on_change().connect([&](TexturePtr const& val){
     current_shader_dirty_ = true;
+    return true;
   });
 
   GlowTexture.on_change().connect([&](TexturePtr const& val){
     current_shader_dirty_ = true;
+    return true;
   });
 
   ShinynessTexture.on_change().connect([&](TexturePtr const& val){
     current_shader_dirty_ = true;
+    return true;
   });
 }
 
@@ -84,6 +91,7 @@ void Material::accept(SavableObjectVisitor& visitor) {
   visitor.add_object("ShinynessTexture", ShinynessTexture);
   visitor.add_member("Shinyness", Shinyness);
   visitor.add_member("BlendAdditive", BlendAdditive);
+  visitor.add_member("AsyncLoading", AsyncLoading);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -149,58 +157,58 @@ void Material::draw_quad_impl(RenderContext const& ctx,
   bool needs_time(false);
 
   if (AnimatedDiffuseTexture()) {
-    AnimatedDiffuseTexture()->bind(ctx, 0);
+    AnimatedDiffuseTexture()->bind(ctx, 0, AsyncLoading());
     current_shader_->diffuse_tex.Set(0);
     needs_time = true;
 
   } else if (DiffuseTexture()) {
-    DiffuseTexture()->bind(ctx, 0);
+    DiffuseTexture()->bind(ctx, 0, AsyncLoading());
     current_shader_->diffuse_tex.Set(0);
   }
   current_shader_->diffuse.Set(Diffuse().vec4());
 
 
   if (AnimatedNormalTexture()) {
-    AnimatedNormalTexture()->bind(ctx, 1);
+    AnimatedNormalTexture()->bind(ctx, 1, AsyncLoading());
     current_shader_->normal_tex.Set(1);
     current_shader_->normal_transform.Set(math::make_rotation(math::get_rotation(transforms[0])));
     needs_time = true;
 
   } else if (NormalTexture()) {
-    NormalTexture()->bind(ctx, 1);
+    NormalTexture()->bind(ctx, 1, AsyncLoading());
     current_shader_->normal_tex.Set(1);
     current_shader_->normal_transform.Set(math::make_rotation(math::get_rotation(transforms[0])));
   }
 
   if (AnimatedEmitTexture()) {
-    AnimatedEmitTexture()->bind(ctx, 2);
+    AnimatedEmitTexture()->bind(ctx, 2, AsyncLoading());
     current_shader_->emit_tex.Set(2);
     needs_time = true;
 
   } else if (EmitTexture()) {
-    EmitTexture()->bind(ctx, 2);
+    EmitTexture()->bind(ctx, 2, AsyncLoading());
     current_shader_->emit_tex.Set(2);
   }
   current_shader_->emit.Set(Emit());
 
   if (AnimatedGlowTexture()) {
-    AnimatedGlowTexture()->bind(ctx, 3);
+    AnimatedGlowTexture()->bind(ctx, 3, AsyncLoading());
     current_shader_->glow_tex.Set(3);
     needs_time = true;
 
   } else if (GlowTexture()) {
-    GlowTexture()->bind(ctx, 3);
+    GlowTexture()->bind(ctx, 3, AsyncLoading());
     current_shader_->glow_tex.Set(3);
   }
   current_shader_->glow.Set(Glow());
 
   if (AnimatedShinynessTexture()) {
-    AnimatedShinynessTexture()->bind(ctx, 4);
+    AnimatedShinynessTexture()->bind(ctx, 4, AsyncLoading());
     current_shader_->shinyness_tex.Set(4);
     needs_time = true;
 
   } else if (ShinynessTexture()) {
-    ShinynessTexture()->bind(ctx, 4);
+    ShinynessTexture()->bind(ctx, 4, AsyncLoading());
     current_shader_->shinyness_tex.Set(4);
   }
   current_shader_->shinyness.Set(Shinyness());

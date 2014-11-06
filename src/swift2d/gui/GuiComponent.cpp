@@ -46,6 +46,7 @@ GuiComponent::GuiComponent()
   , interactive_(true) {
 
   on_loaded.connect([this]() {
+    std::cout << "on loaded" << std::endl;
     js_window_ = new Awesomium::JSValue();
     *js_window_ = view_->ExecuteJavascriptWithResult(
       Awesomium::WSLit("window"), Awesomium::WSLit("")
@@ -54,6 +55,9 @@ GuiComponent::GuiComponent()
     if (!js_window_->IsObject()) {
       LOG_WARNING << "Failed to initialize GuiComponent!" << std::endl;
     }
+    std::cout << "done" << std::endl;
+
+    return false;
   });
 
   view_ = Interface::get().create_webview(Size().x(), Size().y());
@@ -68,12 +72,14 @@ GuiComponent::GuiComponent()
 
   callbacks_[0] = window->on_mouse_move.connect([&](math::vec2 const& pos) {
     update_mouse_position(pos);
+    return true;
   });
 
   callbacks_[1] = window->on_mouse_scroll.connect([&](math::vec2 const& dir) {
     if (interactive_) {
       view_->InjectMouseWheel(dir.y()*10, dir.x()*10);
     }
+    return true;
   });
 
   callbacks_[2] = window->on_mouse_button_press.connect([&](Button button, int action, int mods) {
@@ -84,27 +90,32 @@ GuiComponent::GuiComponent()
         view_->InjectMouseDown(static_cast<Awesomium::MouseButton>(button));
       }
     }
+    return true;
   });
 
   callbacks_[3] = window->on_char.connect([&](unsigned c) {
     if (interactive_) {
       view_->InjectKeyboardEvent(AweKeyEvent(c));
     }
+    return true;
   });
 
   callbacks_[4] = window->on_key_press.connect([&](Key key, int scancode, int action, int mods) {
     if (interactive_) {
       view_->InjectKeyboardEvent(AweKeyEvent(key, scancode, action, mods));
     }
+    return true;
   });
 
   Resource.on_change().connect([&](std::string const& val) {
     Awesomium::WebURL url(Awesomium::WSLit(("asset://swift2d/" + val).c_str()));
     view_->LoadURL(url);
+    return true;
   });
 
   Size.on_change().connect([&](math::vec2i const& val) {
     view_->Resize(val.x(), val.y());
+    return true;
   });
 
   Interactive.on_change().connect([this](bool val){
@@ -114,16 +125,19 @@ GuiComponent::GuiComponent()
       auto pos = WindowManager::get().current()->get_cursor_pos();
       update_mouse_position(pos);
     }
+    return true;
   });
 
   Offset.on_change().connect([this](math::vec2 const& val) {
     auto pos = WindowManager::get().current()->get_cursor_pos();
     update_mouse_position(pos);
+    return true;
   });
 
   Anchor.on_change().connect([this](math::vec2 const& val) {
     auto pos = WindowManager::get().current()->get_cursor_pos();
     update_mouse_position(pos);
+    return true;
   });
 }
 

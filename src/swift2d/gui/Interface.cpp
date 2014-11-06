@@ -37,6 +37,7 @@ namespace {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Interface::update() const {
+  // std::cout << "Interface" << std::endl;
   web_core_->Update();
 }
 

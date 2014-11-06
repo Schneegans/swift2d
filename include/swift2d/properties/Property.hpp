@@ -54,6 +54,7 @@ class Property {
     connection_ = &source;
     connection_id_ = source.on_change().connect([&](T const& value){
       set(value);
+      return true;
     });
     set(source.get());
   }

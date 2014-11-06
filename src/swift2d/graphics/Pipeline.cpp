@@ -35,21 +35,27 @@ Pipeline::Pipeline()
 
   SettingsWrapper::get().Settings->DynamicLighting.on_change().connect([this](int) {
     needs_reload_ = true;
+    return true;
   });
   SettingsWrapper::get().Settings->SubSampling.on_change().connect([this](bool) {
     needs_reload_ = true;
+    return true;
   });
   SettingsWrapper::get().Settings->LightSubSampling.on_change().connect([this](bool) {
     needs_reload_ = true;
+    return true;
   });
   SettingsWrapper::get().Settings->LensFlares.on_change().connect([this](bool) {
     needs_reload_ = true;
+    return true;
   });
   SettingsWrapper::get().Settings->HeatEffect.on_change().connect([this](bool) {
     needs_reload_ = true;
+    return true;
   });
   SettingsWrapper::get().Settings->Fullscreen.on_change().connect([this](bool) {
     needs_reload_ = true;
+    return true;
   });
 }
 
@@ -73,6 +79,7 @@ void Pipeline::set_output_window(WindowPtr const& window) {
 
   window_->Size.on_change().connect([this](math::vec2i){
     needs_reload_ = true;
+    return true;
   });
 }
 
