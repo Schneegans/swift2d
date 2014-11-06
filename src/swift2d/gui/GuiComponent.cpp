@@ -36,6 +36,7 @@ namespace {
 
 GuiComponent::GuiComponent()
   : Depth(0.f)
+  , Opacity(1.f)
   , Resource()
   , Size(math::vec2i(10,10))
   , Anchor(math::vec2i(0,0))
@@ -184,6 +185,7 @@ void GuiComponent::Renderer::draw(RenderContext const& ctx, int start, int end) 
       );
 
       GuiShader::get().size.Set(size);
+      GuiShader::get().opacity.Set(o.Opacity);
       GuiShader::get().offset.Set(offset);
       GuiShader::get().diffuse.Set(0);
       Quad::get().draw(ctx);
@@ -235,11 +237,12 @@ void GuiComponent::add_javascript_getter(std::string const& name, std::function<
 
 void GuiComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
-  s.Depth  = Depth();
-  s.Size   = Size();
-  s.Anchor = Anchor();
-  s.Offset = Offset();
-  s.Self   = shared_from_this();
+  s.Depth   = Depth();
+  s.Opacity = Opacity();
+  s.Size    = Size();
+  s.Anchor  = Anchor();
+  s.Offset  = Offset();
+  s.Self    = shared_from_this();
   scene->renderers().gui_elements.add(std::move(s));
 }
 
@@ -248,6 +251,7 @@ void GuiComponent::serialize(SerializedScenePtr& scene) const {
 void GuiComponent::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
   visitor.add_member("Depth",       Depth);
+  visitor.add_member("Opacity",     Opacity);
   visitor.add_member("Resource",    Resource);
   visitor.add_member("Size",        Size);
   visitor.add_member("Anchor",      Anchor);

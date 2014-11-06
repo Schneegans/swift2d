@@ -17,58 +17,31 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 GuiSpriteComponent::GuiSpriteComponent()
-  : Depth(0.f)
+  : FullscreenGuiSpriteComponent()
   , Size(math::vec2i(10,10))
   , Anchor(math::vec2i(0,0))
-  , Texture(nullptr) {}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void GuiSpriteComponent::Renderer::draw(RenderContext const& ctx, int start, int end) {
-  for (int i(start); i<end; ++i) {
-    auto& o(objects[i]);
-
-    o.Texture->bind(ctx, 0);
-    GuiShader::get().use(ctx);
-
-    math::vec2 size(
-      1.0 * o.Size.x() / ctx.window_size.x(),
-      1.0 * o.Size.y() / ctx.window_size.y()
-    );
-
-    math::vec2 offset(
-      (2.0 * o.Offset.x() + o.Anchor.x() * (ctx.window_size.x() - o.Size.x()))/ctx.window_size.x(),
-      (2.0 * o.Offset.y() + o.Anchor.y() * (ctx.window_size.y() - o.Size.y()))/ctx.window_size.y()
-    );
-
-    GuiShader::get().size.Set(size);
-    GuiShader::get().offset.Set(offset);
-    GuiShader::get().diffuse.Set(0);
-    Quad::get().draw(ctx);
-  }
-}
+  , Offset(math::vec2i(0,0)) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void GuiSpriteComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
   s.Depth    = Depth();
+  s.Opacity  = Opacity();
   s.Size     = Size();
   s.Anchor   = Anchor();
   s.Offset   = Offset();
-  s.Texture = Texture();
+  s.Texture  = Texture();
   scene->renderers().gui_sprite_elements.add(std::move(s));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void GuiSpriteComponent::accept(SavableObjectVisitor& visitor) {
-  Component::accept(visitor);
-  visitor.add_member("Depth",            Depth);
+  FullscreenGuiSpriteComponent::accept(visitor);
   visitor.add_member("Size",             Size);
   visitor.add_member("Anchor",           Anchor);
   visitor.add_member("Offset",           Offset);
-  visitor.add_object_property("Texture", Texture);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -44,17 +44,19 @@ GuiShader::GuiShader()
 
       // uniforms
       uniform sampler2D diffuse;
+      uniform float     opacity;
 
       // output
       @include "write_gbuffer"
 
       void main(void){
-        vec4 color = texture(diffuse, tex_coords);
+        vec4 color = texture(diffuse, tex_coords) * opacity;
         color.rgb /= color.a;
         write_gbuffer(color);
       }
     )"
   )
+  , opacity(get_uniform<float>("opacity"))
   , size(get_uniform<math::vec2>("size"))
   , offset(get_uniform<math::vec2>("offset"))
   , diffuse(get_uniform<int>("diffuse")) {}

@@ -30,13 +30,9 @@ class SWIFT_DLL AnimatedGuiSpriteComponent : public GuiSpriteComponent {
  public:
 
   // ------------------------------------------------------------- inner classes
-  struct Serialized : public SerializedComponent {
-    float           Time;
-    math::vec2i     Size;
-    math::vec2      Anchor;
-    math::vec2      Offset;
-    bool            UseRenderThreadTime;
-    TexturePtr      Texture;
+  struct Serialized : public GuiSpriteComponent::Serialized {
+    float Time;
+    bool  UseRenderThreadTime;
   };
 
   class Renderer : public ResourceRenderer<AnimatedGuiSpriteComponent> {

@@ -45,18 +45,20 @@ AnimatedGuiShader::AnimatedGuiShader()
       // uniforms
       uniform sampler3D diffuse;
       uniform float     time;
+      uniform float     opacity;
 
       // output
       @include "write_gbuffer"
 
       void main(void){
-        vec4 color = texture(diffuse, vec3(tex_coords, time));
+        vec4 color = texture(diffuse, vec3(tex_coords, time)) * opacity;
         color.rgb /= color.a;
         write_gbuffer(color);
       }
     )"
   )
   , time(get_uniform<float>("time"))
+  , opacity(get_uniform<float>("opacity"))
   , size(get_uniform<math::vec2>("size"))
   , offset(get_uniform<math::vec2>("offset"))
   , diffuse(get_uniform<int>("diffuse")) {}

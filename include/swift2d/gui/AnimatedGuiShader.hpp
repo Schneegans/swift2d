@@ -27,6 +27,7 @@ class AnimatedGuiShader : public Shader, public Singleton<AnimatedGuiShader> {
 
   // ------------------------------------------------------------------ uniforms
   oglplus::Lazy<oglplus::Uniform<float>>       time;
+  oglplus::Lazy<oglplus::Uniform<float>>       opacity;
   oglplus::Lazy<oglplus::Uniform<math::vec2>>  size;
   oglplus::Lazy<oglplus::Uniform<math::vec2>>  offset;
   oglplus::Lazy<oglplus::Uniform<int>>         diffuse;

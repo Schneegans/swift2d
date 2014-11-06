@@ -22,7 +22,7 @@
 #include <swift2d/particles/LightParticleSystemComponent.hpp>
 
 #include <swift2d/gui/GuiComponent.hpp>
-#include <swift2d/gui/GuiSpriteComponent.hpp>
+#include <swift2d/gui/FullscreenGuiSpriteComponent.hpp>
 #include <swift2d/gui/AnimatedGuiSpriteComponent.hpp>
 
 #include <swift2d/trails/TrailSystemComponent.hpp>
@@ -59,7 +59,7 @@ class SWIFT_DLL RendererPool {
 
   // ------------------------------------------------------------- gui renderers
   GuiComponent::                  Renderer gui_elements;
-  GuiSpriteComponent::            Renderer gui_sprite_elements;
+  FullscreenGuiSpriteComponent::  Renderer gui_sprite_elements;
   AnimatedGuiSpriteComponent::    Renderer animated_gui_sprite_elements;
 
   // ---------------------------------------------------- construction interface

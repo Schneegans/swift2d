@@ -42,6 +42,7 @@ class SWIFT_DLL GuiComponent : public Component,
 
   // ------------------------------------------------------------- inner classes
   struct Serialized : public SerializedComponent {
+    float                Opacity;
     math::vec2i          Size;
     math::vec2           Anchor;
     math::vec2           Offset;
@@ -54,6 +55,7 @@ class SWIFT_DLL GuiComponent : public Component,
 
   // ---------------------------------------------------------------- properties
   Float  Depth;
+  Float  Opacity;
   String Resource;
   Vec2i  Size;
   Vec2   Anchor;

@@ -6,11 +6,13 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_GUI_SPRITE_COMPONENT_HPP
-#define SWIFT2D_GUI_SPRITE_COMPONENT_HPP
+#ifndef SWIFT2D_FULLSCREEN_GUI_SPRITE_COMPONENT_HPP
+#define SWIFT2D_FULLSCREEN_GUI_SPRITE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/gui/FullscreenGuiSpriteComponent.hpp>
+#include <swift2d/components/Component.hpp>
+#include <swift2d/graphics/ResourceRenderer.hpp>
+#include <swift2d/textures/Texture.hpp>
 
 namespace swift {
 
@@ -18,38 +20,50 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class GuiSpriteComponent;
-typedef std::shared_ptr<GuiSpriteComponent>       GuiSpriteComponentPtr;
-typedef std::shared_ptr<const GuiSpriteComponent> ConstGuiSpriteComponentPtr;
+class FullscreenGuiSpriteComponent;
+typedef std::shared_ptr<FullscreenGuiSpriteComponent>       FullscreenGuiSpriteComponentPtr;
+typedef std::shared_ptr<const FullscreenGuiSpriteComponent> ConstFullscreenGuiSpriteComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL GuiSpriteComponent : public FullscreenGuiSpriteComponent {
+class SWIFT_DLL FullscreenGuiSpriteComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ---------------------------------------------------------------- properties
-  Vec2i  Size;
-  Vec2   Anchor;
-  Vec2   Offset;
+  // ------------------------------------------------------------- inner classes
+  struct Serialized : public SerializedComponent {
+    float           Opacity;
+    TexturePtr      Texture;
+    math::vec2i     Size;
+    math::vec2      Anchor;
+    math::vec2      Offset;
+  };
 
+  class Renderer : public ResourceRenderer<FullscreenGuiSpriteComponent> {
+    void draw(RenderContext const& ctx, int start, int end);
+  };
+
+  // ---------------------------------------------------------------- properties
+  Float           Depth;
+  Float           Opacity;
+  TextureProperty Texture;
 
   // ---------------------------------------------------- construction interface
-  GuiSpriteComponent();
+  FullscreenGuiSpriteComponent();
 
-  static GuiSpriteComponentPtr create() {
-    return std::make_shared<GuiSpriteComponent>();
+  static FullscreenGuiSpriteComponentPtr create() {
+    return std::make_shared<FullscreenGuiSpriteComponent>();
   }
 
   // creates a copy from this
-  GuiSpriteComponentPtr create_copy() const {
-    return std::make_shared<GuiSpriteComponent>(*this);
+  FullscreenGuiSpriteComponentPtr create_copy() const {
+    return std::make_shared<FullscreenGuiSpriteComponent>(*this);
   }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "GuiSpriteComponent"; }
+  static  std::string get_type_name_static() { return "FullscreenGuiSpriteComponent"; }
 
   void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
@@ -59,4 +73,4 @@ class SWIFT_DLL GuiSpriteComponent : public FullscreenGuiSpriteComponent {
 
 }
 
-#endif // SWIFT2D_GUI_SPRITE_COMPONENT_HPP
+#endif // SWIFT2D_FULLSCREEN_GUI_SPRITE_COMPONENT_HPP

@@ -61,6 +61,7 @@ namespace {
       Object::init<DynamicBodyComponent>();
       Object::init<GravitySourceComponent>();
       Object::init<GuiComponent>();
+      Object::init<FullscreenGuiSpriteComponent>();
       Object::init<GuiSpriteComponent>();
       Object::init<AnimatedGuiSpriteComponent>();
       Object::init<HeatParticleSystemComponent>();
