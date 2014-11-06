@@ -22,7 +22,6 @@ AnimatedSpriteComponent::AnimatedSpriteComponent()
 
 void AnimatedSpriteComponent::update(double time) {
   SpriteComponent::update(time);
-
   Time.update(time);
 }
 
@@ -41,13 +40,12 @@ void AnimatedSpriteComponent::serialize(SerializedScenePtr& scene) const {
 
 void AnimatedSpriteComponent::accept(SavableObjectVisitor& visitor) {
   SpriteComponent::accept(visitor);
-  visitor.add_member("Time", Time);
+  visitor.add_object("Time", Time);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void AnimatedSpriteComponent::Renderer::draw(RenderContext const& ctx, int start, int end) {
-
   std::sort(objects.begin() + start, objects.begin() + end,
     [](AnimatedSpriteComponent::Serialized const& a, AnimatedSpriteComponent::Serialized const& b){
       return a.Material.get() < b.Material.get();

@@ -100,7 +100,7 @@ void AudioComponent::stop() {
 
 void AudioComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
-  visitor.add_object("Sound", Sound);
+  visitor.add_object_property("Sound", Sound);
   visitor.add_member("Volume", Volume);
   visitor.add_member("Pitch", Pitch);
   visitor.add_member("Loop", Loop);

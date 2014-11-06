@@ -45,7 +45,7 @@ void HeatParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("EndScale",      EndScale);
   visitor.add_member("StartOpacity",  StartOpacity);
   visitor.add_member("EndOpacity",    EndOpacity);
-  visitor.add_object("Texture",       Texture);
+  visitor.add_object_property("Texture",       Texture);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

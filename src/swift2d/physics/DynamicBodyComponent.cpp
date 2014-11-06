@@ -135,7 +135,7 @@ void DynamicBodyComponent::update(double time) {
 
 void DynamicBodyComponent::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
-  visitor.add_object("Shape", Shape);
+  visitor.add_object_property("Shape", Shape);
   visitor.add_member("Density", Density);
   visitor.add_member("Friction", Friction);
   visitor.add_member("Restitution", Restitution);

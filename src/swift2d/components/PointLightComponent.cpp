@@ -40,7 +40,7 @@ void PointLightComponent::serialize(SerializedScenePtr& scene) const {
 void PointLightComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
   visitor.add_member("Depth", Depth);
-  visitor.add_object("Texture", Texture);
+  visitor.add_object_property("Texture", Texture);
   visitor.add_member("Color", Color);
 }
 

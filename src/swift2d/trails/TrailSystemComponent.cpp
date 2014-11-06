@@ -89,7 +89,7 @@ void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("EndGlow",       EndGlow);
   visitor.add_member("StartColor",    StartColor);
   visitor.add_member("EndColor",      EndColor);
-  visitor.add_object("Texture",       Texture);
+  visitor.add_object_property("Texture",       Texture);
   visitor.add_member("TextureRepeat", TextureRepeat);
   visitor.add_member("UseGlobalTexCoords", UseGlobalTexCoords);
   visitor.add_member("BlendAdd",      BlendAdd);

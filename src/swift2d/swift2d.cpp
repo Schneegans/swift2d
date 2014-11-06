@@ -28,6 +28,7 @@
 #include <swift2d/textures/NoiseTexture.hpp>
 #include <swift2d/textures/DefaultTexture.hpp>
 #include <swift2d/textures/DefaultTexture3D.hpp>
+#include <swift2d/properties/AnimatedProperty.hpp>
 
 #include <GLFW/glfw3.h>
 
@@ -46,6 +47,8 @@ namespace {
 
       // register all objects --------------------------------------------------
       Object::init<AnimatedSpriteComponent>();
+      Object::init<AnimatedFloat>();
+      Object::init<AnimatedDouble>();
       Object::init<Texture3D>();
       Object::init<AudioComponent>();
       Object::init<BoxCollisionShape>();

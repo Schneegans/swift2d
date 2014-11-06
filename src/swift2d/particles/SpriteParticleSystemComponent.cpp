@@ -56,7 +56,7 @@ void SpriteParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("EndColor",    EndColor);
   visitor.add_member("BlendAdd",    BlendAdd);
   visitor.add_member("SubSamplingLevel", SubSamplingLevel);
-  visitor.add_object("Texture",     Texture);
+  visitor.add_object_property("Texture",     Texture);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

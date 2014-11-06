@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/objects/SavableObject.hpp>
+#include <swift2d/properties.hpp>
 
 namespace swift {
 
