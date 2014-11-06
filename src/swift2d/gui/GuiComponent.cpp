@@ -45,8 +45,9 @@ GuiComponent::GuiComponent()
   , callbacks_(5)
   , interactive_(true) {
 
+  Interface::get().increase_loading_state();
+
   on_loaded.connect([this]() {
-    std::cout << "on loaded" << std::endl;
     js_window_ = new Awesomium::JSValue();
     *js_window_ = view_->ExecuteJavascriptWithResult(
       Awesomium::WSLit("window"), Awesomium::WSLit("")
@@ -55,7 +56,8 @@ GuiComponent::GuiComponent()
     if (!js_window_->IsObject()) {
       LOG_WARNING << "Failed to initialize GuiComponent!" << std::endl;
     }
-    std::cout << "done" << std::endl;
+
+    Interface::get().decrease_loading_state();
 
     return false;
   });

@@ -33,8 +33,13 @@ class SWIFT_DLL Interface : public Singleton<Interface> {
  // ----------------------------------------------------------- public interface
  public:
 
+  // ------------------------------------------------------------------- signals
   Signal<Cursor> on_cursor_change;
 
+  // ---------------------------------------------------------------- properties
+  Float LoadingProgress;
+
+  // ------------------------------------------------------------ public methods
   void update() const;
 
   friend class GuiComponent;
@@ -49,6 +54,12 @@ class SWIFT_DLL Interface : public Singleton<Interface> {
 
   bool bind(Awesomium::WebView* view, RenderContext const& ctx, unsigned location) const;
   Awesomium::WebView* create_webview(int width, int height) const;
+
+  void increase_loading_state();
+  void decrease_loading_state();
+
+  int loading_state_;
+  int max_state_;
 
   Awesomium::WebCore* web_core_;
   Awesomium::WebSession* web_session_;

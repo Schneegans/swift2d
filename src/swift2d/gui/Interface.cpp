@@ -42,7 +42,11 @@ void Interface::update() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Interface::Interface() {
+Interface::Interface()
+  : LoadingProgress(1)
+  , loading_state_(0)
+  , max_state_(-1) {
+
   web_core_ = Awesomium::WebCore::Initialize(Awesomium::WebConfig());
   web_core_->set_surface_factory(new GLSurfaceFactory());
 
@@ -75,6 +79,33 @@ bool Interface::bind(Awesomium::WebView* view, RenderContext const& ctx, unsigne
 Awesomium::WebView* Interface::create_webview(int width, int height) const {
   return web_core_->CreateWebView(width, height, web_session_,
                                   Awesomium::kWebViewType_Offscreen);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Interface::increase_loading_state() {
+  ++loading_state_;
+
+  if (loading_state_ > max_state_) {
+    max_state_ = loading_state_;
+  }
+
+  if (max_state_ > 0) {
+    LoadingProgress = 1.f - 1.f * loading_state_ / max_state_;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Interface::decrease_loading_state() {
+  --loading_state_;
+
+  if (loading_state_ == 0) {
+    LoadingProgress = 1.f;
+    max_state_ = -1;
+  } else if (max_state_ > 0) {
+    LoadingProgress = 1.f - 1.f * loading_state_ / max_state_;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
