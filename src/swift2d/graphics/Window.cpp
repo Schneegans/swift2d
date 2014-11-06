@@ -137,7 +137,11 @@ void Window::init_context() {
     if (e != GLEW_OK) {
       LOG_ERROR << "Failed to initialize glew: " << glewGetErrorString(e) << std::endl;
     } else {
-      LOG_MESSAGE << "Initialized OpenGL successfully." << std::endl;
+      int major = glfwGetWindowAttrib(window_, GLFW_CONTEXT_VERSION_MAJOR);
+      int minor = glfwGetWindowAttrib(window_, GLFW_CONTEXT_VERSION_MINOR);
+      int rev   = glfwGetWindowAttrib(window_, GLFW_CONTEXT_REVISION);
+      LOG_MESSAGE << "Initialized OpenGL context " << major << "." << minor 
+                  << "." << rev << " successfully." << std::endl;
     }
 
     glGetError();
