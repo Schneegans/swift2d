@@ -40,6 +40,14 @@ void StaticBodyComponent::update(double time) {
   if (!body_) {
     body_ = Physics::get().add(this);
 
+    body_->SetActive(Enabled());
+    Enabled.on_change().connect([this](bool enabled) {
+      if (body_) {
+        body_->SetActive(enabled);
+      }
+      return true;
+    });
+
     Shape.on_change().connect([&](CollisionShapePtr const&){
       LOG_WARNING << "Updating collision shapes is not implmented yet!"
                           << std::endl;
