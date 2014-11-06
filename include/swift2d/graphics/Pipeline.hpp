@@ -54,6 +54,9 @@ class SWIFT_DLL Pipeline {
   void update();
   void draw(ConstSerializedScenePtr const& scene);
 
+  double get_total_time() const;
+  double get_frame_time() const;
+
   SubSampler* get_sub_sampler(int level);
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -70,6 +73,10 @@ class SWIFT_DLL Pipeline {
     bool needs_reload_;
 
     std::vector<SubSampler*> sub_samplers_;
+    Timer timer_;
+
+    double frame_time_;
+    double total_time_;
 };
 
 }

@@ -72,11 +72,8 @@ class ParticleSystem {
 
   std::unordered_map<ParticleEmitterComponent const*, float> particles_to_spawn_;
   bool   ping_;
-  double total_time_;
   int    update_max_count_;
   int    count_;
-
-  Timer timer_;
 };
 
 }

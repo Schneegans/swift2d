@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_GUI_SHADER_HPP
-#define SWIFT2D_GUI_SHADER_HPP
+#ifndef SWIFT2D_ANIMATED_GUI_SHADER_HPP
+#define SWIFT2D_ANIMATED_GUI_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Shader.hpp>
@@ -19,29 +19,30 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class GuiShader : public Shader, public Singleton<GuiShader> {
+class AnimatedGuiShader : public Shader, public Singleton<AnimatedGuiShader> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ------------------------------------------------------------------ uniforms
+  oglplus::Lazy<oglplus::Uniform<float>>       time;
   oglplus::Lazy<oglplus::Uniform<math::vec2>>  size;
   oglplus::Lazy<oglplus::Uniform<math::vec2>>  offset;
   oglplus::Lazy<oglplus::Uniform<int>>         diffuse;
 
-  friend class Singleton<GuiShader>;
+  friend class Singleton<AnimatedGuiShader>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  GuiShader();
-  ~GuiShader() {};
+  AnimatedGuiShader();
+  ~AnimatedGuiShader() {};
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_GUI_SHADER_HPP
+#endif // SWIFT2D_ANIMATED_GUI_SHADER_HPP

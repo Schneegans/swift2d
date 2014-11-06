@@ -28,6 +28,7 @@ namespace swift {
 
 Texture::Texture()
   : FileName("")
+  , AsyncLoading(true)
   , texture_(nullptr)
   , needs_update_(true)
   , loading_(false)
@@ -69,18 +70,17 @@ Texture::~Texture() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture::bind(RenderContext const& ctx, unsigned location,
-                   bool async_loading) const {
+void Texture::bind(RenderContext const& ctx, unsigned location) const {
 
-  if (!texture_ && !async_loading) {
-    upload_to(ctx, async_loading);
+  if (!texture_ && !AsyncLoading()) {
+    upload_to(ctx);
   }
 
   if (texture_) {
     texture_->Active(location);
     ctx.gl.Bind(ose::_2D(), *texture_);
   } else {
-    upload_to(ctx, async_loading);
+    upload_to(ctx);
     DefaultTexture::get().bind(ctx, location);
   }
 }
@@ -89,19 +89,20 @@ void Texture::bind(RenderContext const& ctx, unsigned location,
 
 void Texture::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("FileName", FileName);
+  visitor.add_member("AsyncLoading", AsyncLoading);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture::upload_to(RenderContext const& ctx, bool async_loading) const {
+void Texture::upload_to(RenderContext const& ctx) const {
 
   if (!data_) {
     if (!loading_) {
       if (ctx.upload_budget > 0) {
         --ctx.upload_budget;
-        load_texture_data(async_loading);
-      } else if (!async_loading) {
-        load_texture_data(async_loading);
+        load_texture_data();
+      } else if (!AsyncLoading()) {
+        load_texture_data();
       } else {
         ++ctx.upload_remaining;
       }
@@ -137,8 +138,7 @@ void Texture::upload_to(RenderContext const& ctx, bool async_loading) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture::load_texture_data(bool async) const {
-  std::cout << async << " Load " << FileName() << std::endl;
+void Texture::load_texture_data() const {
   std::string f(FileName());
 
   if (f.length() > 0) {
@@ -149,7 +149,6 @@ void Texture::load_texture_data(bool async) const {
     auto load = [this, f](){
       int w(0), h(0), c(0);
       auto d(stbi_load(f.c_str(), &w, &h, &c, STBI_default));
-      std::cout  << "  Done. " << FileName() << std::endl;
       if (d) {
         data_ = d;
         width_ = w;
@@ -160,7 +159,7 @@ void Texture::load_texture_data(bool async) const {
       }
     };
 
-    if (async) {
+    if (AsyncLoading()) {
       std::thread loading_thread(load);
       loading_thread.detach();
     } else {

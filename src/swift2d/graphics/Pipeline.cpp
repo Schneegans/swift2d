@@ -31,7 +31,9 @@ Pipeline::Pipeline()
   : compositor_(nullptr)
   , max_load_amount_(-1)
   , current_load_amount_(0)
-  , needs_reload_(true) {
+  , needs_reload_(true)
+  , frame_time_(0)
+  , total_time_(0) {
 
   SettingsWrapper::get().Settings->DynamicLighting.on_change().connect([this](int) {
     needs_reload_ = true;
@@ -57,6 +59,8 @@ Pipeline::Pipeline()
     needs_reload_ = true;
     return true;
   });
+
+  timer_.start();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -138,6 +142,9 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
     needs_reload_ = false;
   }
 
+  frame_time_ = timer_.reset();
+  total_time_ += frame_time_;
+
   auto& ctx(window_->get_context());
 
   // setup projection matrix
@@ -186,6 +193,18 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   // finish frame
   window_->display();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+double Pipeline::get_total_time() const {
+  return total_time_;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+double Pipeline::get_frame_time() const {
+  return frame_time_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -34,6 +34,7 @@ class SWIFT_DLL AnimatedSpriteComponent : public SpriteComponent {
   struct Serialized : public SerializedComponent {
     math::mat3      Transform;
     float           Time;
+    bool            UseRenderThreadTime;
     MaterialBasePtr Material;
   };
 
@@ -43,6 +44,7 @@ class SWIFT_DLL AnimatedSpriteComponent : public SpriteComponent {
 
   // ---------------------------------------------------------------- properties
   AnimatedFloat Time;
+  Bool UseRenderThreadTime;
 
   // ----------------------------------------------------- contruction interface
   AnimatedSpriteComponent();

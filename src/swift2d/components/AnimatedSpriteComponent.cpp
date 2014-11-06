@@ -8,7 +8,9 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/AnimatedSpriteComponent.hpp>
+
 #include <swift2d/graphics/RendererPool.hpp>
+#include <swift2d/graphics/Pipeline.hpp>
 
 namespace swift {
 
@@ -16,7 +18,8 @@ namespace swift {
 
 AnimatedSpriteComponent::AnimatedSpriteComponent()
   : SpriteComponent()
-  , Time(0.f, 1.0f, 10.0f) {}
+  , Time(0.f, 1.0f, 10.0f)
+  , UseRenderThreadTime(false) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -32,6 +35,7 @@ void AnimatedSpriteComponent::serialize(SerializedScenePtr& scene) const {
   s.Depth       = Depth();
   s.Time        = Time();
   s.Transform   = WorldTransform();
+  s.UseRenderThreadTime = UseRenderThreadTime();
   s.Material    = Material() ? Material() : CustomMaterial();
   scene->renderers().animated_sprites.add(std::move(s));
 }
@@ -41,6 +45,7 @@ void AnimatedSpriteComponent::serialize(SerializedScenePtr& scene) const {
 void AnimatedSpriteComponent::accept(SavableObjectVisitor& visitor) {
   SpriteComponent::accept(visitor);
   visitor.add_object("Time", Time);
+  visitor.add_member("UseRenderThreadTime", UseRenderThreadTime);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +68,11 @@ void AnimatedSpriteComponent::Renderer::draw(RenderContext const& ctx, int start
 
     while (start < end && objects[start].Material == mat) {
       transforms.push_back(objects[start].Transform);
-      times.push_back(objects[start].Time);
+      if (objects[start].UseRenderThreadTime) {
+        times.push_back(ctx.pipeline->get_total_time() - (int)ctx.pipeline->get_total_time());
+      } else {
+        times.push_back(objects[start].Time);
+      }
       ++start;
     }
 

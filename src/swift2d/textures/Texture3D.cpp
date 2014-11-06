@@ -20,7 +20,9 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Texture3D::Texture3D()
-  : Texture() {
+  : Texture()
+  , TilesX(0)
+  , TilesY(0) {
 
   TilesX.on_change().connect([&](unsigned){
     needs_update_ = true;
@@ -30,7 +32,6 @@ Texture3D::Texture3D()
     needs_update_ = true;
     return true;
   });
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,17 +53,17 @@ Texture3D::Texture3D(std::string const& file_name, unsigned tiles_x, unsigned ti
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture3D::bind(RenderContext const& ctx, unsigned location, bool async_loading) const {
+void Texture3D::bind(RenderContext const& ctx, unsigned location) const {
 
-  if (!texture_ && !async_loading) {
-    upload_to(ctx, true, async_loading);
+  if (!texture_ && !AsyncLoading()) {
+    upload_to(ctx, true);
   }
 
   if (texture_) {
     texture_->Active(location);
     ctx.gl.Bind(ose::_3D(), *texture_);
   } else {
-    upload_to(ctx, true, async_loading);
+    upload_to(ctx, true);
     DefaultTexture3D::get().bind(ctx, location);
   }
 }
@@ -102,15 +103,15 @@ void Texture3D::set_data(unsigned char* data) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture3D::upload_to(RenderContext const& ctx, bool create_mip_maps, bool async_loading) const {
+void Texture3D::upload_to(RenderContext const& ctx, bool create_mip_maps) const {
 
   if (!data_) {
     if (!loading_) {
       if (ctx.upload_budget > 0) {
         --ctx.upload_budget;
-        load_texture_data(async_loading);
-      } else if (!async_loading) {
-        load_texture_data(async_loading);
+        load_texture_data();
+      } else if (!AsyncLoading()) {
+        load_texture_data();
       } else {
         ++ctx.upload_remaining;
       }
@@ -191,7 +192,6 @@ void Texture3D::upload_to(RenderContext const& ctx, bool create_mip_maps, bool a
       delete data_;
       data_ = nullptr;
     }
-
   }
 }
 

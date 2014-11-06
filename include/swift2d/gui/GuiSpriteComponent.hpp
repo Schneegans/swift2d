@@ -6,68 +6,72 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TEXTURE_3D_HPP
-#define SWIFT2D_TEXTURE_3D_HPP
+#ifndef SWIFT2D_GUI_SPRITE_COMPONENT_HPP
+#define SWIFT2D_GUI_SPRITE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
+#include <swift2d/components/Component.hpp>
+#include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/textures/Texture.hpp>
-#include <swift2d/utils/Color.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-
 // shared pointer type definition ----------------------------------------------
-class Texture3D;
-typedef std::shared_ptr<Texture3D>       Texture3DPtr;
-typedef std::shared_ptr<const Texture3D> ConstTexture3DPtr;
-typedef Property<Texture3DPtr>           Texture3DProperty;
+class GuiSpriteComponent;
+typedef std::shared_ptr<GuiSpriteComponent>       GuiSpriteComponentPtr;
+typedef std::shared_ptr<const GuiSpriteComponent> ConstGuiSpriteComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL Texture3D : public Texture {
+class SWIFT_DLL GuiSpriteComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
+  // ------------------------------------------------------------- inner classes
+  struct Serialized : public SerializedComponent {
+    math::vec2i     Size;
+    math::vec2      Anchor;
+    math::vec2      Offset;
+    TexturePtr      Texture;
+  };
+
+  class Renderer : public ResourceRenderer<GuiSpriteComponent> {
+    void draw(RenderContext const& ctx, int start, int end);
+  };
+
   // ---------------------------------------------------------------- properties
-  UInt TilesX;
-  UInt TilesY;
+  Float  Depth;
+  Vec2i  Size;
+  Vec2   Anchor;
+  Vec2   Offset;
+  TextureProperty Texture;
 
   // ---------------------------------------------------- construction interface
-  template <typename... Args>
-  static Texture3DPtr create(Args&& ... a) {
-    return std::make_shared<Texture3D>(a...);
+  GuiSpriteComponent();
+
+  static GuiSpriteComponentPtr create() {
+    return std::make_shared<GuiSpriteComponent>();
   }
 
-  Texture3D();
-  Texture3D(std::string const& file_name, unsigned tiles_x, unsigned tiles_y);
+  // creates a copy from this
+  GuiSpriteComponentPtr create_copy() const {
+    return std::make_shared<GuiSpriteComponent>(*this);
+  }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "Texture3D"; }
+  static  std::string get_type_name_static() { return "GuiSpriteComponent"; }
 
-  // Binds the texture on the given context to the given location.
-  virtual void bind(RenderContext const& context, unsigned location) const;
-
+  void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
-
- ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
-
- protected:
-
-  void set_width(int width) const;
-  void set_height(int height) const;
-  void set_channels(int channels) const;
-  void set_data(unsigned char* data) const;
-
-  virtual void upload_to(RenderContext const& context, bool create_mip_maps = true) const;
-
 };
+
+// -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_TEXTURE_3D_HPP
+#endif // SWIFT2D_GUI_SPRITE_COMPONENT_HPP

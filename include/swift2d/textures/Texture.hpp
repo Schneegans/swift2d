@@ -37,6 +37,7 @@ class SWIFT_DLL Texture : public SavableObject {
 
   // ---------------------------------------------------------------- properties
   String FileName;
+  Bool AsyncLoading;
 
   // ---------------------------------------------------- construction interface
   template <typename... Args>
@@ -54,17 +55,16 @@ class SWIFT_DLL Texture : public SavableObject {
   static  std::string get_type_name_static() { return "Texture"; }
 
   // Binds the texture on the given context to the given location.
-  virtual void bind(RenderContext const& context, unsigned location,
-                    bool async_loading = true) const;
+  virtual void bind(RenderContext const& context, unsigned location) const;
 
   virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
  // -------------------------------------------------------- protected interface
  protected:
-  virtual void upload_to(RenderContext const& context, bool async_loading) const;
+  virtual void upload_to(RenderContext const& context) const;
 
-  void load_texture_data(bool async) const;
+  void load_texture_data() const;
   void free_texture_data() const;
 
   mutable oglplus::Texture* texture_;
