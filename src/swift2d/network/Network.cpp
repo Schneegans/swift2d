@@ -26,6 +26,7 @@
 #include <raknet/ConnectionGraph2.h>
 #include <raknet/NatPunchthroughClient.h>
 #include <raknet/NetworkIDManager.h>
+#include <raknet/RPC3.h>
 
 #include <sstream>
 

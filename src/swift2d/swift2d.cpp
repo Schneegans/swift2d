@@ -99,6 +99,7 @@ namespace {
     }
 
     ~Swift2DContext() {
+
       LOG_MESSAGE << "Shutting down... " << std::endl;
 
       DefaultTexture3D::destroy_instance();
@@ -123,17 +124,17 @@ namespace {
       SettingsWrapper::destroy_instance();
       Application::destroy_instance();
       Paths::destroy_instance();
+      SceneManager::destroy_instance();
 
-      // SceneManager::destroy_instance();
       // Physics::destroy_instance();
-
       // Interface::destroy_instance();
-      // WindowManager::destroy_instance();
       // MainLoop::destroy_instance();
+      // WindowManager::destroy_instance();
 
       glfwTerminate();
 
       LOG_MESSAGE << "Bye!" << std::endl;
+
       // Leave at this position! SteamAPI_Shutdown() seems to kill the process
       // under some conditions.
       Steam::destroy_instance();
