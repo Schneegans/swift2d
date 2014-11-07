@@ -6,20 +6,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_INTERFACE_HPP
-#define SWIFT2D_INTERFACE_HPP
+#ifndef SWIFT2D_ANIMATED_GUI_SHADER_HPP
+#define SWIFT2D_ANIMATED_GUI_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
+#include <swift2d/materials/Shader.hpp>
 #include <swift2d/utils/Singleton.hpp>
-#include <swift2d/graphics/RenderContext.hpp>
-#include <swift2d/graphics/Window.hpp>
-
-// forward declares ------------------------------------------------------------
-namespace Awesomium {
-  class WebCore;
-  class WebView;
-  class WebSession;
-}
 
 namespace swift {
 
@@ -27,46 +19,31 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL Interface : public Singleton<Interface> {
+class AnimatedGuiShader : public Shader, public Singleton<AnimatedGuiShader> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // ------------------------------------------------------------------- signals
-  Signal<Cursor> on_cursor_change;
+  // ------------------------------------------------------------------ uniforms
+  oglplus::Lazy<oglplus::Uniform<float>>       time;
+  oglplus::Lazy<oglplus::Uniform<float>>       opacity;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>  size;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>  offset;
+  oglplus::Lazy<oglplus::Uniform<int>>         diffuse;
 
-  // ---------------------------------------------------------------- properties
-  Float LoadingProgress;
-
-  // ------------------------------------------------------------ public methods
-  void update() const;
-
-  friend class GuiComponent;
-  friend class Singleton<Interface>;
+  friend class Singleton<AnimatedGuiShader>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  Interface();
-  ~Interface();
-
-  bool bind(Awesomium::WebView* view, RenderContext const& ctx, unsigned location) const;
-  Awesomium::WebView* create_webview(int width, int height) const;
-
-  void increase_loading_state();
-  void decrease_loading_state();
-
-  int loading_state_;
-  int max_state_;
-
-  Awesomium::WebCore* web_core_;
-  Awesomium::WebSession* web_session_;
+  AnimatedGuiShader();
+  ~AnimatedGuiShader() {};
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_INTERFACE_HPP
+#endif // SWIFT2D_ANIMATED_GUI_SHADER_HPP

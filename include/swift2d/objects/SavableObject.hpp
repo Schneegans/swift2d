@@ -11,7 +11,6 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/objects/Object.hpp>
-#include <swift2d/properties.hpp>
 
 #include <memory>
 #include <functional>
@@ -30,7 +29,7 @@ class SavableObjectVisitor;
 class SavableObject;
 typedef std::shared_ptr<SavableObject>       SavableObjectPtr;
 typedef std::shared_ptr<const SavableObject> ConstSavableObjectPtr;
-typedef Property<SavableObjectPtr>           SavableObjectProperty;
+// typedef Property<SavableObjectPtr>           SavableObjectProperty;
 
 // -----------------------------------------------------------------------------
 class SWIFT_DLL SavableObject : public Object {

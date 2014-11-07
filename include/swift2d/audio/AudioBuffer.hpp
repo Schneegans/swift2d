@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/objects/SavableObjectVisitor.hpp>
+#include <swift2d/properties.hpp>
 #include <swift2d/openal.hpp>
 
 #include <memory>

@@ -6,25 +6,26 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_ANIMATED_SPRITE_COMPONENT_HPP
-#define SWIFT2D_ANIMATED_SPRITE_COMPONENT_HPP
+#ifndef SWIFT2D_FULLSCREEN_GUI_SPRITE_COMPONENT_HPP
+#define SWIFT2D_FULLSCREEN_GUI_SPRITE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/SpriteComponent.hpp>
+#include <swift2d/components/Component.hpp>
+#include <swift2d/graphics/ResourceRenderer.hpp>
+#include <swift2d/textures/Texture.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class AnimatedSpriteComponent;
-typedef std::shared_ptr<AnimatedSpriteComponent>       AnimatedSpriteComponentPtr;
-typedef std::shared_ptr<const AnimatedSpriteComponent> ConstAnimatedSpriteComponentPtr;
+class FullscreenGuiSpriteComponent;
+typedef std::shared_ptr<FullscreenGuiSpriteComponent>       FullscreenGuiSpriteComponentPtr;
+typedef std::shared_ptr<const FullscreenGuiSpriteComponent> ConstFullscreenGuiSpriteComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL AnimatedSpriteComponent : public SpriteComponent {
+class SWIFT_DLL FullscreenGuiSpriteComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -32,41 +33,39 @@ class SWIFT_DLL AnimatedSpriteComponent : public SpriteComponent {
 
   // ------------------------------------------------------------- inner classes
   struct Serialized : public SerializedComponent {
-    math::mat3      Transform;
-    float           Time;
-    bool            UseRenderThreadTime;
-    MaterialBasePtr Material;
+    float           Opacity;
+    TexturePtr      Texture;
+    math::vec2i     Size;
+    math::vec2      Anchor;
+    math::vec2      Offset;
   };
 
-  class Renderer : public ResourceRenderer<AnimatedSpriteComponent> {
+  class Renderer : public ResourceRenderer<FullscreenGuiSpriteComponent> {
     void draw(RenderContext const& ctx, int start, int end);
   };
 
   // ---------------------------------------------------------------- properties
-  AnimatedFloat Time;
-  Bool UseRenderThreadTime;
+  Float           Depth;
+  Float           Opacity;
+  TextureProperty Texture;
 
-  // ----------------------------------------------------- contruction interface
-  AnimatedSpriteComponent();
+  // ---------------------------------------------------- construction interface
+  FullscreenGuiSpriteComponent();
 
-  // Creates a new component and returns a shared pointer.
-  template <typename... Args>
-  static AnimatedSpriteComponentPtr create(Args&& ... a) {
-    return std::make_shared<AnimatedSpriteComponent>(a...);
+  static FullscreenGuiSpriteComponentPtr create() {
+    return std::make_shared<FullscreenGuiSpriteComponent>();
   }
 
   // creates a copy from this
-  AnimatedSpriteComponentPtr create_copy() const {
-    return std::make_shared<AnimatedSpriteComponent>(*this);
+  FullscreenGuiSpriteComponentPtr create_copy() const {
+    return std::make_shared<FullscreenGuiSpriteComponent>(*this);
   }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "AnimatedSpriteComponent"; }
+  static  std::string get_type_name_static() { return "FullscreenGuiSpriteComponent"; }
 
-  virtual void update(double time);
-
-  virtual void serialize(SerializedScenePtr& scene) const;
+  void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
 };
 
@@ -74,4 +73,4 @@ class SWIFT_DLL AnimatedSpriteComponent : public SpriteComponent {
 
 }
 
-#endif  // SWIFT2D_ANIMATED_SPRITE_COMPONENT_HPP
+#endif // SWIFT2D_FULLSCREEN_GUI_SPRITE_COMPONENT_HPP

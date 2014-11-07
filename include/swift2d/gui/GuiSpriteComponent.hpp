@@ -6,47 +6,57 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_MATERIAL_BASE_HPP
-#define SWIFT2D_MATERIAL_BASE_HPP
+#ifndef SWIFT2D_GUI_SPRITE_COMPONENT_HPP
+#define SWIFT2D_GUI_SPRITE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/objects/SavableObject.hpp>
-#include <swift2d/properties.hpp>
+#include <swift2d/gui/FullscreenGuiSpriteComponent.hpp>
 
 namespace swift {
-
-class RenderContext;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class MaterialBase;
-typedef std::shared_ptr<MaterialBase>       MaterialBasePtr;
-typedef std::shared_ptr<const MaterialBase> ConstMaterialBasePtr;
-typedef Property<MaterialBasePtr>           MaterialBaseProperty;
+class GuiSpriteComponent;
+typedef std::shared_ptr<GuiSpriteComponent>       GuiSpriteComponentPtr;
+typedef std::shared_ptr<const GuiSpriteComponent> ConstGuiSpriteComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL MaterialBase : public SavableObject {
+class SWIFT_DLL GuiSpriteComponent : public FullscreenGuiSpriteComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  // uses the Material on the given context.
-  virtual void draw_quad(
-    RenderContext const& ctx, math::mat3 const& transform,
-    float depth, float time = 0.f) = 0;
+  // ---------------------------------------------------------------- properties
+  Vec2i  Size;
+  Vec2   Anchor;
+  Vec2   Offset;
 
-  virtual void draw_quads(
-    RenderContext const& ctx, std::vector<math::mat3> const& transforms,
-    float depth, std::vector<float> const& times = {}) = 0;
 
-  virtual void draw_fullscreen_quad(RenderContext const& ctx, float time = 0.f) = 0;
+  // ---------------------------------------------------- construction interface
+  GuiSpriteComponent();
+
+  static GuiSpriteComponentPtr create() {
+    return std::make_shared<GuiSpriteComponent>();
+  }
+
+  // creates a copy from this
+  GuiSpriteComponentPtr create_copy() const {
+    return std::make_shared<GuiSpriteComponent>(*this);
+  }
+
+  // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "GuiSpriteComponent"; }
+
+  void serialize(SerializedScenePtr& scene) const;
+  virtual void accept(SavableObjectVisitor& visitor);
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_MATERIAL_BASE_HPP
+#endif // SWIFT2D_GUI_SPRITE_COMPONENT_HPP

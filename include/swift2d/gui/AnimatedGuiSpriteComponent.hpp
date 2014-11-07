@@ -6,39 +6,36 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_ANIMATED_SPRITE_COMPONENT_HPP
-#define SWIFT2D_ANIMATED_SPRITE_COMPONENT_HPP
+#ifndef SWIFT2D_ANIMATED_GUI_SPRITE_COMPONENT_HPP
+#define SWIFT2D_ANIMATED_GUI_SPRITE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/SpriteComponent.hpp>
+#include <swift2d/gui/GuiSpriteComponent.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class AnimatedSpriteComponent;
-typedef std::shared_ptr<AnimatedSpriteComponent>       AnimatedSpriteComponentPtr;
-typedef std::shared_ptr<const AnimatedSpriteComponent> ConstAnimatedSpriteComponentPtr;
+class AnimatedGuiSpriteComponent;
+typedef std::shared_ptr<AnimatedGuiSpriteComponent>       AnimatedGuiSpriteComponentPtr;
+typedef std::shared_ptr<const AnimatedGuiSpriteComponent> ConstAnimatedGuiSpriteComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL AnimatedSpriteComponent : public SpriteComponent {
+class SWIFT_DLL AnimatedGuiSpriteComponent : public GuiSpriteComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ------------------------------------------------------------- inner classes
-  struct Serialized : public SerializedComponent {
-    math::mat3      Transform;
-    float           Time;
-    bool            UseRenderThreadTime;
-    MaterialBasePtr Material;
+  struct Serialized : public GuiSpriteComponent::Serialized {
+    float Time;
+    bool  UseRenderThreadTime;
   };
 
-  class Renderer : public ResourceRenderer<AnimatedSpriteComponent> {
+  class Renderer : public ResourceRenderer<AnimatedGuiSpriteComponent> {
     void draw(RenderContext const& ctx, int start, int end);
   };
 
@@ -46,27 +43,23 @@ class SWIFT_DLL AnimatedSpriteComponent : public SpriteComponent {
   AnimatedFloat Time;
   Bool UseRenderThreadTime;
 
-  // ----------------------------------------------------- contruction interface
-  AnimatedSpriteComponent();
+  // ---------------------------------------------------- construction interface
+  AnimatedGuiSpriteComponent();
 
-  // Creates a new component and returns a shared pointer.
-  template <typename... Args>
-  static AnimatedSpriteComponentPtr create(Args&& ... a) {
-    return std::make_shared<AnimatedSpriteComponent>(a...);
+  static AnimatedGuiSpriteComponentPtr create() {
+    return std::make_shared<AnimatedGuiSpriteComponent>();
   }
 
   // creates a copy from this
-  AnimatedSpriteComponentPtr create_copy() const {
-    return std::make_shared<AnimatedSpriteComponent>(*this);
+  AnimatedGuiSpriteComponentPtr create_copy() const {
+    return std::make_shared<AnimatedGuiSpriteComponent>(*this);
   }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "AnimatedSpriteComponent"; }
+  static  std::string get_type_name_static() { return "AnimatedGuiSpriteComponent"; }
 
-  virtual void update(double time);
-
-  virtual void serialize(SerializedScenePtr& scene) const;
+  void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
 };
 
@@ -74,4 +67,4 @@ class SWIFT_DLL AnimatedSpriteComponent : public SpriteComponent {
 
 }
 
-#endif  // SWIFT2D_ANIMATED_SPRITE_COMPONENT_HPP
+#endif // SWIFT2D_ANIMATED_GUI_SPRITE_COMPONENT_HPP
