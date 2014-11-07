@@ -45,7 +45,7 @@ void LightParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("EndScale",    EndScale);
   visitor.add_member("StartColor",  StartColor);
   visitor.add_member("EndColor",    EndColor);
-  visitor.add_object("Texture",     Texture);
+  visitor.add_object_property("Texture",     Texture);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

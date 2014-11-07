@@ -27,26 +27,32 @@ Material::Material()
 
   AnimatedDiffuseTexture.on_change().connect([&](TexturePtr const& val){
     current_shader_dirty_ = true;
+    return true;
   });
 
   DiffuseTexture.on_change().connect([&](TexturePtr const& val){
     current_shader_dirty_ = true;
+    return true;
   });
 
   NormalTexture.on_change().connect([&](TexturePtr const& val){
     current_shader_dirty_ = true;
+    return true;
   });
 
   EmitTexture.on_change().connect([&](TexturePtr const& val){
     current_shader_dirty_ = true;
+    return true;
   });
 
   GlowTexture.on_change().connect([&](TexturePtr const& val){
     current_shader_dirty_ = true;
+    return true;
   });
 
   ShinynessTexture.on_change().connect([&](TexturePtr const& val){
     current_shader_dirty_ = true;
+    return true;
   });
 }
 
@@ -73,15 +79,15 @@ void Material::draw_fullscreen_quad(RenderContext const& ctx, float time) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Material::accept(SavableObjectVisitor& visitor) {
-  visitor.add_object("AnimatedDiffuseTexture", AnimatedDiffuseTexture);
-  visitor.add_object("DiffuseTexture", DiffuseTexture);
+  visitor.add_object_property("AnimatedDiffuseTexture", AnimatedDiffuseTexture);
+  visitor.add_object_property("DiffuseTexture", DiffuseTexture);
   visitor.add_member("Diffuse", Diffuse);
-  visitor.add_object("NormalTexture", NormalTexture);
-  visitor.add_object("EmitTexture", EmitTexture);
+  visitor.add_object_property("NormalTexture", NormalTexture);
+  visitor.add_object_property("EmitTexture", EmitTexture);
   visitor.add_member("Emit", Emit);
-  visitor.add_object("GlowTexture", GlowTexture);
+  visitor.add_object_property("GlowTexture", GlowTexture);
   visitor.add_member("Glow", Glow);
-  visitor.add_object("ShinynessTexture", ShinynessTexture);
+  visitor.add_object_property("ShinynessTexture", ShinynessTexture);
   visitor.add_member("Shinyness", Shinyness);
   visitor.add_member("BlendAdditive", BlendAdditive);
 }

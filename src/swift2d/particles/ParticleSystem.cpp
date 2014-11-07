@@ -15,6 +15,7 @@
 #include <swift2d/textures/NoiseTexture.hpp>
 #include <swift2d/math.hpp>
 #include <swift2d/utils/Logger.hpp>
+#include <swift2d/graphics/Pipeline.hpp>
 
 #include <sstream>
 
@@ -36,7 +37,6 @@ ParticleSystem::ParticleSystem(int max_count)
   , transform_feedbacks_()
   , particle_buffers_()
   , ping_(true)
-  , total_time_(0.0)
   , update_max_count_(max_count)
   , count_(0) {}
 
@@ -86,7 +86,6 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
   // upload to GPU if neccessary
   if (particle_buffers_.empty()) {
     upload_to(ctx);
-    timer_.start();
     first_draw = true;
   }
 
@@ -107,8 +106,7 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
   }
 
   // get frame time
-  double frame_time(timer_.reset());
-  total_time_ += frame_time;
+  double frame_time(ctx.pipeline->get_frame_time());
 
   // swap ping pong buffers
   ping_ = !ping_;
@@ -157,7 +155,7 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
 
     NoiseTexture::get().bind(ctx, 0);
     shader.noise_tex.        Set(0);
-    math::vec2 time       (frame_time * 1000.0, total_time_ * 1000.0);
+    math::vec2 time       (frame_time * 1000.0, ctx.pipeline->get_total_time() * 1000.0);
     math::vec2 life       (system.Life,            system.LifeVariance);
     math::vec2 pos_rot_variance  (system.PositionVariance,       system.RotationVariance);
     math::vec2 velocity   (system.Velocity,        system.VelocityVariance);

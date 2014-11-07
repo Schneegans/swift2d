@@ -7,13 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/gui/GuiShader.hpp>
+#include <swift2d/gui/AnimatedGuiShader.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GuiShader::GuiShader()
+AnimatedGuiShader::AnimatedGuiShader()
   : Shader(
     R"(
       // vertex shader ---------------------------------------------------------
@@ -43,19 +43,21 @@ GuiShader::GuiShader()
       in vec2 tex_coords;
 
       // uniforms
-      uniform sampler2D diffuse;
+      uniform sampler3D diffuse;
+      uniform float     time;
       uniform float     opacity;
 
       // output
       @include "write_gbuffer"
 
       void main(void){
-        vec4 color = texture(diffuse, tex_coords) * opacity;
+        vec4 color = texture(diffuse, vec3(tex_coords, time)) * opacity;
         color.rgb /= color.a;
         write_gbuffer(color);
       }
     )"
   )
+  , time(get_uniform<float>("time"))
   , opacity(get_uniform<float>("opacity"))
   , size(get_uniform<math::vec2>("size"))
   , offset(get_uniform<math::vec2>("offset"))

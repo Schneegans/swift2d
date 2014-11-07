@@ -33,7 +33,9 @@ RendererPool::RendererPool()
       &light_particle_systems
     })
   , guis_({
-      &gui_elements
+      &gui_elements,
+      &gui_sprite_elements,
+      &animated_gui_sprite_elements
     }) {}
 
 ////////////////////////////////////////////////////////////////////////////////

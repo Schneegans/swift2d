@@ -28,6 +28,7 @@ namespace swift {
 
 Texture::Texture()
   : FileName("")
+  , AsyncLoading(true)
   , texture_(nullptr)
   , needs_update_(true)
   , loading_(false)
@@ -36,9 +37,9 @@ Texture::Texture()
   , height_(0)
   , channels_(0) {
 
-
   FileName.on_change().connect([&](std::string const& path){
     needs_update_ = true;
+    return true;
   });
 }
 
@@ -56,6 +57,7 @@ Texture::Texture(std::string const& file_name)
 
   FileName.on_change().connect([&](std::string const& path){
     needs_update_ = true;
+    return true;
   });
 }
 
@@ -70,6 +72,10 @@ Texture::~Texture() {
 
 void Texture::bind(RenderContext const& ctx, unsigned location) const {
 
+  if (!texture_ && !AsyncLoading()) {
+    upload_to(ctx);
+  }
+
   if (texture_) {
     texture_->Active(location);
     ctx.gl.Bind(ose::_2D(), *texture_);
@@ -83,18 +89,27 @@ void Texture::bind(RenderContext const& ctx, unsigned location) const {
 
 void Texture::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("FileName", FileName);
+  visitor.add_member("AsyncLoading", AsyncLoading);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Texture::upload_to(RenderContext const& ctx) const {
 
-  if (!loading_) {
-    load_texture_data();
-  }
+  if (!data_) {
+    if (!loading_) {
+      if (ctx.upload_budget > 0) {
+        --ctx.upload_budget;
+        load_texture_data();
+      } else if (!AsyncLoading()) {
+        load_texture_data();
+      } else {
+        ++ctx.upload_remaining;
+      }
+    }
 
-  if (data_ && ctx.upload_budget > 0) {
-    --ctx.upload_budget;
+  } else {
+
     loading_ = false;
     needs_update_ = false;
 
@@ -118,15 +133,12 @@ void Texture::upload_to(RenderContext const& ctx) const {
       .WrapT(ose::Repeat());
 
     free_texture_data();
-  } else {
-    ++ctx.upload_remaining;
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Texture::load_texture_data() const {
-
   std::string f(FileName());
 
   if (f.length() > 0) {
@@ -134,10 +146,9 @@ void Texture::load_texture_data() const {
 
     f = Paths::get().make_absolute(f);
 
-    std::thread load([this, f](){
+    auto load = [this, f](){
       int w(0), h(0), c(0);
       auto d(stbi_load(f.c_str(), &w, &h, &c, STBI_default));
-
       if (d) {
         data_ = d;
         width_ = w;
@@ -146,9 +157,14 @@ void Texture::load_texture_data() const {
       } else {
         LOG_ERROR << "Failed to load texture \"" << FileName() << "\"!" << std::endl;
       }
-    });
+    };
 
-    load.detach();
+    if (AsyncLoading()) {
+      std::thread loading_thread(load);
+      loading_thread.detach();
+    } else {
+      load();
+    }
   }
 }
 

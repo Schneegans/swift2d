@@ -34,8 +34,8 @@ void SpriteComponent::serialize(SerializedScenePtr& scene) const {
 void SpriteComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
   visitor.add_member("Depth", Depth);
-  visitor.add_object("Material", Material);
-  visitor.add_object("CustomMaterial", CustomMaterial);
+  visitor.add_object_property("Material", Material);
+  visitor.add_object_property("CustomMaterial", CustomMaterial);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

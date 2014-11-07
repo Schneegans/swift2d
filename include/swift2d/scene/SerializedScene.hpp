@@ -50,8 +50,6 @@ class SWIFT_DLL SerializedScene {
 
   RendererPool& renderers() const { return *renderers_; }
 
-  std::multimap<float, DirectionalLightComponentPtr>  sun_lights;
-
   CameraComponentPtr camera;
 
   math::vec4  vignette_color;

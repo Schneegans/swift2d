@@ -20,15 +20,18 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Texture3D::Texture3D()
-  : Texture() {
+  : Texture()
+  , TilesX(0)
+  , TilesY(0) {
 
   TilesX.on_change().connect([&](unsigned){
     needs_update_ = true;
+    return true;
   });
   TilesY.on_change().connect([&](unsigned){
     needs_update_ = true;
+    return true;
   });
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,9 +43,11 @@ Texture3D::Texture3D(std::string const& file_name, unsigned tiles_x, unsigned ti
 
   TilesX.on_change().connect([&](unsigned){
     needs_update_ = true;
+    return true;
   });
   TilesY.on_change().connect([&](unsigned){
     needs_update_ = true;
+    return true;
   });
 }
 
@@ -50,11 +55,15 @@ Texture3D::Texture3D(std::string const& file_name, unsigned tiles_x, unsigned ti
 
 void Texture3D::bind(RenderContext const& ctx, unsigned location) const {
 
+  if (!texture_ && !AsyncLoading()) {
+    upload_to(ctx, true);
+  }
+
   if (texture_) {
     texture_->Active(location);
     ctx.gl.Bind(ose::_3D(), *texture_);
   } else {
-    upload_to(ctx);
+    upload_to(ctx, true);
     DefaultTexture3D::get().bind(ctx, location);
   }
 }
@@ -69,25 +78,25 @@ void Texture3D::accept(SavableObjectVisitor& visitor) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture3D::set_width(int width) const{
+void Texture3D::set_width(int width) const {
   width_ = width;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture3D::set_height(int height) const{
+void Texture3D::set_height(int height) const {
   height_ = height;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture3D::set_channels(int channels) const{
+void Texture3D::set_channels(int channels) const {
   channels_ = channels;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture3D::set_data(unsigned char* data) const{
+void Texture3D::set_data(unsigned char* data) const {
   if (data_) delete data_;
   data_ = data;
 }
@@ -96,12 +105,20 @@ void Texture3D::set_data(unsigned char* data) const{
 
 void Texture3D::upload_to(RenderContext const& ctx, bool create_mip_maps) const {
 
-  if (!loading_ && FileName() != "") {
-    load_texture_data();
-  }
+  if (!data_) {
+    if (!loading_) {
+      if (ctx.upload_budget > 0) {
+        --ctx.upload_budget;
+        load_texture_data();
+      } else if (!AsyncLoading()) {
+        load_texture_data();
+      } else {
+        ++ctx.upload_remaining;
+      }
+    }
 
-  if (data_ && ctx.upload_budget > 0) {
-    --ctx.upload_budget;
+  } else {
+
     loading_ = false;
     needs_update_ = false;
 
@@ -175,9 +192,6 @@ void Texture3D::upload_to(RenderContext const& ctx, bool create_mip_maps) const 
       delete data_;
       data_ = nullptr;
     }
-
-  } else {
-    ++ctx.upload_remaining;
   }
 }
 

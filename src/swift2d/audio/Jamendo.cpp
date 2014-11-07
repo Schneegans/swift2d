@@ -46,6 +46,7 @@ Jamendo::Jamendo() {
     } catch(std::runtime_error const& e) {
       LOG_WARNING << "Failed to parse response: " << e.what() << std::endl;
     }
+    return true;
   });
 }
 

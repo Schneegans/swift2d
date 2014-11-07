@@ -10,6 +10,7 @@
 #include <swift2d/trails/TrailSystemComponent.hpp>
 
 #include <swift2d/graphics/RendererPool.hpp>
+#include <swift2d/graphics/Pipeline.hpp>
 #include <swift2d/trails/TrailSystem.hpp>
 #include <swift2d/trails/TexturedTrailShader.hpp>
 #include <swift2d/trails/ColoredTrailShader.hpp>
@@ -32,6 +33,7 @@ TrailSystemComponent::TrailSystemComponent()
 
   MaxCount.on_change().connect([&](int val){
     trail_system_->set_max_trail_points(val);
+    return true;
   });
 }
 
@@ -88,7 +90,7 @@ void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("EndGlow",       EndGlow);
   visitor.add_member("StartColor",    StartColor);
   visitor.add_member("EndColor",      EndColor);
-  visitor.add_object("Texture",       Texture);
+  visitor.add_object_property("Texture",       Texture);
   visitor.add_member("TextureRepeat", TextureRepeat);
   visitor.add_member("UseGlobalTexCoords", UseGlobalTexCoords);
   visitor.add_member("BlendAdd",      BlendAdd);
@@ -112,7 +114,8 @@ void TrailSystemComponent::Renderer::draw(RenderContext const& ctx, int start, i
     auto& o(objects[i]);
 
     SWIFT_PUSH_GL_RANGE("Draw TrailSystem");
-    
+
+    double total_time(ctx.pipeline->get_total_time());
 
     if (o.BlendAdd) {
       ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
@@ -131,7 +134,7 @@ void TrailSystemComponent::Renderer::draw(RenderContext const& ctx, int start, i
       shader.end_color.             Set(o.EndColor);
       shader.glow.                  Set(math::vec2(o.StartGlow, o.EndGlow));
       shader.use_global_texcoords.  Set(o.UseGlobalTexCoords ? 1 : 0);
-      shader.total_time.            Set(o.System->get_total_time() * 1000.0);
+      shader.total_time.            Set(total_time * 1000.0);
     } else {
       auto& shader(ColoredTrailShader::get());
       shader.use(ctx);
@@ -142,7 +145,7 @@ void TrailSystemComponent::Renderer::draw(RenderContext const& ctx, int start, i
       shader.end_color.             Set(o.EndColor);
       shader.glow.                  Set(math::vec2(o.StartGlow, o.EndGlow));
       shader.use_global_texcoords.  Set(o.UseGlobalTexCoords ? 1 : 0);
-      shader.total_time.            Set(o.System->get_total_time() * 1000.0);
+      shader.total_time.            Set(total_time * 1000.0);
     }
 
     o.System->draw_trails(o.Emitters, o, ctx);

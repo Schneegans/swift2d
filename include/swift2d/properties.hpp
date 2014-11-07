@@ -34,10 +34,6 @@ typedef SWIFT_DLL Property<bool>           Bool;
 
 typedef SWIFT_DLL Property<std::string>    String;
 
-typedef SWIFT_DLL AnimatedProperty<double>        AnimatedDouble;
-typedef SWIFT_DLL AnimatedProperty<float>         AnimatedFloat;
-typedef SWIFT_DLL AnimatedProperty<math::vec2>    AnimatedVec2;
-
 }
 
 #endif /* SWIFT2D_EVENTS_PROPERTIES_HPP */

@@ -11,9 +11,14 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Logger.hpp>
+#include <swift2d/utils/stl_helpers.hpp>
 #include <swift2d/properties.hpp>
+#include <swift2d/objects/SavableObject.hpp>
+#include <swift2d/objects/SavableObjectVisitor.hpp>
 
 namespace swift {
+
+class SavableObjectVisitor;
 
 ////////////////////////////////////////////////////////////////////////////////
 // A class for smooth value interpolation.                                    //
@@ -21,14 +26,12 @@ namespace swift {
 
 // -----------------------------------------------------------------------------
 template <typename T>
-class AnimatedProperty : public Property<T> {
+class AnimatedProperty : public Property<T>,
+                         public SavableObject {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
-  // ------------------------------------------------------------------- signals
-  Signal<> const& on_finish() const { return on_finish_; }
-
   // --------------------------------------------------------------------- enums
   enum Direction {
 	  DIR_IN, DIR_OUT, DIR_IN_OUT, DIR_OUT_IN, DIR_LINEAR
@@ -38,103 +41,99 @@ class AnimatedProperty : public Property<T> {
     NONE, REPEAT, TOGGLE
   };
 
+  int       direction;
+  int       loop;
+  double    duration;
+  double    exponent;
+  double    delay;
+
+  // ------------------------------------------------------------------- signals
+  Signal<> on_finish;
+
   // ----------------------------------------------------- contruction interface
   AnimatedProperty()
     : Property<T>()
-    , direction_(DIR_IN_OUT)
+    , direction(DIR_IN_OUT)
     , start_()
     , end_()
     , state_(0.0)
-    , duration_(0)
-    , exp_(0.0)
-    , delay_(0.0) {}
+    , duration(0)
+    , exponent(0.0)
+    , delay(0.0) {}
 
-  AnimatedProperty(T const& value)
-    : Property<T>(value)
-    , direction_(DIR_IN_OUT)
-    , start_(value)
-    , end_(value)
-    , state_(-1.0)
-    , duration_(0)
-    , exp_(0.0)
-    , delay_(0.0) {}
-
-  AnimatedProperty(T const& start, T const& end, double duration = 1.0,
-	  Direction direction = DIR_IN_OUT, Loop loop = NONE,
-                   double exponent = 0.0)
+  AnimatedProperty(T const& start, T const& end, double dur = 1.0,
+	  Direction dir = DIR_IN_OUT, Loop looping = NONE,
+                   double exp = 0.0)
     : Property<T>(start)
-    , direction_(direction)
-    , loop_(loop)
+    , direction(dir)
+    , loop(looping)
     , start_(start)
     , end_(end)
     , state_(0.0)
-    , duration_(duration)
-    , exp_(exponent)
-    , delay_(0.0) {}
+    , duration(dur)
+    , exponent(exp)
+    , delay(0.0) {}
 
   // ------------------------------------------------------------ public methods
-  void set(T const& value, double duration, double delay = 0.0) {
+  void set(T const& value, double dur, double del = 0.0) {
     start_ = this->get();
     end_ = value;
-    duration_ = duration;
+    duration = dur;
     state_ = 0.0;
-    delay_ = delay;
+    delay = del;
   }
 
   void set(T const& value) {
     start_ = this->get();
     end_ = value;
-    duration_ = 0.0;
+    duration = 0.0;
     state_ = -1.0;
-    delay_ = 0.0;
+    delay = 0.0;
     Property<T>::set(value);
   }
 
-  void set_direction(Direction dir) {
-    direction_ = dir;
-  }
-
-  void set_loop(Loop loop) {
-    loop_ = loop;
-  }
-
   void update(double time) {
+
+    if (duration == 0.0) {
+      state_ = 1.0;
+    }
+
     if (state_ < 1 && state_ >= 0.0) {
-      if (delay_ > 0) {
-        delay_ -= time;
+      if (delay > 0) {
+        delay -= time;
       } else {
 
-        state_ += time / duration_;
+        state_ += time / duration;
 
-        switch (direction_) {
+        switch (direction) {
           case DIR_LINEAR:
             Property<T>::set(updateLinear(state_, start_, end_));
             break;
           case DIR_IN:
             Property<T>::set(updateEaseIn(state_, start_, end_));
-            return;
+            break;
           case DIR_OUT:
             Property<T>::set(updateEaseOut(state_, start_, end_));
-            return;
+            break;
           case DIR_IN_OUT:
             Property<T>::set(updateEaseInOut(state_, start_, end_));
-            return;
+            break;
           case DIR_OUT_IN:
             Property<T>::set(updateEaseOutIn(state_, start_, end_));
-            return;
+            break;
         }
       }
     } else if (state_ != -1.0) {
       Property<T>::set(end_);
       state_ = -1.0;
-      on_finish_.emit();
+      on_finish.emit();
 
-      if (loop_ == REPEAT) {
+      if (loop == REPEAT) {
         Property<T>::set(start_);
-        set(end_, duration_);
+        set(end_, duration);
 
-      } else if (loop_ == TOGGLE) {
-        set(start_, duration_);
+      } else if (loop == TOGGLE) {
+        set(start_, duration);
       }
     }
   }
@@ -147,19 +146,29 @@ class AnimatedProperty : public Property<T> {
     return *this;
   }
 
+  virtual void accept(SavableObjectVisitor& visitor) {
+    visitor.add_member("Direction", direction);
+    visitor.add_member("Loop",      loop);
+    visitor.add_member("Duration",  duration);
+    visitor.add_member("Exponent",  exponent);
+    visitor.add_member("Delay",     delay);
+    visitor.add_member("Start",     start_);
+    visitor.add_member("End",       end_);
+  };
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
- private:
+ protected:
   T updateLinear(T const& t, T const& s, double e) {
-    return (s + t * (e-s));
+    return clamp((T)(s + t * (e-s)), start_, end_);
   }
 
   T updateEaseIn(T const& t, T const& s, double e) {
-    return (s + (t * t * ((exp_+1) * t - exp_)) * (e-s));
+    return s + (t * t * ((exponent+1) * t - exponent)) * (e-s);
   }
 
   T updateEaseOut(T const& t, T const& s, double e) {
-    return (s + ((t-1) * (t-1) * ((exp_+1) * (t-1) + exp_) + 1) * (e-s));
+    return s + ((t-1) * (t-1) * ((exponent+1) * (t-1) + exponent) + 1) * (e-s);
   }
 
   T updateEaseInOut(T const& t, T const& s, double e) {
@@ -172,13 +181,61 @@ class AnimatedProperty : public Property<T> {
     else               return updateEaseIn(t*2 - 1, s + (e-s) * 0.5f, e);
   }
 
-  Signal<> on_finish_;
-  Direction direction_;
-  Loop loop_;
-
   T start_, end_;
   double state_;
-  double duration_, exp_, delay_;
+};
+
+class AnimatedFloat : public AnimatedProperty<float> {
+ public:
+  AnimatedFloat() : AnimatedProperty<float>() {}
+  AnimatedFloat(float const& start, float const& end, double duration = 1.0,
+    Direction direction = DIR_IN_OUT, Loop loop = NONE, double exponent = 0.0)
+    : AnimatedProperty<float>(start, end, duration, direction, loop, exponent) {}
+
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "AnimatedFloat"; }
+
+  AnimatedFloat& operator=(AnimatedFloat const& other) {
+    direction = other.direction;
+    loop = other.loop;
+    duration = other.duration;
+    exponent = other.exponent;
+    delay = other.delay;
+    start_ = other.start_;
+    end_ = other.end_;
+    state_ = other.state_;
+
+    Property<float>::set(other.get());
+
+    return *this;
+  }
+};
+
+class AnimatedDouble : public AnimatedProperty<double> {
+ public:
+  AnimatedDouble() : AnimatedProperty<double>() {}
+  AnimatedDouble(double const& start, double const& end, double duration = 1.0,
+    Direction direction = DIR_IN_OUT, Loop loop = NONE, double exponent = 0.0)
+    : AnimatedProperty<double>(start, end, duration, direction, loop, exponent) {}
+
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "AnimatedDouble"; }
+
+  AnimatedDouble& operator=(AnimatedDouble const& other) {
+    std::cout << "assignemnt animated double" << std::endl;
+    direction = other.direction;
+    loop = other.loop;
+    duration = other.duration;
+    exponent = other.exponent;
+    delay = other.delay;
+    start_ = other.start_;
+    end_ = other.end_;
+    state_ = other.state_;
+
+    Property<double>::set(other.get());
+
+    return *this;
+  }
 };
 
 }

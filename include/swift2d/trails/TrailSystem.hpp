@@ -57,10 +57,6 @@ class TrailSystem {
     TrailSystemComponent::Serialized const& system,
     RenderContext const& context);
 
-  double get_total_time() const {
-    return total_time_;
-  }
-
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
@@ -78,10 +74,7 @@ class TrailSystem {
 
   std::unordered_map<TrailEmitterComponent const*, float>      trails_to_spawn_;
   bool   ping_;
-  double total_time_;
   int    update_max_trail_points_;
-
-  Timer timer_;
 };
 
 }

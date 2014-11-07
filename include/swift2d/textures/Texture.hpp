@@ -37,6 +37,7 @@ class SWIFT_DLL Texture : public SavableObject {
 
   // ---------------------------------------------------------------- properties
   String FileName;
+  Bool AsyncLoading;
 
   // ---------------------------------------------------- construction interface
   template <typename... Args>

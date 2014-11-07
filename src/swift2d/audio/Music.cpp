@@ -85,9 +85,11 @@ void Music::load(oalplus::Source* source) {
           file_ = downloader_.result_file();
           load(source);
         }
+        return true;
       });
       downloader_.on_error.connect([](std::string const& what){
         LOG_WARNING << "Failed to download music: " << what << std::endl;
+        return true;
       });
       downloader_.download(file_);
       return;

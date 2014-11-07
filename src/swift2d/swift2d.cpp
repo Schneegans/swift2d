@@ -28,6 +28,7 @@
 #include <swift2d/textures/NoiseTexture.hpp>
 #include <swift2d/textures/DefaultTexture.hpp>
 #include <swift2d/textures/DefaultTexture3D.hpp>
+#include <swift2d/properties/AnimatedProperty.hpp>
 
 #include <GLFW/glfw3.h>
 
@@ -46,6 +47,8 @@ namespace {
 
       // register all objects --------------------------------------------------
       Object::init<AnimatedSpriteComponent>();
+      Object::init<AnimatedFloat>();
+      Object::init<AnimatedDouble>();
       Object::init<Texture3D>();
       Object::init<AudioComponent>();
       Object::init<BoxCollisionShape>();
@@ -58,7 +61,9 @@ namespace {
       Object::init<DynamicBodyComponent>();
       Object::init<GravitySourceComponent>();
       Object::init<GuiComponent>();
-      Object::init<GuiComponent>();
+      Object::init<FullscreenGuiSpriteComponent>();
+      Object::init<GuiSpriteComponent>();
+      Object::init<AnimatedGuiSpriteComponent>();
       Object::init<HeatParticleSystemComponent>();
       Object::init<LightParticleSystemComponent>();
       Object::init<ListenerComponent>();
@@ -94,6 +99,7 @@ namespace {
     }
 
     ~Swift2DContext() {
+
       LOG_MESSAGE << "Shutting down... " << std::endl;
 
       DefaultTexture3D::destroy_instance();
@@ -118,17 +124,17 @@ namespace {
       SettingsWrapper::destroy_instance();
       Application::destroy_instance();
       Paths::destroy_instance();
+      SceneManager::destroy_instance();
 
-      // SceneManager::destroy_instance();
       // Physics::destroy_instance();
-
       // Interface::destroy_instance();
-      // WindowManager::destroy_instance();
       // MainLoop::destroy_instance();
+      // WindowManager::destroy_instance();
 
       glfwTerminate();
 
       LOG_MESSAGE << "Bye!" << std::endl;
+
       // Leave at this position! SteamAPI_Shutdown() seems to kill the process
       // under some conditions.
       Steam::destroy_instance();

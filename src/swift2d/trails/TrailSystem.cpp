@@ -15,6 +15,7 @@
 #include <swift2d/textures/NoiseTexture.hpp>
 #include <swift2d/math.hpp>
 #include <swift2d/utils/Logger.hpp>
+#include <swift2d/graphics/Pipeline.hpp>
 
 #include <sstream>
 
@@ -41,7 +42,6 @@ TrailSystem::TrailSystem(int max_trail_points)
   , emitter_buffer_(nullptr)
   , emitter_vao_(nullptr)
   , ping_(true)
-  , total_time_(0.0)
   , update_max_trail_points_(max_trail_points) {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +97,6 @@ void TrailSystem::update_trails(
   // upload to GPU if neccessary
   if (trail_buffers_.empty()) {
     upload_to(ctx);
-    timer_.start();
     first_draw = true;
   }
 
@@ -120,8 +119,8 @@ void TrailSystem::update_trails(
   }
 
   // get frame time
-  double frame_time(timer_.reset());
-  total_time_ += frame_time;
+  double frame_time(ctx.pipeline->get_frame_time());
+  double total_time(ctx.pipeline->get_total_time());
 
   // swap ping pong buffers
   ping_ = !ping_;
@@ -134,7 +133,7 @@ void TrailSystem::update_trails(
 
   auto& shader(TrailUpdateShader::get());
   shader.use(ctx);
-  math::vec2 time      (frame_time * 1000.0, total_time_ * 1000.0);
+  math::vec2 time      (frame_time * 1000.0, total_time * 1000.0);
   shader.time.                   Set(time);
   shader.use_global_texcoords.   Set(system.UseGlobalTexCoords ? 1 : 0);
   shader.life.                   Set(system.Life * 1000.0);
@@ -202,6 +201,7 @@ void TrailSystem::draw_trails(
   RenderContext const& ctx) {
 
   std::vector<TrailPoint> emitter_points;
+  double total_time(ctx.pipeline->get_total_time());
 
   for (auto const& emitter : emitters) {
 
@@ -216,8 +216,8 @@ void TrailSystem::draw_trails(
 
       if (system.UseGlobalTexCoords) {
         trail_point.prev_u_texcoords = 1.0/system.Life *
-                                       math::vec2(total_time_,
-                                                  total_time_ -
+                                       math::vec2(total_time,
+                                                  total_time -
                                                   emitter.TimeSinceLastSpawn);
       } else {
         trail_point.prev_u_texcoords = 1.0/system.Life *
@@ -232,9 +232,9 @@ void TrailSystem::draw_trails(
 
       if (system.UseGlobalTexCoords) {
         trail_point.prev_u_texcoords = 1.0/system.Life *
-                                       math::vec2(total_time_ -
+                                       math::vec2(total_time -
                                                   emitter.TimeSinceLastSpawn,
-                                                  total_time_ -
+                                                  total_time -
                                                   emitter.TimeSincePrev1Spawn);
       } else {
         trail_point.prev_u_texcoords = 1.0/system.Life *
@@ -254,8 +254,8 @@ void TrailSystem::draw_trails(
 
       if (system.UseGlobalTexCoords) {
         trail_point.prev_u_texcoords = 1.0/system.Life *
-                                       math::vec2(total_time_,
-                                                  total_time_ -
+                                       math::vec2(total_time,
+                                                  total_time -
                                                   emitter.TimeSincePrev1Spawn);
       } else {
         trail_point.prev_u_texcoords = 1.0/system.Life *

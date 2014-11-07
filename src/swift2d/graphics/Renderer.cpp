@@ -40,20 +40,23 @@ Renderer::Renderer(Pipeline& pipeline)
       if (!timer_.is_running()) {
         timer_.start();
       }
-
       started_rendering_ = false;
+
+      Application::get().AppFPS.step();
+      Application::get().on_frame.emit(timer_.reset());
+      WindowManager::get().current()->process_input();
+
       updating_scene_ = SceneManager::get().current()->serialize();
       {
         std::unique_lock<std::mutex> lock(mutex_);
         last_rendered_scene_ = nullptr;
         updated_scene_ = updating_scene_;
       }
-      Application::get().AppFPS.step();
-      Application::get().on_frame.emit(timer_.reset());
-      WindowManager::get().current()->process_input();
 
       pipeline.update();
     }
+
+    return true;
   });
   ticker_->start();
 

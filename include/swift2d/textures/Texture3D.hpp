@@ -64,8 +64,7 @@ class SWIFT_DLL Texture3D : public Texture {
   void set_channels(int channels) const;
   void set_data(unsigned char* data) const;
 
-  virtual void upload_to(RenderContext const& context,
-                         bool create_mip_maps = true) const;
+  virtual void upload_to(RenderContext const& context, bool create_mip_maps = true) const;
 
 };
 

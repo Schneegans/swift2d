@@ -24,18 +24,22 @@ AudioComponent::AudioComponent()
 
   Sound.on_change().connect([&](AudioBufferPtr const& val) {
     stop();
+    return true;
   });
 
   Volume.on_change().connect([&](float val) {
     source_->Gain(val);
+    return true;
   });
 
   Pitch.on_change().connect([&](float val) {
     source_->Pitch(val);
+    return true;
   });
 
   Loop.on_change().connect([&](bool val) {
     source_->Looping(val);
+    return true;
   });
 }
 
@@ -96,7 +100,7 @@ void AudioComponent::stop() {
 
 void AudioComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
-  visitor.add_object("Sound", Sound);
+  visitor.add_object_property("Sound", Sound);
   visitor.add_member("Volume", Volume);
   visitor.add_member("Pitch", Pitch);
   visitor.add_member("Loop", Loop);

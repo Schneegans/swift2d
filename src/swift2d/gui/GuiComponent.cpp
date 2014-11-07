@@ -36,6 +36,7 @@ namespace {
 
 GuiComponent::GuiComponent()
   : Depth(0.f)
+  , Opacity(1.f)
   , Resource()
   , Size(math::vec2i(10,10))
   , Anchor(math::vec2i(0,0))
@@ -44,6 +45,8 @@ GuiComponent::GuiComponent()
   , js_window_(nullptr)
   , callbacks_(5)
   , interactive_(true) {
+
+  Interface::get().increase_loading_state();
 
   on_loaded.connect([this]() {
     js_window_ = new Awesomium::JSValue();
@@ -54,6 +57,10 @@ GuiComponent::GuiComponent()
     if (!js_window_->IsObject()) {
       LOG_WARNING << "Failed to initialize GuiComponent!" << std::endl;
     }
+
+    Interface::get().decrease_loading_state();
+
+    return false;
   });
 
   view_ = Interface::get().create_webview(Size().x(), Size().y());
@@ -68,12 +75,14 @@ GuiComponent::GuiComponent()
 
   callbacks_[0] = window->on_mouse_move.connect([&](math::vec2 const& pos) {
     update_mouse_position(pos);
+    return true;
   });
 
   callbacks_[1] = window->on_mouse_scroll.connect([&](math::vec2 const& dir) {
     if (interactive_) {
       view_->InjectMouseWheel(dir.y()*10, dir.x()*10);
     }
+    return true;
   });
 
   callbacks_[2] = window->on_mouse_button_press.connect([&](Button button, int action, int mods) {
@@ -84,27 +93,32 @@ GuiComponent::GuiComponent()
         view_->InjectMouseDown(static_cast<Awesomium::MouseButton>(button));
       }
     }
+    return true;
   });
 
   callbacks_[3] = window->on_char.connect([&](unsigned c) {
     if (interactive_) {
       view_->InjectKeyboardEvent(AweKeyEvent(c));
     }
+    return true;
   });
 
   callbacks_[4] = window->on_key_press.connect([&](Key key, int scancode, int action, int mods) {
     if (interactive_) {
       view_->InjectKeyboardEvent(AweKeyEvent(key, scancode, action, mods));
     }
+    return true;
   });
 
   Resource.on_change().connect([&](std::string const& val) {
     Awesomium::WebURL url(Awesomium::WSLit(("asset://swift2d/" + val).c_str()));
     view_->LoadURL(url);
+    return true;
   });
 
   Size.on_change().connect([&](math::vec2i const& val) {
     view_->Resize(val.x(), val.y());
+    return true;
   });
 
   Interactive.on_change().connect([this](bool val){
@@ -114,16 +128,19 @@ GuiComponent::GuiComponent()
       auto pos = WindowManager::get().current()->get_cursor_pos();
       update_mouse_position(pos);
     }
+    return true;
   });
 
   Offset.on_change().connect([this](math::vec2 const& val) {
     auto pos = WindowManager::get().current()->get_cursor_pos();
     update_mouse_position(pos);
+    return true;
   });
 
   Anchor.on_change().connect([this](math::vec2 const& val) {
     auto pos = WindowManager::get().current()->get_cursor_pos();
     update_mouse_position(pos);
+    return true;
   });
 }
 
@@ -168,6 +185,7 @@ void GuiComponent::Renderer::draw(RenderContext const& ctx, int start, int end) 
       );
 
       GuiShader::get().size.Set(size);
+      GuiShader::get().opacity.Set(o.Opacity);
       GuiShader::get().offset.Set(offset);
       GuiShader::get().diffuse.Set(0);
       Quad::get().draw(ctx);
@@ -219,11 +237,12 @@ void GuiComponent::add_javascript_getter(std::string const& name, std::function<
 
 void GuiComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
-  s.Depth  = Depth();
-  s.Size   = Size();
-  s.Anchor = Anchor();
-  s.Offset = Offset();
-  s.Self   = shared_from_this();
+  s.Depth   = Depth();
+  s.Opacity = Opacity();
+  s.Size    = Size();
+  s.Anchor  = Anchor();
+  s.Offset  = Offset();
+  s.Self    = shared_from_this();
   scene->renderers().gui_elements.add(std::move(s));
 }
 
@@ -232,6 +251,7 @@ void GuiComponent::serialize(SerializedScenePtr& scene) const {
 void GuiComponent::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
   visitor.add_member("Depth",       Depth);
+  visitor.add_member("Opacity",     Opacity);
   visitor.add_member("Resource",    Resource);
   visitor.add_member("Size",        Size);
   visitor.add_member("Anchor",      Anchor);
