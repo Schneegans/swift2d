@@ -9,6 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/network/ReplicationConnection.hpp>
 
+#include <swift2d/network/NetworkObjectBase.hpp>
 #include <swift2d/network/ReplicationManager.hpp>
 #include <swift2d/utils/Logger.hpp>
 

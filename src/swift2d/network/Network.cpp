@@ -9,6 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/network/Network.hpp>
 
+#include <swift2d/network/NetworkObjectBase.hpp>
 #include <swift2d/network/ReplicationManager.hpp>
 #include <swift2d/utils/Logger.hpp>
 #include <swift2d/math/operators.hpp>

@@ -10,7 +10,7 @@
 #define SWIFT2D_REPLICATION_CONNECTION_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/network/NetworkObjectBase.hpp>
+#include <swift2d/network/ReplicationManager.hpp>
 
 #include <raknet/ReplicaManager3.h>
 
@@ -20,7 +20,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // forward declares ------------------------------------------------------------
-class ReplicationManager;
+// class ReplicationManager;
 
 // -----------------------------------------------------------------------------
 class ReplicationConnection: public RakNet::Connection_RM3 {

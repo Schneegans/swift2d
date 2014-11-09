@@ -10,12 +10,16 @@
 #define SWIFT2D_REPLICATION_MANAGER_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/network/ReplicationConnection.hpp>
+#include <raknet/ReplicaManager3.h>
+
+#include <swift2d/utils/platform.hpp>
 
 #include <functional>
 #include <map>
 
 namespace swift {
+
+class NetworkObjectBase;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

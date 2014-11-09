@@ -12,10 +12,11 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Singleton.hpp>
 
-#include <swift2d/network/UpnpOpener.hpp>
-#include <swift2d/network/NetworkObjectBase.hpp>
+#include <swift2d/math.hpp>
 #include <swift2d/network/ReplicationManager.hpp>
 #include <swift2d/network/HttpConnection.hpp>
+
+#include <raknet/RPC3.h>
 
 namespace RakNet {
   class RakPeerInterface;
@@ -23,10 +24,11 @@ namespace RakNet {
   class FullyConnectedMesh2;
   class NatPunchthroughClient;
   class NetworkIDManager;
-  class RPC3;
 }
 
 namespace swift {
+
+class NetworkObjectBase;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,6 +55,16 @@ class SWIFT_DLL Network : public Singleton<Network> {
   void natpunch(math::uint64 uuid);
 
   void distribute_object(NetworkObjectBase* object);
+
+  template<typename Function>
+  void distribute_function(std::string const& function_name, Function const& f) {
+    rpc_->RegisterFunction(function_name.c_str(), f);
+  }
+
+  template<typename ...Args>
+  void call_function(std::string const& function_name, RakNet::NetworkID const& id, Args&& ... a) {
+    rpc_->CallCPP(function_name.c_str(), id, a...);
+  }
 
   std::string const& get_internal_address() const;
   std::string const& get_external_address() const;

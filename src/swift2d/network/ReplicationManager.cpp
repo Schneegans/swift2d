@@ -9,7 +9,10 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/network/ReplicationManager.hpp>
 
+#include <swift2d/network/ReplicationConnection.hpp>
 #include <swift2d/utils/Logger.hpp>
+
+#include <raknet/RakString.h>
 
 namespace swift {
 
@@ -38,7 +41,7 @@ NetworkObjectBase* ReplicationManager::create_object(RakNet::RakString const& na
   if (factory != object_registry_.end()) {
     return factory->second();
   } else {
-    LOG_WARNING << "Failed to create NetworkObjectBase: Type " << name << " is not registered!" << std::endl;
+    // LOG_WARNING << "Failed to create NetworkObjectBase: Type " << name << " is not registered!" << std::endl;
     return nullptr;
   }
 }
