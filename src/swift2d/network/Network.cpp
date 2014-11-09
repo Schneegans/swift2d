@@ -30,8 +30,6 @@
 
 #include <sstream>
 
-#define USE_UPNP false
-
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,13 +39,16 @@ Network::Network()
   , peer_             (RakNet::RakPeerInterface::GetInstance())
   , npt_              (RakNet::NatPunchthroughClient::GetInstance())
   , id_manager_       (new RakNet::NetworkIDManager())
+  , rpc_              (new RakNet::RPC3())
   , replica_          (new ReplicationManager())
   , internal_id_      ("")
   , external_id_      ("") {
 
   peer_->AttachPlugin(npt_);
   peer_->AttachPlugin(replica_);
+  peer_->AttachPlugin(rpc_);
 
+  rpc_->SetNetworkIDManager(id_manager_);
   replica_->SetNetworkIDManager(id_manager_);
 
   RakNet::SocketDescriptor sd;

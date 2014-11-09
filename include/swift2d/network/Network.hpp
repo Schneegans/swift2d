@@ -23,6 +23,7 @@ namespace RakNet {
   class FullyConnectedMesh2;
   class NatPunchthroughClient;
   class NetworkIDManager;
+  class RPC3;
 }
 
 namespace swift {
@@ -70,6 +71,7 @@ class SWIFT_DLL Network : public Singleton<Network> {
   RakNet::RakPeerInterface*      peer_;
   RakNet::NatPunchthroughClient* npt_;
   RakNet::NetworkIDManager*      id_manager_;
+  RakNet::RPC3*                  rpc_;
   ReplicationManager*            replica_;
 
   Phase                          phase_;
