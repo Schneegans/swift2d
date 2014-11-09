@@ -140,6 +140,8 @@ bool Steam::init() {
     return false;
   }
 
+  SteamUtils()->SetOverlayNotificationPosition(k_EPositionBottomLeft);
+
   return true;
 }
 
