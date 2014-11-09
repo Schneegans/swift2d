@@ -10,9 +10,10 @@
 #define SWIFT2D_NETWORK_OBJECT_BASE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <raknet/ReplicaManager3.h>
-
+#include <swift2d/network/Network.hpp>
 #include <swift2d/network/SerializableReference.hpp>
+
+#include <raknet/ReplicaManager3.h>
 
 namespace swift {
 
@@ -44,6 +45,16 @@ class SWIFT_DLL NetworkObjectBase : public RakNet::Replica3 {
   virtual void OnUserReplicaPreSerializeTick();
 
   void distribute_member(SerializableReference const& value);
+
+  template<typename Function>
+  void distribute_function(std::string const& function_name, Function const& f) const {
+    Network::get().distribute_function(get_type().C_String() + function_name, f);
+  }
+
+  template<typename ...Args>
+  void call_function(std::string const& function_name, Args&& ... a) {
+    Network::get().call_function(get_type().C_String() + function_name, GetNetworkID(), a...);
+  }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

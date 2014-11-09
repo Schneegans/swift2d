@@ -12,10 +12,11 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/utils/Singleton.hpp>
 
-#include <swift2d/network/UpnpOpener.hpp>
-#include <swift2d/network/NetworkObjectBase.hpp>
+#include <swift2d/math.hpp>
 #include <swift2d/network/ReplicationManager.hpp>
 #include <swift2d/network/HttpConnection.hpp>
+
+#include <raknet/RPC3.h>
 
 namespace RakNet {
   class RakPeerInterface;
@@ -26,6 +27,8 @@ namespace RakNet {
 }
 
 namespace swift {
+
+class NetworkObjectBase;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,6 +56,16 @@ class SWIFT_DLL Network : public Singleton<Network> {
 
   void distribute_object(NetworkObjectBase* object);
 
+  template<typename Function>
+  void distribute_function(std::string const& function_name, Function const& f) {
+    rpc_->RegisterFunction(function_name.c_str(), f);
+  }
+
+  template<typename ...Args>
+  void call_function(std::string const& function_name, RakNet::NetworkID const& id, Args&& ... a) {
+    rpc_->CallCPP(function_name.c_str(), id, a...);
+  }
+
   std::string const& get_internal_address() const;
   std::string const& get_external_address() const;
   math::uint64       get_network_id() const;
@@ -70,6 +83,7 @@ class SWIFT_DLL Network : public Singleton<Network> {
   RakNet::RakPeerInterface*      peer_;
   RakNet::NatPunchthroughClient* npt_;
   RakNet::NetworkIDManager*      id_manager_;
+  RakNet::RPC3*                  rpc_;
   ReplicationManager*            replica_;
 
   Phase                          phase_;
