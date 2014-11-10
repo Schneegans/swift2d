@@ -25,6 +25,7 @@ DynamicBodyComponent::DynamicBodyComponent()
   , Restitution(0.5f)
   , LinearDamping(0.5f)
   , AngularDamping(0.5f)
+  , GravityScale(1.f)
   , Group(0)
   , Mask(-1)
   , Category(0)
@@ -151,6 +152,7 @@ void DynamicBodyComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Restitution", Restitution);
   visitor.add_member("LinearDamping", LinearDamping);
   visitor.add_member("AngularDamping", AngularDamping);
+  visitor.add_member("GravityScale", GravityScale);
   visitor.add_member("Group", Group);
   visitor.add_member("Mask", Mask);
   visitor.add_member("Category", Category);
