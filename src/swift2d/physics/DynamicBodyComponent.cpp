@@ -97,6 +97,14 @@ math::vec2 DynamicBodyComponent::get_linear_velocity() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+float DynamicBodyComponent::get_speed() {
+  init();
+  auto v = body_->GetLinearVelocity();
+  return math::vec2(v.x, v.y).Length();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void DynamicBodyComponent::set_angular_velocity(float val) {
   init();
   body_->SetAngularVelocity(val);

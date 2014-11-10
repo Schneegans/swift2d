@@ -81,6 +81,7 @@ class SWIFT_DLL DynamicBodyComponent : public Component {
 
   void       set_linear_velocity(math::vec2 const& val);
   math::vec2 get_linear_velocity();
+  float      get_speed();
 
   void       set_angular_velocity(float val);
   float      get_angular_velocity();

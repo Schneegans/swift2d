@@ -154,6 +154,15 @@ void SceneObject::translate(float x, float y) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+math::vec2 SceneObject::get_position() const {
+  return math::get_translation(Transform.get());
+}
+math::vec2 SceneObject::get_world_position() const {
+  return math::get_translation(WorldTransform.get());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void SceneObject::serialize(SerializedScenePtr& scene) const {
   if (Enabled()) {
     for (auto const& component: components_) {

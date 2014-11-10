@@ -150,6 +150,9 @@ class SWIFT_DLL SceneObject : public SavableObject {
   void translate (math::vec2 const& delta);
   void translate (float x, float y);
 
+  virtual math::vec2 get_position() const;
+  virtual math::vec2 get_world_position() const;
+
   // --------------------------------------------------- serialization interface
 
   // calls serialize() on all enabled components and objects --- the provided

@@ -59,6 +59,9 @@ SWIFT_DLL vec2 normalized(vec2 const& vec);
 SWIFT_DLL void normalize(vec3& vec);
 SWIFT_DLL void normalize(vec2& vec);
 
+SWIFT_DLL float dot(vec2 const& a, vec2 const& b);
+SWIFT_DLL float dot(vec3 const& a, vec3 const& b);
+
 SWIFT_DLL mat4 to_3D(mat3 const& mat);
 
 }
