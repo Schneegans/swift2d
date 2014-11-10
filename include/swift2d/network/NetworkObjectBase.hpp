@@ -53,7 +53,7 @@ class SWIFT_DLL NetworkObjectBase : public RakNet::Replica3 {
 
   template<typename ...Args>
   void call_function(std::string const& function_name, Args&& ... a) {
-    Network::get().call_function(get_type().C_String() + function_name, GetNetworkID(), a...);
+    Network::get().call_function(get_type().C_String() + function_name, GetNetworkID(), a..., true);
   }
 
  ///////////////////////////////////////////////////////////////////////////////
