@@ -26,6 +26,8 @@ DynamicBodyComponent::DynamicBodyComponent()
   , LinearDamping(0.5f)
   , AngularDamping(0.5f)
   , Group(0)
+  , Mask(-1)
+  , Category(0)
   , body_(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -142,6 +144,8 @@ void DynamicBodyComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("LinearDamping", LinearDamping);
   visitor.add_member("AngularDamping", AngularDamping);
   visitor.add_member("Group", Group);
+  visitor.add_member("Mask", Mask);
+  visitor.add_member("Category", Category);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -184,9 +188,21 @@ void DynamicBodyComponent::init() {
       body_->SetAngularDamping(val);
       return true;
     });
-    Group.on_change().connect([&](short val){
-      b2Filter f;
+    Group.on_change().connect([&](math::int16 val){
+      auto f(body_->GetFixtureList()->GetFilterData());
       f.groupIndex = val;
+      body_->GetFixtureList()->SetFilterData(f);
+      return true;
+    });
+    Mask.on_change().connect([&](math::uint16 val){
+      auto f(body_->GetFixtureList()->GetFilterData());
+      f.maskBits = val;
+      body_->GetFixtureList()->SetFilterData(f);
+      return true;
+    });
+    Category.on_change().connect([&](math::uint16 val){
+      auto f(body_->GetFixtureList()->GetFilterData());
+      f.categoryBits = val;
       body_->GetFixtureList()->SetFilterData(f);
       return true;
     });

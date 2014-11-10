@@ -40,7 +40,10 @@ class SWIFT_DLL StaticBodyComponent : public Component {
   Float                   Density;
   Float                   Friction;
   Float                   Restitution;
-  Short                   Group;
+
+  Int16                   Group;
+  UInt16                  Mask;
+  UInt16                  Category;
 
   // ------------------------------------------------------------------- signals
   Signal<DynamicBodyComponent*, math::vec2> start_contact_with_dynamic;

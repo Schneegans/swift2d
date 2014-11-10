@@ -28,7 +28,7 @@ class SWIFT_DLL Downloader {
 
   Signal<std::string> on_error;
 
-  Int   ProgressBytes;
+  Int32 ProgressBytes;
   Float ProgressPercent;
 
   Downloader();

@@ -33,8 +33,8 @@ class SWIFT_DLL Texture3D : public Texture {
  public:
 
   // ---------------------------------------------------------------- properties
-  UInt TilesX;
-  UInt TilesY;
+  UInt32 TilesX;
+  UInt32 TilesY;
 
   // ---------------------------------------------------- construction interface
   template <typename... Args>

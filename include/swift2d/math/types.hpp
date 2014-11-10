@@ -18,6 +18,7 @@ namespace math {
 // typedefs  -------------------------------------------------------------------
 
 // same typedefs as in steam api
+typedef char int8;
 typedef unsigned char uint8;
 
 #if defined( _WIN32 )

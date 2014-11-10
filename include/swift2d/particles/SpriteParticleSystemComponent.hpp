@@ -54,7 +54,7 @@ class SWIFT_DLL SpriteParticleSystemComponent : public ParticleSystemComponent {
   Float           StartGlow,  EndGlow;
   ColorProperty   StartColor, EndColor;
   Bool            BlendAdd;
-  Int             SubSamplingLevel;
+  Int32           SubSamplingLevel;
   TextureProperty Texture;
 
   // ----------------------------------------------------- contruction interface

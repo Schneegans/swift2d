@@ -61,7 +61,7 @@ class SWIFT_DLL TrailSystemComponent : public TransformableComponent {
   };
 
   // ---------------------------------------------------------------- properties
-  Int             MaxCount;
+  Int32           MaxCount;
   Float           Depth;
   Float           Life;
 

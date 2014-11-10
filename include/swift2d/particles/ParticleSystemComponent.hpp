@@ -59,7 +59,7 @@ class SWIFT_DLL ParticleSystemComponent : public TransformableComponent {
   };
 
   // ---------------------------------------------------------------- properties
-  Int   MaxCount;
+  Int32 MaxCount;
   Float Depth;
   Float Mass;
 

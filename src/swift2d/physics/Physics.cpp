@@ -150,6 +150,8 @@ b2Body* Physics::add(DynamicBodyComponent* body) {
   fixtureDef.friction = body->Friction();
   fixtureDef.restitution = body->Restitution();
   fixtureDef.filter.groupIndex = body->Group();
+  fixtureDef.filter.maskBits = body->Mask();
+  fixtureDef.filter.categoryBits = body->Category();
   fixtureDef.shape = shape;
 
   b2BodyDef bodyDef;
@@ -188,6 +190,8 @@ b2Body* Physics::add(StaticBodyComponent* body) {
   fixtureDef.friction = body->Friction();
   fixtureDef.restitution = body->Restitution();
   fixtureDef.filter.groupIndex = body->Group();
+  fixtureDef.filter.maskBits = body->Mask();
+  fixtureDef.filter.categoryBits = body->Category();
 
   b2Shape* shape;
 

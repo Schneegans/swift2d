@@ -41,9 +41,9 @@ class SWIFT_DLL ColorMap : public Texture3D {
   ColorProperty BackTopLeft;
   ColorProperty BackTopRight;
   ColorProperty BackBottomRight;
-  Int           Width;
-  Int           Height;
-  Int           Depth;
+  Int32         Width;
+  Int32         Height;
+  Int32         Depth;
 
   // ---------------------------------------------------- construction interface
   template <typename... Args>

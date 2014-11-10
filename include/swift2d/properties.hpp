@@ -19,11 +19,12 @@ namespace swift {
 
 typedef SWIFT_DLL Property<double>         Double;
 typedef SWIFT_DLL Property<float>          Float;
-typedef SWIFT_DLL Property<int>            Int;
-typedef SWIFT_DLL Property<char>           Char;
-typedef SWIFT_DLL Property<short>          Short;
-typedef SWIFT_DLL Property<unsigned>       UInt;
-typedef SWIFT_DLL Property<unsigned char>  UChar;
+typedef SWIFT_DLL Property<math::int8>     Int8;
+typedef SWIFT_DLL Property<math::int16>    Int16;
+typedef SWIFT_DLL Property<math::int32>    Int32;
+typedef SWIFT_DLL Property<math::uint8>    UInt8;
+typedef SWIFT_DLL Property<math::uint16>   UInt16;
+typedef SWIFT_DLL Property<math::uint32>   UInt32;
 
 typedef SWIFT_DLL Property<math::vec3>     Vec3;
 typedef SWIFT_DLL Property<math::vec2i>    Vec2i;
