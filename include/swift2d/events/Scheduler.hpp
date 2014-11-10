@@ -23,16 +23,19 @@ class SWIFT_DLL Scheduler {
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+  Scheduler();
 
   // ------------------------------------------------------------ public methods
-  void execute_delayed(double delay, std::function<void()> callback);
+  int execute_delayed(double delay, std::function<void()> callback);
+  void cancel(int id);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-   void self_callback(boost::asio::deadline_timer* timer, int revents);
+   void self_callback(boost::asio::deadline_timer* timer, int id);
 
-   std::map<boost::asio::deadline_timer*, std::function<void()> > tasks_;
+   std::map<int, std::pair<boost::asio::deadline_timer*, std::function<void()>>> tasks_;
+   int current_id_;
 };
 
 // -----------------------------------------------------------------------------
