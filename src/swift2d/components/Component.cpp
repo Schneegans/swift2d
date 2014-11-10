@@ -22,6 +22,7 @@ Component::Component()
 
 void Component::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Enabled", Enabled);
+  visitor.add_member("Label", Label);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

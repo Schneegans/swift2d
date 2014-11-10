@@ -52,6 +52,7 @@ class SWIFT_DLL Component : public SavableObject {
   // ---------------------------------------------------------------- properties
   // True, if this core should be processed in the serialization and traversal.
   Bool Enabled;
+  String Label;
 
   // ----------------------------------------------------- contruction interface
   // Contstructor is protected --- do not instantiate this class directly
