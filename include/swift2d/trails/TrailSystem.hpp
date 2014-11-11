@@ -48,7 +48,7 @@ class TrailSystem {
   void set_max_trail_points(int max_trail_points);
 
   void update_trails(
-    std::vector<SerializedTrailEmitter> const& emitters,
+    std::vector<SerializedTrailEmitter>& emitters,
     TrailSystemComponent::Serialized const& system,
     RenderContext const& context);
 

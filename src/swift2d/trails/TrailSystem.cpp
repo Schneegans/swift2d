@@ -72,7 +72,7 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
   }
 
   emitter_buffer_ = new ogl::Buffer();
-  emitter_vao_ = new ogl::VertexArray();
+  emitter_vao_    = new ogl::VertexArray();
 
   emitter_vao_->Bind();
   emitter_buffer_->Bind(ose::Array());
@@ -88,7 +88,7 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void TrailSystem::update_trails(
-  std::vector<SerializedTrailEmitter> const& emitters,
+  std::vector<SerializedTrailEmitter>& emitters,
   TrailSystemComponent::Serialized const& system,
   RenderContext const& ctx) {
 
@@ -133,8 +133,7 @@ void TrailSystem::update_trails(
 
   auto& shader(TrailUpdateShader::get());
   shader.use(ctx);
-  math::vec2 time      (frame_time * 1000.0, total_time * 1000.0);
-  shader.time.                   Set(time);
+  shader.time.                   Set(math::vec2(frame_time, total_time)*1000.0);
   shader.use_global_texcoords.   Set(system.UseGlobalTexCoords ? 1 : 0);
   shader.life.                   Set(system.Life * 1000.0);
 
@@ -148,8 +147,9 @@ void TrailSystem::update_trails(
   {
 
     // spawn new particles -----------------------------------------------------
-    for (auto const& emitter: emitters) {
+    for (auto& emitter: emitters) {
       if (emitter.SpawnNewPoint) {
+        emitter.SpawnNewPoint = false;
         times.push_back(math::vec2(
           emitter.TimeSincePrev1Spawn * 1000.0,
           emitter.TimeSincePrev2Spawn * 1000.0

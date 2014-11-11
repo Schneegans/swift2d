@@ -45,12 +45,8 @@ void TrailEmitterComponent::update(double time) {
 
   TransformableComponent::update(time);
 
-  spawn_new_point_ = false;
   //check if distance and angle are large enough to spawn new trail points
-
   position_ = (WorldTransform() * math::vec3(0.0, 0.0, 1)).xy();
-
-  auto distance = (position_ - last_position_).Length();
 
   auto p1_to_p2 = prev_1_position_ - last_position_;
   auto p1_to_p0 = position_ - last_position_;
@@ -69,20 +65,14 @@ void TrailEmitterComponent::update(double time) {
     time_since_last_spawn_ = 0.f;
   };
 
-  if (distance > MinSpawnGap()) {
-    if (l2 > 0.0) {
-      if (l1 > 0.0) {
-        float angle = std::abs(math::vec2::DotProduct(p1_to_p0 / l2, p1_to_p2 / l1));
-        if (angle < 0.9999) {
-          spawn_point();
-        }
-      } else {
-        spawn_point();
-      }
+  if (l2 > MinSpawnGap() && l1 > 0.0) {
+    float angle = std::abs(math::dot(p1_to_p0 / l2, p1_to_p2 / l1));
+    if (angle < 0.9999) {
+      spawn_point();
     }
   }
 
-  if ((!spawn_new_point_) && (distance > MaxSpawnGap())) {
+  if ((!spawn_new_point_) && (l2 > MaxSpawnGap())) {
     spawn_point();
   }
 }
@@ -110,6 +100,8 @@ SerializedTrailEmitter TrailEmitterComponent::make_serialized_emitter() const {
   result.Prev3Position = prev_3_position_;
   result.SpawnNewPoint = spawn_new_point_;
   result.Self = this;
+
+  spawn_new_point_ = false;
 
   return result;
 }

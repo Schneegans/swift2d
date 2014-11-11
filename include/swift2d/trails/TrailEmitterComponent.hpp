@@ -74,7 +74,7 @@ class SWIFT_DLL TrailEmitterComponent : public TransformableComponent {
   math::vec2 prev_3_position_;
 
   bool first_frame_;
-  bool spawn_new_point_;
+  mutable bool spawn_new_point_;
 };
 
 }
