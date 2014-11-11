@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/TransformableComponent.hpp>
+#include <swift2d/components/DepthComponent.hpp>
 #include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/materials/Material.hpp>
 
@@ -26,7 +27,8 @@ typedef std::shared_ptr<SpriteComponent>       SpriteComponentPtr;
 typedef std::shared_ptr<const SpriteComponent> ConstSpriteComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL SpriteComponent : public TransformableComponent {
+class SWIFT_DLL SpriteComponent : public TransformableComponent,
+                                  public DepthComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -43,7 +45,6 @@ class SWIFT_DLL SpriteComponent : public TransformableComponent {
   };
 
   // ---------------------------------------------------------------- properties
-  Float                 Depth;
   MaterialProperty      Material;
   MaterialBaseProperty  CustomMaterial; // used, if the above is not set
 
@@ -65,6 +66,7 @@ class SWIFT_DLL SpriteComponent : public TransformableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "SpriteComponent"; }
 
+  virtual void update(double time);
   virtual void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
 };

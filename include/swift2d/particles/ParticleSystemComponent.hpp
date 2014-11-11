@@ -10,7 +10,8 @@
 #define SWIFT2D_PARTICLE_SYSTEM_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/TransformableComponent.hpp>
+#include <swift2d/components/Component.hpp>
+#include <swift2d/components/DepthComponent.hpp>
 #include <swift2d/particles/ParticleEmitterComponent.hpp>
 #include <swift2d/textures/Texture.hpp>
 
@@ -31,7 +32,8 @@ typedef std::shared_ptr<ParticleSystemComponent>       ParticleSystemComponentPt
 typedef std::shared_ptr<const ParticleSystemComponent> ConstParticleSystemComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL ParticleSystemComponent : public TransformableComponent {
+class SWIFT_DLL ParticleSystemComponent : public Component,
+                                          public DepthComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -60,7 +62,6 @@ class SWIFT_DLL ParticleSystemComponent : public TransformableComponent {
 
   // ---------------------------------------------------------------- properties
   Int32 MaxCount;
-  Float Depth;
   Float Mass;
 
   Float Life;
@@ -85,6 +86,7 @@ class SWIFT_DLL ParticleSystemComponent : public TransformableComponent {
   void remove_emitter(ParticleEmitterComponent const* emitter);
   void spawn_once(SerializedEmitter const& emitter);
 
+  virtual void update(double time);
   virtual void serialize(ParticleSystemComponent::Serialized& serialized) const;
   virtual void accept(SavableObjectVisitor& visitor);
 

@@ -10,7 +10,8 @@
 #define SWIFT2D_TRAIL_SYSTEM_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/TransformableComponent.hpp>
+#include <swift2d/components/Component.hpp>
+#include <swift2d/components/DepthComponent.hpp>
 #include <swift2d/trails/TrailEmitterComponent.hpp>
 #include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/textures/Texture.hpp>
@@ -33,7 +34,8 @@ typedef std::shared_ptr<TrailSystemComponent>       TrailSystemComponentPtr;
 typedef std::shared_ptr<const TrailSystemComponent> ConstTrailSystemComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL TrailSystemComponent : public TransformableComponent {
+class SWIFT_DLL TrailSystemComponent : public Component,
+                                       public DepthComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -62,7 +64,6 @@ class SWIFT_DLL TrailSystemComponent : public TransformableComponent {
 
   // ---------------------------------------------------------------- properties
   Int32           MaxCount;
-  Float           Depth;
   Float           Life;
 
   Float           StartWidth, EndWidth;
@@ -93,6 +94,7 @@ class SWIFT_DLL TrailSystemComponent : public TransformableComponent {
   void add_emitter(TrailEmitterComponent const* emitter);
   void remove_emitter(TrailEmitterComponent const* emitter);
 
+  virtual void update(double time);
   virtual void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
 

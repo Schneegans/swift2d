@@ -16,9 +16,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 ParticleSystemComponent::ParticleSystemComponent()
-  : TransformableComponent()
-  , MaxCount                (1000)
-  , Depth                   (0.f)
+  : MaxCount                (1000)
   , Mass                    (0.f)
   , LinearDamping           (0.f)
   , AngularDamping          (0.f)
@@ -36,6 +34,13 @@ ParticleSystemComponent::ParticleSystemComponent()
     particle_system_->set_max_count(val);
     return true;
   });
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ParticleSystemComponent::update(double time) {
+  Component::update(time);
+  DepthComponent::update(time, get_user());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +65,7 @@ void ParticleSystemComponent::spawn_once(SerializedEmitter const& emitter) {
 
 void ParticleSystemComponent::serialize(ParticleSystemComponent::Serialized& serialized) const {
 
-  serialized.Depth = Depth();
+  serialized.Depth = WorldDepth();
   serialized.Mass = Mass();
 
   serialized.Life = Life();
@@ -93,9 +98,9 @@ void ParticleSystemComponent::serialize(ParticleSystemComponent::Serialized& ser
 ////////////////////////////////////////////////////////////////////////////////
 
 void ParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
-  TransformableComponent::accept(visitor);
+  Component::accept(visitor);
+  DepthComponent::accept(visitor);
   visitor.add_member("MaxCount",                  MaxCount);
-  visitor.add_member("Depth",                     Depth);
   visitor.add_member("Mass",                      Mass);
   visitor.add_member("LinearDamping",             LinearDamping);
   visitor.add_member("AngularDamping",            AngularDamping);

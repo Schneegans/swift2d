@@ -26,7 +26,7 @@ GuiSpriteComponent::GuiSpriteComponent()
 
 void GuiSpriteComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
-  s.Depth    = Depth();
+  s.Depth    = WorldDepth();
   s.Opacity  = Opacity();
   s.Size     = Size();
   s.Anchor   = Anchor();

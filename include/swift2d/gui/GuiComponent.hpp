@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
+#include <swift2d/components/DepthComponent.hpp>
 #include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/gui/Interface.hpp>
 #include <swift2d/utils/stl_helpers.hpp>
@@ -34,6 +35,7 @@ typedef std::shared_ptr<const GuiComponent> ConstGuiComponentPtr;
 
 // -----------------------------------------------------------------------------
 class SWIFT_DLL GuiComponent : public Component,
+                               public DepthComponent,
                                public std::enable_shared_from_this<GuiComponent> {
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -54,7 +56,6 @@ class SWIFT_DLL GuiComponent : public Component,
   };
 
   // ---------------------------------------------------------------- properties
-  Float  Depth;
   Float  Opacity;
   String Resource;
   Vec2i  Size;
@@ -95,7 +96,8 @@ class SWIFT_DLL GuiComponent : public Component,
   void add_javascript_callback(std::string const& name);
   void add_javascript_getter(std::string const& name, std::function<std::string()> callback);
 
-  void serialize(SerializedScenePtr& scene) const;
+  virtual void update(double time);
+  virtual void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
 
   std::unordered_map<std::string, std::function<std::string()>> const& get_result_callbacks() const {

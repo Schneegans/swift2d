@@ -32,9 +32,9 @@ void AnimatedSpriteComponent::update(double time) {
 
 void AnimatedSpriteComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
-  s.Depth       = Depth();
-  s.Time        = Time();
   s.Transform   = WorldTransform();
+  s.Depth       = WorldDepth();
+  s.Time        = Time();
   s.UseRenderThreadTime = UseRenderThreadTime();
   s.Material    = Material() ? Material() : CustomMaterial();
   scene->renderers().animated_sprites.add(std::move(s));
@@ -44,6 +44,7 @@ void AnimatedSpriteComponent::serialize(SerializedScenePtr& scene) const {
 
 void AnimatedSpriteComponent::accept(SavableObjectVisitor& visitor) {
   SpriteComponent::accept(visitor);
+  DepthComponent::accept(visitor);
   visitor.add_object("Time", Time);
   visitor.add_member("UseRenderThreadTime", UseRenderThreadTime);
 }

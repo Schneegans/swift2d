@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
+#include <swift2d/components/DepthComponent.hpp>
 #include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/textures/Texture.hpp>
 
@@ -25,7 +26,8 @@ typedef std::shared_ptr<FullscreenGuiSpriteComponent>       FullscreenGuiSpriteC
 typedef std::shared_ptr<const FullscreenGuiSpriteComponent> ConstFullscreenGuiSpriteComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL FullscreenGuiSpriteComponent : public Component {
+class SWIFT_DLL FullscreenGuiSpriteComponent : public Component,
+                                               public DepthComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -45,7 +47,6 @@ class SWIFT_DLL FullscreenGuiSpriteComponent : public Component {
   };
 
   // ---------------------------------------------------------------- properties
-  Float           Depth;
   Float           Opacity;
   TextureProperty Texture;
 
@@ -65,6 +66,7 @@ class SWIFT_DLL FullscreenGuiSpriteComponent : public Component {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "FullscreenGuiSpriteComponent"; }
 
+  virtual void update(double time);
   void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
 };

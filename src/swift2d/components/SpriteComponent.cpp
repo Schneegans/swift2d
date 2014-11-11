@@ -15,15 +15,21 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 SpriteComponent::SpriteComponent()
-  : Depth(0.f)
-  , Material(nullptr)
+  : Material(nullptr)
   , CustomMaterial(nullptr) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void SpriteComponent::update(double time) {
+  TransformableComponent::update(time);
+  DepthComponent::update(time, get_user());
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void SpriteComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
-  s.Depth       = Depth();
+  s.Depth       = WorldDepth();
   s.Transform   = WorldTransform();
   s.Material    = Material() ? Material() : CustomMaterial();
   scene->renderers().sprites.add(std::move(s));
@@ -33,7 +39,7 @@ void SpriteComponent::serialize(SerializedScenePtr& scene) const {
 
 void SpriteComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
-  visitor.add_member("Depth", Depth);
+  DepthComponent::accept(visitor);
   visitor.add_object_property("Material", Material);
   visitor.add_object_property("CustomMaterial", CustomMaterial);
 }

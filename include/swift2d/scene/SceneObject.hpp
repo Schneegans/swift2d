@@ -40,6 +40,10 @@ class SWIFT_DLL SceneObject : public SavableObject {
   // ---------------------------------------------------------------- properties
   SceneObjectProperty Parent;
   String              Label;
+
+  Float               Depth;
+  Float               WorldDepth;
+
   Mat3                Transform;
   Mat3                WorldTransform;
   Bool                Enabled;

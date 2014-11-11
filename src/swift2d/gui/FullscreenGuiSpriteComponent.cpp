@@ -19,9 +19,15 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 FullscreenGuiSpriteComponent::FullscreenGuiSpriteComponent()
-  : Depth(0.f)
-  , Opacity(1)
+  : Opacity(1)
   , Texture(nullptr) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void FullscreenGuiSpriteComponent::update(double time) {
+  Component::update(time);
+  DepthComponent::update(time, get_user());
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -54,7 +60,7 @@ void FullscreenGuiSpriteComponent::Renderer::draw(RenderContext const& ctx, int 
 
 void FullscreenGuiSpriteComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
-  s.Depth    = Depth();
+  s.Depth    = WorldDepth();
   s.Opacity  = Opacity();
   s.Size     = WindowManager::get().current()->Size();
   s.Anchor   = math::vec2(0.f, 0.f);
@@ -67,7 +73,7 @@ void FullscreenGuiSpriteComponent::serialize(SerializedScenePtr& scene) const {
 
 void FullscreenGuiSpriteComponent::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
-  visitor.add_member("Depth",            Depth);
+  DepthComponent::accept(visitor);
   visitor.add_member("Opacity",          Opacity);
   visitor.add_object_property("Texture", Texture);
 }

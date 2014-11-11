@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/TransformableComponent.hpp>
+#include <swift2d/components/DepthComponent.hpp>
 #include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/geometries/Quad.hpp>
 #include <swift2d/materials/Material.hpp>
@@ -27,7 +28,8 @@ typedef std::shared_ptr<FullscreenSpriteComponent>       FullscreenSpriteCompone
 typedef std::shared_ptr<const FullscreenSpriteComponent> ConstFullscreenSpriteComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL FullscreenSpriteComponent : public Component {
+class SWIFT_DLL FullscreenSpriteComponent : public Component,
+                                            public DepthComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -43,7 +45,6 @@ class SWIFT_DLL FullscreenSpriteComponent : public Component {
   };
 
   // ---------------------------------------------------------------- properties
-  Float                 Depth;
   MaterialProperty      Material;
   MaterialBaseProperty  CustomMaterial; // used, if the above is not set
 
@@ -65,6 +66,7 @@ class SWIFT_DLL FullscreenSpriteComponent : public Component {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "FullscreenSpriteComponent"; }
 
+  virtual void update(double time);
   virtual void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
 };

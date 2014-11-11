@@ -18,8 +18,14 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 PointLightComponent::PointLightComponent()
-  : Depth(0.f)
-  , Color(swift::Color(1.f, 1.f, 1.f)) {}
+  : Color(swift::Color(1.f, 1.f, 1.f)) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void PointLightComponent::update(double time) {
+  TransformableComponent::update(time);
+  DepthComponent::update(time, get_user());
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +34,7 @@ void PointLightComponent::serialize(SerializedScenePtr& scene) const {
   transform = transform * math::make_scale(math::get_scale(WorldTransform()));
 
   Serialized s;
-  s.Depth       = Depth();
+  s.Depth       = WorldDepth();
   s.Transform   = transform;
   s.Texture     = Texture();
   s.Color       = Color().vec4();
@@ -39,7 +45,7 @@ void PointLightComponent::serialize(SerializedScenePtr& scene) const {
 
 void PointLightComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
-  visitor.add_member("Depth", Depth);
+  DepthComponent::accept(visitor);
   visitor.add_object_property("Texture", Texture);
   visitor.add_member("Color", Color);
 }

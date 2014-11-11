@@ -22,7 +22,6 @@ namespace swift {
 TrailSystemComponent::TrailSystemComponent()
   : MaxCount(1000)
   , Life(1.0)
-  , Depth(0.f)
   , StartWidth(1.f),               EndWidth(1.f)
   , StartGlow(0.f),                EndGlow(0.f)
   , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 1))
@@ -35,6 +34,13 @@ TrailSystemComponent::TrailSystemComponent()
     trail_system_->set_max_trail_points(val);
     return true;
   });
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void TrailSystemComponent::update(double time) {
+  Component::update(time);
+  DepthComponent::update(time, get_user());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -55,7 +61,7 @@ void TrailSystemComponent::serialize(SerializedScenePtr& scene) const {
 
   Serialized s;
 
-  s.Depth = Depth();
+  s.Depth = WorldDepth();
   s.Life = Life();
   s.StartWidth = StartWidth();
   s.EndWidth = EndWidth();
@@ -80,9 +86,9 @@ void TrailSystemComponent::serialize(SerializedScenePtr& scene) const {
 ////////////////////////////////////////////////////////////////////////////////
 
 void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
-  TransformableComponent::accept(visitor);
+  Component::accept(visitor);
+  DepthComponent::accept(visitor);
   visitor.add_member("MaxCount",      MaxCount);
-  visitor.add_member("Depth",         Depth);
   visitor.add_member("Life",          Life);
   visitor.add_member("StartWidth",    StartWidth);
   visitor.add_member("EndWidth",      EndWidth);

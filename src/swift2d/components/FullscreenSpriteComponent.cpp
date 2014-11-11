@@ -15,15 +15,21 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 FullscreenSpriteComponent::FullscreenSpriteComponent()
-  : Depth(0.f)
-  , Material(nullptr)
+  : Material(nullptr)
   , CustomMaterial(nullptr) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void FullscreenSpriteComponent::update(double time) {
+  Component::update(time);
+  DepthComponent::update(time, get_user());
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void FullscreenSpriteComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
-  s.Depth       = Depth();
+  s.Depth       = WorldDepth();
   s.Material    = Material() ? Material() : CustomMaterial();
   scene->renderers().fullscreen_sprites.add(std::move(s));
 }
@@ -32,7 +38,7 @@ void FullscreenSpriteComponent::serialize(SerializedScenePtr& scene) const {
 
 void FullscreenSpriteComponent::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
-  visitor.add_member("Depth", Depth);
+  DepthComponent::accept(visitor);
   visitor.add_object_property("Material", Material);
   visitor.add_object_property("CustomMaterial", CustomMaterial);
 }

@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/TransformableComponent.hpp>
+#include <swift2d/components/DepthComponent.hpp>
 #include <swift2d/graphics/ResourceRenderer.hpp>
 #include <swift2d/textures/Texture.hpp>
 #include <swift2d/utils/Color.hpp>
@@ -27,7 +28,8 @@ typedef std::shared_ptr<PointLightComponent>       PointLightComponentPtr;
 typedef std::shared_ptr<const PointLightComponent> ConstPointLightComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL PointLightComponent : public TransformableComponent {
+class SWIFT_DLL PointLightComponent : public TransformableComponent,
+                                      public DepthComponent  {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -45,7 +47,6 @@ class SWIFT_DLL PointLightComponent : public TransformableComponent {
   };
 
   // ---------------------------------------------------------------- properties
-  Float           Depth;
   TextureProperty Texture;
   ColorProperty   Color;
 
@@ -67,7 +68,8 @@ class SWIFT_DLL PointLightComponent : public TransformableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "PointLightComponent"; }
 
-  void serialize(SerializedScenePtr& scene) const;
+  virtual void update(double time);
+  virtual void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
 };
 

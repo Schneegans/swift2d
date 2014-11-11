@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
-#define SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
+#ifndef SWIFT2D_DEPTH_COMPONENT_HPP
+#define SWIFT2D_DEPTH_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
@@ -22,38 +22,28 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class TransformableComponent;
-typedef std::shared_ptr<TransformableComponent>       TransformableComponentPtr;
-typedef std::shared_ptr<const TransformableComponent> ConstTransformableComponentPtr;
+class DepthComponent;
+typedef std::shared_ptr<DepthComponent>       DepthComponentPtr;
+typedef std::shared_ptr<const DepthComponent> ConstDepthComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL TransformableComponent : public Component {
+class SWIFT_DLL DepthComponent {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
+  DepthComponent();
+
   // ---------------------------------------------------------------- properties
-  Mat3 Transform;
-  Mat3 WorldTransform;
+  Float Depth;
+  Float WorldDepth;
 
   // ------------------------------------------------------------ public methods
-  virtual void update(double time);
-
-  // -------------------------------------------------- transformation interface
-  virtual void scale     (math::vec2 const& scale);
-  virtual void scale     (float scale);
-  virtual void scale     (float x, float y);
-  virtual void rotate    (float angle);
-  virtual void translate (math::vec2 const& delta);
-  virtual void translate (float x, float y);
-
-  virtual math::vec2 get_position() const;
-  virtual math::vec2 get_world_position() const;
-
+  virtual void update(double time, SceneObject* user);
   virtual void accept(SavableObjectVisitor& visitor);
 };
 
 }
 
-#endif  // SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
+#endif  // SWIFT2D_DEPTH_COMPONENT_HPP

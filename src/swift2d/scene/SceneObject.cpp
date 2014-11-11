@@ -25,6 +25,8 @@ namespace swift {
 SceneObject::SceneObject()
   : Parent(nullptr)
   , Enabled(true)
+  , Depth(0)
+  , WorldDepth(0)
   , remove_flag_(false) {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -184,8 +186,10 @@ void SceneObject::update(double time) {
   if (Enabled()) {
     if (Parent.get()) {
       WorldTransform = Parent.get()->WorldTransform.get() * Transform.get();
+      WorldDepth     = Parent.get()->WorldDepth.get() + Depth.get();
     } else {
       WorldTransform = Transform.get();
+      WorldDepth     = Depth.get();
     }
 
     for (auto current(components_.begin()), next(current);
@@ -228,6 +232,7 @@ void SceneObject::update_world_transform() {
 
 void SceneObject::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Transform", Transform);
+  visitor.add_member("Depth",     Depth);
   visitor.add_member("Label",     Label);
   visitor.add_member("Enabled",   Enabled);
   visitor.add_array("Components", components_);

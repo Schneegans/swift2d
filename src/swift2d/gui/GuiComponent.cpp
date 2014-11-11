@@ -35,8 +35,7 @@ namespace {
 ////////////////////////////////////////////////////////////////////////////////
 
 GuiComponent::GuiComponent()
-  : Depth(0.f)
-  , Opacity(1.f)
+  : Opacity(1.f)
   , Resource()
   , Size(math::vec2i(10,10))
   , Anchor(math::vec2i(0,0))
@@ -167,6 +166,13 @@ GuiComponent::~GuiComponent() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void GuiComponent::update(double time) {
+  Component::update(time);
+  DepthComponent::update(time, get_user());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void GuiComponent::Renderer::draw(RenderContext const& ctx, int start, int end) {
   for (int i(start); i<end; ++i) {
     auto& o(objects[i]);
@@ -237,7 +243,7 @@ void GuiComponent::add_javascript_getter(std::string const& name, std::function<
 
 void GuiComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
-  s.Depth   = Depth();
+  s.Depth   = WorldDepth();
   s.Opacity = Opacity();
   s.Size    = Size();
   s.Anchor  = Anchor();
@@ -250,7 +256,7 @@ void GuiComponent::serialize(SerializedScenePtr& scene) const {
 
 void GuiComponent::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
-  visitor.add_member("Depth",       Depth);
+  DepthComponent::accept(visitor);
   visitor.add_member("Opacity",     Opacity);
   visitor.add_member("Resource",    Resource);
   visitor.add_member("Size",        Size);
