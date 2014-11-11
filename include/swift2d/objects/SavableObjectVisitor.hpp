@@ -59,6 +59,24 @@ class SWIFT_DLL SavableObjectVisitor {
   }
 
   template <class T>
+  void add_object_ptr(std::string const& name, T& target) {
+    if (loaded_object_raw_) {
+      auto child(json_.get_child_optional(name));
+
+      if (child) {
+        SavableObjectVisitor sub_visitor;
+        sub_visitor.read_json(child.get());
+        target = std::dynamic_pointer_cast<typename T::element_type>(sub_visitor.to_object());
+      }
+
+    } else {
+      SavableObjectVisitor visitor(target->get_type_name());
+      target->accept(visitor);
+      json_.push_back(std::make_pair(name, visitor.to_json()));
+    }
+  }
+
+  template <class T>
   void add_object_property(std::string const& name, T& target) {
     if (loaded_object_raw_) {
       auto child(json_.get_child_optional(name));

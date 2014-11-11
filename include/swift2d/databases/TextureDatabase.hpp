@@ -26,6 +26,22 @@ class SWIFT_DLL TextureDatabase : public Database<Texture>,
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
+
+  TexturePtr lookup_or_load(std::string const& name) {
+    if (name == "") {
+      return TexturePtr();
+    }
+
+    if (has(name)) {
+      return TextureDatabase::get().lookup(name);
+    }
+
+    auto tex = Texture::create(Paths::get().resource("images", name));
+    TextureDatabase::get().add(name, tex);
+
+    return tex;
+  }
+
   friend class Singleton<TextureDatabase>;
 
  ///////////////////////////////////////////////////////////////////////////////
