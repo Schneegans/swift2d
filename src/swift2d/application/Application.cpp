@@ -20,7 +20,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Application::Application()
-  : LoadingProgress(1.f)
+  : LoadingProgress(0.f)
   , AppFPS(20)
   , RenderFPS(20)
   , signals_(new boost::asio::signal_set(MainLoop::get().get_io_service(), SIGINT, SIGTERM))

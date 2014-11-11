@@ -43,7 +43,7 @@ void Interface::update() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 Interface::Interface()
-  : LoadingProgress(1)
+  : LoadingProgress(0)
   , loading_state_(0)
   , max_state_(-1) {
 
