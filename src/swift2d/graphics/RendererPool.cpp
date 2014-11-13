@@ -25,7 +25,8 @@ RendererPool::RendererPool()
       &trail_systems
     })
   , heats_({
-      &heat_particle_systems
+      &heat_particle_systems,
+      &heat_sprites
     })
   , lights_({
       &directional_lights,

@@ -65,6 +65,7 @@ namespace {
       Object::init<GuiSpriteComponent>();
       Object::init<AnimatedGuiSpriteComponent>();
       Object::init<HeatParticleSystemComponent>();
+      Object::init<HeatSpriteComponent>();
       Object::init<LightParticleSystemComponent>();
       Object::init<ListenerComponent>();
       Object::init<Material>();

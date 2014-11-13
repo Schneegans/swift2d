@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/SpriteComponent.hpp>
+#include <swift2d/components/HeatSpriteComponent.hpp>
 #include <swift2d/components/FullscreenSpriteComponent.hpp>
 #include <swift2d/components/AnimatedSpriteComponent.hpp>
 #include <swift2d/components/PointLightComponent.hpp>
