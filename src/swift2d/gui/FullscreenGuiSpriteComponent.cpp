@@ -62,7 +62,7 @@ void FullscreenGuiSpriteComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
   s.Depth    = WorldDepth();
   s.Opacity  = Opacity();
-  s.Size     = WindowManager::get().current()->Size();
+  s.Size     = WindowManager::get().current()->get_size();
   s.Anchor   = math::vec2(0.f, 0.f);
   s.Offset   = math::vec2(0.f, 0.f);
   s.Texture  = Texture();

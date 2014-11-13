@@ -33,7 +33,7 @@ class SWIFT_DLL WindowManager : public Singleton<WindowManager> {
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  WindowManager() : current_(Window::create(false)) {}
+   WindowManager() : current_(Window::create(false)) {}
   ~WindowManager() {}
 
   std::unordered_map<GLFWwindow*, Window*> glfw_windows;

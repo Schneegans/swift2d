@@ -19,10 +19,9 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Window::Window(bool debug)
-  : Open(false)
+  : Minimized(false)
   , HideCursor(false)
   , Title("Swift2D")
-  , Size(math::vec2i(1024, 768))
   , window_(nullptr)
   , joystick_axis_cache_(static_cast<int>(JoystickId::JOYSTICK_NUM),
                          std::vector<float>(
@@ -36,13 +35,8 @@ Window::Window(bool debug)
   , init_glew_(true)
   //, debugger_(nullptr)
   //, log_sink_(nullptr)
-  , debug_(debug) {
-
-  Open.on_change().connect([this](bool val) {
-    if (val) open();
-    else     close();
-    return true;
-  });
+  , debug_(debug)
+  , size_(math::vec2i(1024, 768)) {
 
   SettingsWrapper::get().Settings->VSync.on_change().connect([this](bool) {
     vsync_dirty_ = true;
@@ -105,6 +99,18 @@ void Window::display() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Window::set_size(math::vec2i const& size) {
+  size_ = size;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+math::vec2i const& Window::get_size() const {
+  return size_;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 bool Window::key_pressed(Key key) const {
   if (!window_) {
     return false;
@@ -127,7 +133,7 @@ math::vec2 Window::get_cursor_pos() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Window::init_context() {
+void Window::update_context() {
   if (init_glew_) {
     init_glew_ = false;
 
@@ -184,6 +190,19 @@ void Window::init_context() {
 
     render_context_.ready = true;
   }
+
+  if (size_.x() > 0 && size_.y() > 0) {
+    Minimized = false;
+  } else {
+    Minimized = true;
+  }
+
+  render_context_.window_size = size_;
+  render_context_.sub_sampling = SettingsWrapper::get().Settings->SubSampling();
+  render_context_.dynamic_lighting = SettingsWrapper::get().Settings->DynamicLighting();
+  render_context_.light_sub_sampling = SettingsWrapper::get().Settings->LightSubSampling();
+  render_context_.lens_flares = SettingsWrapper::get().Settings->LensFlares();
+  render_context_.heat_effect = SettingsWrapper::get().Settings->HeatEffect();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -198,14 +217,13 @@ void Window::open() {
       auto desktop_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
       int desktop_height = desktop_mode->height;
       int desktop_width = desktop_mode->width;
-
-      render_context_.window_size = math::vec2i(desktop_width, desktop_height);
-    } else {
-      render_context_.window_size = Size();
+      size_ = math::vec2i(desktop_width, desktop_height);
     }
+    
+    render_context_.window_size = size_;
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
     if (debug_) {
       glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
@@ -222,8 +240,9 @@ void Window::open() {
     });
 
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
-      WindowManager::get().glfw_windows[w]->get_context().window_size = math::vec2i(width, height);
-      WindowManager::get().glfw_windows[w]->Size = math::vec2i(width, height);
+      math::vec2i size(math::vec2i(width, height));
+      WindowManager::get().glfw_windows[w]->size_ = size;
+      WindowManager::get().glfw_windows[w]->on_size_change.emit(size);
     });
 
     glfwSetKeyCallback(window_, [](GLFWwindow* w, int key, int scancode, int action, int mods) {

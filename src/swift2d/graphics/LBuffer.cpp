@@ -40,7 +40,7 @@ LBuffer::LBuffer(RenderContext const& ctx) {
       ogl::PixelDataFormat::RGBA
     );
 
-    // create framebuffer object -------------------------------------------------
+    // create framebuffer object -----------------------------------------------
     fbo_.Bind(ogl::Framebuffer::Target::Draw);
 
     ogl::Framebuffer::AttachColorTexture(

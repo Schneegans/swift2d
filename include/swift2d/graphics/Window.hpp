@@ -40,18 +40,19 @@ class SWIFT_DLL Window {
  public:
 
   // ---------------------------------------------------------------- properties
-  Bool   Open;
+  Bool   Minimized;
   Bool   HideCursor;
   String Title;
-  Vec2i  Size;
 
   // ------------------------------------------------------------------- signals
   Signal<>                                    on_close;
+  Signal<math::vec2i>                         on_size_change;
+
   Signal<Key, int, int, int>                  on_key_press;
+  Signal<unsigned>                            on_char;
   Signal<math::vec2>                          on_mouse_move;
   Signal<Button, int, int>                    on_mouse_button_press;
   Signal<math::vec2>                          on_mouse_scroll;
-  Signal<unsigned>                            on_char;
 
   Signal<JoystickId, JoystickAxisId, float>   on_joystick_axis_changed;
   Signal<JoystickId, JoystickButtonId>        on_joystick_button_pressed;
@@ -66,9 +67,15 @@ class SWIFT_DLL Window {
   }
 
   // ------------------------------------------------------------ public methods
+  void open();
+  void close();
+
   void process_input();
   void set_active(bool active);
   void display();
+
+  void set_size(math::vec2i const& size);
+  math::vec2i const& get_size() const;
 
   bool key_pressed(Key key) const;
   math::vec2 get_cursor_pos() const;
@@ -76,13 +83,12 @@ class SWIFT_DLL Window {
   RenderContext const& get_context() const { return render_context_; };
   RenderContext&       get_context()       { return render_context_; };
 
-  void init_context();
+  void update_context();
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void open();
-  void close();
+
   void update_joysticks();
 
   RenderContext render_context_;
@@ -95,6 +101,8 @@ class SWIFT_DLL Window {
   bool fullscreen_dirty_;
   bool init_glew_;
   bool debug_;
+
+  math::vec2i size_;
 
   //ogl::Debug*           debugger_;
   //ogl::Debug::LogSink*  log_sink_;
