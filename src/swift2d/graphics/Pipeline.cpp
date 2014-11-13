@@ -102,12 +102,12 @@ void Pipeline::update() {
 
 void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
+  // create & update window
+  window_->set_active(true);
+  window_->update_context();
+
   if (!window_->Minimized()) {
     SWIFT_PUSH_GL_RANGE("Frame");
-
-    // create & update window
-    window_->set_active(true);
-    window_->update_context();
 
     // update window size
     if (needs_reload_) {
