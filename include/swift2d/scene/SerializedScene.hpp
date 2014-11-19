@@ -56,6 +56,7 @@ class SWIFT_DLL SerializedScene {
   float       vignette_softness;
   float       vignette_coverage;
   float       dirt_opacity;
+  float       glow_opacity;
 
   std::string color_map_name;
   float       color_grading_intensity;

@@ -51,6 +51,7 @@ class PostProcessor {
   oglplus::Lazy<oglplus::Uniform<int>> heat_buffer_;
   oglplus::Lazy<oglplus::Uniform<int>> dirt_tex_;
   oglplus::Lazy<oglplus::Uniform<float>> dirt_opacity_;
+  oglplus::Lazy<oglplus::Uniform<float>> glow_opacity_;
   oglplus::Lazy<oglplus::Uniform<int>> use_heat_;
   oglplus::Lazy<oglplus::Uniform<float>> gamma_;
   oglplus::Lazy<oglplus::Uniform<math::vec4>> vignette_color_;
@@ -62,8 +63,7 @@ class PostProcessor {
 
   HeatEffect      heat_effect_;
   LensFlareEffect lens_flare_effect_;
-
-  Texture   dirt_;
+  Texture         dirt_;
 };
 
 // -----------------------------------------------------------------------------

@@ -112,7 +112,7 @@ void Physics::update(double time) {
   while (body) {
     auto body_pos = body->GetWorldCenter();
 
-    if (body->IsAwake()) {
+    if (body->IsAwake() && body->GetType() == b2_dynamicBody) {
       for (auto source: gravity_sources_) {
         auto transform(source->get_user()->WorldTransform());
         auto pos(math::get_translation(transform));
@@ -123,10 +123,21 @@ void Physics::update(double time) {
         dist *= ((mass * body->GetMass() * b->GravityScale()) / (dist.LengthSquared() + 0.001));
         body->ApplyForceToCenter(dist, true);
       }
+
+      for (auto const& shock: shock_waves_) {
+        b2Vec2 dist(body_pos - b2Vec2(shock.x(), shock.y()));
+        float length(dist.LengthSquared());
+        if (length > 0) {
+          dist *= shock.z()/length;
+          body->ApplyLinearImpulse(dist, body_pos, true);
+        }
+      }
     }
 
     body = body->GetNext();
   }
+
+  shock_waves_.clear();
 
   world_->Step(time, 6, 2);
 }
@@ -216,6 +227,12 @@ b2Body* Physics::add(StaticBodyComponent* body) {
 
 void Physics::add(GravitySourceComponent* source) {
   gravity_sources_.insert(source);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Physics::add_shock_wave(math::vec2 const& location, float strength) {
+  shock_waves_.push_back(math::vec3(location.x(), location.y(), strength));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
