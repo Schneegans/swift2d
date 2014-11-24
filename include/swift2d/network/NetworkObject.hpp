@@ -19,7 +19,6 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-template<typename T>
 class SWIFT_DLL NetworkObject : public NetworkObjectBase {
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -30,17 +29,10 @@ class SWIFT_DLL NetworkObject : public NetworkObjectBase {
     : NetworkObjectBase()
     , is_local_(is_local) {}
 
-  static void init(std::string const& type_name) {
-    if (!initialized_) {
-      initialized_ = true;
-      type_name_ = RakNet::RakString(type_name.c_str());
-      swift::Network::get().register_type<T>(type_name_);
-    }
+  template<typename T>
+  static void init() {
+    swift::Network::get().register_type<T>(T::get_type_name_static());
   }
-
-  RakNet::RakString const& get_type() const {
-    return type_name_;
-  };
 
   bool is_local() const {
     return is_local_;
@@ -59,16 +51,7 @@ class SWIFT_DLL NetworkObject : public NetworkObjectBase {
  // ---------------------------------------------------------- private interface
  private:
   bool is_local_;
-
-  static RakNet::RakString type_name_;
-  static bool              initialized_;
 };
-
-template<typename T>
-RakNet::RakString NetworkObject<T>::type_name_ = "";
-
-template<typename T>
-bool NetworkObject<T>::initialized_ = false;
 
 }
 

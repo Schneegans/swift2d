@@ -27,8 +27,8 @@ class SWIFT_DLL NetworkObjectBase : public RakNet::Replica3 {
  // ----------------------------------------------------------- public interface
  public:
 
-  virtual RakNet::RakString const& get_type() const = 0;
   virtual void on_remote_delete() = 0;
+  virtual std::string get_type_name() const = 0;
 
   virtual void WriteAllocationID(RakNet::Connection_RM3 *con, RakNet::BitStream* stream) const;
   virtual RakNet::RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *con, RakNet::ReplicaManager3 *replicaManager3);
@@ -48,12 +48,12 @@ class SWIFT_DLL NetworkObjectBase : public RakNet::Replica3 {
 
   template<typename Function>
   void distribute_function(std::string const& function_name, Function const& f) const {
-    Network::get().distribute_function(get_type().C_String() + function_name, f);
+    Network::get().distribute_function(get_type_name() + function_name, f);
   }
 
   template<typename ...Args>
   void call_function(std::string const& function_name, Args&& ... a) {
-    Network::get().call_function(get_type().C_String() + function_name, GetNetworkID(), a..., true);
+    Network::get().call_function(get_type_name() + function_name, GetNetworkID(), a..., true);
   }
 
  ///////////////////////////////////////////////////////////////////////////////

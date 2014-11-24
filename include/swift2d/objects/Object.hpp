@@ -42,7 +42,7 @@ class SWIFT_DLL Object {
     register_type(T::get_type_name_static(), [](){ return std::make_shared<T>(); });
   }
 
-   virtual std::string get_type_name() const = 0;
+  virtual std::string get_type_name() const = 0;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
