@@ -31,7 +31,7 @@ class SWIFT_DLL NetworkObject : public NetworkObjectBase {
 
   template<typename T>
   static void init() {
-    swift::Network::get().register_type<T>(T::get_type_name_static());
+    Network::get().register_type<T>(T::get_type_name_static());
   }
 
   bool is_local() const {
