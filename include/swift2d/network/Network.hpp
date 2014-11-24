@@ -47,8 +47,8 @@ class SWIFT_DLL Network : public Singleton<Network> {
 
   void update();
 
-  template<typename T> void register_type(RakNet::RakString const& type) {
-    replica_->register_object(type, [](){ return new T(); });
+  template<typename T> void register_type(std::string const& type) {
+    replica_->register_object(RakNet::RakString(type.c_str()), [](){ return new T(); });
   };
 
   void connect(std::string const& other);

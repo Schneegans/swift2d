@@ -29,6 +29,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   , heat_buffer_(post_fx_shader_.get_uniform<int>("heat_buffer"))
   , dirt_tex_(post_fx_shader_.get_uniform<int>("dirt_tex"))
   , dirt_opacity_(post_fx_shader_.get_uniform<float>("dirt_opacity"))
+  , glow_opacity_(post_fx_shader_.get_uniform<float>("glow_opacity"))
   , use_heat_(post_fx_shader_.get_uniform<int>("use_heat"))
   , gamma_(post_fx_shader_.get_uniform<float>("gamma"))
   , vignette_color_(post_fx_shader_.get_uniform<math::vec4>("vignette_color"))
@@ -63,14 +64,12 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
     uniform float vignette_coverage;
     uniform float vignette_softness;
 
-    vec3 apply_vignette(vec3 color_in) {
+    float get_vignette() {
       // inigo quilez's great vigneting effect!
       float a = -vignette_coverage/vignette_softness;
       float b = 1.0/vignette_softness;
       vec2 q = texcoords;
-      float fac = clamp(a + b*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.1 ), 0, 1) * vignette_color.a + (1-vignette_color.a);
-
-      return mix(vignette_color.rgb, color_in, fac);
+      return clamp(a + b*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.1 ), 0, 1) * vignette_color.a + (1-vignette_color.a);
     }
 
     // color grading -----------------------------------------------------------
@@ -145,11 +144,19 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       vec3 get_color(vec2 texcoords) {
         return get_diffuse(texcoords);
       }
+
+      vec3 apply_glow(vec3 color_in, float vignetting) {
+        return color_in;
+      }
     )";
   } else if (!ctx.lens_flares) {
     f_source << R"(
       vec3 get_color(vec2 texcoords) {
         return get_lighting(texcoords);
+      }
+
+      vec3 apply_glow(vec3 color_in, float vignetting) {
+        return color_in;
       }
     )";
   } else {
@@ -159,20 +166,22 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       uniform sampler2D heat_buffer;
       uniform sampler2D dirt_tex;
       uniform float     dirt_opacity;
+      uniform float     glow_opacity;
       uniform bool      use_heat;
 
       vec3 get_color(vec2 texcoords) {
-        vec3 glow = texture(glow_buffer, texcoords).rgb;
-        vec3 dirt = texture(dirt_tex, texcoords).rgb;
-
         vec2 shifted_texcoords = texcoords;
         if (use_heat) {
           vec2 offset = (texture(heat_buffer, texcoords).rg - 0.5) * 0.2;
           shifted_texcoords   += offset;
         }
+        return get_lighting(shifted_texcoords);
+      }
 
-        vec3 result = get_lighting(shifted_texcoords);
-        return result + glow * dirt * dirt_opacity;
+      vec3 apply_glow(vec3 color_in, float vignetting) {
+        vec3 glow = texture(glow_buffer, texcoords).rgb;
+        vec3 dirt = texture(dirt_tex, texcoords).rgb;
+        return color_in + glow * dirt * glow_opacity + max(vec3(0), (1-vignetting) * dirt * (dirt_opacity+0.5) - 0.5);
       }
     )";
   }
@@ -180,8 +189,14 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   f_source << R"(
     void main(void){
       vec3 result = get_color(texcoords);
+      float vignetting = get_vignette();
+
+      result = apply_glow(result, vignetting);
+
       result = apply_color_grading(result);
-      result = apply_vignette(result);
+
+      result = mix(vignette_color.rgb, result, vignetting);
+
       result = apply_gamma(result);
 
       fragColor = result;
@@ -294,6 +309,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
       dirt_.bind(ctx, start);
       dirt_tex_.Set(start);
       dirt_opacity_.Set(scene->dirt_opacity);
+      glow_opacity_.Set(scene->glow_opacity);
     }
 
     Quad::get().draw(ctx);

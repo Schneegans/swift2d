@@ -20,6 +20,7 @@ Scene::Scene()
   , VignetteSoftness(0.5)
   , VignetteCoverage(0.5)
   , DirtOpacity(0.5)
+  , GlowOpacity(0.5)
   , ColorMapName("")
   , ColorGradingIntensity(1.f)
 {
@@ -38,6 +39,7 @@ SerializedScenePtr Scene::serialize() const {
   scene->vignette_softness = VignetteSoftness();
   scene->vignette_coverage = VignetteCoverage();
   scene->dirt_opacity = DirtOpacity();
+  scene->glow_opacity = GlowOpacity();
 
   scene->color_map_name = ColorMapName();
   scene->color_grading_intensity = ColorGradingIntensity();

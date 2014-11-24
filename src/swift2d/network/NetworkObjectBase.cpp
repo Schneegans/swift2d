@@ -19,7 +19,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 void NetworkObjectBase::WriteAllocationID(RakNet::Connection_RM3 *con, RakNet::BitStream* stream) const {
-  stream->Write(get_type());
+  stream->Write(RakNet::RakString(get_type_name().c_str()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

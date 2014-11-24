@@ -11,6 +11,8 @@
 
 #include <swift2d/geometries/Quad.hpp>
 
+#define GBUFFER_FRACTION 4
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +93,7 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
     void main(void) {
       fragColor = vec3(0);
       for (int i=0; i<4; ++i) {
-        vec2 fac = -pow((texcoords[i]-0.5)*2, vec2(2)) + 1;
+        vec2 fac = (1-pow((texcoords[i]-0.5)*2, vec2(2)));
         fragColor += texture(inputs[max(0, i-1)], texcoords[i]).rgb * colors[i] * fac.x * fac.y;
       }
     }
@@ -117,7 +119,7 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
       .WrapT(ogl::TextureWrap::ClampToBorder);
   };
 
-  auto size(ctx.g_buffer_size/6);
+  auto size(ctx.g_buffer_size/GBUFFER_FRACTION);
 
   create_texture(
     buffer_tmp_, size.x(), size.y(),
@@ -164,7 +166,7 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
 
 void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshold_buffer_) {
 
-  ctx.gl.Viewport(ctx.g_buffer_size.x()/6, ctx.g_buffer_size.y()/6);
+  ctx.gl.Viewport(ctx.g_buffer_size.x()/GBUFFER_FRACTION, ctx.g_buffer_size.y()/GBUFFER_FRACTION);
 
   fbo_.Bind(ogl::Framebuffer::Target::Draw);
 
@@ -182,7 +184,7 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
     Quad::get().draw(ctx);
   };
 
-  math::vec2 radius(2.0/(ctx.g_buffer_size.x()/6), 2.0/(ctx.g_buffer_size.y()/6));
+  math::vec2 radius(2.0/(ctx.g_buffer_size.x()/GBUFFER_FRACTION), 2.0/(ctx.g_buffer_size.y()/GBUFFER_FRACTION));
 
   blur_pass(math::vec2(radius.x()/2, 0), threshold_buffer_, ogl::FramebufferColorAttachment::_0);
   blur_pass(math::vec2(radius.x(), 0),   buffer_tmp_,       ogl::FramebufferColorAttachment::_1);
@@ -240,11 +242,14 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
 ////////////////////////////////////////////////////////////////////////////////
 
 int GhostEffect::bind_buffers(int start, RenderContext const& ctx) {
+  // ogl::Texture::Active(start + 0);
+  // ctx.gl.Bind(ose::_2D(), ghost_buffer_1_);
+
   ogl::Texture::Active(start + 0);
-  ctx.gl.Bind(ose::_2D(), ghost_buffer_1_);
+  ctx.gl.Bind(ose::_2D(), ghost_buffer_2_);
 
   ogl::Texture::Active(start + 1);
-  ctx.gl.Bind(ose::_2D(), ghost_buffer_2_);
+  ctx.gl.Bind(ose::_2D(), blur_buffer_);
 
   return start + 2;
 }

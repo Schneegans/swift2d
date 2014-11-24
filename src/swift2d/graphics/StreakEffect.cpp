@@ -11,6 +11,8 @@
 
 #include <swift2d/geometries/Quad.hpp>
 
+#define GBUFFER_FRACTION 4
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +72,7 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
       .WrapT(ogl::TextureWrap::ClampToBorder);
   };
 
-  auto size(ctx.g_buffer_size/6);
+  auto size(ctx.g_buffer_size/GBUFFER_FRACTION);
 
   create_texture(
     streak_buffer_tmp_, size.x(), size.y(),
@@ -171,7 +173,7 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
 
 void StreakEffect::process(RenderContext const& ctx, ogl::Texture const& threshold_buffer_) {
 
-  ctx.gl.Viewport(ctx.g_buffer_size.x()/6, ctx.g_buffer_size.y()/6);
+  ctx.gl.Viewport(ctx.g_buffer_size.x()/GBUFFER_FRACTION, ctx.g_buffer_size.y()/GBUFFER_FRACTION);
 
   streak_fbo_.Bind(ogl::Framebuffer::Target::Draw);
   const float DEC = 0.96;
@@ -204,21 +206,21 @@ void StreakEffect::process(RenderContext const& ctx, ogl::Texture const& thresho
   pass(step_dir*5,  streak_buffer_2_,   ogl::FramebufferColorAttachment::_0, streak_colors_3_);
   pass(step_dir*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_2, streak_colors_3_);
 
-  step_dir = math::vec2(-0.7*4.0/ctx.g_buffer_size.x(), -0.9*4.0/ctx.g_buffer_size.y());
-  pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
-  pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_3, streak_colors_3_);
+  // step_dir = math::vec2(-0.7*4.0/ctx.g_buffer_size.x(), -0.9*4.0/ctx.g_buffer_size.y());
+  // pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
+  // pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_3, streak_colors_3_);
 
-  step_dir = math::vec2(0.7*4.0/ctx.g_buffer_size.x(), -0.9*4.0/ctx.g_buffer_size.y());
-  pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
-  pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_4, streak_colors_3_);
+  // step_dir = math::vec2(0.7*4.0/ctx.g_buffer_size.x(), -0.9*4.0/ctx.g_buffer_size.y());
+  // pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
+  // pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_4, streak_colors_3_);
 
-  step_dir = math::vec2(-0.7*4.0/ctx.g_buffer_size.x(), 0.9*4.0/ctx.g_buffer_size.y());
-  pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
-  pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_5, streak_colors_3_);
+  // step_dir = math::vec2(-0.7*4.0/ctx.g_buffer_size.x(), 0.9*4.0/ctx.g_buffer_size.y());
+  // pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
+  // pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_5, streak_colors_3_);
 
-  step_dir = math::vec2(0.7*4.0/ctx.g_buffer_size.x(), 0.9*4.0/ctx.g_buffer_size.y());
-  pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
-  pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_6, streak_colors_3_);
+  // step_dir = math::vec2(0.7*4.0/ctx.g_buffer_size.x(), 0.9*4.0/ctx.g_buffer_size.y());
+  // pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
+  // pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_6, streak_colors_3_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -230,19 +232,20 @@ int StreakEffect::bind_buffers(int start, RenderContext const& ctx) {
   ogl::Texture::Active(start + 1);
   ctx.gl.Bind(ose::_2D(), streak_buffer_2_);
 
-  ogl::Texture::Active(start + 2);
-  ctx.gl.Bind(ose::_2D(), streak_buffer_3_);
+  // ogl::Texture::Active(start + 2);
+  // ctx.gl.Bind(ose::_2D(), streak_buffer_3_);
 
-  ogl::Texture::Active(start + 3);
-  ctx.gl.Bind(ose::_2D(), streak_buffer_4_);
+  // ogl::Texture::Active(start + 3);
+  // ctx.gl.Bind(ose::_2D(), streak_buffer_4_);
 
-  ogl::Texture::Active(start + 4);
-  ctx.gl.Bind(ose::_2D(), streak_buffer_5_);
+  // ogl::Texture::Active(start + 4);
+  // ctx.gl.Bind(ose::_2D(), streak_buffer_5_);
 
-  ogl::Texture::Active(start + 5);
-  ctx.gl.Bind(ose::_2D(), streak_buffer_6_);
+  // ogl::Texture::Active(start + 5);
+  // ctx.gl.Bind(ose::_2D(), streak_buffer_6_);
 
-  return start + 6;
+  return start + 2;
+  // return start + 6;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

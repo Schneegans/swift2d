@@ -11,6 +11,8 @@
 
 #include <swift2d/geometries/Quad.hpp>
 
+#define GBUFFER_FRACTION 4
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,14 +26,14 @@ LensFlareEffect::LensFlareEffect(RenderContext const& ctx)
     @include "version"
 
     in vec2 texcoords;
-	uniform sampler2D inputs[8];
+	uniform sampler2D inputs[4];
 
     layout (location = 0) out vec3 fragColor;
 
     void main(void) {
     vec3 color = vec3(0);
 
-	for (int i=0; i<8; ++i) {
+	for (int i=0; i<4; ++i) {
 		color += texture(inputs[i], texcoords).rgb;
 	}
 
@@ -92,7 +94,7 @@ LensFlareEffect::LensFlareEffect(RenderContext const& ctx)
   , g_buffer_light_(threshold_shader_.get_uniform<int>("g_buffer_light"))
   , ghosts_(ctx)
   , streaks_(ctx) {
-  
+
   auto create_texture = [&](
     ogl::Texture& tex, int width, int height,
     ogl::enums::PixelDataInternalFormat i_format,
@@ -108,7 +110,7 @@ LensFlareEffect::LensFlareEffect(RenderContext const& ctx)
     .WrapT(ogl::TextureWrap::ClampToBorder);
   };
 
-  auto size(ctx.g_buffer_size / 6);
+  auto size(ctx.g_buffer_size / GBUFFER_FRACTION);
 
   create_texture(
     buffer_, size.x(), size.y(),
@@ -145,10 +147,11 @@ void LensFlareEffect::process(RenderContext const& ctx) {
   start = streaks_.bind_buffers(start, ctx);
   start = ghosts_.bind_buffers(start, ctx);
 
-  std::vector<int> units = { 4, 5, 6, 7, 8, 9, 10, 11 };
-  
+  // std::vector<int> units = { 4, 5, 6, 7, 8, 9, 10, 11 };
+  std::vector<int> units = { 4, 5, 6, 7, 8 };
+
   fbo_.Bind(ogl::Framebuffer::Target::Draw);
-  
+
   mix_shader_.use(ctx);
   inputs_.Set(units);
 
@@ -170,7 +173,7 @@ void LensFlareEffect::generate_threshold_buffer(RenderContext const& ctx) {
 
   auto size(ctx.g_buffer_size);
 
-  ctx.gl.Viewport(size.x() / 6, size.y() / 6);
+  ctx.gl.Viewport(size.x() / GBUFFER_FRACTION, size.y() / GBUFFER_FRACTION);
 
   fbo_.Bind(oglplus::Framebuffer::Target::Draw);
   ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
@@ -178,7 +181,7 @@ void LensFlareEffect::generate_threshold_buffer(RenderContext const& ctx) {
   threshold_shader_.use(ctx);
   g_buffer_diffuse_.Set(0);
   g_buffer_light_.Set(1);
-  screen_size_.Set(size / 6);
+  screen_size_.Set(size / GBUFFER_FRACTION);
 
   Quad::get().draw(ctx);
 }

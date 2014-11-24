@@ -42,6 +42,7 @@ class SWIFT_DLL Scene {
   Float              VignetteCoverage;
 
   Float              DirtOpacity;
+  Float              GlowOpacity;
 
   String             ColorMapName;
   Float              ColorGradingIntensity;
