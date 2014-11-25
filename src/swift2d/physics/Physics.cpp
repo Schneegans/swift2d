@@ -118,10 +118,13 @@ void Physics::update(double time) {
         auto pos(math::get_translation(transform));
         auto scale(math::get_scale(transform));
         float mass(source->Density() * scale.x() * scale.y());
-        b2Vec2 dist(b2Vec2(pos.x(), pos.y()) - body_pos);
-        auto b(static_cast<DynamicBodyComponent*>(body->GetUserData()));
-        dist *= ((mass * body->GetMass() * b->GravityScale()) / (dist.LengthSquared() + 0.001));
-        body->ApplyForceToCenter(dist, true);
+        math::vec2 direction(pos - math::vec2(body_pos.x, body_pos.y));
+        float distance(math::get_length_squared(direction));
+        if (distance > 1.f) {
+          auto b(static_cast<DynamicBodyComponent*>(body->GetUserData()));
+          direction = direction * mass * b->GravityScale() / distance;
+          b->apply_global_force(direction);
+        }
       }
 
       for (auto const& shock: shock_waves_) {
