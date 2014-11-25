@@ -35,7 +35,6 @@ struct SWIFT_DLL SerializedTrailEmitter {
   math::vec2 Prev2Position;
   math::vec2 Prev3Position;
   bool       SpawnNewPoint;
-  TrailEmitterComponent const* Self;
 };
 
 // -----------------------------------------------------------------------------

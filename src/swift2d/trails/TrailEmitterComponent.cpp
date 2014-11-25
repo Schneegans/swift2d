@@ -99,7 +99,6 @@ SerializedTrailEmitter TrailEmitterComponent::make_serialized_emitter() const {
   result.Prev2Position = prev_2_position_;
   result.Prev3Position = prev_3_position_;
   result.SpawnNewPoint = spawn_new_point_;
-  result.Self = this;
 
   spawn_new_point_ = false;
 
