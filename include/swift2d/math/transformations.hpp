@@ -49,6 +49,8 @@ SWIFT_DLL float get_rotation(mat3 const& mat);
 SWIFT_DLL vec2  get_direction(mat3 const& mat);
 
 SWIFT_DLL float get_rotation(vec2 const& vec);
+SWIFT_DLL float get_length(vec2 const& vec);
+SWIFT_DLL float get_length_squared(vec2 const& vec);
 
 SWIFT_DLL void set_translation(mat3& mat, vec2 const& val);
 SWIFT_DLL void set_translation(mat3& mat, float x, float y);
