@@ -21,35 +21,15 @@ namespace swift {
 
 Texture3D::Texture3D()
   : Texture()
-  , TilesX(0)
-  , TilesY(0) {
-
-  TilesX.on_change().connect([&](unsigned){
-    needs_update_ = true;
-    return true;
-  });
-  TilesY.on_change().connect([&](unsigned){
-    needs_update_ = true;
-    return true;
-  });
-}
+  , tiles_x_(0)
+  , tiles_y_(0) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 Texture3D::Texture3D(std::string const& file_name, unsigned tiles_x, unsigned tiles_y)
   : Texture(file_name)
-  , TilesX(tiles_x)
-  , TilesY(tiles_y) {
-
-  TilesX.on_change().connect([&](unsigned){
-    needs_update_ = true;
-    return true;
-  });
-  TilesY.on_change().connect([&](unsigned){
-    needs_update_ = true;
-    return true;
-  });
-}
+  , tiles_x_(tiles_x)
+  , tiles_y_(tiles_y) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -72,8 +52,8 @@ void Texture3D::bind(RenderContext const& ctx, unsigned location) const {
 
 void Texture3D::accept(SavableObjectVisitor& visitor) {
   Texture::accept(visitor);
-  visitor.add_member("TilesX", TilesX);
-  visitor.add_member("TilesY", TilesY);
+  visitor.add_member("TilesX", tiles_x_);
+  visitor.add_member("TilesY", tiles_y_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,15 +100,14 @@ void Texture3D::upload_to(RenderContext const& ctx, bool create_mip_maps) const 
   } else {
 
     loading_ = false;
-    needs_update_ = false;
 
     if (texture_) {
       delete texture_;
     }
 
-    int tile_width  (width_  / TilesX());
-    int tile_height (height_ / TilesY());
-    int tile_count  (TilesX() * TilesY());
+    int tile_width  (width_  / tiles_x_);
+    int tile_height (height_ / tiles_y_);
+    int tile_count  (tiles_x_ * tiles_y_);
 
     auto internal_format(channels_ > 3 ? ogl::InternalFormat::RGBA : ogl::InternalFormat::RGB);
     auto format(channels_ > 3 ? ogl::Format::RGBA : ogl::Format::RGB);
@@ -145,10 +124,10 @@ void Texture3D::upload_to(RenderContext const& ctx, bool create_mip_maps) const 
     }
 
 
-    for (int tile_y(0); tile_y<TilesY(); ++tile_y) {
-      for (int tile_x(0); tile_x<TilesX(); ++tile_x) {
+    for (int tile_y(0); tile_y<tiles_y_; ++tile_y) {
+      for (int tile_x(0); tile_x<tiles_x_; ++tile_x) {
 
-        int tile_number(tile_y*TilesX() + tile_x);
+        int tile_number(tile_y*tiles_x_ + tile_x);
 
         std::vector<unsigned char> data(tile_width*tile_height*channels_);
 
@@ -186,10 +165,12 @@ void Texture3D::upload_to(RenderContext const& ctx, bool create_mip_maps) const 
        .WrapT(ose::ClampToEdge())
        .WrapR(ose::ClampToEdge());
 
-    if (FileName() != "") {
-      free_texture_data();
+    if (layers_.size() > 0) {
+      for (auto& layer: layers_) {
+        layer.free();
+      }
     } else {
-      delete data_;
+      delete[] data_;
       data_ = nullptr;
     }
   }

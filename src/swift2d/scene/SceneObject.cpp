@@ -235,8 +235,8 @@ void SceneObject::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Depth",     Depth);
   visitor.add_member("Label",     Label);
   visitor.add_member("Enabled",   Enabled);
-  visitor.add_array("Components", components_);
-  visitor.add_array("Objects",    objects_);
+  visitor.add_ptr_array("Components", components_);
+  visitor.add_ptr_array("Objects",    objects_);
 
   for (auto& ptr: objects_) {
     ptr->Parent = this;
