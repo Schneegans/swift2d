@@ -222,8 +222,10 @@ void SceneObject::update_world_transform() {
     if (Parent.get()) {
       Parent.get()->update_world_transform();
       WorldTransform = Parent.get()->WorldTransform.get() * Transform.get();
+      WorldDepth     = Parent.get()->WorldDepth.get() + Depth.get();
     } else {
       WorldTransform = Transform.get();
+      WorldDepth     = Depth.get();
     }
   }
 }

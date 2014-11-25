@@ -53,6 +53,17 @@ void TrailSystemComponent::add_emitter(TrailEmitterComponent const* emitter) {
 
 void TrailSystemComponent::remove_emitter(TrailEmitterComponent const* emitter) {
   emitters_.erase(emitter);
+
+  erased_emitters_.push_back(emitter->make_serialized_emitter());
+
+  erased_emitters_.back().TimeSincePrev2Spawn = erased_emitters_.back().TimeSincePrev1Spawn;
+  erased_emitters_.back().TimeSincePrev1Spawn = erased_emitters_.back().TimeSinceLastSpawn;
+  erased_emitters_.back().TimeSinceLastSpawn = 0;
+  erased_emitters_.back().Prev3Position = erased_emitters_.back().Prev2Position;
+  erased_emitters_.back().Prev2Position = erased_emitters_.back().Prev1Position;
+  erased_emitters_.back().Prev1Position = erased_emitters_.back().LastPosition;
+  erased_emitters_.back().LastPosition = erased_emitters_.back().Position;
+  erased_emitters_.back().SpawnNewPoint = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -74,11 +85,17 @@ void TrailSystemComponent::serialize(SerializedScenePtr& scene) const {
   s.UseGlobalTexCoords = UseGlobalTexCoords();
   s.BlendAdd = BlendAdd();
   s.System = trail_system_;
-  s.Emitters.reserve(emitters_.size());
+  s.Emitters.reserve(emitters_.size() + erased_emitters_.size());
 
   for (auto const& emitter: emitters_) {
     s.Emitters.push_back(emitter->make_serialized_emitter());
   }
+
+  for (auto const& emitter: erased_emitters_) {
+    s.Emitters.push_back(emitter);
+  }
+
+  erased_emitters_.clear();
 
   scene->renderers().trail_systems.add(std::move(s));
 }

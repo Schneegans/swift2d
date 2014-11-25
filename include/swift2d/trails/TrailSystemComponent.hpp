@@ -104,6 +104,7 @@ class SWIFT_DLL TrailSystemComponent : public Component,
   TrailSystemPtr trail_system_;
 
   std::unordered_set<TrailEmitterComponent const*> emitters_;
+  mutable std::vector<SerializedTrailEmitter> erased_emitters_;
 };
 
 // -----------------------------------------------------------------------------

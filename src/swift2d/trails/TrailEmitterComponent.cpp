@@ -46,7 +46,7 @@ void TrailEmitterComponent::update(double time) {
   TransformableComponent::update(time);
 
   //check if distance and angle are large enough to spawn new trail points
-  position_ = (WorldTransform() * math::vec3(0.0, 0.0, 1)).xy();
+  position_ = get_world_position();
 
   auto p1_to_p2 = prev_1_position_ - last_position_;
   auto p1_to_p0 = position_ - last_position_;
