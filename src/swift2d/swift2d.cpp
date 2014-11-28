@@ -83,6 +83,7 @@ namespace {
       Object::init<SpriteParticleSystemComponent>();
       Object::init<StaticBodyComponent>();
       Object::init<Texture>();
+      Object::init<Texture::Layer>();
       Object::init<TimedDeleteBehavior>();
       Object::init<TrailEmitterComponent>();
       Object::init<TrailSystemComponent>();

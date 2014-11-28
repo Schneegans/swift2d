@@ -46,7 +46,7 @@ void TrailEmitterComponent::update(double time) {
   TransformableComponent::update(time);
 
   //check if distance and angle are large enough to spawn new trail points
-  position_ = (WorldTransform() * math::vec3(0.0, 0.0, 1)).xy();
+  position_ = get_world_position();
 
   auto p1_to_p2 = prev_1_position_ - last_position_;
   auto p1_to_p0 = position_ - last_position_;
@@ -99,7 +99,6 @@ SerializedTrailEmitter TrailEmitterComponent::make_serialized_emitter() const {
   result.Prev2Position = prev_2_position_;
   result.Prev3Position = prev_3_position_;
   result.SpawnNewPoint = spawn_new_point_;
-  result.Self = this;
 
   spawn_new_point_ = false;
 

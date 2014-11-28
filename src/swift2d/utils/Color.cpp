@@ -23,33 +23,27 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Color::Color()
-  : r_(0.0f)
-  , g_(0.0f)
-  , b_(0.0f)
-  , a_(1.0f) {}
+  : val_(0, 0, 0, 1) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 Color::Color(float r, float g, float b, float a)
-  : r_(r)
-  , g_(g)
-  , b_(b)
-  , a_(a) {}
+  : val_(r, g, b, a) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 float Color::h() const {
 
   if (s() > 0.0f) {
-    float maxi = std::max(std::max(r_, g_), b_);
-    float mini = std::min(std::min(r_, g_), b_);
+    float maxi = std::max(std::max(val_[0], val_[1]), val_[2]);
+    float mini = std::min(std::min(val_[0], val_[1]), val_[2]);
 
-    if (maxi == r_)
-      return fmod(60.f * ((g_ - b_) / (maxi - mini)) + 360.f, 360.f);
-    else if (maxi == g_)
-      return fmod(60.f * (2 + (b_ - r_) / (maxi - mini)) + 360.f, 360.f);
+    if (maxi == val_[0])
+      return fmod(60.f * ((val_[1] - val_[2]) / (maxi - mini)) + 360.f, 360.f);
+    else if (maxi == val_[1])
+      return fmod(60.f * (2 + (val_[2] - val_[0]) / (maxi - mini)) + 360.f, 360.f);
     else
-      return fmod(60.f * (4 + (r_ - g_) / (maxi - mini)) + 360.f, 360.f);
+      return fmod(60.f * (4 + (val_[0] - val_[1]) / (maxi - mini)) + 360.f, 360.f);
   } else
     return 0.0f;
 }
@@ -60,25 +54,25 @@ float Color::s() const {
   if (v() == 0)
     return 0;
   else
-    return ((v() - std::min(std::min(r_, g_), b_)) / v());
+    return ((v() - std::min(std::min(val_[0], val_[1]), val_[2])) / v());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Color::r(float red) {
-  r_ = math::clamp(red, 0.0f, 1.0f);
+  val_[0] = math::clamp(red, 0.0f, 1.0f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Color::g(float green) {
-  g_ = math::clamp(green, 0.0f, 1.0f);
+  val_[1] = math::clamp(green, 0.0f, 1.0f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Color::b(float blue) {
-  b_ = math::clamp(blue, 0.0f, 1.0f);
+  val_[2] = math::clamp(blue, 0.0f, 1.0f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -102,7 +96,7 @@ void Color::v(float value) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Color::a(float alpha) {
-  a_ = math::clamp(alpha, 0.0f, 1.0f);
+  val_[3] = math::clamp(alpha, 0.0f, 1.0f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -110,9 +104,9 @@ void Color::a(float alpha) {
 void Color::set_hsv(float hue, float saturation, float value) {
 
   if (saturation == 0) {
-    r_ = value;
-    g_ = value;
-    b_ = value;
+    val_[0] = value;
+    val_[1] = value;
+    val_[2] = value;
     return;
   }
   hue = fmod(hue, 360);
@@ -122,34 +116,34 @@ void Color::set_hsv(float hue, float saturation, float value) {
 
   switch (i) {
     case 0:
-      r_ = value;
-      g_ = value * (1 - saturation * (1 - f));
-      b_ = value * (1 - saturation);
+      val_[0] = value;
+      val_[1] = value * (1 - saturation * (1 - f));
+      val_[2] = value * (1 - saturation);
       break;
     case 1:
-      r_ = value * (1 - saturation * f);
-      g_ = value;
-      b_ = value * (1 - saturation);
+      val_[0] = value * (1 - saturation * f);
+      val_[1] = value;
+      val_[2] = value * (1 - saturation);
       break;
     case 2:
-      r_ = value * (1 - saturation);
-      g_ = value;
-      b_ = value * (1 - saturation * (1 - f));
+      val_[0] = value * (1 - saturation);
+      val_[1] = value;
+      val_[2] = value * (1 - saturation * (1 - f));
       break;
     case 3:
-      r_ = value * (1 - saturation);
-      g_ = value * (1 - saturation * f);
-      b_ = value;
+      val_[0] = value * (1 - saturation);
+      val_[1] = value * (1 - saturation * f);
+      val_[2] = value;
       break;
     case 4:
-      r_ = value * (1 - saturation * (1 - f));
-      g_ = value * (1 - saturation);
-      b_ = value;
+      val_[0] = value * (1 - saturation * (1 - f));
+      val_[1] = value * (1 - saturation);
+      val_[2] = value;
       break;
     default:
-      r_ = value;
-      g_ = value * (1 - saturation);
-      b_ = value * (1 - saturation * f);
+      val_[0] = value;
+      val_[1] = value * (1 - saturation);
+      val_[2] = value * (1 - saturation * f);
       break;
   }
 }
@@ -180,13 +174,13 @@ Color Color::brightened() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 math::vec3 Color::vec3() const {
-  return math::vec3(r_, g_, b_);
+  return val_.xyz();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-math::vec4 Color::vec4() const {
-  return math::vec4(r_, g_, b_, a_);
+math::vec4 const& Color::vec4() const {
+  return val_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -199,6 +193,18 @@ Color Color::random() {
   result.s(result.s() + 0.5);
   result.v(result.v() + 0.5);
   return result;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+float Color::operator[](unsigned rhs) const {
+  return val_[rhs];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+float& Color::operator[](unsigned rhs) {
+  return val_[rhs];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

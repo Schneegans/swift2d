@@ -72,8 +72,8 @@ ColorMap::ColorMap(
   , Depth(depth)
   , update_data_(true)
 {
-  TilesX = 1;
-  TilesY = depth;
+  tiles_x_ = 1;
+  tiles_y_ = depth;
 
   set_width(width);
   set_height(height * depth);
@@ -136,12 +136,11 @@ void ColorMap::upload_to(RenderContext const& ctx) const {
 ////////////////////////////////////////////////////////////////////////////////
 
 void ColorMap::update_data() const {
-  std::cout << "update_data" << std::endl;
   set_data(create_data(
-           FrontBottomLeft(), FrontTopLeft(), FrontTopRight(), FrontBottomRight(),
-           BackBottomLeft(), BackTopLeft(), BackTopRight(), BackBottomRight(),
-           Width(), Height(), Depth()
-           ));
+    FrontBottomLeft(), FrontTopLeft(), FrontTopRight(), FrontBottomRight(),
+    BackBottomLeft(), BackTopLeft(), BackTopRight(), BackBottomRight(),
+    Width(), Height(), Depth()
+  ));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

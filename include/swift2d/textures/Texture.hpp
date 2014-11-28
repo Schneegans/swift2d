@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/objects/SavableObjectVisitor.hpp>
 #include <swift2d/graphics/RenderContext.hpp>
+#include <swift2d/utils/Color.hpp>
 #include <swift2d/properties.hpp>
 
 #include <memory>
@@ -35,18 +36,42 @@ class SWIFT_DLL Texture : public SavableObject {
  // ----------------------------------------------------------- public interface
  public:
 
+  struct Layer : public SavableObject {
+
+    Layer(std::string const& file = "",
+          Color const& colorize = Color(1, 1, 1, 1));
+
+    std::string FileName;
+    Color       Colorize;
+
+    void load();
+    void free();
+
+    virtual std::string get_type_name() const {  return get_type_name_static(); }
+    static  std::string get_type_name_static() { return "TextureLayer"; }
+
+    virtual void accept(SavableObjectVisitor& visitor);
+
+
+    int width_, height_, channels_;
+    unsigned char* data_;
+  };
+
   // ---------------------------------------------------------------- properties
-  String FileName;
   Bool AsyncLoading;
 
   // ---------------------------------------------------- construction interface
-  template <typename... Args>
-  static TexturePtr create(Args&& ... a) {
-    return std::make_shared<Texture>(a...);
+  static TexturePtr create(std::string const& file) {
+    return std::make_shared<Texture>(file);
+  }
+
+  static TexturePtr create(std::vector<Layer> const& layers) {
+    return std::make_shared<Texture>(layers);
   }
 
   Texture();
   Texture(std::string const& file_name);
+  Texture(std::vector<Layer> const& layers);
 
   virtual ~Texture();
 
@@ -56,7 +81,6 @@ class SWIFT_DLL Texture : public SavableObject {
 
   // Binds the texture on the given context to the given location.
   virtual void bind(RenderContext const& context, unsigned location) const;
-
   virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -65,15 +89,12 @@ class SWIFT_DLL Texture : public SavableObject {
   virtual void upload_to(RenderContext const& context) const;
 
   void load_texture_data() const;
-  void free_texture_data() const;
 
-  mutable oglplus::Texture* texture_;
-
-  mutable bool needs_update_, loading_;
-
+  mutable oglplus::Texture*   texture_;
+  mutable bool                loading_;
+  mutable std::vector<Layer>  layers_;
+  mutable unsigned char*      data_;
   mutable int width_, height_, channels_;
-  mutable unsigned char* data_;
-
 };
 
 }

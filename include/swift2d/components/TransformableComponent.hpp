@@ -39,6 +39,7 @@ class SWIFT_DLL TransformableComponent : public Component {
 
   // ------------------------------------------------------------ public methods
   virtual void update(double time);
+  virtual void update_world_transform();
 
   // -------------------------------------------------- transformation interface
   virtual void scale     (math::vec2 const& scale);

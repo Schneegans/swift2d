@@ -32,10 +32,6 @@ class SWIFT_DLL Texture3D : public Texture {
  // ----------------------------------------------------------- public interface
  public:
 
-  // ---------------------------------------------------------------- properties
-  UInt32 TilesX;
-  UInt32 TilesY;
-
   // ---------------------------------------------------- construction interface
   template <typename... Args>
   static Texture3DPtr create(Args&& ... a) {
@@ -55,8 +51,7 @@ class SWIFT_DLL Texture3D : public Texture {
   virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
-
+ // -------------------------------------------------------- protected interface
  protected:
 
   void set_width(int width) const;
@@ -66,6 +61,8 @@ class SWIFT_DLL Texture3D : public Texture {
 
   virtual void upload_to(RenderContext const& context, bool create_mip_maps = true) const;
 
+  math::uint32 tiles_x_;
+  math::uint32 tiles_y_;
 };
 
 }

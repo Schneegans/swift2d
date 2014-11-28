@@ -48,7 +48,7 @@ class SWIFT_DLL SavableObjectVisitor {
       if (child) {
         SavableObjectVisitor sub_visitor;
         sub_visitor.read_json(child.get());
-        target = *std::dynamic_pointer_cast<T>(sub_visitor.to_object());
+        target = *std::static_pointer_cast<T>(sub_visitor.to_object());
       }
 
     } else {
@@ -66,7 +66,7 @@ class SWIFT_DLL SavableObjectVisitor {
       if (child) {
         SavableObjectVisitor sub_visitor;
         sub_visitor.read_json(child.get());
-        target = std::dynamic_pointer_cast<typename T::element_type>(sub_visitor.to_object());
+        target = std::static_pointer_cast<typename T::element_type>(sub_visitor.to_object());
       }
 
     } else {
@@ -108,6 +108,31 @@ class SWIFT_DLL SavableObjectVisitor {
 
   template <class T>
   void add_array(std::string const& name, T& container) {
+    if (loaded_object_raw_) {
+      auto array(json_.get_child_optional(name));
+      if (array) {
+        for (auto const& elem : array.get()) {
+          SavableObjectVisitor sub_visitor;
+          sub_visitor.read_json(elem.second);
+          std::insert_iterator<T> inserter(container, container.end());
+          inserter = *std::static_pointer_cast<typename T::value_type>(sub_visitor.to_object());
+        }
+      }
+    } else {
+      if (container.size() > 0) {
+        boost::property_tree::ptree targets;
+        for (auto& elem: container) {
+          SavableObjectVisitor visitor(elem.get_type_name());
+          elem.accept(visitor);
+          targets.push_back(std::make_pair("", visitor.to_json()));
+        }
+        json_.add_child(name, targets);
+      }
+    }
+  }
+
+  template <class T>
+  void add_ptr_array(std::string const& name, T& container) {
     if (loaded_object_raw_) {
       auto array(json_.get_child_optional(name));
       if (array) {

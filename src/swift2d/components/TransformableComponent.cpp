@@ -15,6 +15,12 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 void TransformableComponent::update(double time) {
+  update_world_transform();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void TransformableComponent::update_world_transform() {
   if (get_user()) {
     WorldTransform = get_user()->WorldTransform.get() * Transform.get();
   } else {

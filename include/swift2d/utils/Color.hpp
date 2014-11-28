@@ -37,13 +37,13 @@ class SWIFT_DLL Color {
 
   // ------------------------------------------------------------ public methods
   // Returns a single Color value.
-  inline float r() const { return r_; }
-  inline float g() const { return g_; }
-  inline float b() const { return b_; }
+  float r() const { return val_[0]; }
+  float g() const { return val_[1]; }
+  float b() const { return val_[2]; }
   float h() const;
   float s() const;
-  inline float v() const { return std::max(std::max(r_, g_), b_); }
-  inline float a() const { return a_; }
+  float v() const { return std::max(std::max(val_[0], val_[1]), val_[2]); }
+  float a() const { return val_[3]; }
 
   // Sets a single Color value.
   void r(float red);
@@ -60,15 +60,18 @@ class SWIFT_DLL Color {
   // Returns an inverted copy of the Color.
   Color brightened() const;
 
-  math::vec3 vec3() const;
-  math::vec4 vec4() const;
+  math::vec3        vec3() const;
+  math::vec4 const& vec4() const;
+
+  float operator[](unsigned rhs) const;
+  float& operator[](unsigned rhs);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   void set_hsv(float hue, float saturation, float value);
 
-  float r_, g_, b_, a_;
+  math::vec4 val_;
 };
 
 // ------------------------------------------------------------------- operators
@@ -90,6 +93,7 @@ SWIFT_DLL Color operator/(Color const& lhs, float rhs);
 
 SWIFT_DLL std::ostream& operator<<(std::ostream& os, Color const& color);
 SWIFT_DLL std::istream& operator>>(std::istream& is, Color& color);
+
 
 typedef Property<Color> ColorProperty;
 
