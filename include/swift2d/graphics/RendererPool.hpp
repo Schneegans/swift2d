@@ -25,6 +25,7 @@
 #include <swift2d/gui/GuiComponent.hpp>
 #include <swift2d/gui/FullscreenGuiSpriteComponent.hpp>
 #include <swift2d/gui/AnimatedGuiSpriteComponent.hpp>
+#include <swift2d/gui/TangiblePointerComponent.hpp>
 
 #include <swift2d/trails/TrailSystemComponent.hpp>
 
@@ -63,6 +64,7 @@ class SWIFT_DLL RendererPool {
   GuiComponent::                  Renderer gui_elements;
   FullscreenGuiSpriteComponent::  Renderer gui_sprite_elements;
   AnimatedGuiSpriteComponent::    Renderer animated_gui_sprite_elements;
+  TangiblePointerComponent::      Renderer tangible_pointers;
 
   // ---------------------------------------------------- construction interface
   RendererPool();

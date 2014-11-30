@@ -36,7 +36,7 @@ class SWIFT_DLL TextureDatabase : public Database<Texture>,
       return TextureDatabase::get().lookup(name);
     }
 
-    auto tex = Texture::create(Paths::get().resource("images", name));
+    auto tex = Texture::create(name);
     TextureDatabase::get().add(name, tex);
 
     return tex;
