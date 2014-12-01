@@ -43,6 +43,7 @@ class SWIFT_DLL DynamicBodyComponent : public Component {
   Float                   LinearDamping;
   Float                   AngularDamping;
   Float                   GravityScale;
+  Bool                    FixedRotation;
 
   Int16                   Group;
   UInt16                  Mask;

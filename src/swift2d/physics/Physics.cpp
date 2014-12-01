@@ -177,6 +177,7 @@ b2Body* Physics::add(DynamicBodyComponent* body) {
 
   b2Body* result = world_->CreateBody(&bodyDef);
 
+  result->SetFixedRotation(body->FixedRotation());
   result->SetUserData(body);
   result->CreateFixture(&fixtureDef);
   result->SetLinearDamping(body->LinearDamping());
