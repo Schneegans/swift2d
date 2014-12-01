@@ -33,7 +33,7 @@ class SWIFT_DLL GravitySourceComponent : public TransformableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float Density;
+  Float Mass;
 
   // ---------------------------------------------------- construction interface
   GravitySourceComponent();

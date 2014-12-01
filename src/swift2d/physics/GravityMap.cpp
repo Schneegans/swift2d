@@ -93,7 +93,7 @@ void GravityMap::process(ConstSerializedScenePtr const& scene, RenderContext con
     pos = (ctx.projection_matrix * math::vec3(pos.x(), pos.y(), 1.0)).xy();
 
     auto scale(math::get_scale(source->WorldTransform()));
-    sources.push_back(math::vec3(pos.x(), pos.y(), source->Density() * scale.x() * scale.y()));
+    sources.push_back(math::vec3(pos.x(), pos.y(), source->Mass()));
   }
 
   gravity_shader_.use(ctx);

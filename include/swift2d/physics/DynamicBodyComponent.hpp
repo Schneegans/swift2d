@@ -37,7 +37,7 @@ class SWIFT_DLL DynamicBodyComponent : public Component {
 
   // ---------------------------------------------------------------- properties
   CollisionShapeProperty  Shape;
-  Float                   Density;
+  Float                   Mass;
   Float                   Friction;
   Float                   Restitution;
   Float                   LinearDamping;
