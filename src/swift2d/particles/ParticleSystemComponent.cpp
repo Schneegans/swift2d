@@ -45,20 +45,14 @@ void ParticleSystemComponent::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystemComponent::add_emitter(ParticleEmitterComponent const* emitter) {
-  emitters_.insert(emitter);
+void ParticleSystemComponent::spawn(math::vec3 const& pos_rot, unsigned count) {
+  particle_system_->spawn(pos_rot, count);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystemComponent::remove_emitter(ParticleEmitterComponent const* emitter) {
-  emitters_.erase(emitter);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void ParticleSystemComponent::spawn_once(SerializedEmitter const& emitter) {
-  once_emitters_.push_back(emitter);
+void ParticleSystemComponent::spawn(std::vector<math::vec3> const& pos_rots) {
+  particle_system_->spawn(pos_rots);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,16 +77,6 @@ void ParticleSystemComponent::serialize(ParticleSystemComponent::Serialized& ser
   serialized.PositionVariance = PositionVariance();
 
   serialized.System = particle_system_;
-  serialized.Emitters.resize(emitters_.size() + once_emitters_.size());
-
-  int i(0);
-  for (auto const& emitter: emitters_) {
-    serialized.Emitters[i++] = emitter->make_serialized_emitter();
-  }
-  for (auto const& emitter: once_emitters_) {
-    serialized.Emitters[i++] = emitter;
-  }
-  once_emitters_.clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

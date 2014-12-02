@@ -12,8 +12,8 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
 #include <swift2d/components/DepthComponent.hpp>
-#include <swift2d/particles/ParticleEmitterComponent.hpp>
 #include <swift2d/textures/Texture.hpp>
+#include <swift2d/utils/Queue.hpp>
 
 #include <unordered_set>
 
@@ -25,7 +25,7 @@ namespace swift {
 
 // shared pointer type definition ----------------------------------------------
 class ParticleSystem;
-typedef std::shared_ptr<ParticleSystem>       ParticleSystemPtr;
+typedef std::shared_ptr<ParticleSystem> ParticleSystemPtr;
 
 class ParticleSystemComponent;
 typedef std::shared_ptr<ParticleSystemComponent>       ParticleSystemComponentPtr;
@@ -56,7 +56,6 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
     float RotationVariance;
     float PositionVariance;
 
-    std::vector<SerializedEmitter> Emitters;
     ParticleSystemPtr System;
   };
 
@@ -82,9 +81,8 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
   ParticleSystemComponent();
 
   // ------------------------------------------------------------ public methods
-  void add_emitter(ParticleEmitterComponent const* emitter);
-  void remove_emitter(ParticleEmitterComponent const* emitter);
-  void spawn_once(SerializedEmitter const& emitter);
+  void spawn(math::vec3 const& pos_rot, unsigned count = 1);
+  void spawn(std::vector<math::vec3> const& pos_rots);
 
   virtual void update(double time);
   virtual void serialize(ParticleSystemComponent::Serialized& serialized) const;
@@ -94,10 +92,6 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
  // ---------------------------------------------------------- private interface
  private:
   ParticleSystemPtr particle_system_;
-
-  std::unordered_set<ParticleEmitterComponent const*> emitters_;
-  mutable std::vector<SerializedEmitter>              once_emitters_;
-
 };
 
 // -----------------------------------------------------------------------------

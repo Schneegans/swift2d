@@ -14,26 +14,32 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 ParticleEmitterComponent::ParticleEmitterComponent()
-  : Density (1.f) {}
+  : Density (1.f)
+  , particles_to_spawn_(0.f) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ParticleEmitterComponent::update(double time) {
+
+  TransformableComponent::update(time);
+
+  if (ParticleSystem) {
+    particles_to_spawn_ += time * Density();
+    auto pos(math::get_translation(WorldTransform()));
+    auto rot(math::get_rotation(WorldTransform()));
+
+    while (particles_to_spawn_ > 1.f) {
+      --particles_to_spawn_;
+      ParticleSystem->spawn(math::vec3(pos.x(), pos.y(), rot));
+    }
+  }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void ParticleEmitterComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
   visitor.add_member("Density", Density);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-SerializedEmitter ParticleEmitterComponent::make_serialized_emitter() const {
-  SerializedEmitter result;
-  auto pos(math::get_translation(WorldTransform()));
-  auto rot(math::get_rotation(WorldTransform()));
-  result.Density = Density();
-  result.PosRot = math::vec3(pos.x(), pos.y(), rot);
-  result.Self = this;
-
-  return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

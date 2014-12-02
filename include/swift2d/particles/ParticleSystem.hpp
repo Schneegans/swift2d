@@ -12,7 +12,6 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/RenderContext.hpp>
 #include <swift2d/particles/ParticleSystemComponent.hpp>
-#include <swift2d/particles/ParticleEmitterComponent.hpp>
 #include <swift2d/events/Timer.hpp>
 
 #include <unordered_map>
@@ -49,7 +48,11 @@ class ParticleSystem {
   // ------------------------------------------------------------ public methods
   void set_max_count(int max_count);
 
-  int update_particles(ParticleSystemComponent::Serialized const& system,
+  void spawn(math::vec3 const& pos_rot, unsigned count = 1);
+  void spawn(std::vector<math::vec3> const& pos_rots);
+
+  int update_particles(
+    ParticleSystemComponent::Serialized const& system,
     RenderContext const& context);
 
   void draw_particles(RenderContext const& context);
@@ -70,7 +73,8 @@ class ParticleSystem {
 
   ogl::Query* query_;
 
-  std::unordered_map<ParticleEmitterComponent const*, float> particles_to_spawn_;
+  Queue<math::vec3> new_particles_;
+
   bool   ping_;
   int    update_max_count_;
   int    count_;

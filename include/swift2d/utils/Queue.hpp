@@ -37,9 +37,18 @@ class SWIFT_DLL Queue {
     return queue_.size();
   }
 
-  void push(T const& val) {
+  void push(T const& val, unsigned count = 1) {
     std::unique_lock<std::mutex> lock(mutex_);
-    queue_.push(val);
+    for (int i(0); i<count; ++i) {
+      queue_.push(val);
+    }
+  }
+
+  void push(std::vector<T> const& val) {
+    std::unique_lock<std::mutex> lock(mutex_);
+    for (auto const& t:val) {
+      queue_.push(t);
+    }
   }
 
   T pop() {
@@ -53,7 +62,7 @@ class SWIFT_DLL Queue {
  // ---------------------------------------------------------- private interface
  private:
   std::queue<T> queue_;
-  std::mutex mutex_;
+  mutable std::mutex mutex_;
 };
 
 // -----------------------------------------------------------------------------
