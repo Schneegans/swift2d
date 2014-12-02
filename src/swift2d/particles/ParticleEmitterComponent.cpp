@@ -21,16 +21,24 @@ ParticleEmitterComponent::ParticleEmitterComponent()
 
 void ParticleEmitterComponent::update(double time) {
 
+  auto last_spawn_position = math::get_translation(WorldTransform());
+
   TransformableComponent::update(time);
 
   if (ParticleSystem) {
     particles_to_spawn_ += time * Density();
-    auto pos(math::get_translation(WorldTransform()));
-    auto rot(math::get_rotation(WorldTransform()));
 
-    while (particles_to_spawn_ > 1.f) {
-      --particles_to_spawn_;
-      ParticleSystem->spawn(math::vec3(pos.x(), pos.y(), rot));
+    if (particles_to_spawn_ > 1.f) {
+      auto pos(math::get_translation(WorldTransform()));
+      auto rot(math::get_rotation(WorldTransform()));
+
+      int count = particles_to_spawn_;
+      particles_to_spawn_ = particles_to_spawn_ - count;
+
+      for (int i(0); i<count; ++i) {
+        auto p = pos + 1.f*i/count*(last_spawn_position-pos);
+        ParticleSystem->spawn(math::vec3(p.x(), p.y(), rot));
+      }
     }
   }
 }
