@@ -37,9 +37,11 @@ class Property {
   virtual ~Property() {}
 
   virtual Signal<T> const& on_change() const { return on_change_; }
+  virtual Signal<T> const& before_change() const { return before_change_; }
 
   virtual void set(T const& value) {
     if (value != value_) {
+      before_change_.emit(value_);
       value_ = value;
       on_change_.emit(value_);
     }
@@ -69,6 +71,7 @@ class Property {
 
   virtual void disconnect_auditors() {
     on_change_.disconnect_all();
+    before_change_.disconnect_all();
   }
 
   virtual Property<T>& operator=(Property<T> const& rhs) {
@@ -99,6 +102,7 @@ class Property {
 
   T value_;
   Signal<T> on_change_;
+  Signal<T> before_change_;
 
   Property<T> const* connection_;
   int connection_id_;

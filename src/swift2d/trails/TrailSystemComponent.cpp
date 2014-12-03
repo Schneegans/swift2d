@@ -45,6 +45,12 @@ void TrailSystemComponent::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void TrailSystemComponent::spawn(SerializedTrailEmitter const& emitter) {
+  trail_system_->spawn(emitter);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void TrailSystemComponent::add_emitter(TrailEmitterComponent const* emitter) {
   emitters_.insert(emitter);
 }
@@ -53,17 +59,6 @@ void TrailSystemComponent::add_emitter(TrailEmitterComponent const* emitter) {
 
 void TrailSystemComponent::remove_emitter(TrailEmitterComponent const* emitter) {
   emitters_.erase(emitter);
-
-  erased_emitters_.push_back(emitter->make_serialized_emitter());
-
-  erased_emitters_.back().TimeSincePrev2Spawn = erased_emitters_.back().TimeSincePrev1Spawn;
-  erased_emitters_.back().TimeSincePrev1Spawn = erased_emitters_.back().TimeSinceLastSpawn;
-  erased_emitters_.back().TimeSinceLastSpawn = 0;
-  erased_emitters_.back().Prev3Position = erased_emitters_.back().Prev2Position;
-  erased_emitters_.back().Prev2Position = erased_emitters_.back().Prev1Position;
-  erased_emitters_.back().Prev1Position = erased_emitters_.back().LastPosition;
-  erased_emitters_.back().LastPosition = erased_emitters_.back().Position;
-  erased_emitters_.back().SpawnNewPoint = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -85,17 +80,11 @@ void TrailSystemComponent::serialize(SerializedScenePtr& scene) const {
   s.UseGlobalTexCoords = UseGlobalTexCoords();
   s.BlendAdd = BlendAdd();
   s.System = trail_system_;
-  s.Emitters.reserve(emitters_.size() + erased_emitters_.size());
+  s.Emitters.reserve(emitters_.size());
 
   for (auto const& emitter: emitters_) {
-    s.Emitters.push_back(emitter->make_serialized_emitter());
+    s.Emitters.push_back(emitter->serialize());
   }
-
-  for (auto const& emitter: erased_emitters_) {
-    s.Emitters.push_back(emitter);
-  }
-
-  erased_emitters_.clear();
 
   scene->renderers().trail_systems.add(std::move(s));
 }
@@ -105,18 +94,18 @@ void TrailSystemComponent::serialize(SerializedScenePtr& scene) const {
 void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
   DepthComponent::accept(visitor);
-  visitor.add_member("MaxCount",      MaxCount);
-  visitor.add_member("Life",          Life);
-  visitor.add_member("StartWidth",    StartWidth);
-  visitor.add_member("EndWidth",      EndWidth);
-  visitor.add_member("StartGlow",     StartGlow);
-  visitor.add_member("EndGlow",       EndGlow);
-  visitor.add_member("StartColor",    StartColor);
-  visitor.add_member("EndColor",      EndColor);
-  visitor.add_object_property("Texture",       Texture);
-  visitor.add_member("TextureRepeat", TextureRepeat);
-  visitor.add_member("UseGlobalTexCoords", UseGlobalTexCoords);
-  visitor.add_member("BlendAdd",      BlendAdd);
+  visitor.add_member("MaxCount",            MaxCount);
+  visitor.add_member("Life",                Life);
+  visitor.add_member("StartWidth",          StartWidth);
+  visitor.add_member("EndWidth",            EndWidth);
+  visitor.add_member("StartGlow",           StartGlow);
+  visitor.add_member("EndGlow",             EndGlow);
+  visitor.add_member("StartColor",          StartColor);
+  visitor.add_member("EndColor",            EndColor);
+  visitor.add_object_property("Texture",    Texture);
+  visitor.add_member("TextureRepeat",       TextureRepeat);
+  visitor.add_member("UseGlobalTexCoords",  UseGlobalTexCoords);
+  visitor.add_member("BlendAdd",            BlendAdd);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -124,7 +113,7 @@ void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
 void TrailSystemComponent::Renderer::predraw(RenderContext const& ctx) {
   for (auto& object : objects) {
     SWIFT_PUSH_GL_RANGE("Update TrailSystem");
-    object.System->update_trails(object.Emitters, object, ctx);
+    object.System->update_trails(object, ctx);
     SWIFT_POP_GL_RANGE();
   }
 }
@@ -171,7 +160,7 @@ void TrailSystemComponent::Renderer::draw(RenderContext const& ctx, int start, i
       shader.total_time.            Set(total_time * 1000.0);
     }
 
-    o.System->draw_trails(o.Emitters, o, ctx);
+    o.System->draw_trails(o, o.Emitters, ctx);
 
     if (o.BlendAdd) {
       ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);

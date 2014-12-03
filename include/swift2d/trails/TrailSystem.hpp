@@ -14,6 +14,7 @@
 #include <swift2d/trails/TrailEmitterComponent.hpp>
 #include <swift2d/trails/TrailSystemComponent.hpp>
 #include <swift2d/events/Timer.hpp>
+#include <swift2d/utils/Queue.hpp>
 
 #include <unordered_map>
 #include <unordered_set>
@@ -47,14 +48,15 @@ class TrailSystem {
   // ------------------------------------------------------------ public methods
   void set_max_trail_points(int max_trail_points);
 
+  void spawn(SerializedTrailEmitter const& emitter);
+
   void update_trails(
-    std::vector<SerializedTrailEmitter>& emitters,
     TrailSystemComponent::Serialized const& system,
     RenderContext const& context);
 
   void draw_trails(
-    std::vector<SerializedTrailEmitter> const& emitters,
     TrailSystemComponent::Serialized const& system,
+    std::vector<SerializedTrailEmitter> const& emitters,
     RenderContext const& context);
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -72,7 +74,8 @@ class TrailSystem {
   oglplus::Buffer*                        emitter_buffer_;
   oglplus::VertexArray*                   emitter_vao_;
 
-  std::unordered_map<TrailEmitterComponent const*, float>      trails_to_spawn_;
+  Queue<SerializedTrailEmitter> new_points_;
+
   bool   ping_;
   int    update_max_trail_points_;
 };

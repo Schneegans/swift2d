@@ -13,7 +13,6 @@
 #include <swift2d/components/Component.hpp>
 #include <swift2d/components/DepthComponent.hpp>
 #include <swift2d/textures/Texture.hpp>
-#include <swift2d/utils/Queue.hpp>
 
 #include <unordered_set>
 

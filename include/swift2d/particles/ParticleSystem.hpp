@@ -13,6 +13,7 @@
 #include <swift2d/graphics/RenderContext.hpp>
 #include <swift2d/particles/ParticleSystemComponent.hpp>
 #include <swift2d/events/Timer.hpp>
+#include <swift2d/utils/Queue.hpp>
 
 #include <unordered_map>
 #include <unordered_set>

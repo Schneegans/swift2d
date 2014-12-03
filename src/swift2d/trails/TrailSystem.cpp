@@ -35,8 +35,7 @@ struct TrailPoint {
 ////////////////////////////////////////////////////////////////////////////////
 
 TrailSystem::TrailSystem(int max_trail_points)
-  : trails_to_spawn_()
-  , transform_feedbacks_()
+  : transform_feedbacks_()
   , trail_vaos_()
   , trail_buffers_()
   , emitter_buffer_(nullptr)
@@ -48,6 +47,12 @@ TrailSystem::TrailSystem(int max_trail_points)
 
 void TrailSystem::set_max_trail_points(int max_trail_points) {
   update_max_trail_points_ = max_trail_points;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void TrailSystem::spawn(SerializedTrailEmitter const& emitter) {
+  new_points_.push(emitter);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +93,6 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void TrailSystem::update_trails(
-  std::vector<SerializedTrailEmitter>& emitters,
   TrailSystemComponent::Serialized const& system,
   RenderContext const& ctx) {
 
@@ -147,18 +151,16 @@ void TrailSystem::update_trails(
   {
 
     // spawn new particles -----------------------------------------------------
-    for (auto& emitter: emitters) {
-      if (emitter.SpawnNewPoint) {
-        emitter.SpawnNewPoint = false;
-        times.push_back(math::vec2(
-          emitter.TimeSincePrev1Spawn * 1000.0,
-          emitter.TimeSincePrev2Spawn * 1000.0
-        ));
-        positions0.push_back(emitter.LastPosition);
-        positions1.push_back(emitter.Prev1Position);
-        positions2.push_back(emitter.Prev2Position);
-        positions3.push_back(emitter.Prev3Position);
-      }
+    while (!new_points_.empty()) {
+      auto emitter(new_points_.pop());
+      times.push_back(math::vec2(
+        emitter.TimeSincePrev1Spawn * 1000.0,
+        emitter.TimeSincePrev2Spawn * 1000.0
+      ));
+      positions0.push_back(emitter.LastPosition);
+      positions1.push_back(emitter.Prev1Position);
+      positions2.push_back(emitter.Prev2Position);
+      positions3.push_back(emitter.Prev3Position);
     }
 
     int index(0);
@@ -196,8 +198,8 @@ void TrailSystem::update_trails(
 ////////////////////////////////////////////////////////////////////////////////
 
 void TrailSystem::draw_trails(
-  std::vector<SerializedTrailEmitter> const& emitters,
   TrailSystemComponent::Serialized const& system,
+  std::vector<SerializedTrailEmitter> const& emitters,
   RenderContext const& ctx) {
 
   std::vector<TrailPoint> emitter_points;

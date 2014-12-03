@@ -32,6 +32,7 @@ typedef std::shared_ptr<TrailSystem>       TrailSystemPtr;
 class TrailSystemComponent;
 typedef std::shared_ptr<TrailSystemComponent>       TrailSystemComponentPtr;
 typedef std::shared_ptr<const TrailSystemComponent> ConstTrailSystemComponentPtr;
+typedef Property<TrailSystemComponentPtr>           TrailSystemComponentProperty;
 
 // -----------------------------------------------------------------------------
 class SWIFT_DLL TrailSystemComponent : public Component,
@@ -91,20 +92,23 @@ class SWIFT_DLL TrailSystemComponent : public Component,
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "TrailSystemComponent"; }
 
-  void add_emitter(TrailEmitterComponent const* emitter);
-  void remove_emitter(TrailEmitterComponent const* emitter);
+  void spawn(SerializedTrailEmitter const& emitter);
 
   virtual void update(double time);
   virtual void serialize(SerializedScenePtr& scene) const;
   virtual void accept(SavableObjectVisitor& visitor);
 
+  friend class TrailEmitterComponent;
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  void add_emitter(TrailEmitterComponent const* emitter);
+  void remove_emitter(TrailEmitterComponent const* emitter);
+
   TrailSystemPtr trail_system_;
 
   std::unordered_set<TrailEmitterComponent const*> emitters_;
-  mutable std::vector<SerializedTrailEmitter> erased_emitters_;
 };
 
 // -----------------------------------------------------------------------------
