@@ -47,6 +47,10 @@ class Property {
     }
   }
 
+  void set_with_no_emit(T const& value) {
+    value_ = value;
+  }
+
   virtual T const& get() const { return value_; }
 
   virtual void connect_from(Property<T> const& source) {

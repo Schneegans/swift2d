@@ -123,7 +123,7 @@ void Physics::update(double time) {
         if (distance > 1.f) {
           auto b(static_cast<DynamicBodyComponent*>(body->GetUserData()));
           direction = direction * mass * b->GravityScale() / distance;
-          b->apply_global_force(direction);
+          b->apply_global_force(direction, false);
         }
       }
 
@@ -172,6 +172,7 @@ b2Body* Physics::add(DynamicBodyComponent* body) {
 
   b2BodyDef bodyDef;
   bodyDef.type = b2_dynamicBody;
+  bodyDef.awake = !body->Sleep();
   bodyDef.position.Set(pos.x(), pos.y());
   bodyDef.angle = math::get_rotation(transform);
 
