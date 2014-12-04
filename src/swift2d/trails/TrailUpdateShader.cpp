@@ -86,7 +86,7 @@ TrailUpdateShader::TrailUpdateShader()
           for (int i=0; i<spawn_count; ++i) {
             float life = times[i].z;
             float start_life = times[i].w;
-            vec2 texcoords = (-times[i].xy + time.y) / life;
+            vec2 texcoords = (-times[i].xy + time.y) / life - start_life/life;
 
             if (use_global_texcoords == 0) {
               texcoords = times[i].xy/life + start_life/life;

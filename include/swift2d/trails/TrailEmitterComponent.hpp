@@ -29,7 +29,7 @@ typedef std::shared_ptr<TrailEmitterComponent>       TrailEmitterComponentPtr;
 typedef std::shared_ptr<const TrailEmitterComponent> ConstTrailEmitterComponentPtr;
 typedef Property<TrailEmitterComponentPtr>           TrailEmitterComponentProperty;
 
-struct SWIFT_DLL SerializedTrailEmitter {
+struct SWIFT_DLL TrailSegment {
   math::vec2 Position;
   float      TimeSinceLastSpawn;
   float      TimeSincePrev1Spawn;
@@ -71,8 +71,8 @@ class SWIFT_DLL TrailEmitterComponent : public TransformableComponent {
   friend class TrailSystemComponent;
 
  private:
-  void spawn_point();
-  SerializedTrailEmitter serialize() const;
+  void spawn_segment();
+  TrailSegment make_end_segment() const;
 
   float      time_since_last_spawn_;
   float      time_since_prev_1_spawn_;

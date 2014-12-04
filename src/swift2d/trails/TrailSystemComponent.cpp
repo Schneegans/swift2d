@@ -44,19 +44,19 @@ void TrailSystemComponent::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TrailSystemComponent::spawn(SerializedTrailEmitter const& emitter) {
-  trail_system_->spawn(emitter);
+void TrailSystemComponent::spawn(TrailSegment const& emitter) {
+  new_segments_.push_back(emitter);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TrailSystemComponent::add_emitter(TrailEmitterComponent const* emitter) {
+void TrailSystemComponent::add_emitter(TrailEmitterComponent* emitter) {
   emitters_.insert(emitter);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TrailSystemComponent::remove_emitter(TrailEmitterComponent const* emitter) {
+void TrailSystemComponent::remove_emitter(TrailEmitterComponent* emitter) {
   emitters_.erase(emitter);
 }
 
@@ -78,11 +78,14 @@ void TrailSystemComponent::serialize(SerializedScenePtr& scene) const {
   s.UseGlobalTexCoords = UseGlobalTexCoords();
   s.BlendAdd = BlendAdd();
   s.System = trail_system_;
-  s.Emitters.reserve(emitters_.size());
+  s.EndSegments.reserve(emitters_.size());
 
   for (auto const& emitter: emitters_) {
-    s.Emitters.push_back(emitter->serialize());
+    s.EndSegments.push_back(emitter->make_end_segment());
   }
+
+  s.NewSegments = new_segments_;
+  new_segments_.clear();
 
   scene->renderers().trail_systems.add(std::move(s));
 }
@@ -110,7 +113,8 @@ void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
 void TrailSystemComponent::Renderer::predraw(RenderContext const& ctx) {
   for (auto& object : objects) {
     SWIFT_PUSH_GL_RANGE("Update TrailSystem");
-    object.System->update_trails(object, ctx);
+    object.System->update_trails(object, object.NewSegments, ctx);
+    object.NewSegments.clear();
     SWIFT_POP_GL_RANGE();
   }
 }
@@ -157,7 +161,7 @@ void TrailSystemComponent::Renderer::draw(RenderContext const& ctx, int start, i
       shader.total_time.            Set(total_time * 1000.0);
     }
 
-    o.System->draw_trails(o, o.Emitters, ctx);
+    o.System->draw_trails(o, o.EndSegments, ctx);
 
     if (o.BlendAdd) {
       ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);

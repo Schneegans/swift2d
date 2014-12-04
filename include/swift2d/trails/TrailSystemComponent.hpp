@@ -53,7 +53,9 @@ class SWIFT_DLL TrailSystemComponent : public Component,
     bool            BlendAdd;
 
     TrailSystemPtr System;
-    std::vector<SerializedTrailEmitter> Emitters;
+
+    std::vector<TrailSegment> EndSegments;
+    std::vector<TrailSegment> NewSegments;
   };
 
   class Renderer : public ResourceRenderer<TrailSystemComponent> {
@@ -89,7 +91,7 @@ class SWIFT_DLL TrailSystemComponent : public Component,
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "TrailSystemComponent"; }
 
-  void spawn(SerializedTrailEmitter const& emitter);
+  void spawn(TrailSegment const& emitter);
 
   virtual void update(double time);
   virtual void serialize(SerializedScenePtr& scene) const;
@@ -100,12 +102,13 @@ class SWIFT_DLL TrailSystemComponent : public Component,
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void add_emitter(TrailEmitterComponent const* emitter);
-  void remove_emitter(TrailEmitterComponent const* emitter);
+  void add_emitter(TrailEmitterComponent* emitter);
+  void remove_emitter(TrailEmitterComponent* emitter);
 
   TrailSystemPtr trail_system_;
 
-  std::unordered_set<TrailEmitterComponent const*> emitters_;
+  mutable std::vector<TrailSegment> new_segments_;
+  mutable std::unordered_set<TrailEmitterComponent*> emitters_;
 };
 
 // -----------------------------------------------------------------------------

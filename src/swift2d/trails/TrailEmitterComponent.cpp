@@ -49,8 +49,7 @@ TrailEmitterComponent::TrailEmitterComponent()
 
 TrailEmitterComponent::~TrailEmitterComponent() {
   if (TrailSystem()) {
-    update_world_transform();
-    spawn_point();
+    spawn_segment();
     TrailSystem()->remove_emitter(this);
   }
 }
@@ -85,13 +84,18 @@ void TrailEmitterComponent::update(double time) {
   if (l2 > MinSpawnGap() && l1 > 0.0) {
     float angle = std::abs(math::dot(p1_to_p0 / l2, p1_to_p2 / l1));
     if (angle < 0.9999) {
-      spawn_point();
+      spawn_segment();
       spawned = true;
     }
   }
 
   if ((!spawned) && (l2 > MaxSpawnGap())) {
-    spawn_point();
+    spawn_segment();
+    spawned = true;
+  }
+
+  if (!spawned) {
+
   }
 }
 
@@ -99,15 +103,15 @@ void TrailEmitterComponent::update(double time) {
 
 void TrailEmitterComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
-  visitor.add_member("MinSpawnGap",   MinSpawnGap);
-  visitor.add_member("MaxSpawnGap",   MaxSpawnGap);
-  visitor.add_member("Life",          Life);
+  visitor.add_member("MinSpawnGap",  MinSpawnGap);
+  visitor.add_member("MaxSpawnGap",  MaxSpawnGap);
+  visitor.add_member("Life",         Life);
   visitor.add_member("StartAge",     StartAge);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TrailEmitterComponent::spawn_point() {
+void TrailEmitterComponent::spawn_segment() {
   if (TrailSystem()) {
     prev_4_position_ = prev_3_position_;
     prev_3_position_ = prev_2_position_;
@@ -117,22 +121,22 @@ void TrailEmitterComponent::spawn_point() {
     time_since_prev_1_spawn_ = time_since_last_spawn_;
     time_since_last_spawn_   = 0.f;
 
-    TrailSystem()->spawn(serialize());
+    TrailSystem()->spawn(make_end_segment());
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SerializedTrailEmitter TrailEmitterComponent::serialize() const {
-  SerializedTrailEmitter result;
+TrailSegment TrailEmitterComponent::make_end_segment() const {
+  TrailSegment result;
 
   result.Position             = get_world_position();
   result.TimeSinceLastSpawn   = time_since_last_spawn_;
   result.TimeSincePrev1Spawn  = time_since_prev_1_spawn_;
   result.TimeSincePrev2Spawn  = time_since_prev_2_spawn_;
-  result.Prev1Position         = prev_1_position_;
   result.Life                 = Life();
-  result.StartAge            = StartAge();
+  result.StartAge             = StartAge();
+  result.Prev1Position        = prev_1_position_;
   result.Prev2Position        = prev_2_position_;
   result.Prev3Position        = prev_3_position_;
   result.Prev4Position        = prev_4_position_;
