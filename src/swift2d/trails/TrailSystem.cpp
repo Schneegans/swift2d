@@ -139,13 +139,12 @@ void TrailSystem::update_trails(
   shader.use(ctx);
   shader.time.                   Set(math::vec2(frame_time, total_time)*1000.0);
   shader.use_global_texcoords.   Set(system.UseGlobalTexCoords ? 1 : 0);
-  shader.life.                   Set(system.Life * 1000.0);
 
   std::vector<math::vec2> positions0;
   std::vector<math::vec2> positions1;
   std::vector<math::vec2> positions2;
   std::vector<math::vec2> positions3;
-  std::vector<math::vec2> times;
+  std::vector<math::vec4> times;
 
   transform_feedbacks_[current_tf()].BeginPoints();
   {
@@ -153,14 +152,16 @@ void TrailSystem::update_trails(
     // spawn new particles -----------------------------------------------------
     while (!new_points_.empty()) {
       auto emitter(new_points_.pop());
-      times.push_back(math::vec2(
-        emitter.TimeSincePrev1Spawn * 1000.0,
-        emitter.TimeSincePrev2Spawn * 1000.0
+      times.push_back(math::vec4(
+        emitter.TimeSincePrev1Spawn * 1000.0f,
+        emitter.TimeSincePrev2Spawn * 1000.0f,
+        emitter.Life * 1000.0f,
+        emitter.StartAge * 1000.f
       ));
-      positions0.push_back(emitter.LastPosition);
-      positions1.push_back(emitter.Prev1Position);
-      positions2.push_back(emitter.Prev2Position);
-      positions3.push_back(emitter.Prev3Position);
+      positions0.push_back(emitter.Prev1Position);
+      positions1.push_back(emitter.Prev2Position);
+      positions2.push_back(emitter.Prev3Position);
+      positions3.push_back(emitter.Prev4Position);
     }
 
     int index(0);
@@ -168,12 +169,12 @@ void TrailSystem::update_trails(
     while (index < positions0.size()) {
       int count(std::min(50, (int)positions0.size()-index));
 
-      shader.spawn_count.Set(count);
-      shader.time_since_prev_spawns. Set(std::vector<math::vec2>(times.begin() + index, times.begin() + index + count));
-      shader.position.               Set(std::vector<math::vec2>(positions0.begin() + index, positions0.begin() + index + count));
-      shader.prev_1_position.        Set(std::vector<math::vec2>(positions1.begin() + index, positions1.begin() + index + count));
-      shader.prev_2_position.        Set(std::vector<math::vec2>(positions2.begin() + index, positions2.begin() + index + count));
-      shader.prev_3_position.        Set(std::vector<math::vec2>(positions3.begin() + index, positions3.begin() + index + count));
+      shader.spawn_count.     Set(count);
+      shader.times.           Set(std::vector<math::vec4>(times.begin()      + index, times.begin()      + index + count));
+      shader.position.        Set(std::vector<math::vec2>(positions0.begin() + index, positions0.begin() + index + count));
+      shader.prev_1_position. Set(std::vector<math::vec2>(positions1.begin() + index, positions1.begin() + index + count));
+      shader.prev_2_position. Set(std::vector<math::vec2>(positions2.begin() + index, positions2.begin() + index + count));
+      shader.prev_3_position. Set(std::vector<math::vec2>(positions3.begin() + index, positions3.begin() + index + count));
 
       ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       index += count;
@@ -209,64 +210,64 @@ void TrailSystem::draw_trails(
 
     TrailPoint trail_point;
 
-    trail_point.life = math::vec2(0.0, system.Life * 1000.0);
+    trail_point.life = math::vec2(emitter.StartAge / emitter.Life, emitter.Life * 1000.0);
 
-    if (emitter.LastPosition != emitter.Position) {
-      auto next_dir(emitter.LastPosition - emitter.Prev1Position);
-
-      trail_point.pos = emitter.Position + next_dir;
-
-      if (system.UseGlobalTexCoords) {
-        trail_point.prev_u_texcoords = 1.0/system.Life *
-                                       math::vec2(total_time,
-                                                  total_time -
-                                                  emitter.TimeSinceLastSpawn);
-      } else {
-        trail_point.prev_u_texcoords = 1.0/system.Life *
-                                       math::vec2(0.0, emitter.TimeSinceLastSpawn);
-      }
-
-      trail_point.prev_1_pos = emitter.Position;
-      trail_point.prev_2_pos = emitter.LastPosition;
-      trail_point.prev_3_pos = emitter.Prev1Position;
-
-      emitter_points.push_back(trail_point);
-
-      if (system.UseGlobalTexCoords) {
-        trail_point.prev_u_texcoords = 1.0/system.Life *
-                                       math::vec2(total_time -
-                                                  emitter.TimeSinceLastSpawn,
-                                                  total_time -
-                                                  emitter.TimeSincePrev1Spawn);
-      } else {
-        trail_point.prev_u_texcoords = 1.0/system.Life *
-                                       math::vec2(emitter.TimeSinceLastSpawn,
-                                                  emitter.TimeSincePrev1Spawn);
-      }
-      trail_point.pos = emitter.Position;
-      trail_point.prev_1_pos = emitter.LastPosition;
-      trail_point.prev_2_pos = emitter.Prev1Position;
-      trail_point.prev_3_pos = emitter.Prev2Position;
-
-      emitter_points.push_back(trail_point);
-    } else {
+    if (emitter.Prev1Position != emitter.Position) {
       auto next_dir(emitter.Prev1Position - emitter.Prev2Position);
 
       trail_point.pos = emitter.Position + next_dir;
 
       if (system.UseGlobalTexCoords) {
-        trail_point.prev_u_texcoords = 1.0/system.Life *
+        trail_point.prev_u_texcoords = 1.0/emitter.Life *
                                        math::vec2(total_time,
                                                   total_time -
-                                                  emitter.TimeSincePrev1Spawn);
+                                                  emitter.TimeSinceLastSpawn);
       } else {
-        trail_point.prev_u_texcoords = 1.0/system.Life *
-                                       math::vec2(0.0, emitter.TimeSincePrev1Spawn);
+        trail_point.prev_u_texcoords = 1.0/emitter.Life *
+                                       math::vec2(0.0, emitter.TimeSinceLastSpawn);
       }
 
       trail_point.prev_1_pos = emitter.Position;
       trail_point.prev_2_pos = emitter.Prev1Position;
       trail_point.prev_3_pos = emitter.Prev2Position;
+
+      emitter_points.push_back(trail_point);
+
+      if (system.UseGlobalTexCoords) {
+        trail_point.prev_u_texcoords = 1.0/emitter.Life *
+                                       math::vec2(total_time -
+                                                  emitter.TimeSinceLastSpawn,
+                                                  total_time -
+                                                  emitter.TimeSincePrev1Spawn);
+      } else {
+        trail_point.prev_u_texcoords = 1.0/emitter.Life *
+                                       math::vec2(emitter.TimeSinceLastSpawn,
+                                                  emitter.TimeSincePrev1Spawn);
+      }
+      trail_point.pos = emitter.Position;
+      trail_point.prev_1_pos = emitter.Prev1Position;
+      trail_point.prev_2_pos = emitter.Prev2Position;
+      trail_point.prev_3_pos = emitter.Prev3Position;
+
+      emitter_points.push_back(trail_point);
+    } else {
+      auto next_dir(emitter.Prev2Position - emitter.Prev3Position);
+
+      trail_point.pos = emitter.Position + next_dir;
+
+      if (system.UseGlobalTexCoords) {
+        trail_point.prev_u_texcoords = 1.0/emitter.Life *
+                                       math::vec2(total_time,
+                                                  total_time -
+                                                  emitter.TimeSincePrev1Spawn);
+      } else {
+        trail_point.prev_u_texcoords = 1.0/emitter.Life *
+                                       math::vec2(0.0, emitter.TimeSincePrev1Spawn);
+      }
+
+      trail_point.prev_1_pos = emitter.Position;
+      trail_point.prev_2_pos = emitter.Prev2Position;
+      trail_point.prev_3_pos = emitter.Prev3Position;
 
       emitter_points.push_back(trail_point);
     }

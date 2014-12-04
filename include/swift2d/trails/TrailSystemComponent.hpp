@@ -44,8 +44,6 @@ class SWIFT_DLL TrailSystemComponent : public Component,
 
   // ------------------------------------------------------------- inner classes
   struct Serialized : public SerializedComponent {
-    float           Life;
-
     float           StartWidth, EndWidth;
     float           StartGlow,  EndGlow;
     math::vec4      StartColor, EndColor;
@@ -65,7 +63,6 @@ class SWIFT_DLL TrailSystemComponent : public Component,
 
   // ---------------------------------------------------------------- properties
   Int32           MaxCount;
-  Float           Life;
 
   Float           StartWidth, EndWidth;
   Float           StartGlow,  EndGlow;

@@ -21,7 +21,6 @@ namespace swift {
 
 TrailSystemComponent::TrailSystemComponent()
   : MaxCount(1000)
-  , Life(1.0)
   , StartWidth(1.f),               EndWidth(1.f)
   , StartGlow(0.f),                EndGlow(0.f)
   , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 1))
@@ -68,7 +67,6 @@ void TrailSystemComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
 
   s.Depth = WorldDepth();
-  s.Life = Life();
   s.StartWidth = StartWidth();
   s.EndWidth = EndWidth();
   s.StartGlow = StartGlow();
@@ -95,7 +93,6 @@ void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
   DepthComponent::accept(visitor);
   visitor.add_member("MaxCount",            MaxCount);
-  visitor.add_member("Life",                Life);
   visitor.add_member("StartWidth",          StartWidth);
   visitor.add_member("EndWidth",            EndWidth);
   visitor.add_member("StartGlow",           StartGlow);

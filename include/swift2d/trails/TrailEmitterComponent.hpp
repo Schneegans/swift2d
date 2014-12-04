@@ -34,10 +34,12 @@ struct SWIFT_DLL SerializedTrailEmitter {
   float      TimeSinceLastSpawn;
   float      TimeSincePrev1Spawn;
   float      TimeSincePrev2Spawn;
-  math::vec2 LastPosition;
+  float      Life;
+  float      StartAge;
   math::vec2 Prev1Position;
   math::vec2 Prev2Position;
   math::vec2 Prev3Position;
+  math::vec2 Prev4Position;
 };
 
 // -----------------------------------------------------------------------------
@@ -51,6 +53,9 @@ class SWIFT_DLL TrailEmitterComponent : public TransformableComponent {
   TrailSystemComponentProperty TrailSystem;
   Float MaxSpawnGap;
   Float MinSpawnGap;
+
+  Float Life;
+  Float StartAge;
 
   // ----------------------------------------------------- contruction interface
   TrailEmitterComponent();
@@ -72,10 +77,10 @@ class SWIFT_DLL TrailEmitterComponent : public TransformableComponent {
   float      time_since_last_spawn_;
   float      time_since_prev_1_spawn_;
   float      time_since_prev_2_spawn_;
-  math::vec2 last_position_;
   math::vec2 prev_1_position_;
   math::vec2 prev_2_position_;
   math::vec2 prev_3_position_;
+  math::vec2 prev_4_position_;
 
   bool first_frame_;
 };
