@@ -30,7 +30,17 @@ ColorMap::ColorMap()
   , BackTopLeft     (Color(0.f, 1.f, 1.f))
   , BackTopRight    (Color(1.f, 1.f, 1.f))
   , BackBottomRight (Color(1.f, 0.f, 1.f))
+  , Width(16)
+  , Height(16)
+  , Depth(16)
   , update_data_(true) {
+
+    tiles_x_ = 1;
+    tiles_y_ = 16;
+
+    set_width(16);
+    set_height(16 * 16);
+    set_channels(4);
 
     connect_on_members();
   }
