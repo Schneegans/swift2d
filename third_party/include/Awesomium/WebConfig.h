@@ -9,7 +9,7 @@
 ///
 /// Website: <http://www.awesomium.com>
 ///
-/// Copyright (C) 2013 Awesomium Technologies LLC. All rights reserved.
+/// Copyright (C) 2014 Awesomium Technologies LLC. All rights reserved.
 /// Awesomium is a trademark of Awesomium Technologies LLC.
 ///
 #ifndef AWESOMIUM_WEB_CONFIG_H_
@@ -115,7 +115,23 @@ struct OSM_EXPORT WebConfig {
   /// code is run immediately after global JavaScript objects are set up and
   /// before the DOM or any inline scripts are loaded.
   ///
+  /// This is NOT a filepath, you should pass a raw JavaScript string.
+  ///
+  /// This value is global to ALL WebViews. You can specify additional script
+  /// on a per-session basis via WebPreferences::user_script.
+  ///
   WebString user_script;
+
+  ///
+  /// User-defined CSS to be applied to all web-pages. This is useful for
+  /// overriding default styles. (Default: empty)
+  ///
+  /// This is NOT a filepath, you should pass a raw CSS string.
+  ///
+  /// This value is global to ALL WebViews. You can specify additional CSS
+  /// on a per-session basis via WebPreferences::user_stylesheet.
+  ///
+  WebString user_stylesheet;
 
   ///
   /// The name of the asset protocol which is, by default, "asset".

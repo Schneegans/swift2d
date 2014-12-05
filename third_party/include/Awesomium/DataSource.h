@@ -9,7 +9,7 @@
 ///
 /// Website: <http://www.awesomium.com>
 ///
-/// Copyright (C) 2013 Awesomium Technologies LLC. All rights reserved.
+/// Copyright (C) 2014 Awesomium Technologies LLC. All rights reserved.
 /// Awesomium is a trademark of Awesomium Technologies LLC.
 ///
 #ifndef AWESOMIUM_DATA_SOURCE_H_
@@ -74,7 +74,7 @@ class OSM_EXPORT DataSource {
   ///
   void SendResponse(int request_id,
                     unsigned int buffer_size,
-                    unsigned char* buffer,
+                    const unsigned char* buffer,
                     const WebString& mime_type);
 
  protected:
