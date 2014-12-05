@@ -22,14 +22,14 @@ namespace swift {
 
 ColorMap::ColorMap()
   : Texture3D()
-  , FrontBottomLeft (Color(0.f, 0.f, 0.f))
-  , FrontTopLeft    (Color(0.f, 1.f, 0.f))
-  , FrontTopRight   (Color(1.f, 1.f, 0.f))
-  , FrontBottomRight(Color(1.f, 0.f, 0.f))
-  , BackBottomLeft  (Color(0.f, 0.f, 1.f))
-  , BackTopLeft     (Color(0.f, 1.f, 1.f))
-  , BackTopRight    (Color(1.f, 1.f, 1.f))
-  , BackBottomRight (Color(1.f, 0.f, 1.f))
+  , Black     (Color(0.f, 0.f, 0.f))
+  , Green     (Color(0.f, 1.f, 0.f))
+  , Yellow    (Color(1.f, 1.f, 0.f))
+  , Red       (Color(1.f, 0.f, 0.f))
+  , Blue      (Color(0.f, 0.f, 1.f))
+  , Turqoise  (Color(0.f, 1.f, 1.f))
+  , White     (Color(1.f, 1.f, 1.f))
+  , Purple    (Color(1.f, 0.f, 1.f))
   , Width(16)
   , Height(16)
   , Depth(16)
@@ -49,14 +49,14 @@ ColorMap::ColorMap()
 
 ColorMap::ColorMap(std::string const& file_name, unsigned tiles_x, unsigned tiles_y)
   : Texture3D(file_name, tiles_x, tiles_y)
-  , FrontBottomLeft (Color(0.f, 0.f, 0.f))
-  , FrontTopLeft    (Color(0.f, 1.f, 0.f))
-  , FrontTopRight   (Color(1.f, 1.f, 0.f))
-  , FrontBottomRight(Color(1.f, 0.f, 0.f))
-  , BackBottomLeft  (Color(0.f, 0.f, 1.f))
-  , BackTopLeft     (Color(0.f, 1.f, 1.f))
-  , BackTopRight    (Color(1.f, 1.f, 1.f))
-  , BackBottomRight (Color(1.f, 0.f, 1.f))
+  , Black (Color(0.f, 0.f, 0.f))
+  , Green    (Color(0.f, 1.f, 0.f))
+  , Yellow   (Color(1.f, 1.f, 0.f))
+  , Red(Color(1.f, 0.f, 0.f))
+  , Blue  (Color(0.f, 0.f, 1.f))
+  , Turqoise     (Color(0.f, 1.f, 1.f))
+  , White    (Color(1.f, 1.f, 1.f))
+  , Purple (Color(1.f, 0.f, 1.f))
   , update_data_(false) {
 
     connect_on_members();
@@ -69,14 +69,14 @@ ColorMap::ColorMap(
         Color const& bbl, Color const& btl, Color const& btr, Color const& bbr,
         int width, int height, int depth)
   : Texture3D()
-  , FrontBottomLeft(fbl)
-  , FrontTopLeft(ftl)
-  , FrontTopRight(ftr)
-  , FrontBottomRight(fbr)
-  , BackBottomLeft(bbl)
-  , BackTopLeft(btl)
-  , BackTopRight(btr)
-  , BackBottomRight(bbr)
+  , Black(fbl)
+  , Green(ftl)
+  , Yellow(ftr)
+  , Red(fbr)
+  , Blue(bbl)
+  , Turqoise(btl)
+  , White(btr)
+  , Purple(bbr)
   , Width(width)
   , Height(height)
   , Depth(depth)
@@ -124,14 +124,14 @@ void ColorMap::bind(RenderContext const& ctx, unsigned location) const {
 
 void ColorMap::accept(SavableObjectVisitor& visitor) {
   Texture3D::accept(visitor);
-  visitor.add_member("FrontBottomLeft", FrontBottomLeft);
-  visitor.add_member("FrontTopLeft", FrontTopLeft);
-  visitor.add_member("FrontTopRight", FrontTopRight);
-  visitor.add_member("FrontBottomRight", FrontBottomRight);
-  visitor.add_member("BackBottomLeft", BackBottomLeft);
-  visitor.add_member("BackTopLeft", BackTopLeft);
-  visitor.add_member("BackTopRight", BackTopRight);
-  visitor.add_member("BackBottomRight", BackBottomRight);
+  visitor.add_member("Black", Black);
+  visitor.add_member("Green", Green);
+  visitor.add_member("Yellow", Yellow);
+  visitor.add_member("Red", Red);
+  visitor.add_member("Blue", Blue);
+  visitor.add_member("Turqoise", Turqoise);
+  visitor.add_member("White", White);
+  visitor.add_member("Purple", Purple);
   visitor.add_member("Width", Width);
   visitor.add_member("Height", Height);
   visitor.add_member("Depth", Depth);
@@ -147,8 +147,8 @@ void ColorMap::upload_to(RenderContext const& ctx) const {
 
 void ColorMap::update_data() const {
   set_data(create_data(
-    FrontBottomLeft(), FrontTopLeft(), FrontTopRight(), FrontBottomRight(),
-    BackBottomLeft(), BackTopLeft(), BackTopRight(), BackBottomRight(),
+    Black(), Green(), Yellow(), Red(),
+    Blue(), Turqoise(), White(), Purple(),
     Width(), Height(), Depth()
   ));
 }
@@ -156,42 +156,42 @@ void ColorMap::update_data() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 void ColorMap::connect_on_members() const {
-  FrontBottomLeft.on_change().connect([&](Color const&){
+  Black.on_change().connect([&](Color const&){
     update_data_ = true;
     return true;
   });
 
-  FrontTopLeft.on_change().connect([&](Color const&){
+  Green.on_change().connect([&](Color const&){
     update_data_ = true;
     return true;
   });
 
-  FrontTopRight.on_change().connect([&](Color const&){
+  Yellow.on_change().connect([&](Color const&){
     update_data_ = true;
     return true;
   });
 
-  FrontBottomRight.on_change().connect([&](Color const&){
+  Red.on_change().connect([&](Color const&){
     update_data_ = true;
     return true;
   });
 
-  BackBottomLeft.on_change().connect([&](Color const&){
+  Blue.on_change().connect([&](Color const&){
     update_data_ = true;
     return true;
   });
 
-  BackTopLeft.on_change().connect([&](Color const&){
+  Turqoise.on_change().connect([&](Color const&){
     update_data_ = true;
     return true;
   });
 
-  BackTopRight.on_change().connect([&](Color const&){
+  White.on_change().connect([&](Color const&){
     update_data_ = true;
     return true;
   });
 
-  BackBottomRight.on_change().connect([&](Color const&){
+  Purple.on_change().connect([&](Color const&){
     update_data_ = true;
     return true;
   });

@@ -45,7 +45,7 @@ class SWIFT_DLL Scene {
   Float              GlowOpacity;
 
   String             ColorMapName;
-  Float              ColorGradingIntensity;
+  AnimatedFloat      ColorGradingIntensity;
 
   // ----------------------------------------------------- contruction interface
   static ScenePtr create() {
@@ -53,6 +53,8 @@ class SWIFT_DLL Scene {
   }
 
   Scene();
+
+  void update(double time);
 
   // calls serialize() on all enabled components and objects --- a new
   // SerializedScene is created
