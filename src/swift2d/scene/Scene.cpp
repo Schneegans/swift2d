@@ -22,10 +22,7 @@ Scene::Scene()
   , DirtOpacity(0.5)
   , GlowOpacity(0.5)
   , ColorMapName("")
-  , ColorGradingIntensity(0, 0) {
-
-  Root->add(Camera);
-}
+  , ColorGradingIntensity(0, 0) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
