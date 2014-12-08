@@ -48,13 +48,13 @@ class TrailSystem {
   void set_max_trail_points(int max_trail_points);
 
   void update_trails(
-    std::vector<SerializedTrailEmitter>& emitters,
     TrailSystemComponent::Serialized const& system,
+    std::vector<TrailSegment> const& new_segments,
     RenderContext const& context);
 
   void draw_trails(
-    std::vector<SerializedTrailEmitter> const& emitters,
     TrailSystemComponent::Serialized const& system,
+    std::vector<TrailSegment> const& end_segments,
     RenderContext const& context);
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,6 @@ class TrailSystem {
   oglplus::Buffer*                        emitter_buffer_;
   oglplus::VertexArray*                   emitter_vao_;
 
-  std::unordered_map<TrailEmitterComponent const*, float>      trails_to_spawn_;
   bool   ping_;
   int    update_max_trail_points_;
 };

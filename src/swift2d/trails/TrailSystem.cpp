@@ -23,7 +23,7 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-struct TrailPoint {
+struct GPUTrailSegment {
   math::vec2  pos;
   math::vec2  life;
   math::vec2  prev_u_texcoords; // last and prev_1
@@ -35,8 +35,7 @@ struct TrailPoint {
 ////////////////////////////////////////////////////////////////////////////////
 
 TrailSystem::TrailSystem(int max_trail_points)
-  : trails_to_spawn_()
-  , transform_feedbacks_()
+  : transform_feedbacks_()
   , trail_vaos_()
   , trail_buffers_()
   , emitter_buffer_(nullptr)
@@ -65,7 +64,7 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
 
     for (long j(0); j<6; ++j) {
       ogl::VertexArrayAttrib(j).Enable();
-      ogl::VertexArrayAttrib(j).Pointer(2, ogl::DataType::Float, false, sizeof(TrailPoint), (void const*)(j*2*sizeof(float)));
+      ogl::VertexArrayAttrib(j).Pointer(2, ogl::DataType::Float, false, sizeof(GPUTrailSegment), (void const*)(j*2*sizeof(float)));
     }
 
     ogl::NoVertexArray().Bind();
@@ -79,7 +78,7 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
 
   for (long j(0); j<6; ++j) {
     ogl::VertexArrayAttrib(j).Enable();
-    ogl::VertexArrayAttrib(j).Pointer(2, ogl::DataType::Float, false, sizeof(TrailPoint), (void const*)(j*2*sizeof(float)));
+    ogl::VertexArrayAttrib(j).Pointer(2, ogl::DataType::Float, false, sizeof(GPUTrailSegment), (void const*)(j*2*sizeof(float)));
   }
 
   ogl::NoVertexArray().Bind();
@@ -88,8 +87,8 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void TrailSystem::update_trails(
-  std::vector<SerializedTrailEmitter>& emitters,
   TrailSystemComponent::Serialized const& system,
+  std::vector<TrailSegment> const& new_segments,
   RenderContext const& ctx) {
 
   bool first_draw(false);
@@ -105,7 +104,7 @@ void TrailSystem::update_trails(
     for (int i(0); i<2; ++i) {
       trail_buffers_[i].Bind(ose::Array());
 
-      std::vector<TrailPoint> data(update_max_trail_points_);
+      std::vector<GPUTrailSegment> data(update_max_trail_points_);
       data.front().pos  = math::vec2(0.f, 0.f);
       data.front().life = math::vec2(0.f, 0.f);
       data.front().prev_u_texcoords = math::vec2(0.f, 0.f);
@@ -135,30 +134,28 @@ void TrailSystem::update_trails(
   shader.use(ctx);
   shader.time.                   Set(math::vec2(frame_time, total_time)*1000.0);
   shader.use_global_texcoords.   Set(system.UseGlobalTexCoords ? 1 : 0);
-  shader.life.                   Set(system.Life * 1000.0);
 
   std::vector<math::vec2> positions0;
   std::vector<math::vec2> positions1;
   std::vector<math::vec2> positions2;
   std::vector<math::vec2> positions3;
-  std::vector<math::vec2> times;
+  std::vector<math::vec4> times;
 
   transform_feedbacks_[current_tf()].BeginPoints();
   {
 
     // spawn new particles -----------------------------------------------------
-    for (auto& emitter: emitters) {
-      if (emitter.SpawnNewPoint) {
-        emitter.SpawnNewPoint = false;
-        times.push_back(math::vec2(
-          emitter.TimeSincePrev1Spawn * 1000.0,
-          emitter.TimeSincePrev2Spawn * 1000.0
-        ));
-        positions0.push_back(emitter.LastPosition);
-        positions1.push_back(emitter.Prev1Position);
-        positions2.push_back(emitter.Prev2Position);
-        positions3.push_back(emitter.Prev3Position);
-      }
+    for (auto const& segment: new_segments) {
+      times.push_back(math::vec4(
+        segment.TimeSincePrev1Spawn * 1000.0f,
+        segment.TimeSincePrev2Spawn * 1000.0f,
+        segment.Life * 1000.0f,
+        segment.StartAge * 1000.f
+      ));
+      positions0.push_back(segment.Prev1Position);
+      positions1.push_back(segment.Prev2Position);
+      positions2.push_back(segment.Prev3Position);
+      positions3.push_back(segment.Prev4Position);
     }
 
     int index(0);
@@ -166,12 +163,12 @@ void TrailSystem::update_trails(
     while (index < positions0.size()) {
       int count(std::min(50, (int)positions0.size()-index));
 
-      shader.spawn_count.Set(count);
-      shader.time_since_prev_spawns. Set(std::vector<math::vec2>(times.begin() + index, times.begin() + index + count));
-      shader.position.               Set(std::vector<math::vec2>(positions0.begin() + index, positions0.begin() + index + count));
-      shader.prev_1_position.        Set(std::vector<math::vec2>(positions1.begin() + index, positions1.begin() + index + count));
-      shader.prev_2_position.        Set(std::vector<math::vec2>(positions2.begin() + index, positions2.begin() + index + count));
-      shader.prev_3_position.        Set(std::vector<math::vec2>(positions3.begin() + index, positions3.begin() + index + count));
+      shader.spawn_count.     Set(count);
+      shader.times.           Set(std::vector<math::vec4>(times.begin()      + index, times.begin()      + index + count));
+      shader.position.        Set(std::vector<math::vec2>(positions0.begin() + index, positions0.begin() + index + count));
+      shader.prev_1_position. Set(std::vector<math::vec2>(positions1.begin() + index, positions1.begin() + index + count));
+      shader.prev_2_position. Set(std::vector<math::vec2>(positions2.begin() + index, positions2.begin() + index + count));
+      shader.prev_3_position. Set(std::vector<math::vec2>(positions3.begin() + index, positions3.begin() + index + count));
 
       ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       index += count;
@@ -196,85 +193,92 @@ void TrailSystem::update_trails(
 ////////////////////////////////////////////////////////////////////////////////
 
 void TrailSystem::draw_trails(
-  std::vector<SerializedTrailEmitter> const& emitters,
   TrailSystemComponent::Serialized const& system,
+  std::vector<TrailSegment> const& end_segments,
   RenderContext const& ctx) {
 
-  std::vector<TrailPoint> emitter_points;
+  std::vector<GPUTrailSegment> segments;
   double total_time(ctx.pipeline->get_total_time());
 
-  for (auto const& emitter : emitters) {
+  for (auto const& segment : end_segments) {
 
-    TrailPoint trail_point;
+    GPUTrailSegment trail_point;
 
-    trail_point.life = math::vec2(0.0, system.Life * 1000.0);
+    math::vec2 start_age(segment.StartAge / segment.Life, segment.StartAge / segment.Life);
+    trail_point.life = math::vec2(start_age.x(), segment.Life * 1000.0);
 
-    if (emitter.LastPosition != emitter.Position) {
-      auto next_dir(emitter.LastPosition - emitter.Prev1Position);
+    if (segment.Prev1Position != segment.Position) {
+      auto next_dir(segment.Prev1Position - segment.Prev2Position);
 
-      trail_point.pos = emitter.Position + next_dir;
+      trail_point.pos = segment.Position + next_dir;
 
       if (system.UseGlobalTexCoords) {
-        trail_point.prev_u_texcoords = 1.0/system.Life *
+        trail_point.prev_u_texcoords = 1.0/segment.Life *
                                        math::vec2(total_time,
                                                   total_time -
-                                                  emitter.TimeSinceLastSpawn);
+                                                  segment.TimeSinceLastSpawn);
+        trail_point.prev_u_texcoords -= start_age;
       } else {
-        trail_point.prev_u_texcoords = 1.0/system.Life *
-                                       math::vec2(0.0, emitter.TimeSinceLastSpawn);
+        trail_point.prev_u_texcoords = 1.0/segment.Life *
+                                       math::vec2(0.0, segment.TimeSinceLastSpawn);
+        trail_point.prev_u_texcoords += start_age;
       }
 
-      trail_point.prev_1_pos = emitter.Position;
-      trail_point.prev_2_pos = emitter.LastPosition;
-      trail_point.prev_3_pos = emitter.Prev1Position;
+      trail_point.prev_1_pos = segment.Position;
+      trail_point.prev_2_pos = segment.Prev1Position;
+      trail_point.prev_3_pos = segment.Prev2Position;
 
-      emitter_points.push_back(trail_point);
+      segments.push_back(trail_point);
 
       if (system.UseGlobalTexCoords) {
-        trail_point.prev_u_texcoords = 1.0/system.Life *
+        trail_point.prev_u_texcoords = 1.0/segment.Life *
                                        math::vec2(total_time -
-                                                  emitter.TimeSinceLastSpawn,
+                                                  segment.TimeSinceLastSpawn,
                                                   total_time -
-                                                  emitter.TimeSincePrev1Spawn);
+                                                  segment.TimeSincePrev1Spawn);
+        trail_point.prev_u_texcoords -= start_age;
       } else {
-        trail_point.prev_u_texcoords = 1.0/system.Life *
-                                       math::vec2(emitter.TimeSinceLastSpawn,
-                                                  emitter.TimeSincePrev1Spawn);
+        trail_point.prev_u_texcoords = 1.0/segment.Life *
+                                       math::vec2(segment.TimeSinceLastSpawn,
+                                                  segment.TimeSincePrev1Spawn);
+        trail_point.prev_u_texcoords += start_age;
       }
-      trail_point.pos = emitter.Position;
-      trail_point.prev_1_pos = emitter.LastPosition;
-      trail_point.prev_2_pos = emitter.Prev1Position;
-      trail_point.prev_3_pos = emitter.Prev2Position;
+      trail_point.pos = segment.Position;
+      trail_point.prev_1_pos = segment.Prev1Position;
+      trail_point.prev_2_pos = segment.Prev2Position;
+      trail_point.prev_3_pos = segment.Prev3Position;
 
-      emitter_points.push_back(trail_point);
+      segments.push_back(trail_point);
     } else {
-      auto next_dir(emitter.Prev1Position - emitter.Prev2Position);
+      auto next_dir(segment.Prev2Position - segment.Prev3Position);
 
-      trail_point.pos = emitter.Position + next_dir;
+      trail_point.pos = segment.Position + next_dir;
 
       if (system.UseGlobalTexCoords) {
-        trail_point.prev_u_texcoords = 1.0/system.Life *
+        trail_point.prev_u_texcoords = 1.0/segment.Life *
                                        math::vec2(total_time,
                                                   total_time -
-                                                  emitter.TimeSincePrev1Spawn);
+                                                  segment.TimeSincePrev1Spawn);
+        trail_point.prev_u_texcoords -= start_age;
       } else {
-        trail_point.prev_u_texcoords = 1.0/system.Life *
-                                       math::vec2(0.0, emitter.TimeSincePrev1Spawn);
+        trail_point.prev_u_texcoords = 1.0/segment.Life *
+                                       math::vec2(0.0, segment.TimeSincePrev1Spawn);
+        trail_point.prev_u_texcoords += start_age;
       }
 
-      trail_point.prev_1_pos = emitter.Position;
-      trail_point.prev_2_pos = emitter.Prev1Position;
-      trail_point.prev_3_pos = emitter.Prev2Position;
+      trail_point.prev_1_pos = segment.Position;
+      trail_point.prev_2_pos = segment.Prev2Position;
+      trail_point.prev_3_pos = segment.Prev3Position;
 
-      emitter_points.push_back(trail_point);
+      segments.push_back(trail_point);
     }
   }
 
   emitter_buffer_->Bind(oglplus::Buffer::Target::Array);
-  oglplus::Buffer::Data(oglplus::Buffer::Target::Array, emitter_points, ose::StreamDraw());
+  oglplus::Buffer::Data(oglplus::Buffer::Target::Array, segments, ose::StreamDraw());
 
   emitter_vao_->Bind();
-  ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, emitter_points.size());
+  ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, segments.size());
 
   trail_vaos_[current_tf()].Bind();
   ctx.gl.DrawTransformFeedback(

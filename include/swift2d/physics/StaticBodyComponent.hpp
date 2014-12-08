@@ -37,7 +37,6 @@ class SWIFT_DLL StaticBodyComponent : public Component {
 
   // ---------------------------------------------------------------- properties
   CollisionShapeProperty  Shape;
-  Float                   Density;
   Float                   Friction;
   Float                   Restitution;
 

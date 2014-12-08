@@ -33,8 +33,7 @@ struct Particle {
 ////////////////////////////////////////////////////////////////////////////////
 
 ParticleSystem::ParticleSystem(int max_count)
-  : particles_to_spawn_()
-  , transform_feedbacks_()
+  : transform_feedbacks_()
   , particle_buffers_()
   , ping_(true)
   , update_max_count_(max_count)
@@ -74,6 +73,18 @@ void ParticleSystem::upload_to(RenderContext const& ctx) {
   }
 
   query_ = new ogl::Query();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ParticleSystem::spawn(math::vec3 const& pos_rot, unsigned count) {
+  new_particles_.push(pos_rot, count);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ParticleSystem::spawn(std::vector<math::vec3> const& pos_rots) {
+  new_particles_.push(pos_rots);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -126,22 +137,8 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
   }
 
   std::vector<math::vec3> spawn_positions;
-  for (auto const& emitter: system.Emitters) {
-
-    // calculate spawn count
-    int spawn_count(0);
-
-    if (emitter.Self) {
-      particles_to_spawn_[emitter.Self] += emitter.Density * frame_time;
-      spawn_count = particles_to_spawn_[emitter.Self];
-      particles_to_spawn_[emitter.Self] -= spawn_count;
-    } else {
-      spawn_count = emitter.Density;
-    }
-
-    for (int i(0); i<spawn_count; ++i) {
-      spawn_positions.push_back(emitter.PosRot);
-    }
+  while(!new_particles_.empty()) {
+    spawn_positions.push_back(new_particles_.pop());
   }
 
   ogl::Query::Activator qrya(*query_, ose::PrimitivesGenerated());

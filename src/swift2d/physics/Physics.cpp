@@ -117,13 +117,13 @@ void Physics::update(double time) {
         auto transform(source->get_user()->WorldTransform());
         auto pos(math::get_translation(transform));
         auto scale(math::get_scale(transform));
-        float mass(source->Density() * scale.x() * scale.y());
+        float mass(source->Mass());
         math::vec2 direction(pos - math::vec2(body_pos.x, body_pos.y));
         float distance(math::get_length_squared(direction));
         if (distance > 1.f) {
           auto b(static_cast<DynamicBodyComponent*>(body->GetUserData()));
           direction = direction * mass * b->GravityScale() / distance;
-          b->apply_global_force(direction);
+          b->apply_global_force(direction, false);
         }
       }
 
@@ -150,6 +150,7 @@ void Physics::update(double time) {
 b2Body* Physics::add(DynamicBodyComponent* body) {
   auto transform(body->get_user()->WorldTransform());
   math::vec2 pos(math::get_translation(transform));
+  math::vec2 scale(math::get_scale(transform));
 
   b2FixtureDef fixtureDef;
 
@@ -161,7 +162,7 @@ b2Body* Physics::add(DynamicBodyComponent* body) {
   } else {
     shape = body->Shape()->get_shape(transform);
   }
-  fixtureDef.density = body->Density();
+  fixtureDef.density = body->Mass() / scale.x() / scale.y();
   fixtureDef.friction = body->Friction();
   fixtureDef.restitution = body->Restitution();
   fixtureDef.filter.groupIndex = body->Group();
@@ -171,11 +172,13 @@ b2Body* Physics::add(DynamicBodyComponent* body) {
 
   b2BodyDef bodyDef;
   bodyDef.type = b2_dynamicBody;
+  bodyDef.awake = !body->Sleep();
   bodyDef.position.Set(pos.x(), pos.y());
   bodyDef.angle = math::get_rotation(transform);
 
   b2Body* result = world_->CreateBody(&bodyDef);
 
+  result->SetFixedRotation(body->FixedRotation());
   result->SetUserData(body);
   result->CreateFixture(&fixtureDef);
   result->SetLinearDamping(body->LinearDamping());

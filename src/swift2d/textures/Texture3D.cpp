@@ -36,14 +36,14 @@ Texture3D::Texture3D(std::string const& file_name, unsigned tiles_x, unsigned ti
 void Texture3D::bind(RenderContext const& ctx, unsigned location) const {
 
   if (!texture_ && !AsyncLoading()) {
-    upload_to(ctx, true);
+    upload_to(ctx, false);
   }
 
   if (texture_) {
     texture_->Active(location);
     ctx.gl.Bind(ose::_3D(), *texture_);
   } else {
-    upload_to(ctx, true);
+    upload_to(ctx, false);
     DefaultTexture3D::get().bind(ctx, location);
   }
 }

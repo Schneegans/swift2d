@@ -25,4 +25,8 @@ class AweProcessListener : public Awesomium::WebViewListener::Process {
                          Awesomium::TerminationStatus status) {
     LOG_WARNING << "OnCrashed" << std::endl;
   }
+
+  void OnLaunch(Awesomium::WebView* caller) {
+    //LOG_WARNING << "OnLaunch" << std::endl;
+  }
 };

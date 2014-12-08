@@ -59,46 +59,44 @@ TrailUpdateShader::TrailUpdateShader()
       in vec2  varying_prev_3_position[];
 
       // general uniforms
-      uniform vec2      time;         // x: frame time  y: total time [millisec]
+      uniform vec2  time;         // x: frame time  y: total time [millisec]
 
       // spawn uniforms
       uniform vec2  position[50];
       uniform vec2  prev_1_position[50];
       uniform vec2  prev_2_position[50];
       uniform vec2  prev_3_position[50];
-      uniform vec2  time_since_prev_spawns[50]; // x: last  y: prev_1
+      uniform vec4  times[50]; // x: last  y: prev_1  z: life [ms]  w: start_life [ms]
 
       uniform int   spawn_count;
-      uniform float life;         //  [millisec]
       uniform int   use_global_texcoords;
 
-
-      out vec2  out_position;
-      out vec2  out_life;
-      out vec2  out_prev_u_texcoords;
-      out vec2  out_prev_1_position;
-      out vec2  out_prev_2_position;
-      out vec2  out_prev_3_position;
+      out vec2      out_position;
+      out vec2      out_life;
+      out vec2      out_prev_u_texcoords;
+      out vec2      out_prev_1_position;
+      out vec2      out_prev_2_position;
+      out vec2      out_prev_3_position;
 
       void main(void) {
 
         if (spawn_count >= 0) {
 
-
           // spawn new trail points -----------------------------------------------
-
           for (int i=0; i<spawn_count; ++i) {
-            vec2 texcoords = (-time_since_prev_spawns[i] + time.y) / life;
+            float life = times[i].z;
+            float start_life = times[i].w;
+            vec2 texcoords = (-times[i].xy + time.y) / life - start_life/life;
 
             if (use_global_texcoords == 0) {
-              texcoords = time_since_prev_spawns[i]/life;
+              texcoords = times[i].xy/life + start_life/life;
             }
 
-            out_position = position[i];
-            out_prev_1_position = prev_1_position[i];
-            out_prev_2_position = prev_2_position[i];
-            out_prev_3_position = prev_3_position[i];
-            out_life     = vec2(0, life);
+            out_position         = position[i];
+            out_prev_1_position  = prev_1_position[i];
+            out_prev_2_position  = prev_2_position[i];
+            out_prev_3_position  = prev_3_position[i];
+            out_life             = vec2(start_life/life, life);
             out_prev_u_texcoords = texcoords;
 
             EmitVertex(); EndPrimitive();
@@ -135,13 +133,12 @@ TrailUpdateShader::TrailUpdateShader()
     }
   )
   , time(get_uniform<math::vec2>("time"))
-  , time_since_prev_spawns(get_uniform<math::vec2>("time_since_prev_spawns"))
+  , times(get_uniform<math::vec4>("times"))
   , spawn_count(get_uniform<int>("spawn_count"))
   , position(get_uniform<math::vec2>("position"))
   , prev_1_position(get_uniform<math::vec2>("prev_1_position"))
   , prev_2_position(get_uniform<math::vec2>("prev_2_position"))
   , prev_3_position(get_uniform<math::vec2>("prev_3_position"))
-  , life(get_uniform<float>("life"))
   , use_global_texcoords(get_uniform<int>("use_global_texcoords"))
   {}
 

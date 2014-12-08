@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/TransformableComponent.hpp>
+#include <swift2d/particles/ParticleSystemComponent.hpp>
 #include <swift2d/scene/SerializedScene.hpp>
 #include <swift2d/properties.hpp>
 
@@ -25,12 +26,6 @@ typedef std::shared_ptr<ParticleEmitterComponent>       ParticleEmitterComponent
 typedef std::shared_ptr<const ParticleEmitterComponent> ConstParticleEmitterComponentPtr;
 typedef Property<ParticleEmitterComponentPtr>           ParticleEmitterComponentProperty;
 
-struct SWIFT_DLL SerializedEmitter {
-  float Density;
-  math::vec3 PosRot;
-  ParticleEmitterComponent const* Self;
-};
-
 // -----------------------------------------------------------------------------
 class SWIFT_DLL ParticleEmitterComponent : public TransformableComponent {
 
@@ -39,7 +34,8 @@ class SWIFT_DLL ParticleEmitterComponent : public TransformableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float Density;
+  ParticleSystemComponentPtr ParticleSystem;
+  Float                      Density;
 
   // ----------------------------------------------------- contruction interface
   ParticleEmitterComponent();
@@ -48,9 +44,11 @@ class SWIFT_DLL ParticleEmitterComponent : public TransformableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "ParticleEmitterComponent"; }
 
+  virtual void update(double time);
   virtual void accept(SavableObjectVisitor& visitor);
 
-  SerializedEmitter make_serialized_emitter() const;
+ private:
+  float particles_to_spawn_;
 };
 
 }

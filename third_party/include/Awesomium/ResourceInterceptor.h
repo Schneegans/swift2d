@@ -9,7 +9,7 @@
 ///
 /// Website: <http://www.awesomium.com>
 ///
-/// Copyright (C) 2013 Awesomium Technologies LLC. All rights reserved.
+/// Copyright (C) 2014 Awesomium Technologies LLC. All rights reserved.
 /// Awesomium is a trademark of Awesomium Technologies LLC.
 ///
 #ifndef AWESOMIUM_RESOURCE_INTERCEPTOR_H_
@@ -172,6 +172,16 @@ class OSM_EXPORT ResourceRequest {
   /// Append a string of bytes for POST data (adds a new UploadElement)
   virtual void AppendUploadBytes(const char* bytes,
                                  unsigned int num_bytes) = 0;
+  ///
+  /// Make this request ignore any DataSource handlers.
+  ///
+  /// This is useful when you are using DataSource to override default
+  /// protocols such as HTTP or FTP (see WebConfig::asset_protocol) and you
+  /// only want a subset of requests to be handled by DataSource. The request
+  /// will be handled by the default handler if this request ignores the
+  /// DataSource handler. This is set to FALSE by default.
+  ///
+  virtual void set_ignore_data_source_handler(bool ignore) = 0;
 
  protected:
   virtual ~ResourceRequest() {}

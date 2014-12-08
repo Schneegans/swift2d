@@ -37,25 +37,25 @@ class SWIFT_DLL Material : public MaterialBase {
 
   // ---------------------------------------------------------------- properties
   Texture3DProperty AnimatedDiffuseTexture;
-  TextureProperty         DiffuseTexture;
-  ColorProperty           Diffuse;
+  TextureProperty   DiffuseTexture;
+  ColorProperty     Diffuse;
 
   Texture3DProperty AnimatedNormalTexture;
-  TextureProperty         NormalTexture;
+  TextureProperty   NormalTexture;
 
   Texture3DProperty AnimatedEmitTexture;
-  TextureProperty         EmitTexture;
-  Float                   Emit;
+  TextureProperty   EmitTexture;
+  Float             Emit;
 
   Texture3DProperty AnimatedGlowTexture;
-  TextureProperty         GlowTexture;
-  Float                   Glow;
+  TextureProperty   GlowTexture;
+  Float             Glow;
 
   Texture3DProperty AnimatedShinynessTexture;
-  TextureProperty         ShinynessTexture;
-  Float                   Shinyness;
+  TextureProperty   ShinynessTexture;
+  Float             Shinyness;
 
-  Bool                    BlendAdditive;
+  Bool              BlendAdditive;
 
   // ----------------------------------------------------- contruction interface
   Material();

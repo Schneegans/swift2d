@@ -33,14 +33,14 @@ class SWIFT_DLL ColorMap : public Texture3D {
  public:
 
   // ---------------------------------------------------------------- properties
-  ColorProperty FrontBottomLeft;
-  ColorProperty FrontTopLeft;
-  ColorProperty FrontTopRight;
-  ColorProperty FrontBottomRight;
-  ColorProperty BackBottomLeft;
-  ColorProperty BackTopLeft;
-  ColorProperty BackTopRight;
-  ColorProperty BackBottomRight;
+  ColorProperty Black;
+  ColorProperty Green;
+  ColorProperty Yellow;
+  ColorProperty Red;
+  ColorProperty Blue;
+  ColorProperty Turqoise;
+  ColorProperty White;
+  ColorProperty Purple;
   Int32         Width;
   Int32         Height;
   Int32         Depth;

@@ -6,13 +6,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TEXTURE_DATABASE_HPP
-#define SWIFT2D_TEXTURE_DATABASE_HPP
+#ifndef SWIFT2D_QUEUE_HPP
+#define SWIFT2D_QUEUE_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/utils/Singleton.hpp>
-#include <swift2d/databases/Database.hpp>
-#include <swift2d/textures/Texture.hpp>
+#include <queue>
+#include <mutex>
 
 namespace swift {
 
@@ -20,39 +19,54 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL TextureDatabase : public Database<Texture>,
-                                  public Singleton<TextureDatabase> {
+template<class T>
+class SWIFT_DLL Queue {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  TexturePtr lookup_or_load(std::string const& name) {
-    if (name == "") {
-      return TexturePtr();
-    }
-
-    if (has(name)) {
-      return TextureDatabase::get().lookup(name);
-    }
-
-    auto tex = Texture::create(name);
-    TextureDatabase::get().add(name, tex);
-
-    return tex;
+  // ------------------------------------------------------------ public methods
+  bool empty() const {
+    std::unique_lock<std::mutex> lock(mutex_);
+    return queue_.empty();
   }
 
-  friend class Singleton<TextureDatabase>;
+  unsigned size() const {
+    std::unique_lock<std::mutex> lock(mutex_);
+    return queue_.size();
+  }
+
+  void push(T const& val, unsigned count = 1) {
+    std::unique_lock<std::mutex> lock(mutex_);
+    for (int i(0); i<count; ++i) {
+      queue_.push(val);
+    }
+  }
+
+  void push(std::vector<T> const& val) {
+    std::unique_lock<std::mutex> lock(mutex_);
+    for (auto const& t:val) {
+      queue_.push(t);
+    }
+  }
+
+  T pop() {
+    std::unique_lock<std::mutex> lock(mutex_);
+    T val = queue_.front();
+    queue_.pop();
+    return val;
+  }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  // this class is a Singleton --- private c'tor and d'tor
-  TextureDatabase() {}
-  ~TextureDatabase() {}
-
+  std::queue<T> queue_;
+  mutable std::mutex mutex_;
 };
+
+// -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_TEXTURE_DATABASE_HPP
+#endif  // SWIFT2D_QUEUE_HPP

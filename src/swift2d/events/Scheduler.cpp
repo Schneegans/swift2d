@@ -10,6 +10,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include <iostream>
 
 namespace swift {
 
@@ -17,6 +18,14 @@ namespace swift {
 
 Scheduler::Scheduler()
   : current_id_(0) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Scheduler::~Scheduler() {
+  for (auto& c: tasks_) {
+    delete c.second.first;
+  }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

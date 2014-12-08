@@ -36,7 +36,8 @@ RendererPool::RendererPool()
   , guis_({
       &gui_elements,
       &gui_sprite_elements,
-      &animated_gui_sprite_elements
+      &animated_gui_sprite_elements,
+      &tangible_pointers
     }) {}
 
 ////////////////////////////////////////////////////////////////////////////////

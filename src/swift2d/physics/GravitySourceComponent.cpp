@@ -16,7 +16,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 GravitySourceComponent::GravitySourceComponent()
-  : Density(10.f) {
+  : Mass(10.f) {
 
   Physics::get().add(this);
 }
@@ -37,7 +37,7 @@ void GravitySourceComponent::serialize(SerializedScenePtr& scene) const {
 
 void GravitySourceComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
-  visitor.add_member("Density", Density);
+  visitor.add_member("Mass", Mass);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

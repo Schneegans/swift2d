@@ -35,7 +35,7 @@ HeatEffect::HeatEffect(RenderContext const& ctx) {
     };
 
     create_texture(
-      heat_buffer_, ctx.g_buffer_size.x()/8, ctx.g_buffer_size.y()/8,
+      heat_buffer_, ctx.g_buffer_size.x()/4, ctx.g_buffer_size.y()/4,
       oglplus::PixelDataInternalFormat::RG,
       oglplus::PixelDataFormat::RG
     );
@@ -62,7 +62,7 @@ void HeatEffect::process(ConstSerializedScenePtr const& scene,
       oglplus::BlendFunction::OneMinusSrcAlpha
     );
 
-    ctx.gl.Viewport(ctx.g_buffer_size.x()/8, ctx.g_buffer_size.y()/8);
+    ctx.gl.Viewport(ctx.g_buffer_size.x()/4, ctx.g_buffer_size.y()/4);
 
     heat_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
     ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);

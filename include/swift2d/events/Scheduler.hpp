@@ -24,6 +24,7 @@ class SWIFT_DLL Scheduler {
  // ----------------------------------------------------------- public interface
  public:
   Scheduler();
+  ~Scheduler();
 
   // ------------------------------------------------------------ public methods
   int execute_delayed(double delay, std::function<void()> callback);

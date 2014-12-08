@@ -20,12 +20,14 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 DynamicBodyComponent::DynamicBodyComponent()
-  : Density(1.f)
+  : Mass(1.f)
   , Friction(0.5f)
   , Restitution(0.5f)
   , LinearDamping(0.5f)
   , AngularDamping(0.5f)
   , GravityScale(1.f)
+  , FixedRotation(false)
+  , Sleep(false)
   , Group(0)
   , Mask(-1)
   , Category(0)
@@ -41,44 +43,44 @@ DynamicBodyComponent::~DynamicBodyComponent() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DynamicBodyComponent::apply_global_force(math::vec2 const& val) {
+void DynamicBodyComponent::apply_global_force(math::vec2 const& val, bool wake_up) {
   init();
-  body_->ApplyForceToCenter(b2Vec2(val.x(), val.y()), true);
+  body_->ApplyForceToCenter(b2Vec2(val.x(), val.y()), wake_up);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DynamicBodyComponent::apply_local_force(math::vec2 const& val) {
+void DynamicBodyComponent::apply_local_force(math::vec2 const& val, bool wake_up) {
   init();
-  body_->ApplyForceToCenter(body_->GetWorldVector(b2Vec2(val.x(), val.y())), true);
+  body_->ApplyForceToCenter(body_->GetWorldVector(b2Vec2(val.x(), val.y())), wake_up);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DynamicBodyComponent::apply_torque(float val) {
+void DynamicBodyComponent::apply_torque(float val, bool wake_up) {
   init();
-  body_->ApplyTorque(val, true);
+  body_->ApplyTorque(val, wake_up);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DynamicBodyComponent::apply_local_linear_impulse(math::vec2 const& val) {
+void DynamicBodyComponent::apply_local_linear_impulse(math::vec2 const& val, bool wake_up) {
   init();
-  body_->ApplyLinearImpulse(body_->GetWorldVector(b2Vec2(val.x(), val.y())), body_->GetWorldCenter(), true);
+  body_->ApplyLinearImpulse(body_->GetWorldVector(b2Vec2(val.x(), val.y())), body_->GetWorldCenter(), wake_up);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DynamicBodyComponent::apply_global_linear_impulse(math::vec2 const& val) {
+void DynamicBodyComponent::apply_global_linear_impulse(math::vec2 const& val, bool wake_up) {
   init();
-  body_->ApplyLinearImpulse(b2Vec2(val.x(), val.y()), body_->GetWorldCenter(), true);
+  body_->ApplyLinearImpulse(b2Vec2(val.x(), val.y()), body_->GetWorldCenter(), wake_up);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DynamicBodyComponent::apply_angular_impulse(float val) {
+void DynamicBodyComponent::apply_angular_impulse(float val, bool wake_up) {
   init();
-  body_->ApplyAngularImpulse(val, true);
+  body_->ApplyAngularImpulse(val, wake_up);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -140,6 +142,8 @@ void DynamicBodyComponent::update(double time) {
   math::set_translation(transform, position.x, position.y);
 
   get_user()->Transform.set(transform);
+
+  Sleep.set_with_no_emit(!body_->IsAwake());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -147,13 +151,15 @@ void DynamicBodyComponent::update(double time) {
 void DynamicBodyComponent::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
   visitor.add_object_property("Shape", Shape);
-  visitor.add_member("Density", Density);
+  visitor.add_member("Mass", Mass);
   visitor.add_member("Friction", Friction);
   visitor.add_member("Restitution", Restitution);
   visitor.add_member("LinearDamping", LinearDamping);
   visitor.add_member("AngularDamping", AngularDamping);
   visitor.add_member("GravityScale", GravityScale);
   visitor.add_member("Group", Group);
+  visitor.add_member("FixedRotation", FixedRotation);
+  visitor.add_member("Sleep", Sleep);
   visitor.add_member("Mask", Mask);
   visitor.add_member("Category", Category);
 }
@@ -177,13 +183,23 @@ void DynamicBodyComponent::init() {
                           << std::endl;
       return true;
     });
-    Density.on_change().connect([&](float val){
-      body_->GetFixtureList()->SetDensity(val);
+    Mass.on_change().connect([&](float val){
+      auto transform(get_user()->WorldTransform());
+      math::vec2 scale(math::get_scale(transform));
+      body_->GetFixtureList()->SetDensity(val / scale.x() / scale.y());
       body_->ResetMassData();
       return true;
     });
     Friction.on_change().connect([&](float val){
       body_->GetFixtureList()->SetFriction(val);
+      return true;
+    });
+    FixedRotation.on_change().connect([&](bool val){
+      body_->SetFixedRotation(val);
+      return true;
+    });
+    Sleep.on_change().connect([&](bool val){
+      body_->SetAwake(!val);
       return true;
     });
     Restitution.on_change().connect([&](float val){

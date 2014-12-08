@@ -37,12 +37,14 @@ class SWIFT_DLL DynamicBodyComponent : public Component {
 
   // ---------------------------------------------------------------- properties
   CollisionShapeProperty  Shape;
-  Float                   Density;
+  Float                   Mass;
   Float                   Friction;
   Float                   Restitution;
   Float                   LinearDamping;
   Float                   AngularDamping;
   Float                   GravityScale;
+  Bool                    FixedRotation;
+  Bool                    Sleep;
 
   Int16                   Group;
   UInt16                  Mask;
@@ -73,12 +75,12 @@ class SWIFT_DLL DynamicBodyComponent : public Component {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "DynamicBodyComponent"; }
 
-  void       apply_global_force(math::vec2 const& val);
-  void       apply_local_force(math::vec2 const& val);
-  void       apply_torque(float val);
-  void       apply_local_linear_impulse(math::vec2 const& val);
-  void       apply_global_linear_impulse(math::vec2 const& val);
-  void       apply_angular_impulse(float val);
+  void       apply_global_force(math::vec2 const& val, bool wake_up = true);
+  void       apply_local_force(math::vec2 const& val, bool wake_up = true);
+  void       apply_torque(float val, bool wake_up = true);
+  void       apply_local_linear_impulse(math::vec2 const& val, bool wake_up = true);
+  void       apply_global_linear_impulse(math::vec2 const& val, bool wake_up = true);
+  void       apply_angular_impulse(float val, bool wake_up = true);
 
   void       set_linear_velocity(math::vec2 const& val);
   math::vec2 get_linear_velocity();

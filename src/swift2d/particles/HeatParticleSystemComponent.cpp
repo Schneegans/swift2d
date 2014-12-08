@@ -28,11 +28,11 @@ void HeatParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
 
   ParticleSystemComponent::serialize(s);
 
-  s.StartScale = StartScale();
-  s.EndScale = EndScale();
-  s.StartOpacity = StartOpacity();
-  s.EndOpacity = EndOpacity();
-  s.Texture = Texture();
+  s.StartScale    = StartScale();
+  s.EndScale      = EndScale();
+  s.StartOpacity  = StartOpacity();
+  s.EndOpacity    = EndOpacity();
+  s.Texture       = Texture();
 
   scene->renderers().heat_particle_systems.add(std::move(s));
 }
@@ -41,11 +41,11 @@ void HeatParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
 
 void HeatParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   ParticleSystemComponent::accept(visitor);
-  visitor.add_member("StartScale",    StartScale);
-  visitor.add_member("EndScale",      EndScale);
-  visitor.add_member("StartOpacity",  StartOpacity);
-  visitor.add_member("EndOpacity",    EndOpacity);
-  visitor.add_object_property("Texture",       Texture);
+  visitor.add_member("StartScale",        StartScale);
+  visitor.add_member("EndScale",          EndScale);
+  visitor.add_member("StartOpacity",      StartOpacity);
+  visitor.add_member("EndOpacity",        EndOpacity);
+  visitor.add_object_property("Texture",  Texture);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

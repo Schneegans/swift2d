@@ -43,14 +43,15 @@ void FullscreenGuiSpriteComponent::Renderer::draw(RenderContext const& ctx, int 
       1.0 * o.Size.y() / ctx.window_size.y()
     );
 
-    math::vec2 offset(
+    math::vec3 offset(
       (2.0 * o.Offset.x() + o.Anchor.x() * (ctx.window_size.x() - o.Size.x()))/ctx.window_size.x(),
-      (2.0 * o.Offset.y() + o.Anchor.y() * (ctx.window_size.y() - o.Size.y()))/ctx.window_size.y()
+      (2.0 * o.Offset.y() + o.Anchor.y() * (ctx.window_size.y() - o.Size.y()))/ctx.window_size.y(),
+      0
     );
 
     GuiShader::get().size.Set(size);
     GuiShader::get().opacity.Set(o.Opacity);
-    GuiShader::get().offset.Set(offset);
+    GuiShader::get().offset_rot.Set(offset);
     GuiShader::get().diffuse.Set(0);
     Quad::get().draw(ctx);
   }

@@ -20,21 +20,26 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
+class TrailSystemComponent;
+typedef std::shared_ptr<TrailSystemComponent>       TrailSystemComponentPtr;
+typedef Property<TrailSystemComponentPtr>           TrailSystemComponentProperty;
+
 class TrailEmitterComponent;
 typedef std::shared_ptr<TrailEmitterComponent>       TrailEmitterComponentPtr;
 typedef std::shared_ptr<const TrailEmitterComponent> ConstTrailEmitterComponentPtr;
 typedef Property<TrailEmitterComponentPtr>           TrailEmitterComponentProperty;
 
-struct SWIFT_DLL SerializedTrailEmitter {
+struct SWIFT_DLL TrailSegment {
   math::vec2 Position;
   float      TimeSinceLastSpawn;
   float      TimeSincePrev1Spawn;
   float      TimeSincePrev2Spawn;
-  math::vec2 LastPosition;
+  float      Life;
+  float      StartAge;
   math::vec2 Prev1Position;
   math::vec2 Prev2Position;
   math::vec2 Prev3Position;
-  bool       SpawnNewPoint;
+  math::vec2 Prev4Position;
 };
 
 // -----------------------------------------------------------------------------
@@ -45,35 +50,39 @@ class SWIFT_DLL TrailEmitterComponent : public TransformableComponent {
  public:
 
   // ---------------------------------------------------------------- properties
+  TrailSystemComponentProperty TrailSystem;
   Float MaxSpawnGap;
   Float MinSpawnGap;
 
+  Float Life;
+  Float StartAge;
+
   // ----------------------------------------------------- contruction interface
   TrailEmitterComponent();
+  ~TrailEmitterComponent();
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "TrailEmitterComponent"; }
 
   virtual void update(double time);
-
   virtual void accept(SavableObjectVisitor& visitor);
 
-  SerializedTrailEmitter make_serialized_emitter() const;
+  friend class TrailSystemComponent;
 
  private:
+  void spawn_segment();
+  TrailSegment make_end_segment() const;
 
-  math::vec2 position_;
   float      time_since_last_spawn_;
   float      time_since_prev_1_spawn_;
   float      time_since_prev_2_spawn_;
-  math::vec2 last_position_;
   math::vec2 prev_1_position_;
   math::vec2 prev_2_position_;
   math::vec2 prev_3_position_;
+  math::vec2 prev_4_position_;
 
   bool first_frame_;
-  mutable bool spawn_new_point_;
 };
 
 }
