@@ -185,6 +185,18 @@ math::vec4 const& Color::vec4() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+std::string Color::html_rgb() const {
+  std::stringstream stream;
+  stream << "rgb("
+         << static_cast<int>(r() * 255) << ", "
+         << static_cast<int>(g() * 255) << ", "
+         << static_cast<int>(b() * 255) << ")";
+
+  return stream.str();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 Color Color::random() {
 
   Color result(math::random::get(0.0f, 1.0f),
