@@ -197,6 +197,24 @@ std::string Color::html_rgb() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Color::html_rgb(std::string const& val) {
+  std::string str(val);
+  std::string cropped = str.substr(str.find_first_of("(")+1, str.find_first_of(")")-1);
+
+  std::stringstream stream(cropped);
+  std::string comma;
+  float r;
+  float g;
+  float b;
+  stream >> r >> comma >> g >> comma >> b;
+
+  this->r(r/255.f);
+  this->g(g/255.f);
+  this->b(b/255.f);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 Color Color::random() {
 
   Color result(math::random::get(0.0f, 1.0f),

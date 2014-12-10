@@ -63,6 +63,7 @@ class SWIFT_DLL Color {
   math::vec3        vec3() const;
   math::vec4 const& vec4() const;
   std::string       html_rgb() const;
+  void              html_rgb(std::string const& val);
 
   float operator[](unsigned rhs) const;
   float& operator[](unsigned rhs);
