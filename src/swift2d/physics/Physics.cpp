@@ -119,10 +119,10 @@ void Physics::update(double time) {
         auto scale(math::get_scale(transform));
         float mass(source->Mass());
         math::vec2 direction(pos - math::vec2(body_pos.x, body_pos.y));
-        float distance(math::get_length_squared(direction));
+        float distance(math::get_length(direction));
         if (distance > 1.f) {
           auto b(static_cast<DynamicBodyComponent*>(body->GetUserData()));
-          direction = direction * mass * b->GravityScale() / distance;
+          direction = direction * mass * b->GravityScale() / (distance*distance*distance);
           b->apply_global_force(direction, false);
         }
       }
