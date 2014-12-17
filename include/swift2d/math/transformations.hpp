@@ -16,6 +16,9 @@
 namespace swift {
 namespace math {
 
+SWIFT_DLL mat3 make_transformation(vec2 const& pos, float rot, float scale);
+SWIFT_DLL mat3 make_transformation(vec2 const& pos, float rot, vec2 const& scale);
+
 SWIFT_DLL mat3 make_scale(vec2 const& scale);
 SWIFT_DLL mat3 make_scale(float scale);
 SWIFT_DLL mat3 make_scale(float x, float y);
@@ -47,6 +50,7 @@ SWIFT_DLL vec2  get_translation(mat3 const& mat);
 SWIFT_DLL vec2  get_scale(mat3 const& mat);
 SWIFT_DLL float get_rotation(mat3 const& mat);
 SWIFT_DLL vec2  get_direction(mat3 const& mat);
+SWIFT_DLL vec2  get_direction(float rotation);
 
 SWIFT_DLL float get_rotation(vec2 const& vec);
 SWIFT_DLL float get_length(vec2 const& vec);
