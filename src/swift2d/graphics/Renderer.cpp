@@ -17,6 +17,8 @@
 #include <thread>
 #include <memory>
 
+#define MULTITHREADED_RENDERING 1
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,55 +30,22 @@ Renderer::~Renderer() {
 ////////////////////////////////////////////////////////////////////////////////
 
 Renderer::Renderer(Pipeline& pipeline)
-  : rendered_scene_()
+  : pipeline_(pipeline)
+  , rendered_scene_()
   , updating_scene_()
   , updated_scene_()
   , running_(true)
   , started_rendering_(true) {
 
-  ticker_ = Ticker::create(1.0 / 1000.0);
-  ticker_->on_tick.connect([&]() {
-    if (started_rendering_) {
-      if (!timer_.is_running()) {
-        timer_.start();
+  application_step();
+
+  #if MULTITHREADED_RENDERING
+    forever_ = boost::thread([&]() {
+      while (running_) {
+        render_step();
       }
-      started_rendering_ = false;
-
-      Application::get().AppFPS.step();
-      Application::get().on_frame.emit(timer_.reset());
-      WindowManager::get().current()->process_input();
-
-      updating_scene_ = SceneManager::get().current()->serialize();
-      {
-        std::unique_lock<std::mutex> lock(mutex_);
-        last_rendered_scene_ = nullptr;
-        updated_scene_ = updating_scene_;
-      }
-
-      pipeline.update();
-    }
-
-    return true;
-  });
-  ticker_->start();
-
-  forever_ = boost::thread([&]() {
-    while (running_) {
-      if (updated_scene_) {
-        {
-          std::unique_lock<std::mutex> lock(mutex_);
-          last_rendered_scene_ = rendered_scene_;
-          rendered_scene_ = updated_scene_;
-          started_rendering_ = true;
-        }
-
-        Application::get().RenderFPS.step();
-        pipeline.draw(rendered_scene_);
-      } else {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-      }
-    }
-  });
+    });
+  #endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,6 +53,64 @@ Renderer::Renderer(Pipeline& pipeline)
 void Renderer::stop() {
   running_ = false;
   forever_.join();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Renderer::render_step() {
+  if (updated_scene_) {
+    {
+      std::unique_lock<std::mutex> lock(mutex_);
+      last_rendered_scene_ = rendered_scene_;
+      rendered_scene_ = updated_scene_;
+      started_rendering_ = true;
+    }
+
+    Application::get().RenderFPS.step();
+    pipeline_.draw(rendered_scene_);
+  } else {
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Renderer::application_step() {
+  if (started_rendering_) {
+    if (!timer_.is_running()) {
+      timer_.start();
+    }
+    started_rendering_ = false;
+
+    scheduler_.execute_delayed(1.0 / 60.0, [this]() {
+      application_step();
+    });
+
+    Application::get().AppFPS.step();
+    Application::get().on_frame.emit(timer_.reset());
+    WindowManager::get().current()->process_input();
+
+    updating_scene_ = SceneManager::get().current()->serialize();
+    {
+      std::unique_lock<std::mutex> lock(mutex_);
+
+      // delete reference to last scene to free memory from main thread
+      last_rendered_scene_ = nullptr;
+
+      updated_scene_ = updating_scene_;
+    }
+
+    pipeline_.update();
+
+    #if !MULTITHREADED_RENDERING
+    render_step();
+    #endif
+
+  } else {
+    scheduler_.execute_delayed(1.0 / 1000.0, [this]() {
+      application_step();
+    });
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

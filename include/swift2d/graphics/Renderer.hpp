@@ -59,13 +59,17 @@ class SWIFT_DLL Renderer {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  void render_step();
+  void application_step();
+
+  Pipeline& pipeline_;
 
   ConstSerializedScenePtr rendered_scene_;
   ConstSerializedScenePtr last_rendered_scene_;
   ConstSerializedScenePtr updating_scene_;
   ConstSerializedScenePtr updated_scene_;
 
-  TickerPtr ticker_;
+  Scheduler scheduler_;
   Timer     timer_;
 
   boost::thread forever_;
