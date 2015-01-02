@@ -58,6 +58,7 @@ class MaterialShader : public Shader {
   oglplus::Lazy<oglplus::Uniform<float>>       glow;
   oglplus::Lazy<oglplus::Uniform<int>>         shinyness_tex;
   oglplus::Lazy<oglplus::Uniform<float>>       shinyness;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  texcoord_offset_scale;
   oglplus::Lazy<oglplus::Uniform<float>>       time;
 };
 

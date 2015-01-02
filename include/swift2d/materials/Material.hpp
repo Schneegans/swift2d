@@ -55,6 +55,9 @@ class SWIFT_DLL Material : public MaterialBase {
   TextureProperty   ShinynessTexture;
   Float             Shinyness;
 
+  Vec2              TexcoordOffset;
+  Vec2              TexcoordScale;
+
   Bool              BlendAdditive;
 
   // ----------------------------------------------------- contruction interface

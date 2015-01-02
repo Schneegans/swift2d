@@ -22,6 +22,8 @@ Material::Material()
   , Glow(0.0)
   , Shinyness(1.0)
   , BlendAdditive(false)
+  , TexcoordOffset(math::vec2(0.f,0.f))
+  , TexcoordScale(math::vec2(1.f,1.f))
   , current_shader_dirty_(true)
   , current_shader_(nullptr) {
 
@@ -90,6 +92,8 @@ void Material::accept(SavableObjectVisitor& visitor) {
   visitor.add_object_property("ShinynessTexture", ShinynessTexture);
   visitor.add_member("Shinyness", Shinyness);
   visitor.add_member("BlendAdditive", BlendAdditive);
+  visitor.add_member("TexcoordOffset", TexcoordOffset);
+  visitor.add_member("TexcoordScale", TexcoordScale);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -210,6 +214,11 @@ void Material::draw_quad_impl(RenderContext const& ctx,
     current_shader_->shinyness_tex.Set(4);
   }
   current_shader_->shinyness.Set(Shinyness());
+
+  current_shader_->texcoord_offset_scale.Set(math::vec4(
+    TexcoordOffset().x(), TexcoordOffset().y(),
+    TexcoordScale().x(), TexcoordScale().y()
+  ));
 
   bool blend(BlendAdditive());
 

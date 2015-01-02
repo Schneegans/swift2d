@@ -30,6 +30,7 @@ MaterialShader::MaterialShader(int capabilities, std::string const& v_source,
   , glow(get_uniform<float>("glow"))
   , shinyness_tex(get_uniform<int>("shinyness_tex"))
   , shinyness(get_uniform<float>("shinyness"))
+  , texcoord_offset_scale(get_uniform<math::vec4>("texcoord_offset_scale"))
   , time(get_uniform<float>("time")) {}
 
 ////////////////////////////////////////////////////////////////////////////////
