@@ -19,6 +19,7 @@
 #include <string>
 #include <memory>
 #include <mutex>
+#include <condition_variable>
 
 namespace swift {
 
@@ -72,9 +73,10 @@ class SWIFT_DLL Renderer {
   Scheduler scheduler_;
   Timer     timer_;
 
+  bool running_;
   boost::thread forever_;
-  std::mutex mutex_;
-  bool running_, started_rendering_;
+  std::mutex              copy_mutex_;
+  std::condition_variable copy_available_;
 };
 
 }

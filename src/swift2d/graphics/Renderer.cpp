@@ -18,6 +18,8 @@
 #include <memory>
 
 #define MULTITHREADED_RENDERING 1
+#define RENDERING_WAIT_FOR_UPDATE 0
+#define APPLICATION_FPS 60.f
 
 namespace swift {
 
@@ -35,7 +37,7 @@ Renderer::Renderer(Pipeline& pipeline)
   , updating_scene_()
   , updated_scene_()
   , running_(true)
-  , started_rendering_(true) {
+  {
 
   application_step();
 
@@ -58,59 +60,62 @@ void Renderer::stop() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Renderer::render_step() {
-  if (updated_scene_) {
-    {
-      std::unique_lock<std::mutex> lock(mutex_);
-      last_rendered_scene_ = rendered_scene_;
-      rendered_scene_ = updated_scene_;
-      started_rendering_ = true;
-    }
+  {
+    #if MULTITHREADED_RENDERING
+      std::unique_lock<std::mutex> lock(copy_mutex_);
+      while (!updated_scene_) {
+        copy_available_.wait(lock);
+      }
+    #endif
 
-    Application::get().RenderFPS.step();
-    pipeline_.draw(rendered_scene_);
-  } else {
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    last_rendered_scene_ = rendered_scene_;
+    rendered_scene_ = updated_scene_;
+
+    #if RENDERING_WAIT_FOR_UPDATE
+      updated_scene_ = nullptr;
+    #endif
   }
+
+  Application::get().RenderFPS.step();
+  pipeline_.draw(rendered_scene_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Renderer::application_step() {
-  if (started_rendering_) {
-    if (!timer_.is_running()) {
-      timer_.start();
-    }
-    started_rendering_ = false;
+  if (!timer_.is_running()) {
+    timer_.start();
+  }
 
-    scheduler_.execute_delayed(1.0 / 60.0, [this]() {
-      application_step();
-    });
+  double frame_time(timer_.reset());
+  double wait_time(1.0 / APPLICATION_FPS);
 
-    Application::get().AppFPS.step();
-    Application::get().on_frame.emit(timer_.reset());
-    WindowManager::get().current()->process_input();
+  scheduler_.execute_delayed(wait_time, [this]() {
+    application_step();
+  });
 
-    updating_scene_ = SceneManager::get().current()->serialize();
-    {
-      std::unique_lock<std::mutex> lock(mutex_);
+  Application::get().AppFPS.step();
+  Application::get().on_frame.emit(frame_time);
+  WindowManager::get().current()->process_input();
 
-      // delete reference to last scene to free memory from main thread
-      last_rendered_scene_ = nullptr;
-
-      updated_scene_ = updating_scene_;
-    }
-
-    pipeline_.update();
-
-    #if !MULTITHREADED_RENDERING
-    render_step();
+  updating_scene_ = SceneManager::get().current()->serialize();
+  {
+    #if MULTITHREADED_RENDERING
+      std::lock_guard<std::mutex> lock(copy_mutex_);
     #endif
 
-  } else {
-    scheduler_.execute_delayed(1.0 / 1000.0, [this]() {
-      application_step();
-    });
+    // delete reference to last scene to free memory from main thread
+    last_rendered_scene_ = nullptr;
+    updated_scene_ = updating_scene_;
   }
+
+  pipeline_.update();
+
+  #if !MULTITHREADED_RENDERING
+    render_step();
+  #else
+    copy_available_.notify_one();
+  #endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
