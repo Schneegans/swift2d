@@ -78,13 +78,14 @@ void TrailSystemComponent::serialize(SerializedScenePtr& scene) const {
   s.UseGlobalTexCoords = UseGlobalTexCoords();
   s.BlendAdd = BlendAdd();
   s.System = trail_system_;
-  s.EndSegments.reserve(emitters_.size());
+
+  std::vector<TrailSegment> end_segments(emitters_.size());
 
   for (auto const& emitter: emitters_) {
-    s.EndSegments.push_back(emitter->make_end_segment());
+    end_segments.push_back(emitter->make_end_segment());
   }
 
-  s.NewSegments = new_segments_;
+  trail_system_->spawn(end_segments, new_segments_);
   new_segments_.clear();
 
   scene->renderers().trail_systems.add(std::move(s));
@@ -113,8 +114,7 @@ void TrailSystemComponent::accept(SavableObjectVisitor& visitor) {
 void TrailSystemComponent::Renderer::predraw(RenderContext const& ctx) {
   for (auto& object : objects) {
     SWIFT_PUSH_GL_RANGE("Update TrailSystem");
-    object.System->update_trails(object, object.NewSegments, ctx);
-    object.NewSegments.clear();
+    object.System->update_trails(object, ctx);
     SWIFT_POP_GL_RANGE();
   }
 }
@@ -161,7 +161,7 @@ void TrailSystemComponent::Renderer::draw(RenderContext const& ctx, int start, i
       shader.total_time.            Set(total_time * 1000.0);
     }
 
-    o.System->draw_trails(o, o.EndSegments, ctx);
+    o.System->draw_trails(o, ctx);
 
     if (o.BlendAdd) {
       ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);

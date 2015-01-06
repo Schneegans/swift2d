@@ -47,14 +47,16 @@ class TrailSystem {
   // ------------------------------------------------------------ public methods
   void set_max_trail_points(int max_trail_points);
 
+  void spawn(
+    std::vector<TrailSegment> const& end_segments,
+    std::vector<TrailSegment> const& new_segments);
+
   void update_trails(
     TrailSystemComponent::Serialized const& system,
-    std::vector<TrailSegment> const& new_segments,
     RenderContext const& context);
 
   void draw_trails(
     TrailSystemComponent::Serialized const& system,
-    std::vector<TrailSegment> const& end_segments,
     RenderContext const& context);
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -74,6 +76,10 @@ class TrailSystem {
 
   bool   ping_;
   int    update_max_trail_points_;
+
+  std::vector<TrailSegment> new_segments_;
+  std::vector<TrailSegment> end_segments_;
+  mutable std::mutex mutex_;
 };
 
 }

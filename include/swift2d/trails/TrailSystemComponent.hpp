@@ -53,9 +53,6 @@ class SWIFT_DLL TrailSystemComponent : public Component,
     bool            BlendAdd;
 
     TrailSystemPtr System;
-
-    std::vector<TrailSegment> EndSegments;
-    std::vector<TrailSegment> NewSegments;
   };
 
   class Renderer : public ResourceRenderer<TrailSystemComponent> {
@@ -80,11 +77,6 @@ class SWIFT_DLL TrailSystemComponent : public Component,
   template <typename... Args>
   static TrailSystemComponentPtr create(Args&& ... a) {
     return std::make_shared<TrailSystemComponent>(a...);
-  }
-
-  // creates a copy from this
-  TrailSystemComponentPtr create_copy() const {
-    return std::make_shared<TrailSystemComponent>(*this);
   }
 
   // ------------------------------------------------------------ public methods

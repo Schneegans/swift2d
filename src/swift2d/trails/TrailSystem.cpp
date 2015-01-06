@@ -51,6 +51,18 @@ void TrailSystem::set_max_trail_points(int max_trail_points) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void TrailSystem::spawn(
+    std::vector<TrailSegment> const& end_segments,
+    std::vector<TrailSegment> const& new_segments) {
+
+  std::unique_lock<std::mutex> lock(mutex_);
+
+  new_segments_.insert(new_segments_.begin(), new_segments.begin(), new_segments.end());
+  end_segments_ = end_segments;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void TrailSystem::upload_to(RenderContext const& ctx) {
 
   // allocate GPU resources
@@ -88,7 +100,6 @@ void TrailSystem::upload_to(RenderContext const& ctx) {
 
 void TrailSystem::update_trails(
   TrailSystemComponent::Serialized const& system,
-  std::vector<TrailSegment> const& new_segments,
   RenderContext const& ctx) {
 
   bool first_draw(false);
@@ -145,17 +156,23 @@ void TrailSystem::update_trails(
   {
 
     // spawn new particles -----------------------------------------------------
-    for (auto const& segment: new_segments) {
-      times.push_back(math::vec4(
-        segment.TimeSincePrev1Spawn * 1000.0f,
-        segment.TimeSincePrev2Spawn * 1000.0f,
-        segment.Life * 1000.0f,
-        segment.StartAge * 1000.f
-      ));
-      positions0.push_back(segment.Prev1Position);
-      positions1.push_back(segment.Prev2Position);
-      positions2.push_back(segment.Prev3Position);
-      positions3.push_back(segment.Prev4Position);
+    {
+      std::unique_lock<std::mutex> lock(mutex_);
+
+      for (auto const& segment: new_segments_) {
+        times.push_back(math::vec4(
+          segment.TimeSincePrev1Spawn * 1000.0f,
+          segment.TimeSincePrev2Spawn * 1000.0f,
+          segment.Life * 1000.0f,
+          segment.StartAge * 1000.f
+        ));
+        positions0.push_back(segment.Prev1Position);
+        positions1.push_back(segment.Prev2Position);
+        positions2.push_back(segment.Prev3Position);
+        positions3.push_back(segment.Prev4Position);
+      }
+
+      new_segments_.clear();
     }
 
     int index(0);
@@ -194,13 +211,14 @@ void TrailSystem::update_trails(
 
 void TrailSystem::draw_trails(
   TrailSystemComponent::Serialized const& system,
-  std::vector<TrailSegment> const& end_segments,
   RenderContext const& ctx) {
 
   std::vector<GPUTrailSegment> segments;
   double total_time(ctx.pipeline->get_total_time());
 
-  for (auto const& segment : end_segments) {
+  std::unique_lock<std::mutex> lock(mutex_);
+
+  for (auto const& segment : end_segments_) {
 
     GPUTrailSegment trail_point;
 
