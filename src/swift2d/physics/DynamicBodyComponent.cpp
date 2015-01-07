@@ -26,6 +26,7 @@ DynamicBodyComponent::DynamicBodyComponent()
   , LinearDamping(0.5f)
   , AngularDamping(0.5f)
   , GravityScale(1.f)
+  , IsBullet(false)
   , FixedRotation(false)
   , Sleep(false)
   , Group(0)
@@ -158,6 +159,7 @@ void DynamicBodyComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("AngularDamping", AngularDamping);
   visitor.add_member("GravityScale", GravityScale);
   visitor.add_member("Group", Group);
+  visitor.add_member("IsBullet", IsBullet);
   visitor.add_member("FixedRotation", FixedRotation);
   visitor.add_member("Sleep", Sleep);
   visitor.add_member("Mask", Mask);
@@ -192,6 +194,10 @@ void DynamicBodyComponent::init() {
     });
     Friction.on_change().connect([&](float val){
       body_->GetFixtureList()->SetFriction(val);
+      return true;
+    });
+    IsBullet.on_change().connect([&](bool val){
+      body_->SetBullet(val);
       return true;
     });
     FixedRotation.on_change().connect([&](bool val){
