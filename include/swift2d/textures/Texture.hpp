@@ -59,6 +59,7 @@ class SWIFT_DLL Texture : public SavableObject {
 
   // ---------------------------------------------------------------- properties
   Bool AsyncLoading;
+  Bool Repeat;
 
   // ---------------------------------------------------- construction interface
   static TexturePtr create(std::string const& file) {

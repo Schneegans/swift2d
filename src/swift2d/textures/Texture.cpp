@@ -77,6 +77,7 @@ void Texture::Layer::accept(SavableObjectVisitor& visitor) {
 
 Texture::Texture()
   : AsyncLoading(true)
+  , Repeat(true)
   , texture_(nullptr)
   , loading_(false)
   , data_(nullptr)
@@ -88,6 +89,7 @@ Texture::Texture()
 
 Texture::Texture(std::string const& file_name)
   : AsyncLoading(true)
+  , Repeat(true)
   , texture_(nullptr)
   , loading_(false)
   , data_(nullptr)
@@ -102,6 +104,7 @@ Texture::Texture(std::string const& file_name)
 
 Texture::Texture(std::vector<Layer> const& layers)
   : AsyncLoading(true)
+  , Repeat(true)
   , texture_(nullptr)
   , loading_(false)
   , data_(nullptr)
@@ -137,6 +140,7 @@ void Texture::bind(RenderContext const& ctx, unsigned location) const {
 
 void Texture::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("AsyncLoading", AsyncLoading);
+  visitor.add_member("Repeat", Repeat);
   visitor.add_array("Layers", layers_);
 }
 
@@ -177,8 +181,8 @@ void Texture::upload_to(RenderContext const& ctx) const {
         .GenerateMipmap()
         .MinFilter(ose::LinearMipmapLinear())
         .MagFilter(ose::Linear())
-        .WrapS(ose::Repeat())
-        .WrapT(ose::Repeat());
+        .WrapS(Repeat() ? oglplus::TextureWrap::Repeat : oglplus::TextureWrap::ClampToEdge)
+        .WrapT(Repeat() ? oglplus::TextureWrap::Repeat : oglplus::TextureWrap::ClampToEdge);
 
       for (auto& layer: layers_) {
         layer.free();
