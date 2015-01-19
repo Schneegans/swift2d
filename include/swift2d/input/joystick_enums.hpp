@@ -105,28 +105,28 @@ enum JoystickButtonId {
 };
 
 enum Xbox360ControllerButton {
-  A                  =  JoystickButtonId::JOYSTICK_BUTTON_0,
-  B                  =  JoystickButtonId::JOYSTICK_BUTTON_1,
-  X                  =  JoystickButtonId::JOYSTICK_BUTTON_2,
-  Y                  =  JoystickButtonId::JOYSTICK_BUTTON_3,
-  BUMPER_LEFT        =  JoystickButtonId::JOYSTICK_BUTTON_4,
-  BUMPER_RIGHT       =  JoystickButtonId::JOYSTICK_BUTTON_5,
-  BACK               =  JoystickButtonId::JOYSTICK_BUTTON_6,
-  START              =  JoystickButtonId::JOYSTICK_BUTTON_7,
-  XBOX               =  JoystickButtonId::JOYSTICK_BUTTON_8,
-  LEFT_STICK_BUTTON  =  JoystickButtonId::JOYSTICK_BUTTON_9,
-  RIGHT_STICK_BUTTON = JoystickButtonId::JOYSTICK_BUTTON_10,
+  XBOX_A                  =  JoystickButtonId::JOYSTICK_BUTTON_0,
+  XBOX_B                  =  JoystickButtonId::JOYSTICK_BUTTON_1,
+  XBOX_X                  =  JoystickButtonId::JOYSTICK_BUTTON_2,
+  XBOX_Y                  =  JoystickButtonId::JOYSTICK_BUTTON_3,
+  XBOX_BUMPER_LEFT        =  JoystickButtonId::JOYSTICK_BUTTON_4,
+  XBOX_BUMPER_RIGHT       =  JoystickButtonId::JOYSTICK_BUTTON_5,
+  XBOX_BACK               =  JoystickButtonId::JOYSTICK_BUTTON_6,
+  XBOX_START              =  JoystickButtonId::JOYSTICK_BUTTON_7,
+  XBOX_XBOX               =  JoystickButtonId::JOYSTICK_BUTTON_8,
+  XBOX_LEFT_STICK_BUTTON  =  JoystickButtonId::JOYSTICK_BUTTON_9,
+  XBOX_RIGHT_STICK_BUTTON =  JoystickButtonId::JOYSTICK_BUTTON_10,
 };
 
 enum Xbox360ControllerAxis {
-  LEFT_STICK_X       =      JoystickAxisId::JOYSTICK_AXIS_0,
-  LEFT_STICK_Y       =      JoystickAxisId::JOYSTICK_AXIS_1,
-  LEFT_TRIGGER       =      JoystickAxisId::JOYSTICK_AXIS_2,
-  RIGHT_STICK_X      =      JoystickAxisId::JOYSTICK_AXIS_3,
-  RIGHT_STICK_Y      =      JoystickAxisId::JOYSTICK_AXIS_4,
-  RIGHT_TRIGGER      =      JoystickAxisId::JOYSTICK_AXIS_5,
-  DIRECTIONAL_PAD_X  =      JoystickAxisId::JOYSTICK_AXIS_6,
-  DIRECTIONAL_PAD_Y  =      JoystickAxisId::JOYSTICK_AXIS_7
+  XBOX_LEFT_STICK_X       =      JoystickAxisId::JOYSTICK_AXIS_0,
+  XBOX_LEFT_STICK_Y       =      JoystickAxisId::JOYSTICK_AXIS_1,
+  XBOX_LEFT_TRIGGER       =      JoystickAxisId::JOYSTICK_AXIS_2,
+  XBOX_RIGHT_STICK_X      =      JoystickAxisId::JOYSTICK_AXIS_3,
+  XBOX_RIGHT_STICK_Y      =      JoystickAxisId::JOYSTICK_AXIS_4,
+  XBOX_RIGHT_TRIGGER      =      JoystickAxisId::JOYSTICK_AXIS_5,
+  XBOX_DIRECTIONAL_PAD_X  =      JoystickAxisId::JOYSTICK_AXIS_6,
+  XBOX_DIRECTIONAL_PAD_Y  =      JoystickAxisId::JOYSTICK_AXIS_7
 };
 
 bool operator== (JoystickButtonId joy_button, Xbox360ControllerButton xbox_button);
