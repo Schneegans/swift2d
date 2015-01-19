@@ -44,6 +44,12 @@ DynamicBodyComponent::~DynamicBodyComponent() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void DynamicBodyComponent::on_detach(double time) {
+  update(time);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void DynamicBodyComponent::apply_global_force(math::vec2 const& val, bool wake_up) {
   init();
   body_->ApplyForceToCenter(b2Vec2(val.x(), val.y()), wake_up);
@@ -143,6 +149,7 @@ void DynamicBodyComponent::update(double time) {
   math::set_translation(transform, position.x, position.y);
 
   get_user()->Transform.set(transform);
+  get_user()->update_world_transform();
 
   Sleep.set_with_no_emit(!body_->IsAwake());
 }

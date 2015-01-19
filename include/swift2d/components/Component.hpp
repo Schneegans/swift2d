@@ -59,6 +59,14 @@ class SWIFT_DLL Component : public SavableObject {
   virtual ~Component() {}
 
   // ------------------------------------------------------------ public methods
+  // removes this component from its user - if not forced it will be
+  // removed in the next frame
+  void detach(bool force = false);
+
+  // called when this component or it's user got removed from the scene
+  // it's called instead of update, so the frame time is passed to this method
+  virtual void on_detach(double time) {}
+
   virtual void update(double time) {}
   virtual void serialize(SerializedScenePtr& scene) const {};
   virtual void accept(SavableObjectVisitor& visitor);

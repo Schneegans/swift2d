@@ -9,6 +9,8 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
 
+#include <swift2d/scene/SceneObject.hpp>
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -17,6 +19,14 @@ Component::Component()
   : Enabled(true)
   , user_(nullptr)
   , remove_flag_(false) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Component::detach(bool force) {
+  if (user_) {
+    user_->remove(this, force);
+  }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
