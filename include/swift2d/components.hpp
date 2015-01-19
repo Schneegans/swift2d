@@ -18,5 +18,8 @@
 #include <swift2d/components/DirectionalLightComponent.hpp>
 #include <swift2d/components/ListenerComponent.hpp>
 #include <swift2d/components/CameraComponent.hpp>
+#include <swift2d/components/LifeComponent.hpp>
+#include <swift2d/components/ScoreComponent.hpp>
+#include <swift2d/components/RespawnComponent.hpp>
 
 #endif  // SWIFT2D_INCLUDE_COMPONENTS_HPP

@@ -6,11 +6,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
-#define SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
+#ifndef SWIFT2D_RESPAWN_COMPONENT_HPP
+#define SWIFT2D_RESPAWN_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
+#include <swift2d/events/Scheduler.hpp>
 #include <swift2d/math.hpp>
 
 namespace swift {
@@ -20,39 +21,39 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class TransformableComponent;
-typedef std::shared_ptr<TransformableComponent>       TransformableComponentPtr;
-typedef std::shared_ptr<const TransformableComponent> ConstTransformableComponentPtr;
+class RespawnComponent;
+typedef std::shared_ptr<RespawnComponent>       RespawnComponentPtr;
+typedef std::shared_ptr<const RespawnComponent> ConstRespawnComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL TransformableComponent : public Component {
+class SWIFT_DLL RespawnComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
+  Signal<> on_respawn;
+
   // ---------------------------------------------------------------- properties
-  Mat3 Transform;
-  Mat3 WorldTransform;
+  Float RespawnTime;
+
+  // ----------------------------------------------------- contruction interface
+  RespawnComponent();
 
   // ------------------------------------------------------------ public methods
-  virtual void update(double time);
-  virtual void update_world_transform();
-
-  // -------------------------------------------------- transformation interface
-  virtual void scale     (math::vec2 const& scale);
-  virtual void scale     (float scale);
-  virtual void scale     (float x, float y);
-  virtual void rotate    (float angle);
-  virtual void translate (math::vec2 const& delta);
-  virtual void translate (float x, float y);
-
-  virtual math::vec2 get_position() const;
-  virtual math::vec2 get_world_position() const;
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "RespawnComponent"; }
 
   virtual void accept(SavableObjectVisitor& visitor);
+  virtual void update(double time);
+
+ ///////////////////////////////////////////////////////////////////////////////
+ // ---------------------------------------------------------- private interface
+ private:
+  Scheduler scheduler_;
+  bool initialized_;
 };
 
 }
 
-#endif  // SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
+#endif  // SWIFT2D_RESPAWN_COMPONENT_HPP

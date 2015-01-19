@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
-#define SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
+#ifndef SWIFT2D_SCORE_COMPONENT_HPP
+#define SWIFT2D_SCORE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
@@ -20,39 +20,33 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class TransformableComponent;
-typedef std::shared_ptr<TransformableComponent>       TransformableComponentPtr;
-typedef std::shared_ptr<const TransformableComponent> ConstTransformableComponentPtr;
+class ScoreComponent;
+typedef std::shared_ptr<ScoreComponent>       ScoreComponentPtr;
+typedef std::shared_ptr<const ScoreComponent> ConstScoreComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL TransformableComponent : public Component {
+class SWIFT_DLL ScoreComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ---------------------------------------------------------------- properties
-  Mat3 Transform;
-  Mat3 WorldTransform;
+  Int32 Score;
+
+  // ----------------------------------------------------- contruction interface
+  ScoreComponent();
 
   // ------------------------------------------------------------ public methods
-  virtual void update(double time);
-  virtual void update_world_transform();
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "ScoreComponent"; }
 
-  // -------------------------------------------------- transformation interface
-  virtual void scale     (math::vec2 const& scale);
-  virtual void scale     (float scale);
-  virtual void scale     (float x, float y);
-  virtual void rotate    (float angle);
-  virtual void translate (math::vec2 const& delta);
-  virtual void translate (float x, float y);
-
-  virtual math::vec2 get_position() const;
-  virtual math::vec2 get_world_position() const;
+  void increase(int amount=1);
+  void decrease(int amount=1);
 
   virtual void accept(SavableObjectVisitor& visitor);
 };
 
 }
 
-#endif  // SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
+#endif  // SWIFT2D_SCORE_COMPONENT_HPP

@@ -46,10 +46,10 @@ namespace {
       LOG_MESSAGE << "Booting Swift2D..." << std::endl;
 
       // register all objects --------------------------------------------------
-      Object::init<AnimatedSpriteComponent>();
-      Object::init<AnimatedFloat>();
       Object::init<AnimatedDouble>();
-      Object::init<Texture3D>();
+      Object::init<AnimatedFloat>();
+      Object::init<AnimatedGuiSpriteComponent>();
+      Object::init<AnimatedSpriteComponent>();
       Object::init<AudioComponent>();
       Object::init<BoxCollisionShape>();
       Object::init<CameraComponent>();
@@ -57,15 +57,16 @@ namespace {
       Object::init<CircularShape>();
       Object::init<DeleteOnLeaveBehavior>();
       Object::init<DirectionalLightComponent>();
-      Object::init<EngineSettings>();
       Object::init<DynamicBodyComponent>();
+      Object::init<EngineSettings>();
+      Object::init<FullscreenGuiSpriteComponent>();
+      Object::init<FullscreenSpriteComponent>();
       Object::init<GravitySourceComponent>();
       Object::init<GuiComponent>();
-      Object::init<FullscreenGuiSpriteComponent>();
       Object::init<GuiSpriteComponent>();
-      Object::init<AnimatedGuiSpriteComponent>();
       Object::init<HeatParticleSystemComponent>();
       Object::init<HeatSpriteComponent>();
+      Object::init<LifeComponent>();
       Object::init<LightParticleSystemComponent>();
       Object::init<ListenerComponent>();
       Object::init<Material>();
@@ -77,13 +78,15 @@ namespace {
       Object::init<PointParticleSystemComponent>();
       Object::init<PolygonCollisionShape>();
       Object::init<SceneObject>();
+      Object::init<ScoreComponent>();
+      Object::init<RespawnComponent>();
       Object::init<Sound>();
       Object::init<SpriteComponent>();
-      Object::init<FullscreenSpriteComponent>();
       Object::init<SpriteParticleSystemComponent>();
       Object::init<StaticBodyComponent>();
-      Object::init<Texture>();
+      Object::init<Texture3D>();
       Object::init<Texture::Layer>();
+      Object::init<Texture>();
       Object::init<TimedDeleteBehavior>();
       Object::init<TrailEmitterComponent>();
       Object::init<TrailSystemComponent>();

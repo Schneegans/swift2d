@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
-#define SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
+#ifndef SWIFT2D_LIFE_COMPONENT_HPP
+#define SWIFT2D_LIFE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
@@ -20,39 +20,52 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class TransformableComponent;
-typedef std::shared_ptr<TransformableComponent>       TransformableComponentPtr;
-typedef std::shared_ptr<const TransformableComponent> ConstTransformableComponentPtr;
+class LifeComponent;
+typedef std::shared_ptr<LifeComponent>       LifeComponentPtr;
+typedef std::shared_ptr<const LifeComponent> ConstLifeComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL TransformableComponent : public Component {
+class SWIFT_DLL LifeComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
+  Signal<math::uint64> on_killed;
+
   // ---------------------------------------------------------------- properties
-  Mat3 Transform;
-  Mat3 WorldTransform;
+  Float Life;
+  Float MaxLife;
+
+  Float DamageSourceResetTime;
+
+  // ----------------------------------------------------- contruction interface
+  LifeComponent();
 
   // ------------------------------------------------------------ public methods
-  virtual void update(double time);
-  virtual void update_world_transform();
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "LifeComponent"; }
 
-  // -------------------------------------------------- transformation interface
-  virtual void scale     (math::vec2 const& scale);
-  virtual void scale     (float scale);
-  virtual void scale     (float x, float y);
-  virtual void rotate    (float angle);
-  virtual void translate (math::vec2 const& delta);
-  virtual void translate (float x, float y);
+  void increase(float amount);
 
-  virtual math::vec2 get_position() const;
-  virtual math::vec2 get_world_position() const;
+  void decrease(float amount);
+  void decrease(float amount, math::uint64 source);
+
+  void reset();
+
+  bool is_dead() const;
 
   virtual void accept(SavableObjectVisitor& visitor);
+  virtual void update(double time);
+
+ ///////////////////////////////////////////////////////////////////////////////
+ // ---------------------------------------------------------- private interface
+ private:
+  math::uint64 damage_source_;
+  float        reset_time_;
+  bool         dead_;
 };
 
 }
 
-#endif  // SWIFT2D_TRANSFORMABLE_COMPONENT_HPP
+#endif  // SWIFT2D_LIFE_COMPONENT_HPP
