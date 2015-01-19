@@ -37,9 +37,25 @@ SceneObjectPtr SceneObject::create_from_file(std::string const& path) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SceneObject::detach() {
+void SceneObject::detach(bool force) {
   if (Parent()) {
-    Parent()->remove(this);
+    Parent()->remove(this, force);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void SceneObject::on_detach(double time) {
+  for (auto current(components_.begin()), next(current);
+       current != components_.end(); current = next) {
+    ++next;
+    (*current)->on_detach(time);
+  }
+
+  for (auto current(objects_.begin()), next(current);
+       current != objects_.end(); current = next) {
+    ++next;
+    (*current)->on_detach(time);
   }
 }
 
@@ -85,6 +101,7 @@ std::unordered_set<SceneObjectPtr> const& SceneObject::get_objects() const {
 
 void SceneObject::remove(SceneObjectPtr const& object, bool force) {
   if (force) {
+    object->on_detach(0.0);
     objects_.erase(object);
   } else {
     object->remove_flag_ = true;
@@ -97,6 +114,7 @@ void SceneObject::remove(SceneObject* object, bool force) {
   if (force) {
     for (auto& ptr: objects_) {
       if (ptr.get() == object) {
+        object->on_detach(0.0);
         objects_.erase(ptr);
         break;
       }
@@ -110,11 +128,28 @@ void SceneObject::remove(SceneObject* object, bool force) {
 
 void SceneObject::remove(ComponentPtr const& component, bool force) {
   if (force) {
-    auto delete_pos(std::remove(components_.begin(), components_.end(), component));
+    for (auto it(components_.begin()); it!=components_.end(); ++it) {
+      if (*it == component) {
+        component->on_detach(0.0);
+        components_.erase(it);
+        break;
+      }
+    }
+  } else {
+    component->remove_flag_ = true;
+  }
+}
 
-    if (delete_pos != components_.end()) {
-      (*delete_pos)->set_user(nullptr);
-      components_.erase(delete_pos, components_.end());
+////////////////////////////////////////////////////////////////////////////////
+
+void SceneObject::remove(Component* component, bool force) {
+  if (force) {
+    for (auto it(components_.begin()); it!=components_.end(); ++it) {
+      if (it->get() == component) {
+        component->on_detach(0.0);
+        components_.erase(it);
+        break;
+      }
     }
   } else {
     component->remove_flag_ = true;
@@ -208,6 +243,7 @@ void SceneObject::update(double time) {
          current != components_.end(); current = next) {
       ++next;
       if ((*current)->remove_flag_) {
+        (*current)->on_detach(time);
         components_.erase(current);
       } else if ((*current)->Enabled.get()) {
         (*current)->update(time);
@@ -218,6 +254,7 @@ void SceneObject::update(double time) {
          current != objects_.end(); current = next) {
       ++next;
       if ((*current)->remove_flag_) {
+        (*current)->on_detach(time);
         objects_.erase(current);
       } else {
         (*current)->update(time);
@@ -229,6 +266,21 @@ void SceneObject::update(double time) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void SceneObject::update_world_transform() {
+
+  if (Enabled()) {
+    if (Parent.get()) {
+      WorldTransform = Parent.get()->WorldTransform.get() * Transform.get();
+      WorldDepth     = Parent.get()->WorldDepth.get() + Depth.get();
+    } else {
+      WorldTransform = Transform.get();
+      WorldDepth     = Depth.get();
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void SceneObject::update_world_transform_recursively() {
 
   if (Enabled()) {
     if (Parent.get()) {

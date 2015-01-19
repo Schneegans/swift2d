@@ -157,15 +157,18 @@ void Material::draw_quad_impl(RenderContext const& ctx,
   current_shader_->parallax.Set(ctx.projection_parallax);
 
   bool needs_time(false);
+  bool needs_texcoords(false);
 
   if (AnimatedDiffuseTexture()) {
     AnimatedDiffuseTexture()->bind(ctx, 0);
     current_shader_->diffuse_tex.Set(0);
     needs_time = true;
+    needs_texcoords = true;
 
   } else if (DiffuseTexture()) {
     DiffuseTexture()->bind(ctx, 0);
     current_shader_->diffuse_tex.Set(0);
+    needs_texcoords = true;
   }
   current_shader_->diffuse.Set(Diffuse().vec4());
 
@@ -175,21 +178,25 @@ void Material::draw_quad_impl(RenderContext const& ctx,
     current_shader_->normal_tex.Set(1);
     current_shader_->normal_transform.Set(math::make_rotation(math::get_rotation(transforms[0])));
     needs_time = true;
+    needs_texcoords = true;
 
   } else if (NormalTexture()) {
     NormalTexture()->bind(ctx, 1);
     current_shader_->normal_tex.Set(1);
     current_shader_->normal_transform.Set(math::make_rotation(math::get_rotation(transforms[0])));
+    needs_texcoords = true;
   }
 
   if (AnimatedEmitTexture()) {
     AnimatedEmitTexture()->bind(ctx, 2);
     current_shader_->emit_tex.Set(2);
     needs_time = true;
+    needs_texcoords = true;
 
   } else if (EmitTexture()) {
     EmitTexture()->bind(ctx, 2);
     current_shader_->emit_tex.Set(2);
+    needs_texcoords = true;
   }
   current_shader_->emit.Set(Emit());
 
@@ -197,10 +204,12 @@ void Material::draw_quad_impl(RenderContext const& ctx,
     AnimatedGlowTexture()->bind(ctx, 3);
     current_shader_->glow_tex.Set(3);
     needs_time = true;
+    needs_texcoords = true;
 
   } else if (GlowTexture()) {
     GlowTexture()->bind(ctx, 3);
     current_shader_->glow_tex.Set(3);
+    needs_texcoords = true;
   }
   current_shader_->glow.Set(Glow());
 
@@ -208,6 +217,7 @@ void Material::draw_quad_impl(RenderContext const& ctx,
     AnimatedShinynessTexture()->bind(ctx, 4);
     current_shader_->shinyness_tex.Set(4);
     needs_time = true;
+    needs_texcoords = true;
 
   } else if (ShinynessTexture()) {
     ShinynessTexture()->bind(ctx, 4);
@@ -215,10 +225,12 @@ void Material::draw_quad_impl(RenderContext const& ctx,
   }
   current_shader_->shinyness.Set(Shinyness());
 
-  current_shader_->texcoord_offset_scale.Set(math::vec4(
-    TexcoordOffset().x(), TexcoordOffset().y(),
-    TexcoordScale().x(), TexcoordScale().y()
-  ));
+  if (needs_texcoords) {
+    current_shader_->texcoord_offset_scale.Set(math::vec4(
+      TexcoordOffset().x(), TexcoordOffset().y(),
+      TexcoordScale().x(), TexcoordScale().y()
+    ));
+  }
 
   bool blend(BlendAdditive());
 
