@@ -22,5 +22,6 @@
 #include <swift2d/components/ScoreComponent.hpp>
 #include <swift2d/components/RespawnComponent.hpp>
 #include <swift2d/components/NetworkPositionUpdateComponent.hpp>
+#include <swift2d/components/DealDamageComponent.hpp>
 
 #endif  // SWIFT2D_INCLUDE_COMPONENTS_HPP
