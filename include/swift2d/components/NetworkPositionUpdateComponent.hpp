@@ -38,11 +38,13 @@ class SWIFT_DLL NetworkPositionUpdateComponent : public Component {
   Vec3 LinAngUpdate;
 
   // ----------------------------------------------------- contruction interface
-  NetworkPositionUpdateComponent(bool is_local=false);
+  NetworkPositionUpdateComponent();
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "NetworkPositionUpdateComponent"; }
+
+  void init(bool is_local);
 
   virtual void accept(SavableObjectVisitor& visitor);
   virtual void update(double time);
@@ -50,6 +52,8 @@ class SWIFT_DLL NetworkPositionUpdateComponent : public Component {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  void send_update();
+
   float update_interval_;
   float time_;
 

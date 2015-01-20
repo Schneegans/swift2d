@@ -15,10 +15,20 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-NetworkPositionUpdateComponent::NetworkPositionUpdateComponent(bool is_local)
+NetworkPositionUpdateComponent::NetworkPositionUpdateComponent()
   : update_interval_(0.1)
   , time_(update_interval_)
-  , is_local_(is_local) {
+  , is_local_(true) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void NetworkPositionUpdateComponent::init(bool is_local) {
+  is_local_ = is_local;
+  body_ = get_user()->get_component<DynamicBodyComponent>();
+
+  if (!body_) {
+    LOG_WARNING << "Failed to initialize NetworkPositionUpdateComponent: No DynamicBodyComponent found!" << std::endl;
+  }
 
   if (!is_local_) {
     PosRotUpdate.on_change().connect([this](math::vec3 const& val) {
@@ -35,37 +45,34 @@ NetworkPositionUpdateComponent::NetworkPositionUpdateComponent(bool is_local)
       }
       return true;
     });
+  } else {
+    send_update();
   }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void NetworkPositionUpdateComponent::update(double time) {
-
-  if (!body_) {
-    body_ = get_user()->get_component<DynamicBodyComponent>();
-
-    if (!body_) {
-      LOG_WARNING << "Failed to initialize NetworkPositionUpdateComponent: No DynamicBodyComponent found!" << std::endl;
-    }
-  }
-
   if (is_local_) {
     time_ += time;
     if (time_ >= update_interval_) {
       time_ = 0.f;
-
-      if (body_) {
-        auto pos(math::get_translation(get_user()->Transform.get()));
-        auto rot(math::get_rotation(get_user()->Transform.get()));
-        PosRotUpdate.set(math::vec3(pos.x(), pos.y(), rot));
-
-        auto lin_vel(body_->get_linear_velocity());
-        auto ang_vel(body_->get_angular_velocity());
-        LinAngUpdate.set(math::vec3(lin_vel.x(), lin_vel.y(), ang_vel));
-      }
+      send_update();
     }
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void NetworkPositionUpdateComponent::send_update() {
+  if (body_) {
+    auto pos(math::get_translation(get_user()->Transform.get()));
+    auto rot(math::get_rotation(get_user()->Transform.get()));
+    PosRotUpdate.set(math::vec3(pos.x(), pos.y(), rot));
+
+    auto lin_vel(body_->get_linear_velocity());
+    auto ang_vel(body_->get_angular_velocity());
+    LinAngUpdate.set(math::vec3(lin_vel.x(), lin_vel.y(), ang_vel));
   }
 }
 
