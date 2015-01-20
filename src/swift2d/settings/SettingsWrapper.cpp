@@ -50,13 +50,13 @@ void SettingsWrapper::save_to_file(std::string const& file_name) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void SettingsWrapper::load_from_steam_file(std::string const& file_name) {
-  Steam::get().load_file_from_cloud(file_name);
-  // auto d(EngineSettings::create_from_file(file_name));
-  // if (d) {
-  //   Settings = std::dynamic_pointer_cast<EngineSettings>(d);
-  // } else {
-  //   Settings = std::dynamic_pointer_cast<EngineSettings>(Object::create(settings_type_));
-  // }
+  auto buffer = Steam::get().load_file_from_cloud(file_name);
+  auto d(EngineSettings::create_from_buffer(buffer));
+  if (d) {
+    Settings = std::dynamic_pointer_cast<EngineSettings>(d);
+  } else {
+    Settings = std::dynamic_pointer_cast<EngineSettings>(Object::create(settings_type_));
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
