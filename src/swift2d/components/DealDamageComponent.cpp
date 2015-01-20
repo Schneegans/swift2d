@@ -23,7 +23,7 @@ DealDamageComponent::DealDamageComponent()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DealDamageComponent::init() {
+void DealDamageComponent::on_init() {
   auto body(get_user()->get_component<DynamicBodyComponent>());
   if (body) {
     body->start_contact_with_dynamic.connect([this](DynamicBodyComponent* other, math::vec2 const&) {
