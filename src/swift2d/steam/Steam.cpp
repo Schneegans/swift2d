@@ -328,6 +328,17 @@ std::string Steam::get_user_avatar(math::uint64 steam_id) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Steam::save_file_to_cloud(std::string const& file_name, std::string const& file_data) {
+
+}
+
+std::string Steam::load_file_from_cloud(std::string const& file_name) {
+  return std::string();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Steam::save_avatar(math::uint64 steam_id) {
   int avatar_id = SteamFriends()->GetSmallFriendAvatar(steam_id);
 
