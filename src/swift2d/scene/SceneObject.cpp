@@ -27,7 +27,8 @@ SceneObject::SceneObject()
   , Enabled(true)
   , Depth(0)
   , WorldDepth(0)
-  , remove_flag_(false) {}
+  , remove_flag_(false)
+  , initialized_(false) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -242,6 +243,10 @@ void SceneObject::update(double time) {
     for (auto current(components_.begin()), next(current);
          current != components_.end(); current = next) {
       ++next;
+      if (!(*current)->initialized_) {
+        (*current)->initialized_ = true;
+        (*current)->on_init();
+      }
       if ((*current)->remove_flag_) {
         (*current)->on_detach(time);
         components_.erase(current);
@@ -253,6 +258,10 @@ void SceneObject::update(double time) {
     for (auto current(objects_.begin()), next(current);
          current != objects_.end(); current = next) {
       ++next;
+      if (!(*current)->initialized_) {
+        (*current)->initialized_ = true;
+        (*current)->on_init();
+      }
       if ((*current)->remove_flag_) {
         (*current)->on_detach(time);
         objects_.erase(current);

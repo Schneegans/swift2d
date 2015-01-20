@@ -67,6 +67,9 @@ class SWIFT_DLL Component : public SavableObject {
   // it's called instead of update, so the frame time is passed to this method
   virtual void on_detach(double time) {}
 
+  // called before the very first update
+  virtual void on_init() {}
+
   virtual void update(double time) {}
   virtual void serialize(SerializedScenePtr& scene) const {};
   virtual void accept(SavableObjectVisitor& visitor);
@@ -86,7 +89,7 @@ class SWIFT_DLL Component : public SavableObject {
  private:
   SceneObject* user_;
 
-  bool remove_flag_;
+  bool remove_flag_, initialized_;
 };
 
 }
