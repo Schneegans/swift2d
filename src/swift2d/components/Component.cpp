@@ -18,7 +18,8 @@ namespace swift {
 Component::Component()
   : Enabled(true)
   , user_(nullptr)
-  , remove_flag_(false) {}
+  , remove_flag_(false)
+  , initialized_(false) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
