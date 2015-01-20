@@ -72,14 +72,15 @@ namespace {
       Object::init<Material>();
       Object::init<MoveBehavior>();
       Object::init<Music>();
+      Object::init<NetworkPositionUpdateComponent>();
       Object::init<OffsetBehavior>();
       Object::init<ParticleEmitterComponent>();
       Object::init<PointLightComponent>();
       Object::init<PointParticleSystemComponent>();
       Object::init<PolygonCollisionShape>();
+      Object::init<RespawnComponent>();
       Object::init<SceneObject>();
       Object::init<ScoreComponent>();
-      Object::init<RespawnComponent>();
       Object::init<Sound>();
       Object::init<SpriteComponent>();
       Object::init<SpriteParticleSystemComponent>();
