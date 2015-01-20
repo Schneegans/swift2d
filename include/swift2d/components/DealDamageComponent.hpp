@@ -42,7 +42,7 @@ class SWIFT_DLL DealDamageComponent : public Component {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "DealDamageComponent"; }
 
-  void init();
+  virtual void on_init();
 
   virtual void accept(SavableObjectVisitor& visitor);
 
