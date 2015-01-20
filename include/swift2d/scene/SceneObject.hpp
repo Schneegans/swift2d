@@ -196,7 +196,6 @@ class SWIFT_DLL SceneObject : public SavableObject {
   std::vector<ComponentPtr> components_;
 
   bool remove_flag_, initialized_;
-
 };
 
 }

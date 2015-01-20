@@ -25,9 +25,19 @@ class SWIFT_DLL NetworkObject : public NetworkObjectBase {
  // ----------------------------------------------------------- public interface
  public:
 
-  NetworkObject(bool is_local)
+  UInt64 OwnerID;
+
+  NetworkObject(swift::math::uint64 owner_id, bool is_local)
     : NetworkObjectBase()
-    , is_local_(is_local) {}
+    , OwnerID(owner_id)
+    , is_local_(is_local) {
+
+    distribute_member(&OwnerID);
+  }
+
+  virtual ~NetworkObject() {
+    undistribute();
+  }
 
   template<typename T>
   static void init() {
