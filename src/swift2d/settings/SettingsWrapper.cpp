@@ -17,14 +17,12 @@ namespace swift {
 
 void SettingsWrapper::set_settings_type(std::string const& type) {
   settings_type_ = type;
-  load();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 SettingsWrapper::SettingsWrapper()
   : settings_type_("EngineSettings") {
-  load();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -17,7 +17,7 @@ namespace swift {
 void SavableObject::save_to_file(std::string const& path) {
   SavableObjectVisitor visitor(get_type_name());
   accept(visitor);
-  visitor.write_json(path);
+  visitor.write_to_file(path);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,14 +32,29 @@ std::string SavableObject::save_to_buffer() {
 
 void SavableObject::load_from_file(std::string const& path) {
   SavableObjectVisitor visitor;
-  visitor.read_json(path, this);
+  visitor.read_from_file(path, this);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void SavableObject::load_from_buffer(std::string const& buffer) {
+  SavableObjectVisitor visitor;
+  visitor.read_from_buffer(buffer, this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 SavableObjectPtr SavableObject::create_from_file(std::string const& path) {
   SavableObjectVisitor visitor;
-  visitor.read_json(path);
+  visitor.read_from_file(path);
+  return visitor.to_object();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SavableObjectPtr SavableObject::create_from_buffer(std::string const& buffer) {
+  SavableObjectVisitor visitor;
+  visitor.read_from_buffer(buffer);
   return visitor.to_object();
 }
 

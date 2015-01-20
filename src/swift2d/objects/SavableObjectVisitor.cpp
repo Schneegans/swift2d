@@ -28,7 +28,7 @@ SavableObjectVisitor::SavableObjectVisitor(std::string const& name)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SavableObjectVisitor::write_json(std::string const& path) {
+void SavableObjectVisitor::write_to_file(std::string const& path) {
   boost::property_tree::write_json(path, json_);
 }
 
@@ -42,7 +42,7 @@ std::string SavableObjectVisitor::write_to_buffer() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SavableObjectVisitor::read_json(std::string const& path) {
+void SavableObjectVisitor::read_from_file(std::string const& path) {
   try {
     boost::property_tree::read_json(path, json_);
 
@@ -58,9 +58,41 @@ void SavableObjectVisitor::read_json(std::string const& path) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void SavableObjectVisitor::read_json(std::string const& path, SavableObject* target) {
+void SavableObjectVisitor::read_from_file(std::string const& path, SavableObject* target) {
   try {
     boost::property_tree::read_json(path, json_);
+
+    if (json_.get<std::string>("Type") == target->get_type_name()) {
+      loaded_object_raw_ = target;
+      target->accept(*this);
+    }
+
+  } catch(...) {}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void SavableObjectVisitor::read_from_buffer(std::string const& buffer) {
+  try {
+    std::stringstream str(buffer);
+    boost::property_tree::read_json(str, json_);
+
+    loaded_object_ = std::dynamic_pointer_cast<SavableObject>(
+      Object::create(json_.get<std::string>("Type"))
+    );
+
+    loaded_object_raw_ = loaded_object_.get();
+
+    loaded_object_->accept(*this);
+  } catch(...) {}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void SavableObjectVisitor::read_from_buffer(std::string const& buffer, SavableObject* target) {
+  try {
+    std::stringstream str(buffer);
+    boost::property_tree::read_json(str, json_);
 
     if (json_.get<std::string>("Type") == target->get_type_name()) {
       loaded_object_raw_ = target;
