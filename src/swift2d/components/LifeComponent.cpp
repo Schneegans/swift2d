@@ -14,7 +14,7 @@ namespace swift {
 
 LifeComponent::LifeComponent()
   : Life(100)
-  , CurrentDamageSource(0)
+  , damage_source_(0)
   , dead_(false) {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ void LifeComponent::decrease(float amount) {
 
 void LifeComponent::decrease(float amount, math::uint64 source) {
   Life = std::max(Life() - amount, 0.f);
-  CurrentDamageSource = source;
+  damage_source_ = source;
   reset_time_ = DamageSourceResetTime();
 }
 
@@ -63,13 +63,13 @@ void LifeComponent::update(double time) {
 
     if (reset_time_ <= 0.f) {
       reset_time_ = 0.f;
-      CurrentDamageSource = 0;
+      damage_source_ = 0;
     }
   }
 
   if (!dead_ && Life() <= 0.f) {
     dead_ = true;
-    on_killed.emit(CurrentDamageSource());
+    on_killed.emit(damage_source_);
   }
 }
 
