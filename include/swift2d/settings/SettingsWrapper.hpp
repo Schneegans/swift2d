@@ -31,8 +31,11 @@ class SWIFT_DLL SettingsWrapper : public Singleton<SettingsWrapper> {
   }
 
   void set_settings_type(std::string const& type);
-  void load();
-  void save();
+  void load_from_file(std::string const& file_name);
+  void save_to_file(std::string const& file_name);
+
+  void load_from_steam_file(std::string const& file_name);
+  void save_to_steam_file(std::string const& file_name);
 
   friend class Singleton<SettingsWrapper>;
 
