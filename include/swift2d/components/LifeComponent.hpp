@@ -37,8 +37,7 @@ class SWIFT_DLL LifeComponent : public Component {
   Float Life;
   Float MaxLife;
 
-  UInt64 CurrentDamageSource;
-  Float  DamageSourceResetTime;
+  Float DamageSourceResetTime;
 
   // ----------------------------------------------------- contruction interface
   LifeComponent();
@@ -62,6 +61,7 @@ class SWIFT_DLL LifeComponent : public Component {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  math::uint64 damage_source_;
   float        reset_time_;
   bool         dead_;
 };
