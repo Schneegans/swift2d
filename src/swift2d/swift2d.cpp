@@ -57,6 +57,7 @@ namespace {
       Object::init<CircularShape>();
       Object::init<DeleteOnLeaveBehavior>();
       Object::init<DirectionalLightComponent>();
+      Object::init<DealDamageComponent>();
       Object::init<DynamicBodyComponent>();
       Object::init<EngineSettings>();
       Object::init<FullscreenGuiSpriteComponent>();
