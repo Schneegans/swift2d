@@ -17,7 +17,7 @@ namespace swift {
 
 NetworkPositionUpdateComponent::NetworkPositionUpdateComponent(bool is_local)
   : update_interval_(0.1)
-  , time_(0)
+  , time_(update_interval_)
   , is_local_(is_local) {
 
   if (!is_local_) {
@@ -53,7 +53,7 @@ void NetworkPositionUpdateComponent::update(double time) {
 
   if (is_local_) {
     time_ += time;
-    if (time_ > update_interval_) {
+    if (time_ >= update_interval_) {
       time_ = 0.f;
 
       if (body_) {
