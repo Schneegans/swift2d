@@ -34,6 +34,14 @@ void SavableObjectVisitor::write_json(std::string const& path) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+std::string SavableObjectVisitor::write_to_buffer() {
+  std::stringstream str;
+  boost::property_tree::write_json(str, json_);
+  return str.str();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void SavableObjectVisitor::read_json(std::string const& path) {
   try {
     boost::property_tree::read_json(path, json_);
