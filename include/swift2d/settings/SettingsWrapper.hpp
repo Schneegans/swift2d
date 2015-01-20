@@ -31,12 +31,12 @@ class SWIFT_DLL SettingsWrapper : public Singleton<SettingsWrapper> {
   }
 
   void set_settings_type(std::string const& type);
+  void load();
+  void save();
 
   friend class Singleton<SettingsWrapper>;
 
  private:
-  void load();
-  void save();
 
   SettingsWrapper();
   ~SettingsWrapper();
