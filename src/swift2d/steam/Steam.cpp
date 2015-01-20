@@ -329,10 +329,13 @@ std::string Steam::get_user_avatar(math::uint64 steam_id) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Steam::save_file_to_cloud(std::string const& file_name, std::string const& file_data) {
-
+  SteamRemoteStorage()->FileWrite(file_name.c_str(), &file_data, file_data.size());
 }
 
 std::string Steam::load_file_from_cloud(std::string const& file_name) {
+  if (SteamRemoteStorage()->FileExists(file_name.c_str())) {
+    std::cout << "FileExists" << std::endl;
+  }
   return std::string();
 }
 
