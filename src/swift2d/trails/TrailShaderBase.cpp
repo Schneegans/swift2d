@@ -83,13 +83,14 @@ TrailShaderBase::TrailShaderBase() {
 
         float r = mix(start_width * 0.5, end_width * 0.5, age);
 
-        vec2 p2_to_p3 = normalize(varying_prev_3_position[0] - varying_prev_2_position[0]);
+        vec2 p3_to_p2 = normalize(varying_prev_2_position[0] - varying_prev_3_position[0]);
         vec2 p2_to_p1 = normalize(varying_prev_1_position[0] - varying_prev_2_position[0]);
+        vec2 p1_to_p0 = normalize(gl_in[0].gl_Position.xy - varying_prev_1_position[0]);
 
-        vec2 n1 = normalize(p2_to_p3 + p2_to_p1) * flip_ccw(p2_to_p1, p2_to_p3);
+        vec2 n1 = vec2(0.5, -0.5)*(p3_to_p2.yx + p2_to_p1.yx)*r;
 
-        vec3 v1 = projection * vec3(varying_prev_2_position[0] + r * n1, 1.0);
-        vec3 v2 = projection * vec3(varying_prev_2_position[0] - r * n1, 1.0);
+        vec3 v1 = projection * vec3(varying_prev_2_position[0] + n1, 1.0);
+        vec3 v2 = projection * vec3(varying_prev_2_position[0] - n1, 1.0);
 
         gl_Position = vec4(v1, 1.0);
         texcoords = vec2(varying_prev_u_texcoods[0].y, 1.0);
@@ -108,13 +109,10 @@ TrailShaderBase::TrailShaderBase() {
 
         r = mix(start_width * 0.5, end_width * 0.5, age);
 
-        vec2 p1_to_p2 = normalize(varying_prev_2_position[0] - varying_prev_1_position[0]);
-        vec2 p1_to_p0 = normalize(gl_in[0].gl_Position.xy - varying_prev_1_position[0]);
+        vec2 n2 = vec2(0.5, -0.5)*(p2_to_p1.yx + p1_to_p0.yx)*r;
 
-        vec2 n2 = normalize(p1_to_p2 + p1_to_p0) * flip_ccw(p1_to_p0, p1_to_p2);
-
-        vec3 v3 = projection * vec3(varying_prev_1_position[0] + r * n2, 1.0);
-        vec3 v4 = projection * vec3(varying_prev_1_position[0] - r * n2, 1.0);
+        vec3 v3 = projection * vec3(varying_prev_1_position[0] + n2, 1.0);
+        vec3 v4 = projection * vec3(varying_prev_1_position[0] - n2, 1.0);
 
         gl_Position = vec4(v3, 1.0);
         texcoords = vec2(varying_prev_u_texcoods[0].x, 1.0);

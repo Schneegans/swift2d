@@ -146,7 +146,7 @@ void Window::update_context() {
       int major = glfwGetWindowAttrib(window_, GLFW_CONTEXT_VERSION_MAJOR);
       int minor = glfwGetWindowAttrib(window_, GLFW_CONTEXT_VERSION_MINOR);
       int rev   = glfwGetWindowAttrib(window_, GLFW_CONTEXT_REVISION);
-      LOG_MESSAGE << "Initialized OpenGL context " << major << "." << minor 
+      LOG_MESSAGE << "Initialized OpenGL context " << major << "." << minor
                   << "." << rev << " successfully." << std::endl;
     }
 
@@ -219,7 +219,7 @@ void Window::open() {
       int desktop_width = desktop_mode->width;
       size_ = math::vec2i(desktop_width, desktop_height);
     }
-    
+
     render_context_.window_size = size_;
 
     //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

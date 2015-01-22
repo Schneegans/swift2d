@@ -61,8 +61,22 @@ class SWIFT_DLL SceneObject : public SavableObject {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "SceneObject"; }
 
-  // removes this scene object from its parent
-  void detach();
+  // removes this scene object from its parent - if not forced it will be
+  // removed in the next frame
+  void detach(bool force = false);
+
+  // called when this object or one of it's parents got removed from the scene
+  // it's called instead of update, so the frame time is passed to this method
+  virtual void on_detach(double time);
+  
+  // called before the very first update
+  virtual void on_init() {}
+
+  // calls update() on all components and objects
+  virtual void update(double time);
+
+  virtual void update_world_transform();
+  virtual void update_world_transform_recursively();
 
   //----------------------------------------------------- scene object interface
 
@@ -113,6 +127,7 @@ class SWIFT_DLL SceneObject : public SavableObject {
 
   // remove a component from this object
   void remove(ComponentPtr const& component, bool force = false);
+  void remove(Component* component, bool force = false);
 
   // get all components of the given type
   template<typename T>
@@ -167,11 +182,6 @@ class SWIFT_DLL SceneObject : public SavableObject {
   // SerializedScene is extended
   virtual void serialize(SerializedScenePtr& scene) const;
 
-  // calls update() on all components and objects
-  virtual void update(double time);
-
-  virtual void update_world_transform();
-
   virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -185,8 +195,7 @@ class SWIFT_DLL SceneObject : public SavableObject {
   // a collection of all components attached to this object
   std::vector<ComponentPtr> components_;
 
-  bool remove_flag_;
-
+  bool remove_flag_, initialized_;
 };
 
 }

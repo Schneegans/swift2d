@@ -79,6 +79,11 @@ class SWIFT_DLL Steam : public Singleton<Steam> {
   std::string  get_user_name(math::uint64 steam_id);
   std::string  get_user_avatar(math::uint64 steam_id);
 
+  void         save_file_to_cloud(std::string const& file_name,
+                                  std::string const& file_data);
+
+  std::string  load_file_from_cloud(std::string const& file_name);
+
   friend class Singleton<Steam>;
 
  ///////////////////////////////////////////////////////////////////////////////

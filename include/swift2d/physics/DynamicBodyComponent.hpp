@@ -76,6 +76,8 @@ class SWIFT_DLL DynamicBodyComponent : public Component {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "DynamicBodyComponent"; }
 
+  void on_detach(double time);
+
   void       apply_global_force(math::vec2 const& val, bool wake_up = true);
   void       apply_local_force(math::vec2 const& val, bool wake_up = true);
   void       apply_torque(float val, bool wake_up = true);

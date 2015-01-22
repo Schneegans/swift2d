@@ -11,6 +11,10 @@
 
 #include <swift2d/trails/TrailSystemComponent.hpp>
 
+#include <swift2d/materials/Material.hpp>
+#include <swift2d/scene/SceneObject.hpp>
+#include <swift2d/components/SpriteComponent.hpp>
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -49,9 +53,15 @@ TrailEmitterComponent::TrailEmitterComponent()
 
 TrailEmitterComponent::~TrailEmitterComponent() {
   if (TrailSystem()) {
-    spawn_segment();
     TrailSystem()->remove_emitter(this);
   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void TrailEmitterComponent::on_detach(double time) {
+  update(time);
+  spawn_segment();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -92,10 +102,6 @@ void TrailEmitterComponent::update(double time) {
   if ((!spawned) && (l2 > MaxSpawnGap())) {
     spawn_segment();
     spawned = true;
-  }
-
-  if (!spawned) {
-
   }
 }
 

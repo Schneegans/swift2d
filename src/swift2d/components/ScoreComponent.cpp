@@ -6,37 +6,33 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-// includes  -------------------------------------------------------------------
-#include <swift2d/components/Component.hpp>
-
-#include <swift2d/scene/SceneObject.hpp>
+#include <swift2d/components/ScoreComponent.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Component::Component()
-  : Enabled(true)
-  , user_(nullptr)
-  , remove_flag_(false)
-  , initialized_(false) {}
+ScoreComponent::ScoreComponent()
+  : Score(0) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Component::detach(bool force) {
-  if (user_) {
-    user_->remove(this, force);
-  }
+void ScoreComponent::increase(int amount) {
+  Score = Score() + amount;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Component::accept(SavableObjectVisitor& visitor) {
-  visitor.add_member("Enabled", Enabled);
-  visitor.add_member("Label", Label);
+void ScoreComponent::decrease(int amount) {
+  Score = std::max(0, Score() - amount);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ScoreComponent::accept(SavableObjectVisitor& visitor) {
+  visitor.add_member("Score", Score);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 }
-

@@ -32,9 +32,12 @@ class SWIFT_DLL SavableObjectVisitor {
   SavableObjectVisitor();
   SavableObjectVisitor(std::string const& name);
 
-  void write_json(std::string const& path);
-  void read_json(std::string const& path);
-  void read_json(std::string const& path, SavableObject* target);
+  void write_to_file(std::string const& path);
+  std::string write_to_buffer();
+  void read_from_file(std::string const& path);
+  void read_from_file(std::string const& path, SavableObject* target);
+  void read_from_buffer(std::string const& buffer);
+  void read_from_buffer(std::string const& buffer, SavableObject* target);
   void read_json(boost::property_tree::ptree const& json);
 
   boost::property_tree::ptree to_json();

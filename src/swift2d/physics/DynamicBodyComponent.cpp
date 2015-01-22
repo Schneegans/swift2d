@@ -44,6 +44,12 @@ DynamicBodyComponent::~DynamicBodyComponent() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void DynamicBodyComponent::on_detach(double time) {
+  update(time);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void DynamicBodyComponent::apply_global_force(math::vec2 const& val, bool wake_up) {
   init();
   body_->ApplyForceToCenter(b2Vec2(val.x(), val.y()), wake_up);
@@ -126,6 +132,12 @@ float DynamicBodyComponent::get_angular_velocity() {
 void DynamicBodyComponent::set_transform(math::vec2 const& pos, float rot) {
   init();
   body_->SetTransform(b2Vec2(pos.x(), pos.y()), rot);
+
+  auto transform(get_user()->Transform.get());
+  math::set_rotation(transform, rot);
+  math::set_translation(transform, pos.x(), pos.y());
+  get_user()->Transform.set(transform);
+  get_user()->update_world_transform();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -138,11 +150,10 @@ void DynamicBodyComponent::update(double time) {
   float angle     = body_->GetAngle();
 
   auto transform(get_user()->Transform.get());
-
   math::set_rotation(transform, angle);
   math::set_translation(transform, position.x, position.y);
-
   get_user()->Transform.set(transform);
+  get_user()->update_world_transform();
 
   Sleep.set_with_no_emit(!body_->IsAwake());
 }
