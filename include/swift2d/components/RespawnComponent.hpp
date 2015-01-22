@@ -1,0 +1,59 @@
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// This file is part of Swift2D.                                              //
+//                                                                            //
+// Copyright: (c) 2011-2014 Simon Schneegans & Felix Lauer                    //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+#ifndef SWIFT2D_RESPAWN_COMPONENT_HPP
+#define SWIFT2D_RESPAWN_COMPONENT_HPP
+
+// includes  -------------------------------------------------------------------
+#include <swift2d/components/Component.hpp>
+#include <swift2d/events/Scheduler.hpp>
+#include <swift2d/math.hpp>
+
+namespace swift {
+
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+// shared pointer type definition ----------------------------------------------
+class RespawnComponent;
+typedef std::shared_ptr<RespawnComponent>       RespawnComponentPtr;
+typedef std::shared_ptr<const RespawnComponent> ConstRespawnComponentPtr;
+
+// -----------------------------------------------------------------------------
+class SWIFT_DLL RespawnComponent : public Component {
+
+ ///////////////////////////////////////////////////////////////////////////////
+ // ----------------------------------------------------------- public interface
+ public:
+
+  Signal<> on_respawn;
+
+  // ---------------------------------------------------------------- properties
+  Float RespawnTime;
+
+  // ----------------------------------------------------- contruction interface
+  RespawnComponent();
+
+  // ------------------------------------------------------------ public methods
+  virtual std::string get_type_name() const {  return get_type_name_static(); }
+  static  std::string get_type_name_static() { return "RespawnComponent"; }
+
+  virtual void accept(SavableObjectVisitor& visitor);
+  virtual void update(double time);
+
+ ///////////////////////////////////////////////////////////////////////////////
+ // ---------------------------------------------------------- private interface
+ private:
+  Scheduler scheduler_;
+  bool initialized_;
+};
+
+}
+
+#endif  // SWIFT2D_RESPAWN_COMPONENT_HPP
