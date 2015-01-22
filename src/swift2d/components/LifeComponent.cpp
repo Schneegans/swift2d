@@ -14,31 +14,40 @@ namespace swift {
 
 LifeComponent::LifeComponent()
   : Life(100)
+  , MaxLife(100)
+  , DamageSourceResetTime(1)
+  , Invulnerable(false)
   , damage_source_(0)
   , dead_(false) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void LifeComponent::increase(float amount) {
-  Life = std::min(Life() + amount, MaxLife());
+  if (!Invulnerable()) {
+    Life = std::min(Life() + amount, MaxLife());
 
-  if (dead_ && Life() > 0.f) {
-    dead_ = false;
+    if (dead_ && Life() > 0.f) {
+      dead_ = false;
+    }
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void LifeComponent::decrease(float amount) {
-  Life = std::max(Life() - amount, 0.f);
+  if (!Invulnerable()) {
+    Life = std::max(Life() - amount, 0.f);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void LifeComponent::decrease(float amount, math::uint64 source) {
-  Life = std::max(Life() - amount, 0.f);
-  damage_source_ = source;
-  reset_time_ = DamageSourceResetTime();
+  if (!Invulnerable()) {
+    Life = std::max(Life() - amount, 0.f);
+    damage_source_ = source;
+    reset_time_ = DamageSourceResetTime();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -79,6 +88,7 @@ void LifeComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Life", Life);
   visitor.add_member("MaxLife", MaxLife);
   visitor.add_member("DamageSourceResetTime", DamageSourceResetTime);
+  visitor.add_member("Invulnerable", Invulnerable);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

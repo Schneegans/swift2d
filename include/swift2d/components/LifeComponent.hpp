@@ -39,6 +39,8 @@ class SWIFT_DLL LifeComponent : public Component {
 
   Float DamageSourceResetTime;
 
+  Bool Invulnerable;
+
   // ----------------------------------------------------- contruction interface
   LifeComponent();
 

@@ -9,6 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/physics/Physics.hpp>
 
+#include <swift2d/components/LifeComponent.hpp>
 #include <swift2d/scene/SceneObject.hpp>
 #include <swift2d/math/transformations.hpp>
 
@@ -130,9 +131,16 @@ void Physics::update(double time) {
       for (auto const& shock: shock_waves_) {
         b2Vec2 dist(body_pos - b2Vec2(shock.x(), shock.y()));
         float length(dist.LengthSquared());
-        if (length > 0) {
-          dist *= shock.z()/length;
+        if (length > 0 && length < shock.w()*shock.w()) {
+          dist *= shock.z()/(length+1.f);
           body->ApplyLinearImpulse(dist, body_pos, true);
+
+          auto b(static_cast<DynamicBodyComponent*>(body->GetUserData()));
+          auto life = b->get_user()->get_component<LifeComponent>();
+          if (life) {
+            float damage((1.f - std::sqrt(length)/shock.w()) * shock.z());
+            life->decrease(damage);
+          }
         }
       }
     }
@@ -238,8 +246,8 @@ void Physics::add(GravitySourceComponent* source) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Physics::add_shock_wave(math::vec2 const& location, float strength) {
-  shock_waves_.push_back(math::vec3(location.x(), location.y(), strength));
+void Physics::add_shock_wave(math::vec2 const& location, float damage, float radius) {
+  shock_waves_.push_back(math::vec4(location.x(), location.y(), damage, radius));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

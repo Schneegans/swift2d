@@ -42,7 +42,7 @@ class SWIFT_DLL Physics : public Singleton<Physics> {
   b2Body* add(StaticBodyComponent* body);
   void    add(GravitySourceComponent* source);
 
-  void    add_shock_wave(math::vec2 const& location, float strength);
+  void    add_shock_wave(math::vec2 const& location, float damage, float radius);
 
   void    remove(b2Body* body);
   void    remove(GravitySourceComponent* source);
@@ -66,7 +66,7 @@ class SWIFT_DLL Physics : public Singleton<Physics> {
   SwiftContactListener* contact_listener_;;
 
   GravityMap* gravity_map_;
-  std::vector<math::vec3> shock_waves_;
+  std::vector<math::vec4> shock_waves_;
 };
 
 // -----------------------------------------------------------------------------
