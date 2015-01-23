@@ -21,7 +21,7 @@ SubSampleBuffer::SubSampleBuffer(RenderContext const& ctx, int sub_sample_level)
     oglplus::enums::PixelDataInternalFormat i_format,
     oglplus::enums::PixelDataFormat         p_format) {
 
-    ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
+    ogl::Context::Bound(oglplus::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
         0, p_format, oglplus::PixelDataType::UnsignedByte, nullptr)
       .MaxLevel(0)
@@ -75,7 +75,7 @@ SubSampleBuffer::SubSampleBuffer(RenderContext const& ctx, int sub_sample_level)
 void SubSampleBuffer::bind_for_drawing(RenderContext const& ctx) {
 
   auto size(ctx.g_buffer_size/sub_sample_level_);
-  ctx.gl.Viewport(size.x(), size.y());
+  ogl::Context::Viewport(size.x(), size.y());
 
   if (ctx.dynamic_lighting) {
 
@@ -86,9 +86,9 @@ void SubSampleBuffer::bind_for_drawing(RenderContext const& ctx) {
       oglplus::FramebufferColorAttachment::_1,
       oglplus::FramebufferColorAttachment::_2
     };
-    ctx.gl.DrawBuffers(draw_buffs);
-    ctx.gl.ClearColor(0.f, 0.f, 0.f, 0.f);
-    ctx.gl.Clear().ColorBuffer();
+    ogl::Context::DrawBuffers(draw_buffs);
+    ogl::Context::ClearColor(0.f, 0.f, 0.f, 0.f);
+    ogl::Context::Clear().ColorBuffer();
 
   } else {
     fbo_.Bind(oglplus::Framebuffer::Target::Draw);
@@ -96,9 +96,9 @@ void SubSampleBuffer::bind_for_drawing(RenderContext const& ctx) {
     oglplus::Context::ColorBuffer draw_buffs[1] =  {
       oglplus::FramebufferColorAttachment::_0
     };
-    ctx.gl.DrawBuffers(draw_buffs);
-    ctx.gl.ClearColor(0.f, 0.f, 0.f, 0.f);
-    ctx.gl.Clear().ColorBuffer();
+    ogl::Context::DrawBuffers(draw_buffs);
+    ogl::Context::ClearColor(0.f, 0.f, 0.f, 0.f);
+    ogl::Context::Clear().ColorBuffer();
   }
 }
 

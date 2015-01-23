@@ -39,7 +39,7 @@ SubSampler::SubSampler(RenderContext const& ctx, int level)
       }
   )")
   , level_(level)
-  , original_framebuffer_(ctx.gl.Current(ogl::Framebuffer::Target::Draw))
+  , original_framebuffer_(ogl::Context::Current(ogl::Framebuffer::Target::Draw))
   , buffer_(ctx, level) {
 
   original_framebuffer_.Bind(ogl::Framebuffer::Target::Draw);
@@ -49,15 +49,15 @@ SubSampler::SubSampler(RenderContext const& ctx, int level)
 
 void SubSampler::bind(RenderContext const& ctx, bool additive) {
 
-  original_framebuffer_ = ctx.gl.Current(ogl::Framebuffer::Target::Draw);
+  original_framebuffer_ = ogl::Context::Current(ogl::Framebuffer::Target::Draw);
 
   buffer_.bind_for_drawing(ctx);
 
   if (additive) {
-    ctx.gl.BlendFuncSeparate(ose::SrcAlpha(), ose::One(),
+    ogl::Context::BlendFuncSeparate(ose::SrcAlpha(), ose::One(),
                              ose::One(),      ose::OneMinusSrcAlpha());
   } else {
-    ctx.gl.BlendFuncSeparate(ose::SrcAlpha(), ose::OneMinusSrcAlpha(),
+    ogl::Context::BlendFuncSeparate(ose::SrcAlpha(), ose::OneMinusSrcAlpha(),
                              ose::One(),      ose::OneMinusSrcAlpha());
   }
 }
@@ -66,7 +66,7 @@ void SubSampler::bind(RenderContext const& ctx, bool additive) {
 
 void SubSampler::draw(RenderContext const& ctx, bool additive) {
   original_framebuffer_.Bind(ogl::Framebuffer::Target::Draw);
-  ctx.gl.Viewport(ctx.g_buffer_size.x(), ctx.g_buffer_size.y());
+  ogl::Context::Viewport(ctx.g_buffer_size.x(), ctx.g_buffer_size.y());
 
   buffer_.bind_diffuse(10);
   buffer_.bind_light(11);

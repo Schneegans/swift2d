@@ -109,7 +109,7 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
     ogl::enums::PixelDataInternalFormat i_format,
     ogl::enums::PixelDataFormat         p_format) {
 
-    ctx.gl.Bound(ogl::Texture::Target::_2D, tex)
+    ogl::Context::Bound(ogl::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
         0, p_format, ogl::PixelDataType::UnsignedByte, nullptr)
       .MaxLevel(0)
@@ -166,7 +166,7 @@ GhostEffect::GhostEffect(RenderContext const& ctx)
 
 void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshold_buffer_) {
 
-  ctx.gl.Viewport(ctx.g_buffer_size.x()/GBUFFER_FRACTION, ctx.g_buffer_size.y()/GBUFFER_FRACTION);
+  ogl::Context::Viewport(ctx.g_buffer_size.x()/GBUFFER_FRACTION, ctx.g_buffer_size.y()/GBUFFER_FRACTION);
 
   fbo_.Bind(ogl::Framebuffer::Target::Draw);
 
@@ -178,8 +178,8 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
   auto blur_pass = [&](math::vec2 const& step, ogl::Texture const& input,
                   ogl::FramebufferColorAttachment output) {
 
-    ctx.gl.DrawBuffer(output);
-    ctx.gl.Bind(ose::_2D(), input);
+    ogl::Context::DrawBuffer(output);
+    ogl::Context::Bind(ose::_2D(), input);
     step_.Set(step);
     Quad::get().draw(ctx);
   };
@@ -192,18 +192,18 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
   blur_pass(math::vec2(0, radius.y()),   buffer_tmp_,       ogl::FramebufferColorAttachment::_1);
 
   // ghosting ------------------------------------------------------------------
-  ctx.gl.DrawBuffer(ogl::FramebufferColorAttachment::_2);
+  ogl::Context::DrawBuffer(ogl::FramebufferColorAttachment::_2);
 
   ghost_shader_.use(ctx);
 
   ogl::Texture::Active(4);
-  ctx.gl.Bind(ose::_2D(), blur_buffer_);
+  ogl::Context::Bind(ose::_2D(), blur_buffer_);
 
   ogl::Texture::Active(5);
-  ctx.gl.Bind(ose::_2D(), blur_buffer_);
+  ogl::Context::Bind(ose::_2D(), blur_buffer_);
 
   ogl::Texture::Active(6);
-  ctx.gl.Bind(ose::_2D(), blur_buffer_);
+  ogl::Context::Bind(ose::_2D(), blur_buffer_);
 
   std::vector<int> inputs = {4, 5, 6};
   inputs_.Set(inputs);
@@ -218,16 +218,16 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
   Quad::get().draw(ctx);
 
 
-  ctx.gl.DrawBuffer(ogl::FramebufferColorAttachment::_3);
+  ogl::Context::DrawBuffer(ogl::FramebufferColorAttachment::_3);
 
   ogl::Texture::Active(4);
-  ctx.gl.Bind(ose::_2D(), ghost_buffer_1_);
+  ogl::Context::Bind(ose::_2D(), ghost_buffer_1_);
 
   ogl::Texture::Active(5);
-  ctx.gl.Bind(ose::_2D(), ghost_buffer_1_);
+  ogl::Context::Bind(ose::_2D(), ghost_buffer_1_);
 
   ogl::Texture::Active(6);
-  ctx.gl.Bind(ose::_2D(), blur_buffer_);
+  ogl::Context::Bind(ose::_2D(), blur_buffer_);
 
   colors = {
     math::vec3(0.6, 0.2, 0.2), math::vec3(0.2, 0.06, 0.6),
@@ -243,13 +243,13 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
 
 int GhostEffect::bind_buffers(int start, RenderContext const& ctx) {
   // ogl::Texture::Active(start + 0);
-  // ctx.gl.Bind(ose::_2D(), ghost_buffer_1_);
+  // ogl::Context::Bind(ose::_2D(), ghost_buffer_1_);
 
   ogl::Texture::Active(start + 0);
-  ctx.gl.Bind(ose::_2D(), ghost_buffer_2_);
+  ogl::Context::Bind(ose::_2D(), ghost_buffer_2_);
 
   ogl::Texture::Active(start + 1);
-  ctx.gl.Bind(ose::_2D(), blur_buffer_);
+  ogl::Context::Bind(ose::_2D(), blur_buffer_);
 
   return start + 2;
 }

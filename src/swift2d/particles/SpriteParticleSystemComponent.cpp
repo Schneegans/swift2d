@@ -84,7 +84,7 @@ void SpriteParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int
       if (o.SubSamplingLevel > 1) {
         ctx.pipeline->get_sub_sampler(o.SubSamplingLevel)->bind(ctx, o.BlendAdd);
       } else if (o.BlendAdd) {
-        ctx.gl.BlendFunc(ose::SrcAlpha(), ose::One());
+        ogl::Context::BlendFunc(ose::SrcAlpha(), ose::One());
       }
 
       o.Texture->bind(ctx, 0);
@@ -106,7 +106,7 @@ void SpriteParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int
       if (o.SubSamplingLevel > 1) {
         ctx.pipeline->get_sub_sampler(o.SubSamplingLevel)->draw(ctx, o.BlendAdd);
       } else if (o.BlendAdd) {
-        ctx.gl.BlendFunc(ose::SrcAlpha(), ose::OneMinusSrcAlpha());
+        ogl::Context::BlendFunc(ose::SrcAlpha(), ose::OneMinusSrcAlpha());
       }
 
       SWIFT_POP_GL_RANGE();

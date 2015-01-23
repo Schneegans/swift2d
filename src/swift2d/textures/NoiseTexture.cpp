@@ -26,22 +26,22 @@ NoiseTexture::~NoiseTexture() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void NoiseTexture::bind(RenderContext const& context, unsigned location) const {
+void NoiseTexture::bind(RenderContext const& ctx, unsigned location) const {
   if (!texture_) {
-    upload_to(context);
+    upload_to(ctx);
   }
 
   texture_->Active(location);
-  context.gl.Bind(ose::_2D(), *texture_);
+  ogl::Context::Bind(ose::_2D(), *texture_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void NoiseTexture::upload_to(RenderContext const& context) const {
+void NoiseTexture::upload_to(RenderContext const& ctx) const {
 
   texture_ = new oglplus::Texture();
 
-  context.gl.Bound(ose::_2D(), *texture_)
+  ogl::Context::Bound(ose::_2D(), *texture_)
     .Image2D(oglplus::images::RandomRGBUByte(256, 256))
     .MaxLevel(0)
     .MinFilter(ose::Linear())

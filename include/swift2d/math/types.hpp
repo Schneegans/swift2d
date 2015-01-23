@@ -10,7 +10,9 @@
 #define SWIFT2D_MATH_TYPES_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/opengl.hpp>
+#include <GL/glew.h>
+#include <oglplus/fwd.hpp>
+#include <oglplus/math/matrix.hpp>
 
 namespace swift {
 namespace math {

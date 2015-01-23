@@ -20,7 +20,7 @@ GBuffer::GBuffer(RenderContext const& ctx) {
     oglplus::enums::PixelDataInternalFormat i_format,
     oglplus::enums::PixelDataFormat         p_format) {
 
-    ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
+    ogl::Context::Bound(oglplus::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
         0, p_format, oglplus::PixelDataType::UnsignedByte, nullptr)
       .MaxLevel(0)
@@ -74,7 +74,7 @@ GBuffer::GBuffer(RenderContext const& ctx) {
 void GBuffer::bind_for_drawing(RenderContext const& ctx) {
 
   auto size(ctx.g_buffer_size);
-  ctx.gl.Viewport(size.x(), size.y());
+  ogl::Context::Viewport(size.x(), size.y());
 
   if (ctx.dynamic_lighting) {
     fbo_.Bind(oglplus::Framebuffer::Target::Draw);
@@ -84,14 +84,14 @@ void GBuffer::bind_for_drawing(RenderContext const& ctx) {
       oglplus::FramebufferColorAttachment::_1,
       oglplus::FramebufferColorAttachment::_2
     };
-    ctx.gl.DrawBuffers(draw_buffs);
+    ogl::Context::DrawBuffers(draw_buffs);
   } else {
     fbo_.Bind(oglplus::Framebuffer::Target::Draw);
 
     oglplus::Context::ColorBuffer draw_buffs[1] =  {
       oglplus::FramebufferColorAttachment::_0
     };
-    ctx.gl.DrawBuffers(draw_buffs);
+    ogl::Context::DrawBuffers(draw_buffs);
   }
 }
 

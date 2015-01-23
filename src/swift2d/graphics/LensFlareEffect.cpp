@@ -100,7 +100,7 @@ LensFlareEffect::LensFlareEffect(RenderContext const& ctx)
     ogl::enums::PixelDataInternalFormat i_format,
     ogl::enums::PixelDataFormat         p_format) {
 
-    ctx.gl.Bound(ogl::Texture::Target::_2D, tex)
+    ogl::Context::Bound(ogl::Texture::Target::_2D, tex)
     .Image2D(0, i_format, width, height,
     0, p_format, ogl::PixelDataType::UnsignedByte, nullptr)
     .MaxLevel(0)
@@ -164,7 +164,7 @@ void LensFlareEffect::process(RenderContext const& ctx) {
 
 void LensFlareEffect::bind_buffer(int location, RenderContext const& ctx) {
   ogl::Texture::Active(location);
-  ctx.gl.Bind(ose::_2D(), buffer_);
+  ogl::Context::Bind(ose::_2D(), buffer_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -173,10 +173,10 @@ void LensFlareEffect::generate_threshold_buffer(RenderContext const& ctx) {
 
   auto size(ctx.g_buffer_size);
 
-  ctx.gl.Viewport(size.x() / GBUFFER_FRACTION, size.y() / GBUFFER_FRACTION);
+  ogl::Context::Viewport(size.x() / GBUFFER_FRACTION, size.y() / GBUFFER_FRACTION);
 
   fbo_.Bind(oglplus::Framebuffer::Target::Draw);
-  ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
+  ogl::Context::DrawBuffer(oglplus::FramebufferColorAttachment::_0);
 
   threshold_shader_.use(ctx);
   g_buffer_diffuse_.Set(0);

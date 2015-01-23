@@ -8,6 +8,8 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/graphics/Window.hpp>
+
+#include <swift2d/opengl.hpp>
 #include <swift2d/graphics/WindowManager.hpp>
 #include <swift2d/utils/Logger.hpp>
 #include <swift2d/settings.hpp>
@@ -184,9 +186,9 @@ void Window::update_context() {
       );*/
     }
 
-    render_context_.gl.Disable(ogl::Capability::DepthTest);
-    render_context_.gl.DepthMask(false);
-    render_context_.gl.Disable(ogl::Capability::Multisample);
+    ogl::Context::Disable(ogl::Capability::DepthTest);
+    ogl::Context::DepthMask(false);
+    ogl::Context::Disable(ogl::Capability::Multisample);
 
     render_context_.ready = true;
   }

@@ -67,7 +67,7 @@ void Quad::draw(RenderContext const& ctx) const {
   }
 
   rectangle_->Bind();
-  ctx.gl.DrawArrays(oglplus::PrimitiveType::TriangleStrip, 0, 4);
+  ogl::Context::DrawArrays(oglplus::PrimitiveType::TriangleStrip, 0, 4);
 
   oglplus::NoVertexArray().Bind();
 }
@@ -82,7 +82,7 @@ void Quad::draw(RenderContext const& ctx, unsigned instance_count) const {
   }
 
   rectangle_->Bind();
-  ctx.gl.DrawArraysInstanced(oglplus::PrimitiveType::TriangleStrip, 0, 4, instance_count);
+  ogl::Context::DrawArraysInstanced(oglplus::PrimitiveType::TriangleStrip, 0, 4, instance_count);
 
   oglplus::NoVertexArray().Bind();
 }

@@ -10,7 +10,6 @@
 #define SWIFT2D_RENDER_CONTEXT_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/opengl.hpp>
 #include <swift2d/math.hpp>
 
 namespace swift {
@@ -23,8 +22,6 @@ class Pipeline;
 
 // -----------------------------------------------------------------------------
 struct RenderContext {
-
-  oglplus::Context gl;
 
   float time;
 

@@ -34,7 +34,11 @@ class Property {
       connection_(nullptr),
       connection_id_(-1) {}
 
-  virtual ~Property() {}
+  virtual ~Property() {
+    if (connection_) {
+      connection_->on_change().disconnect(connection_id_);
+    }
+  }
 
   virtual Signal<T> const& on_change() const { return on_change_; }
   virtual Signal<T> const& before_change() const { return before_change_; }

@@ -24,7 +24,7 @@ HeatEffect::HeatEffect(RenderContext const& ctx) {
       oglplus::enums::PixelDataInternalFormat i_format,
       oglplus::enums::PixelDataFormat         p_format) {
 
-      ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
+      ogl::Context::Bound(oglplus::Texture::Target::_2D, tex)
         .Image2D(0, i_format, width, height,
           0, p_format, oglplus::PixelDataType::Float, nullptr)
         .MaxLevel(0)
@@ -46,7 +46,7 @@ HeatEffect::HeatEffect(RenderContext const& ctx) {
     );
 
     GLfloat clear[2] = {0.5f, 0.5f};
-    ctx.gl.ClearColorBuffer(0, clear);
+    ogl::Context::ClearColorBuffer(0, clear);
   }
 }
 
@@ -57,18 +57,18 @@ void HeatEffect::process(ConstSerializedScenePtr const& scene,
 
   if (!scene->renderers().heat_particle_systems.empty()) {
 
-    ctx.gl.BlendFunc(
+    ogl::Context::BlendFunc(
       oglplus::BlendFunction::SrcAlpha,
       oglplus::BlendFunction::OneMinusSrcAlpha
     );
 
-    ctx.gl.Viewport(ctx.g_buffer_size.x()/4, ctx.g_buffer_size.y()/4);
+    ogl::Context::Viewport(ctx.g_buffer_size.x()/4, ctx.g_buffer_size.y()/4);
 
     heat_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
-    ctx.gl.DrawBuffer(oglplus::FramebufferColorAttachment::_0);
+    ogl::Context::DrawBuffer(oglplus::FramebufferColorAttachment::_0);
 
     GLfloat clear[2] = {0.5f, 0.5f};
-    ctx.gl.ClearColorBuffer(0, clear);
+    ogl::Context::ClearColorBuffer(0, clear);
 
     scene->renderers().process_heat(ctx);
   }
@@ -78,7 +78,7 @@ void HeatEffect::process(ConstSerializedScenePtr const& scene,
 
 int HeatEffect::bind_buffers(int start, RenderContext const& ctx) {
   oglplus::Texture::Active(start);
-  ctx.gl.Bind(ose::_2D(), heat_buffer_);
+  ogl::Context::Bind(ose::_2D(), heat_buffer_);
   return start + 1;
 }
 

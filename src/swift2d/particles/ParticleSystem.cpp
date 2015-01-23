@@ -122,7 +122,7 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
   // swap ping pong buffers
   ping_ = !ping_;
 
-  ctx.gl.Enable(ogl::Capability::RasterizerDiscard);
+  ogl::Context::Enable(ogl::Capability::RasterizerDiscard);
 
   particle_vaos_      [current_vb()].Bind();
   transform_feedbacks_[current_tf()].Bind();
@@ -171,7 +171,7 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
       int count(std::min(50, (int)spawn_positions.size()-index));
       shader.spawn_count.Set(count);
       shader.transform.Set(std::vector<math::vec3>(spawn_positions.begin() + index, spawn_positions.begin() + index + count));
-      ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
+      ogl::Context::DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       index += count;
     }
   }
@@ -187,14 +187,14 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
     shader.projection. Set(ctx.projection_matrix);
     shader.dynamics.   Set(dynamics);
 
-    ctx.gl.DrawTransformFeedback(
+    ogl::Context::DrawTransformFeedback(
       ogl::PrimitiveType::Points, transform_feedbacks_[current_vb()]
     );
   }
 
   xfba.Finish();
   ogl::DefaultTransformFeedback().Bind();
-  ctx.gl.Disable(ogl::Capability::RasterizerDiscard);
+  ogl::Context::Disable(ogl::Capability::RasterizerDiscard);
 
   qrya.Finish();
 
@@ -209,7 +209,7 @@ void ParticleSystem::draw_particles(RenderContext const& ctx) {
 
   particle_vaos_[current_tf()].Bind();
 
-  ctx.gl.DrawTransformFeedback(
+  ogl::Context::DrawTransformFeedback(
     ogl::PrimitiveType::Points, transform_feedbacks_[current_tf()]
   );
 

@@ -237,11 +237,11 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
   if (!ctx.dynamic_lighting) {
 
-    ctx.gl.Disable(oglplus::Capability::Blend);
+    ogl::Context::Disable(oglplus::Capability::Blend);
 
     SWIFT_PUSH_GL_RANGE("Composite");
 
-    ctx.gl.Viewport(ctx.window_size.x(), ctx.window_size.y());
+    ogl::Context::Viewport(ctx.window_size.x(), ctx.window_size.y());
     oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
 
     g_buffer->bind_diffuse(0);
@@ -254,7 +254,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
     SWIFT_POP_GL_RANGE();
 
-    ctx.gl.Enable(oglplus::Capability::Blend);
+    ogl::Context::Enable(oglplus::Capability::Blend);
 
   } else {
 
@@ -264,7 +264,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
       SWIFT_POP_GL_RANGE();
     }
 
-    ctx.gl.Disable(oglplus::Capability::Blend);
+    ogl::Context::Disable(oglplus::Capability::Blend);
 
     g_buffer->bind_diffuse(0);
     g_buffer->bind_light(1);
@@ -278,7 +278,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     }
 
     SWIFT_PUSH_GL_RANGE("Composite");
-    ctx.gl.Viewport(ctx.window_size.x(), ctx.window_size.y());
+    ogl::Context::Viewport(ctx.window_size.x(), ctx.window_size.y());
     oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
 
     use_postfx_shader();
@@ -316,7 +316,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
     SWIFT_POP_GL_RANGE();
 
-    ctx.gl.Enable(oglplus::Capability::Blend);
+    ogl::Context::Enable(oglplus::Capability::Blend);
   }
 }
 

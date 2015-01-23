@@ -131,7 +131,7 @@ void TrailSystemComponent::Renderer::draw(RenderContext const& ctx, int start, i
     double total_time(ctx.pipeline->get_total_time());
 
     if (o.BlendAdd) {
-      ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
+      ogl::Context::BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
     }
 
     if (o.Texture) {
@@ -164,7 +164,7 @@ void TrailSystemComponent::Renderer::draw(RenderContext const& ctx, int start, i
     o.System->draw_trails(o, ctx);
 
     if (o.BlendAdd) {
-      ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
+      ogl::Context::BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
     }
 
     SWIFT_POP_GL_RANGE();

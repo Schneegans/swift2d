@@ -10,6 +10,7 @@
 #define SWIFT2D_LBUFFER_HPP
 
 // includes  -------------------------------------------------------------------
+#include <swift2d/opengl.hpp>
 #include <swift2d/graphics/RenderContext.hpp>
 
 namespace swift {

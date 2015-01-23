@@ -135,7 +135,7 @@ void TrailSystem::update_trails(
   // swap ping pong buffers
   ping_ = !ping_;
 
-  ctx.gl.Enable(ogl::Capability::RasterizerDiscard);
+  ogl::Context::Enable(ogl::Capability::RasterizerDiscard);
 
   trail_vaos_         [current_vb()].Bind();
   transform_feedbacks_[current_tf()].Bind();
@@ -187,14 +187,14 @@ void TrailSystem::update_trails(
       shader.prev_2_position. Set(std::vector<math::vec2>(positions2.begin() + index, positions2.begin() + index + count));
       shader.prev_3_position. Set(std::vector<math::vec2>(positions3.begin() + index, positions3.begin() + index + count));
 
-      ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, 1);
+      ogl::Context::DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       index += count;
     }
 
     // update existing particles -----------------------------------------------
     if (!first_draw) {
       shader.spawn_count.Set(-1);
-      ctx.gl.DrawTransformFeedback(
+      ogl::Context::DrawTransformFeedback(
         ogl::PrimitiveType::Points, transform_feedbacks_[current_vb()]
       );
     }
@@ -203,7 +203,7 @@ void TrailSystem::update_trails(
   transform_feedbacks_[current_tf()].End();
 
   ogl::DefaultTransformFeedback().Bind();
-  ctx.gl.Disable(ogl::Capability::RasterizerDiscard);
+  ogl::Context::Disable(ogl::Capability::RasterizerDiscard);
   ogl::NoVertexArray().Bind();
 }
 
@@ -296,10 +296,10 @@ void TrailSystem::draw_trails(
   oglplus::Buffer::Data(oglplus::Buffer::Target::Array, segments, ose::StreamDraw());
 
   emitter_vao_->Bind();
-  ctx.gl.DrawArrays(ogl::PrimitiveType::Points, 0, segments.size());
+  ogl::Context::DrawArrays(ogl::PrimitiveType::Points, 0, segments.size());
 
   trail_vaos_[current_tf()].Bind();
-  ctx.gl.DrawTransformFeedback(
+  ogl::Context::DrawTransformFeedback(
     ogl::PrimitiveType::Points, transform_feedbacks_[current_tf()]
   );
 }

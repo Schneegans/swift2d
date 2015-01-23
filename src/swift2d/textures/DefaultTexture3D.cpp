@@ -24,24 +24,24 @@ DefaultTexture3D::~DefaultTexture3D() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DefaultTexture3D::bind(RenderContext const& context, unsigned location) const {
+void DefaultTexture3D::bind(RenderContext const& ctx, unsigned location) const {
   if (!texture_) {
-    upload_to(context);
+    upload_to(ctx);
   }
 
   texture_->Active(location);
-  context.gl.Bind(ose::_3D(), *texture_);
+  ogl::Context::Bind(ose::_3D(), *texture_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DefaultTexture3D::upload_to(RenderContext const& context) const {
+void DefaultTexture3D::upload_to(RenderContext const& ctx) const {
 
   texture_ = new oglplus::Texture();
 
   std::vector<unsigned char> data = {0, 0, 0, 0};
 
-  context.gl.Bound(ose::_3D(), *texture_)
+  ogl::Context::Bound(ose::_3D(), *texture_)
     .Image3D(0, oglplus::PixelDataInternalFormat::RGBA, 1, 1, 1,
              0, oglplus::PixelDataFormat::RGBA,
              oglplus::PixelDataType::UnsignedByte, &data.front());

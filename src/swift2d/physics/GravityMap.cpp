@@ -57,7 +57,7 @@ GravityMap::GravityMap(RenderContext const& ctx)
     oglplus::enums::PixelDataInternalFormat i_format,
     oglplus::enums::PixelDataFormat         p_format) {
 
-    ctx.gl.Bound(oglplus::Texture::Target::_2D, tex)
+    ogl::Context::Bound(oglplus::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
         0, p_format, oglplus::PixelDataType::Float, nullptr)
       .MaxLevel(0)
@@ -82,9 +82,9 @@ GravityMap::GravityMap(RenderContext const& ctx)
 ////////////////////////////////////////////////////////////////////////////////
 
 void GravityMap::process(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
-  ctx.gl.Disable(oglplus::Capability::Blend);
+  ogl::Context::Disable(oglplus::Capability::Blend);
   gravity_fbo_.Bind(oglplus::Framebuffer::Target::Draw);
-  ctx.gl.Viewport(ctx.window_size.x()/16, ctx.window_size.y()/16);
+  ogl::Context::Viewport(ctx.window_size.x()/16, ctx.window_size.y()/16);
 
   std::vector<math::vec3> sources;
 
@@ -106,7 +106,7 @@ void GravityMap::process(ConstSerializedScenePtr const& scene, RenderContext con
 
   Quad::get().draw(ctx);
 
-  ctx.gl.Enable(oglplus::Capability::Blend);
+  ogl::Context::Enable(oglplus::Capability::Blend);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

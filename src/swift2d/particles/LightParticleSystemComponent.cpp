@@ -70,7 +70,7 @@ void LightParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int 
 
       o.Texture->bind(ctx, 3);
 
-      ctx.gl.BlendFunc(
+      ogl::Context::BlendFunc(
         oglplus::BlendFunction::One,
         oglplus::BlendFunction::One
       );

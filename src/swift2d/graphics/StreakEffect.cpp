@@ -62,7 +62,7 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
     ogl::enums::PixelDataInternalFormat i_format,
     ogl::enums::PixelDataFormat         p_format) {
 
-    ctx.gl.Bound(ogl::Texture::Target::_2D, tex)
+    ogl::Context::Bound(ogl::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
         0, p_format, ogl::PixelDataType::UnsignedByte, nullptr)
       .MaxLevel(0)
@@ -173,7 +173,7 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
 
 void StreakEffect::process(RenderContext const& ctx, ogl::Texture const& threshold_buffer_) {
 
-  ctx.gl.Viewport(ctx.g_buffer_size.x()/GBUFFER_FRACTION, ctx.g_buffer_size.y()/GBUFFER_FRACTION);
+  ogl::Context::Viewport(ctx.g_buffer_size.x()/GBUFFER_FRACTION, ctx.g_buffer_size.y()/GBUFFER_FRACTION);
 
   streak_fbo_.Bind(ogl::Framebuffer::Target::Draw);
   const float DEC = 0.96;
@@ -185,8 +185,8 @@ void StreakEffect::process(RenderContext const& ctx, ogl::Texture const& thresho
                   ogl::FramebufferColorAttachment output,
                   std::vector<math::vec3>& colors_in) {
 
-    ctx.gl.DrawBuffer(output);
-    ctx.gl.Bind(ose::_2D(), input);
+    ogl::Context::DrawBuffer(output);
+    ogl::Context::Bind(ose::_2D(), input);
 
     colors_.Set(colors_in);
     step_.Set(step_dir);
@@ -227,22 +227,22 @@ void StreakEffect::process(RenderContext const& ctx, ogl::Texture const& thresho
 
 int StreakEffect::bind_buffers(int start, RenderContext const& ctx) {
   ogl::Texture::Active(start + 0);
-  ctx.gl.Bind(ose::_2D(), streak_buffer_1_);
+  ogl::Context::Bind(ose::_2D(), streak_buffer_1_);
 
   ogl::Texture::Active(start + 1);
-  ctx.gl.Bind(ose::_2D(), streak_buffer_2_);
+  ogl::Context::Bind(ose::_2D(), streak_buffer_2_);
 
   // ogl::Texture::Active(start + 2);
-  // ctx.gl.Bind(ose::_2D(), streak_buffer_3_);
+  // ogl::Context::Bind(ose::_2D(), streak_buffer_3_);
 
   // ogl::Texture::Active(start + 3);
-  // ctx.gl.Bind(ose::_2D(), streak_buffer_4_);
+  // ogl::Context::Bind(ose::_2D(), streak_buffer_4_);
 
   // ogl::Texture::Active(start + 4);
-  // ctx.gl.Bind(ose::_2D(), streak_buffer_5_);
+  // ogl::Context::Bind(ose::_2D(), streak_buffer_5_);
 
   // ogl::Texture::Active(start + 5);
-  // ctx.gl.Bind(ose::_2D(), streak_buffer_6_);
+  // ogl::Context::Bind(ose::_2D(), streak_buffer_6_);
 
   return start + 2;
   // return start + 6;

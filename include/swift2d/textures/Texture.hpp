@@ -10,6 +10,7 @@
 #define SWIFT2D_TEXTURE_HPP
 
 // includes  -------------------------------------------------------------------
+#include <swift2d/opengl.hpp>
 #include <swift2d/objects/SavableObjectVisitor.hpp>
 #include <swift2d/graphics/RenderContext.hpp>
 #include <swift2d/utils/Color.hpp>

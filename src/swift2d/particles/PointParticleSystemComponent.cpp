@@ -75,10 +75,10 @@ void PointParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int 
 
     if (o.System->get_particle_count() > 0) {
 
-      ctx.gl.Rasterization::PointSize(o.Scale);
+      ogl::Context::Rasterization::PointSize(o.Scale);
 
       if (o.BlendAdd) {
-        ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
+        ogl::Context::BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
       }
 
       auto& shader(PointParticleShader::get());
@@ -91,7 +91,7 @@ void PointParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int 
       o.System->draw_particles(ctx);
 
       if (o.BlendAdd) {
-        ctx.gl.BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
+        ogl::Context::BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
       }
     }
 

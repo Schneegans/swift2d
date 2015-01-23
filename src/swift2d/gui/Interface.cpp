@@ -9,6 +9,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/gui/Interface.hpp>
 
+#include <swift2d/opengl.hpp>
 #include <swift2d/utils/Logger.hpp>
 #include <swift2d/utils/TextFile.hpp>
 #include <swift2d/application/Paths.hpp>

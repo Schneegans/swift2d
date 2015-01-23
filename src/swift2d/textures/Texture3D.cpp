@@ -41,7 +41,7 @@ void Texture3D::bind(RenderContext const& ctx, unsigned location) const {
 
   if (texture_) {
     texture_->Active(location);
-    ctx.gl.Bind(ose::_3D(), *texture_);
+    ogl::Context::Bind(ose::_3D(), *texture_);
   } else {
     upload_to(ctx, false);
     DefaultTexture3D::get().bind(ctx, location);
@@ -114,7 +114,7 @@ void Texture3D::upload_to(RenderContext const& ctx, bool create_mip_maps) const 
 
     texture_ = new ogl::Texture();
 
-    auto tex = ctx.gl.Bound(ose::_3D(), *texture_);
+    auto tex = ogl::Context::Bound(ose::_3D(), *texture_);
     tex.Image3D(0, internal_format, tile_width, tile_height, tile_count, 0,
                 format, ogl::DataType::UnsignedByte, nullptr);
     if (create_mip_maps) {

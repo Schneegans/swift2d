@@ -235,7 +235,7 @@ void Material::draw_quad_impl(RenderContext const& ctx,
   bool blend(BlendAdditive());
 
   if (blend) {
-    ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::One);
+    ogl::Context::BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::One);
   }
 
   int index(0);
@@ -254,7 +254,7 @@ void Material::draw_quad_impl(RenderContext const& ctx,
 
 
   if (blend) {
-    ctx.gl.BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::OneMinusSrcAlpha);
+    ogl::Context::BlendFunc(oglplus::BlendFn::SrcAlpha, oglplus::BlendFn::OneMinusSrcAlpha);
   }
 }
 

@@ -298,11 +298,11 @@ void normalize(vec2& vec) {
 ////////////////////////////////////////////////////////////////////////////////
 
 float dot(vec2 const& a, vec2 const& b) {
-  return ogl::Dot(a, b);
+  return oglplus::Dot(a, b);
 }
 
 float dot(vec3 const& a, vec3 const& b) {
-  return ogl::Dot(a, b);
+  return oglplus::Dot(a, b);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

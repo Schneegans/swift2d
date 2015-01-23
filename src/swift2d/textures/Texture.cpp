@@ -129,7 +129,7 @@ void Texture::bind(RenderContext const& ctx, unsigned location) const {
 
   if (texture_) {
     texture_->Active(location);
-    ctx.gl.Bind(ose::_2D(), *texture_);
+    ogl::Context::Bind(ose::_2D(), *texture_);
   } else {
     upload_to(ctx);
     DefaultTexture::get().bind(ctx, location);
@@ -174,7 +174,7 @@ void Texture::upload_to(RenderContext const& ctx) const {
 
       texture_ = new ogl::Texture();
 
-      ctx.gl.Bound(ose::_2D(), *texture_)
+      ogl::Context::Bound(ose::_2D(), *texture_)
         .Image2D(0, internal_format, width_, height_, 0, format,
                  ogl::DataType::UnsignedByte, data_)
         .MaxLevel(1000)

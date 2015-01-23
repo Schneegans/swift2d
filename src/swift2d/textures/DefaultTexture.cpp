@@ -24,24 +24,24 @@ DefaultTexture::~DefaultTexture() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DefaultTexture::bind(RenderContext const& context, unsigned location) const {
+void DefaultTexture::bind(RenderContext const& ctx, unsigned location) const {
   if (!texture_) {
-    upload_to(context);
+    upload_to(ctx);
   }
 
   texture_->Active(location);
-  context.gl.Bind(ose::_2D(), *texture_);
+  ogl::Context::Bind(ose::_2D(), *texture_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DefaultTexture::upload_to(RenderContext const& context) const {
+void DefaultTexture::upload_to(RenderContext const& ctx) const {
 
   texture_ = new oglplus::Texture();
 
   std::vector<unsigned char> data = {0, 0, 0, 0};
 
-  context.gl.Bound(ose::_2D(), *texture_)
+  ogl::Context::Bound(ose::_2D(), *texture_)
     .Image2D(0, oglplus::PixelDataInternalFormat::RGBA, 1, 1,
              0, oglplus::PixelDataFormat::RGBA,
              oglplus::PixelDataType::UnsignedByte, &data.front())

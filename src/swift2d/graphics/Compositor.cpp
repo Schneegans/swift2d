@@ -37,7 +37,7 @@ Compositor::~Compositor() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Compositor::draw_objects(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
-  ctx.gl.BlendFunc(
+  ogl::Context::BlendFunc(
     oglplus::BlendFunction::SrcAlpha,
     oglplus::BlendFunction::OneMinusSrcAlpha
   );
@@ -72,10 +72,10 @@ void Compositor::post_process(ConstSerializedScenePtr const& scene, RenderContex
 void Compositor::draw_gui(ConstSerializedScenePtr const& scene, RenderContext const& ctx) {
 
   if (ctx.sub_sampling) {
-    ctx.gl.Viewport(ctx.window_size.x(), ctx.window_size.y());
+    ogl::Context::Viewport(ctx.window_size.x(), ctx.window_size.y());
   }
 
-  ctx.gl.BlendFunc(
+  ogl::Context::BlendFunc(
     oglplus::BlendFunction::SrcAlpha,
     oglplus::BlendFunction::OneMinusSrcAlpha
   );

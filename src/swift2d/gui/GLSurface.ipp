@@ -32,7 +32,7 @@ class GLSurface : public Awesomium::Surface {
     std::unique_lock<std::mutex> lock(mutex_);
     tex_ = new oglplus::Texture();
     oglplus::Texture::Active(0);
-    ctx.gl.Bound(oglplus::Texture::Target::_2D, *tex_)
+    ogl::Context::Bound(oglplus::Texture::Target::_2D, *tex_)
       .Image2D(0, oglplus::PixelDataInternalFormat::RGBA, width_, height_,
         0, oglplus::PixelDataFormat::BGRA,
         oglplus::PixelDataType::UnsignedByte, &buffer_.front()
@@ -59,7 +59,7 @@ class GLSurface : public Awesomium::Surface {
     }
 
     tex_->Active(location);
-    ctx.gl.Bind(ose::_2D(), *tex_);
+    ogl::Context::Bind(ose::_2D(), *tex_);
 
     if (needs_update_) {
       std::unique_lock<std::mutex> lock(mutex_);

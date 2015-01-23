@@ -61,7 +61,7 @@ void DirectionalLightComponent::Renderer::draw(RenderContext const& ctx, int sta
 
   SWIFT_PUSH_GL_RANGE("Draw SunLights");
 
-  ctx.gl.Disable(oglplus::Capability::Blend);
+  ogl::Context::Disable(oglplus::Capability::Blend);
 
   auto& shader(DirectionalLightShader::get());
   shader.use(ctx);
@@ -76,7 +76,7 @@ void DirectionalLightComponent::Renderer::draw(RenderContext const& ctx, int sta
 
   Quad::get().draw(ctx);
 
-  ctx.gl.Enable(oglplus::Capability::Blend);
+  ogl::Context::Enable(oglplus::Capability::Blend);
 
   SWIFT_POP_GL_RANGE();
 }

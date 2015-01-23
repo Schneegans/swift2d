@@ -20,7 +20,7 @@ LBuffer::LBuffer(RenderContext const& ctx) {
     ogl::enums::PixelDataInternalFormat i_format,
     ogl::enums::PixelDataFormat         p_format) {
 
-    ctx.gl.Bound(ogl::Texture::Target::_2D, tex)
+    ogl::Context::Bound(ogl::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
         0, p_format, ogl::PixelDataType::UnsignedByte, nullptr)
       .MaxLevel(0)
@@ -55,14 +55,14 @@ void LBuffer::bind_for_drawing(RenderContext const& ctx) {
 
   if (ctx.dynamic_lighting) {
     auto size(ctx.g_buffer_size/(ctx.light_sub_sampling ? 2 : 1));
-    ctx.gl.Viewport(size.x(), size.y());
+    ogl::Context::Viewport(size.x(), size.y());
 
     fbo_.Bind(ogl::Framebuffer::Target::Draw);
 
     ogl::Context::ColorBuffer draw_buffs[1] =  {
       ogl::FramebufferColorAttachment::_0
     };
-    ctx.gl.DrawBuffers(draw_buffs);
+    ogl::Context::DrawBuffers(draw_buffs);
   }
 }
 

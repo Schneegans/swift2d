@@ -74,7 +74,7 @@ void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, in
       ++start;
     }
 
-    ctx.gl.BlendFunc(
+    ogl::Context::BlendFunc(
       oglplus::BlendFunction::One,
       oglplus::BlendFunction::One
     );
