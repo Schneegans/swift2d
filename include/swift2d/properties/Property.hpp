@@ -125,17 +125,38 @@ class Property {
 };
 
 // ----------------------------- specialization for built-in default contructors
-template<> Property<double>::Property();
-template<> Property<float>::Property();
-template<> Property<math::int8>::Property();
-template<> Property<math::int16>::Property();
-template<> Property<math::int32>::Property();
-template<> Property<math::int64>::Property();
-template<> Property<math::uint8>::Property();
-template<> Property<math::uint16>::Property();
-template<> Property<math::uint32>::Property();
-template<> Property<math::uint64>::Property();
-template<> Property<bool>::Property();
+template<> inline Property<double>::Property()
+  : connection_(nullptr), connection_id_(-1), value_(0.0) {}
+
+template<> inline Property<float>::Property()
+  : connection_(nullptr), connection_id_(-1), value_(0.f) {}
+
+template<> inline Property<math::int8>::Property()
+  : connection_(nullptr), connection_id_(-1), value_(0) {}
+
+template<> inline Property<math::int16>::Property()
+  : connection_(nullptr), connection_id_(-1), value_(0) {}
+
+template<> inline Property<math::int32>::Property()
+  : connection_(nullptr), connection_id_(-1), value_(0) {}
+
+template<> inline Property<math::int64>::Property()
+  : connection_(nullptr), connection_id_(-1), value_(0) {}
+
+template<> inline Property<math::uint8>::Property()
+  : connection_(nullptr), connection_id_(-1), value_(0) {}
+
+template<> inline Property<math::uint16>::Property()
+  : connection_(nullptr), connection_id_(-1), value_(0) {}
+
+template<> inline Property<math::uint32>::Property()
+  : connection_(nullptr), connection_id_(-1), value_(0) {}
+
+template<> inline Property<math::uint64>::Property()
+  : connection_(nullptr), connection_id_(-1), value_(0) {}
+
+template<> inline Property<bool>::Property()
+  : connection_(nullptr), connection_id_(-1), value_(false) {}
 
 // ------------------------------------------------------------ stream operators
 template<typename T>
