@@ -12,6 +12,8 @@
 #include <swift2d/events/Signal.hpp>
 #include <swift2d/utils/platform.hpp>
 
+#include <swift2d/math/types.hpp>
+
 namespace swift {
 
 template <typename T>
@@ -21,24 +23,30 @@ class Property {
   typedef T value_type;
 
   Property()
-    : connection_(nullptr),
-      connection_id_(-1) {}
+    : connection_(nullptr)
+    , connection_id_(-1) {}
 
   Property(T const& val)
-    : value_(val),
-      connection_(nullptr),
-      connection_id_(-1) {}
+    : value_(val)
+    , connection_(nullptr)
+    , connection_id_(-1) {}
+
+  Property(T&& val)
+    : value_(std::move(val))
+    , connection_(nullptr)
+    , connection_id_(-1) {}
 
   Property(Property<T> const& to_copy)
-    : value_(to_copy.value_),
-      connection_(nullptr),
-      connection_id_(-1) {}
+    : value_(to_copy.value_)
+    , connection_(nullptr)
+    , connection_id_(-1) {}
 
-  virtual ~Property() {
-    if (connection_) {
-      connection_->on_change().disconnect(connection_id_);
-    }
-  }
+  Property(Property<T>&& to_copy)
+    : value_(std::move(to_copy.value_))
+    , connection_(nullptr)
+    , connection_id_(-1) {}
+
+  virtual ~Property() {}
 
   virtual Signal<T> const& on_change() const { return on_change_; }
   virtual Signal<T> const& before_change() const { return before_change_; }
@@ -116,6 +124,20 @@ class Property {
   int connection_id_;
 };
 
+// ----------------------------- specialization for built-in default contructors
+template<> Property<double>::Property();
+template<> Property<float>::Property();
+template<> Property<math::int8>::Property();
+template<> Property<math::int16>::Property();
+template<> Property<math::int32>::Property();
+template<> Property<math::int64>::Property();
+template<> Property<math::uint8>::Property();
+template<> Property<math::uint16>::Property();
+template<> Property<math::uint32>::Property();
+template<> Property<math::uint64>::Property();
+template<> Property<bool>::Property();
+
+// ------------------------------------------------------------ stream operators
 template<typename T>
 std::ostream& operator<<(std::ostream& out_stream, Property<T> const& val) {
   out_stream << val.get();

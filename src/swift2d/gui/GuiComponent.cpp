@@ -36,9 +36,10 @@ namespace {
 
 GuiComponent::GuiComponent()
   : Opacity(1.f)
-  , Resource()
+  , Resource("")
   , Size(math::vec2i(10,10))
   , Anchor(math::vec2i(0,0))
+  , Offset(math::vec2i(0,0))
   , Interactive(true)
   , view_(nullptr)
   , js_window_(nullptr)

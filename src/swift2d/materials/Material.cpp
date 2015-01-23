@@ -17,7 +17,17 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Material::Material()
-  : Diffuse(Color(1, 1, 1))
+  : AnimatedDiffuseTexture(nullptr)
+  , DiffuseTexture(nullptr)
+  , AnimatedNormalTexture(nullptr)
+  , NormalTexture(nullptr)
+  , AnimatedEmitTexture(nullptr)
+  , EmitTexture(nullptr)
+  , AnimatedGlowTexture(nullptr)
+  , GlowTexture(nullptr)
+  , AnimatedShinynessTexture(nullptr)
+  , ShinynessTexture(nullptr)
+  , Diffuse(Color(1, 1, 1))
   , Emit(1.0)
   , Glow(0.0)
   , Shinyness(1.0)

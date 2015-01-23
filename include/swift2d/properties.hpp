@@ -11,7 +11,6 @@
 
 #include <swift2d/properties/Property.hpp>
 #include <swift2d/properties/AnimatedProperty.hpp>
-#include <swift2d/math/types.hpp>
 
 #include <string>
 

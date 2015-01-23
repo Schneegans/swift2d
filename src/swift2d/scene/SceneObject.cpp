@@ -27,6 +27,7 @@ SceneObject::SceneObject()
   , Enabled(true)
   , Depth(0)
   , WorldDepth(0)
+  , Label("")
   , remove_flag_(false)
   , initialized_(false) {}
 

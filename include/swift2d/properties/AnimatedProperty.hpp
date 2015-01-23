@@ -61,6 +61,16 @@ class AnimatedProperty : public Property<T>,
     , exponent(0.0)
     , delay(0.0) {}
 
+  AnimatedProperty(T const& val)
+    : Property<T>(val)
+    , direction(DIR_IN_OUT)
+    , start_(val)
+    , end_(val)
+    , state_(0.0)
+    , duration(0)
+    , exponent(0.0)
+    , delay(0.0) {}
+
   AnimatedProperty(T const& start, T const& end, double dur = 1.0,
 	  Direction dir = DIR_IN_OUT, Loop looping = NONE,
                    double exp = 0.0)
@@ -187,7 +197,7 @@ class AnimatedProperty : public Property<T>,
 
 class AnimatedFloat : public AnimatedProperty<float> {
  public:
-  AnimatedFloat() : AnimatedProperty<float>() {}
+  AnimatedFloat() : AnimatedProperty<float>(0.f) {}
   AnimatedFloat(float const& start, float const& end, double duration = 1.0,
     Direction direction = DIR_IN_OUT, Loop loop = NONE, double exponent = 0.0)
     : AnimatedProperty<float>(start, end, duration, direction, loop, exponent) {}
@@ -213,7 +223,7 @@ class AnimatedFloat : public AnimatedProperty<float> {
 
 class AnimatedDouble : public AnimatedProperty<double> {
  public:
-  AnimatedDouble() : AnimatedProperty<double>() {}
+  AnimatedDouble() : AnimatedProperty<double>(0) {}
   AnimatedDouble(double const& start, double const& end, double duration = 1.0,
     Direction direction = DIR_IN_OUT, Loop loop = NONE, double exponent = 0.0)
     : AnimatedProperty<double>(start, end, duration, direction, loop, exponent) {}
