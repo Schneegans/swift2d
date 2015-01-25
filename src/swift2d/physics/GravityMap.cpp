@@ -8,6 +8,8 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/physics/GravityMap.hpp>
+
+#include <swift2d/physics/Physics.hpp>
 #include <swift2d/physics/GravitySourceComponent.hpp>
 #include <swift2d/geometries/Quad.hpp>
 
@@ -26,6 +28,7 @@ GravityMap::GravityMap(RenderContext const& ctx)
 
       uniform vec3  gravity_sources[20];
       uniform int   gravity_source_count;
+      uniform vec2  world_gravity;
       uniform ivec2 screen_size;
 
       in vec2 texcoords;
@@ -34,7 +37,7 @@ GravityMap::GravityMap(RenderContext const& ctx)
 
       void main(void){
 
-        fragColor = vec2(0.5);
+        fragColor = vec2(0.5 + world_gravity*0.1);
 
         vec2 pos = (texcoords - vec2(0.5))*2.0;
 
@@ -50,7 +53,8 @@ GravityMap::GravityMap(RenderContext const& ctx)
   )")
   , gravity_sources_(gravity_shader_.get_uniform<math::vec3>("gravity_sources"))
   , screen_size_(gravity_shader_.get_uniform<math::vec2i>("screen_size"))
-  , gravity_source_count_(gravity_shader_.get_uniform<int>("gravity_source_count")) {
+  , gravity_source_count_(gravity_shader_.get_uniform<int>("gravity_source_count"))
+  , world_gravity_(gravity_shader_.get_uniform<math::vec2>("world_gravity")) {
 
   auto create_texture = [&](
     oglplus::Texture& tex, int width, int height,
@@ -99,6 +103,7 @@ void GravityMap::process(ConstSerializedScenePtr const& scene, RenderContext con
   gravity_shader_.use(ctx);
   screen_size_.Set(ctx.window_size / 16);
   gravity_source_count_.Set((int)sources.size());
+  world_gravity_.Set(Physics::get().Gravity());
 
   if (sources.size() > 0) {
     gravity_sources_.Set(sources);

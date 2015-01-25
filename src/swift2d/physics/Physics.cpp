@@ -89,12 +89,18 @@ class SwiftContactListener : public b2ContactListener {
 ////////////////////////////////////////////////////////////////////////////////
 
 Physics::Physics()
-  : world_(new b2World(b2Vec2(0.f, 0.f)))
+  : Gravity(math::vec2(0.f, 0.f))
+  , world_(new b2World(b2Vec2(0.f, 0.f)))
   , contact_listener_(new SwiftContactListener())
   , gravity_map_(nullptr) {
 
   world_->SetContactListener(contact_listener_);
   world_->SetAllowSleeping(false);
+
+  Gravity.on_change().connect([this](math::vec2 const& val) {
+    world_->SetGravity(b2Vec2(val.x(), val.y()));
+    return true;
+  });
 }
 
 ////////////////////////////////////////////////////////////////////////////////

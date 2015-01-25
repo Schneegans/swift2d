@@ -18,7 +18,13 @@ namespace swift {
 ParticleEmitterComponent::ParticleEmitterComponent()
   : ParticleSystem(nullptr)
   , Density (1.f)
-  , particles_to_spawn_(0.f) {}
+  , particles_to_spawn_(0.f) {
+
+  ParticleSystemLabel.on_change().connect([this](std::string const&) {
+    ParticleSystem = nullptr;
+    return true;
+  });
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
