@@ -10,7 +10,6 @@
 #define SWIFT2D_INCLUDE_PARTICLES_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/particles/ParticleEffect.hpp>
 #include <swift2d/particles/ParticleEmitterComponent.hpp>
 #include <swift2d/particles/SpriteParticleSystemComponent.hpp>
 #include <swift2d/particles/PointParticleSystemComponent.hpp>
