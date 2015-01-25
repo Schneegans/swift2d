@@ -101,6 +101,63 @@ std::unordered_set<SceneObjectPtr> const& SceneObject::get_objects() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+SceneObjectPtr SceneObject::get_object(std::string const& label) const {
+  if (label[0] == '/') {
+    return get_root()->get_object(split_string(label.substr(1), '/'));
+  }
+
+  return get_object(split_string(label, '/'));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObjectPtr SceneObject::get_object(std::vector<std::string> const& path) const {
+  return get_object(path.begin(), path.end());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObjectPtr SceneObject::get_object(
+                          std::vector<std::string>::const_iterator const& path_start,
+                          std::vector<std::string>::const_iterator const& path_end) const {
+
+  if (path_start != path_end) {
+    for (auto& ptr: objects_) {
+      if (ptr->Label() == *path_start) {
+        if (path_start+1 == path_end) {
+          return ptr;
+        } else {
+          return get_object(path_start+1, path_end);
+        }
+      }
+    }
+  }
+
+  return SceneObjectPtr();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObject const* SceneObject::get_root() const {
+  if (Parent()) {
+    return Parent()->get_root();
+  } else {
+    return this;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObject* SceneObject::get_root() {
+  if (Parent()) {
+    return Parent()->get_root();
+  } else {
+    return this;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void SceneObject::remove(SceneObjectPtr const& object, bool force) {
   if (force) {
     object->on_detach(0.0);

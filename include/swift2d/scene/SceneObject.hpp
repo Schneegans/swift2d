@@ -68,7 +68,7 @@ class SWIFT_DLL SceneObject : public SavableObject {
   // called when this object or one of it's parents got removed from the scene
   // it's called instead of update, so the frame time is passed to this method
   virtual void on_detach(double time);
-  
+
   // called before the very first update
   virtual void on_init() {}
 
@@ -90,7 +90,16 @@ class SWIFT_DLL SceneObject : public SavableObject {
   // returns a shared pointer
   SceneObjectPtr const& add_at_root(SceneObjectPtr const& object);
 
+  // gets all children of this SceneObject
   std::unordered_set<SceneObjectPtr> const& get_objects() const;
+
+  // gets the first child with the given label
+  SceneObjectPtr      get_object(std::string const& label) const;
+  SceneObjectPtr      get_object(std::vector<std::string> const& path) const;
+
+  // gets the root object
+  SceneObject const*  get_root() const;
+  SceneObject*        get_root();
 
   // removes a given object from this scene
   void remove(SceneObjectPtr const& object, bool force = false);
@@ -129,6 +138,11 @@ class SWIFT_DLL SceneObject : public SavableObject {
   void remove(ComponentPtr const& component, bool force = false);
   void remove(Component* component, bool force = false);
 
+  // get all components
+  std::vector<ComponentPtr> const& get_all_components() const {
+    return components_;
+  }
+
   // get all components of the given type
   template<typename T>
   std::vector<std::shared_ptr<T>> get_components() const {
@@ -152,6 +166,56 @@ class SWIFT_DLL SceneObject : public SavableObject {
         return casted;
       }
     }
+    return std::shared_ptr<T>();
+  }
+
+  // get the first component of the given type with the given label
+  template<typename T>
+  std::shared_ptr<T> get_component(std::string const& label) const {
+
+    if (label[0] == '/') {
+      return get_root()->get_component<T>(split_string(label.substr(1), '/'));
+    }
+
+    return get_component<T>(split_string(label, '/'));
+
+    for (auto const& component: components_) {
+      if (component->Label() == label) {
+        auto casted(std::dynamic_pointer_cast<T>(component));
+        if (casted) {
+          return casted;
+        }
+      }
+    }
+    return std::shared_ptr<T>();
+  }
+
+  // get the first component of the given type with the given path
+  template<typename T>
+  std::shared_ptr<T> get_component(std::vector<std::string> const& path) const {
+    if (path.size() == 1) {
+      for (auto const& component: components_) {
+        if (component->Label() == path[0]) {
+          auto casted(std::dynamic_pointer_cast<T>(component));
+          if (casted) {
+            return casted;
+          }
+        }
+      }
+    } else if (path.size() > 1) {
+      auto object(get_object(path.begin(), path.end()-1));
+      if (object) {
+        for (auto const& component: object->components_) {
+          if (component->Label() == path.back()) {
+            auto casted(std::dynamic_pointer_cast<T>(component));
+            if (casted) {
+              return casted;
+            }
+          }
+        }
+      }
+    }
+
     return std::shared_ptr<T>();
   }
 
@@ -187,7 +251,8 @@ class SWIFT_DLL SceneObject : public SavableObject {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  // static SceneObjectPtr create_from_json(boost::property_tree::ptree const& json);
+  SceneObjectPtr get_object(std::vector<std::string>::const_iterator const& path_start,
+                            std::vector<std::string>::const_iterator const& path_end) const;
 
   // a collection of all objects attached to this object
   std::unordered_set<SceneObjectPtr> objects_;

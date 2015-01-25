@@ -7,56 +7,36 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/components/Component.hpp>
-
-#include <swift2d/scene/SceneObject.hpp>
+#include <swift2d/particles/ParticleEffect.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Component::Component()
-  : Enabled(true)
-  , user_(nullptr)
-  , remove_flag_(false)
-  , initialized_(false) {}
+ParticleEffect::ParticleEffect()
+  : SceneObject()
+  , Time (0.f) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Component::detach(bool force) {
-  if (user_) {
-    user_->remove(this, force);
-  }
+void ParticleEffect::on_init() {
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SceneObject const* Component::get_root() const {
-  if (user_) {
-    return user_->get_root();
-  } else {
-    return nullptr;
-  }
+void ParticleEffect::update(double time) {
+  Time.update(time);
+  SceneObject::update(time);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SceneObject* Component::get_root() {
-  if (user_) {
-    return user_->get_root();
-  } else {
-    return nullptr;
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Component::accept(SavableObjectVisitor& visitor) {
-  visitor.add_member("Enabled", Enabled);
-  visitor.add_member("Label", Label);
+void ParticleEffect::accept(SavableObjectVisitor& visitor) {
+  SceneObject::accept(visitor);
+  visitor.add_member("Time", Time);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 }
-

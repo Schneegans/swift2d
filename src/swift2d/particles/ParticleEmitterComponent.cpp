@@ -9,6 +9,8 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/particles/ParticleEmitterComponent.hpp>
 
+#include <swift2d/scene/SceneObject.hpp>
+
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,6 +27,11 @@ void ParticleEmitterComponent::update(double time) {
   auto last_spawn_position = math::get_translation(WorldTransform());
 
   TransformableComponent::update(time);
+  Density.update(time);
+
+  if (!ParticleSystem) {
+    ParticleSystem = get_user()->get_component<ParticleSystemComponent>(ParticleSystemLabel());
+  }
 
   if (ParticleSystem) {
     particles_to_spawn_ += time * Density();
@@ -49,6 +56,7 @@ void ParticleEmitterComponent::update(double time) {
 void ParticleEmitterComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
   visitor.add_member("Density", Density);
+  visitor.add_member("ParticleSystemLabel", ParticleSystemLabel);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
