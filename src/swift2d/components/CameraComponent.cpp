@@ -24,7 +24,8 @@ math::vec2 CameraComponent::pixel_to_world(math::vec2 const& pixel_pos) const {
   auto w = WindowManager::get().current();
   if (w->get_context().ready) {
     math::vec2 scaled = (pixel_pos / math::vec2(w->get_context().window_size));
-    math::vec3 tmp = WorldTransform() * math::vec3(scaled.x(), scaled.y(), 1.f);
+    scaled = scaled*2.f - math::vec2(1.f, 1.f);
+    math::vec3 tmp = WorldTransform() * math::vec3(scaled.x() * Size().x(), scaled.y() * Size().y(), 1.f);
     return math::vec2(tmp.x(), tmp.y());
   }
   return math::vec2(0.f, 0.f);
