@@ -298,33 +298,50 @@ void SceneObject::update(double time) {
       WorldDepth     = Depth.get();
     }
 
-    for (auto current(components_.begin()), next(current);
-         current != components_.end(); current = next) {
-      ++next;
-      if (!(*current)->initialized_) {
-        (*current)->initialized_ = true;
-        (*current)->on_init();
-      }
-      if ((*current)->remove_flag_) {
-        (*current)->on_detach(time);
-        components_.erase(current);
-      } else if ((*current)->Enabled.get()) {
-        (*current)->update(time);
+    {
+      auto current(components_.begin());
+      bool last(current == components_.end());
+
+      while (!last) {
+        auto next(current+1);
+        last = (next == components_.end());
+
+        if (!(*current)->initialized_) {
+          (*current)->initialized_ = true;
+          (*current)->on_init();
+        }
+        if ((*current)->remove_flag_) {
+          (*current)->on_detach(time);
+          components_.erase(current);
+        } else if ((*current)->Enabled.get()) {
+          (*current)->update(time);
+        }
+
+        current = next;
       }
     }
 
-    for (auto current(objects_.begin()), next(current);
-         current != objects_.end(); current = next) {
-      ++next;
-      if (!(*current)->initialized_) {
-        (*current)->initialized_ = true;
-        (*current)->on_init();
-      }
-      if ((*current)->remove_flag_) {
-        (*current)->on_detach(time);
-        objects_.erase(current);
-      } else {
-        (*current)->update(time);
+    {
+      auto current(objects_.begin());
+      bool last(current == objects_.end());
+
+      while (!last) {
+        auto next = current;
+        ++next;
+        last = (next == objects_.end());
+
+        if (!(*current)->initialized_) {
+          (*current)->initialized_ = true;
+          (*current)->on_init();
+        }
+        if ((*current)->remove_flag_) {
+          (*current)->on_detach(time);
+          objects_.erase(current);
+        } else {
+          (*current)->update(time);
+        }
+
+        current = next;
       }
     }
   }

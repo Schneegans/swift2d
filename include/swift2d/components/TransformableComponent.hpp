@@ -47,6 +47,10 @@ class SWIFT_DLL TransformableComponent : public Component {
   virtual void translate (math::vec2 const& delta);
   virtual void translate (float x, float y);
 
+  virtual float      get_rotation() const;
+  virtual float      get_world_rotation() const;
+  virtual math::vec2 get_direction() const;
+  virtual math::vec2 get_world_direction() const;
   virtual math::vec2 get_position() const;
   virtual math::vec2 get_world_position() const;
 
