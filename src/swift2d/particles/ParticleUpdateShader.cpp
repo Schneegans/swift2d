@@ -88,7 +88,7 @@ ParticleUpdateShader::ParticleUpdateShader()
             float delta = 1.0*i/spawn_count;
             vec3 random = get_random((i+1)*time.y);
 
-            float l = life.x      + random.x * life.y;
+            float l = max(0, life.x  + random.x * life.y);
             float d = transform[i].z + random.y * pos_rot_variance.y;
             float v = velocity.x  + random.z * velocity.y;
             float r = rotation.x  + random.z * rotation.y;
