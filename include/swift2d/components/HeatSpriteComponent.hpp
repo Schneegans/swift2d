@@ -39,6 +39,8 @@ class SWIFT_DLL HeatSpriteComponent : public TransformableComponent,
   struct Serialized : public SerializedComponent {
     math::mat3 Transform;
     TexturePtr Texture;
+    math::vec2 TexcoordOffset;
+    math::vec2 TexcoordScale;
     float      Opacity;
   };
 
@@ -48,6 +50,8 @@ class SWIFT_DLL HeatSpriteComponent : public TransformableComponent,
 
   // ---------------------------------------------------------------- properties
   TextureProperty Texture;
+  Vec2            TexcoordOffset;
+  Vec2            TexcoordScale;
   Float           Opacity;
 
   // ----------------------------------------------------- contruction interface
