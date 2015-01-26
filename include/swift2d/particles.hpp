@@ -11,6 +11,7 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/particles/ParticleEmitterComponent.hpp>
+#include <swift2d/particles/ParticleOnceEmitterComponent.hpp>
 #include <swift2d/particles/SpriteParticleSystemComponent.hpp>
 #include <swift2d/particles/PointParticleSystemComponent.hpp>
 #include <swift2d/particles/LightParticleSystemComponent.hpp>

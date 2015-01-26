@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/particles/ParticleEmitterComponent.hpp>
+#include <swift2d/particles/ParticleOnceEmitterComponent.hpp>
 
 #include <swift2d/scene/SceneObject.hpp>
 
@@ -15,10 +15,11 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ParticleEmitterComponent::ParticleEmitterComponent()
+ParticleOnceEmitterComponent::ParticleOnceEmitterComponent()
   : ParticleSystem(nullptr)
-  , Density (1.f)
-  , particles_to_spawn_(0.f) {
+  , Delay(0.f)
+  , Amount(10.f)
+  , DetachOnEmmission(true) {
 
   ParticleSystemLabel.on_change().connect([this](std::string const&) {
     ParticleSystem = nullptr;
@@ -28,30 +29,28 @@ ParticleEmitterComponent::ParticleEmitterComponent()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleEmitterComponent::update(double time) {
-
-  auto last_spawn_position = math::get_translation(WorldTransform());
+void ParticleOnceEmitterComponent::update(double time) {
 
   TransformableComponent::update(time);
-  Density.update(time);
 
   if (!ParticleSystem) {
     ParticleSystem = get_user()->get_component<ParticleSystemComponent>(ParticleSystemLabel());
   }
 
-  if (ParticleSystem) {
-    particles_to_spawn_ += time * Density();
+  if (ParticleSystem && Delay() >= 0) {
 
-    if (particles_to_spawn_ > 1.f) {
-      auto pos(math::get_translation(WorldTransform()));
-      auto rot(math::get_rotation(WorldTransform()));
+    Delay = Delay() - time;
 
-      int count = particles_to_spawn_;
-      particles_to_spawn_ = particles_to_spawn_ - count;
+    if (Delay() <= 0.0) {
+      Delay = -1.0;
 
-      for (int i(0); i<count; ++i) {
-        auto p = pos + 1.f*i/count*(last_spawn_position-pos);
-        ParticleSystem->spawn(math::vec3(p.x(), p.y(), rot));
+      auto pos(get_world_position());
+      auto rot(get_world_rotation());
+
+      ParticleSystem->spawn(math::vec3(pos.x(), pos.y(), rot), Amount());
+
+      if (DetachOnEmmission()) {
+        detach();
       }
     }
   }
@@ -59,10 +58,12 @@ void ParticleEmitterComponent::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleEmitterComponent::accept(SavableObjectVisitor& visitor) {
+void ParticleOnceEmitterComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
   visitor.add_member("ParticleSystemLabel", ParticleSystemLabel);
-  visitor.add_member("Density", Density);
+  visitor.add_member("Delay", Delay);
+  visitor.add_member("Amount", Amount);
+  visitor.add_member("DetachOnEmmission", DetachOnEmmission);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
