@@ -148,6 +148,7 @@ class AnimatedProperty : public Property<T>,
     }
   }
 
+  inline void     restart()     { Property<T>::set(start_); set(end_, duration); }
   inline T const& start() const { return start_; }
   inline T const& end()   const { return end_; }
 

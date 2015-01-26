@@ -19,12 +19,19 @@ ParticleOnceEmitterComponent::ParticleOnceEmitterComponent()
   : ParticleSystem(nullptr)
   , Delay(0.f)
   , Amount(10.f)
-  , DetachOnEmmission(true) {
+  , DetachOnEmmission(false)
+  , age_(0.0) {
 
   ParticleSystemLabel.on_change().connect([this](std::string const&) {
     ParticleSystem = nullptr;
     return true;
   });
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ParticleOnceEmitterComponent::restart() {
+  age_ = 0.0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,12 +44,12 @@ void ParticleOnceEmitterComponent::update(double time) {
     ParticleSystem = get_user()->get_component<ParticleSystemComponent>(ParticleSystemLabel());
   }
 
-  if (ParticleSystem && Delay() >= 0) {
+  if (ParticleSystem && age_ >= 0) {
 
-    Delay = Delay() - time;
+    age_ += time;
 
-    if (Delay() <= 0.0) {
-      Delay = -1.0;
+    if (age_ > Delay()) {
+      age_ = -1.0;
 
       auto pos(get_world_position());
       auto rot(get_world_rotation());
