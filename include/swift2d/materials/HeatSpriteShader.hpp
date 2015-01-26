@@ -33,6 +33,7 @@ class HeatSpriteShader : public Shader,
   oglplus::Lazy<oglplus::Uniform<math::mat3>>   transform;
   oglplus::Lazy<oglplus::Uniform<math::mat3>>   heat_transform;
   oglplus::Lazy<oglplus::Uniform<int>>          diffuse;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>   texcoord_offset_scale;
   oglplus::Lazy<oglplus::Uniform<float>>        opacity;
 
   friend class Singleton<HeatSpriteShader>;

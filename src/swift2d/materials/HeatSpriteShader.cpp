@@ -17,7 +17,7 @@ HeatSpriteShader::HeatSpriteShader()
   : Shader(
     R"(
       // vertex shader ---------------------------------------------------------
-      @include "instanced_quad_vertex_shader"
+      @include "shifted_instanced_quad_vertex_shader"
     )",
     R"(
       // fragment shader -------------------------------------------------------
@@ -47,6 +47,7 @@ HeatSpriteShader::HeatSpriteShader()
   , depth(get_uniform<float>("depth"))
   , parallax(get_uniform<float>("parallax"))
   , diffuse(get_uniform<int>("diffuse"))
+  , texcoord_offset_scale(get_uniform<math::vec4>("texcoord_offset_scale"))
   , opacity(get_uniform<float>("opacity")) {}
 
 ////////////////////////////////////////////////////////////////////////////////
