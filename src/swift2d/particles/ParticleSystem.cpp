@@ -154,13 +154,13 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
     shader.noise_tex.        Set(0);
     math::vec2 time       (frame_time * 1000.0, ctx.pipeline->get_total_time() * 1000.0);
     math::vec2 life       (system.Life,            system.LifeVariance);
-    math::vec2 pos_rot_variance  (system.PositionVariance,       system.RotationVariance);
+    math::vec3 dir_pos_rot_variance  (system.Rotation, system.PositionVariance,       system.RotationVariance);
     math::vec2 velocity   (system.Velocity,        system.VelocityVariance);
     math::vec2 rotation   (system.AngularVelocity, system.AngularVelocityVariance);
 
     shader.time.             Set(time);
     shader.life.             Set(life);
-    shader.pos_rot_variance. Set(pos_rot_variance);
+    shader.dir_pos_rot_variance. Set(dir_pos_rot_variance);
     shader.velocity.         Set(velocity);
     shader.rotation.         Set(rotation);
 
@@ -169,14 +169,14 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
 
     while (index < spawn_positions.size()) {
       int count(std::min(50, (int)spawn_positions.size()-index));
-      shader.spawn_count.Set(count);
+      shader.spawn_count_it.Set(math::vec2i(count, index));
       shader.transform.Set(std::vector<math::vec3>(spawn_positions.begin() + index, spawn_positions.begin() + index + count));
       ogl::Context::DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       index += count;
     }
   }
 
-  shader.spawn_count.Set(-1);
+  shader.spawn_count_it.Set(math::vec2i(-1, 0));
 
   // update existing particles -----------------------------------------------
   if (!first_draw) {

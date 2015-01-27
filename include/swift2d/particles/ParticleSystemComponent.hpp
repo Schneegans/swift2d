@@ -52,7 +52,9 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
     float AngularVelocityVariance;
     float AngularDamping;
 
+    float Rotation;
     float RotationVariance;
+
     float PositionVariance;
 
     ParticleSystemPtr System;
@@ -73,7 +75,9 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
   Float AngularVelocityVariance;
   Float AngularDamping;
 
+  Float Rotation;
   Float RotationVariance;
+
   Float PositionVariance;
 
   // ----------------------------------------------------- contruction interface

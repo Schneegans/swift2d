@@ -18,15 +18,16 @@ namespace swift {
 ParticleSystemComponent::ParticleSystemComponent()
   : MaxCount                (1000)
   , Mass                    (0.f)
-  , LinearDamping           (0.f)
-  , AngularDamping          (0.f)
   , Life                    (10.f)
   , LifeVariance            (3.f)
-  , RotationVariance        (0.3f)
   , Velocity                (0.3f)
   , VelocityVariance        (0.3f)
+  , LinearDamping           (0.f)
   , AngularVelocity         (0.f)
   , AngularVelocityVariance (0.f)
+  , AngularDamping          (0.f)
+  , Rotation                (0.0f)
+  , RotationVariance        (0.3f)
   , PositionVariance        (0.0f)
   , particle_system_(ParticleSystem::create(MaxCount())) {
 
@@ -73,6 +74,7 @@ void ParticleSystemComponent::serialize(ParticleSystemComponent::Serialized& ser
   serialized.AngularVelocityVariance = AngularVelocityVariance();
   serialized.AngularDamping = AngularDamping();
 
+  serialized.Rotation = Rotation();
   serialized.RotationVariance = RotationVariance();
   serialized.PositionVariance = PositionVariance();
 
@@ -90,6 +92,7 @@ void ParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("AngularDamping",            AngularDamping);
   visitor.add_member("Life",                      Life);
   visitor.add_member("LifeVariance",              LifeVariance);
+  visitor.add_member("Rotation",                  Rotation);
   visitor.add_member("RotationVariance",          RotationVariance);
   visitor.add_member("Velocity",                  Velocity);
   visitor.add_member("VelocityVariance",          VelocityVariance);
