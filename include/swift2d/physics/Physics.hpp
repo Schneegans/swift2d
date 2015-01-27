@@ -54,6 +54,11 @@ class SWIFT_DLL Physics : public Singleton<Physics> {
   void update_gravity_map(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
   void bind_gravity_map  (RenderContext const& ctx, int location);
 
+  bool ray_cast(math::vec2 const& start, math::vec2 const& end,
+                std::vector<DynamicBodyComponent*>& hits,
+                std::vector<math::vec2>& hit_points,
+                std::vector<math::vec2>& hit_normals) const;
+
   friend class Singleton<Physics>;
 
  ///////////////////////////////////////////////////////////////////////////////
