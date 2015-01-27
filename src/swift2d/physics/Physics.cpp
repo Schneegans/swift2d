@@ -85,6 +85,26 @@ class SwiftContactListener : public b2ContactListener {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+
+class SwiftRayCastCallback : public b2RayCastCallback {
+
+ public:
+  std::vector<DynamicBodyComponent*> hits;
+  std::vector<math::vec2>            hit_points;
+  std::vector<math::vec2>            hit_normals;
+
+  virtual float ReportFixture (b2Fixture* fixture, b2Vec2 const& point,
+                               b2Vec2 const& normal, float fraction) {
+
+    hits.push_back(static_cast<DynamicBodyComponent*>(fixture->GetBody()->GetUserData()));
+    hit_points.push_back(math::vec2(point.x, point.y));
+    hit_normals.push_back(math::vec2(normal.x, normal.y));
+
+    return 1.f;
+  }
+};
+
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -286,6 +306,22 @@ void Physics::clear_gravity_map(RenderContext const& ctx) {
 
 void Physics::bind_gravity_map(RenderContext const& ctx, int location) {
   gravity_map_->bind(ctx, location);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Physics::ray_cast(math::vec2 const& start, math::vec2 const& end,
+                       std::vector<DynamicBodyComponent*>& hits,
+                       std::vector<math::vec2>& hit_points,
+                       std::vector<math::vec2>& hit_normals) const {
+
+  SwiftRayCastCallback callback;
+  world_->RayCast(&callback, b2Vec2(start.x(), start.y()), b2Vec2(end.x(), end.y()));
+  hits = callback.hits;
+  hit_points = callback.hit_points;
+  hit_normals = callback.hit_points;
+
+  return !hit_points.empty();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

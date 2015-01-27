@@ -183,6 +183,7 @@ void DynamicBodyComponent::init() {
   if (!body_) {
     body_ = Physics::get().add(this);
 
+    body_->SetUserData(this);
     body_->SetActive(Enabled());
     Enabled.on_change().connect([this](bool enabled) {
       if (body_) {
