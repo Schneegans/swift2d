@@ -29,6 +29,8 @@ class SWIFT_DLL Color {
   // This constructs a Color with all values set to 0 (black).
   Color();
 
+  Color(std::string const& html_rgba);
+
   // This constructs a Color from given RGB values.
   Color(float red, float green, float blue, float alpha = 1.f);
 
@@ -62,8 +64,8 @@ class SWIFT_DLL Color {
 
   math::vec3        vec3() const;
   math::vec4 const& vec4() const;
-  std::string       html_rgb() const;
-  void              html_rgb(std::string const& val);
+  std::string       html_rgba() const;
+  void              html_rgba(std::string const& val);
 
   float operator[](unsigned rhs) const;
   float& operator[](unsigned rhs);

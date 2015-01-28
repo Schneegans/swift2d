@@ -27,6 +27,13 @@ Color::Color()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+Color::Color(std::string const& html_rgba)
+  : val_(0, 0, 0, 1) {
+    this->html_rgba(html_rgba);
+  }
+
+////////////////////////////////////////////////////////////////////////////////
+
 Color::Color(float r, float g, float b, float a)
   : val_(r, g, b, a) {}
 
@@ -185,19 +192,20 @@ math::vec4 const& Color::vec4() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::string Color::html_rgb() const {
+std::string Color::html_rgba() const {
   std::stringstream stream;
-  stream << "rgb("
+  stream << "rgba("
          << static_cast<int>(r() * 255) << ", "
          << static_cast<int>(g() * 255) << ", "
-         << static_cast<int>(b() * 255) << ")";
+         << static_cast<int>(b() * 255) << ", "
+         << a() << ")";
 
   return stream.str();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Color::html_rgb(std::string const& val) {
+void Color::html_rgba(std::string const& val) {
   std::string str(val);
   std::string cropped = str.substr(str.find_first_of("(")+1, str.find_first_of(")")-1);
 
@@ -206,7 +214,13 @@ void Color::html_rgb(std::string const& val) {
   float r;
   float g;
   float b;
-  stream >> r >> comma >> g >> comma >> b;
+  stream >> r >> comma >> g >> comma >> b >> comma;
+
+  if (comma == ",") {
+    float a;
+    stream >> a;
+    this->a(a);
+  }
 
   this->r(r/255.f);
   this->g(g/255.f);
