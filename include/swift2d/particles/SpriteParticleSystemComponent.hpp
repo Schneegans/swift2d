@@ -36,9 +36,10 @@ class SWIFT_DLL SpriteParticleSystemComponent : public ParticleSystemComponent {
 
   // ------------------------------------------------------------- inner classes
   struct Serialized : public ParticleSystemComponent::Serialized {
-    math::vec2 StartScale, EndScale;
-    float      StartGlow,  EndGlow;
-    math::vec4 StartColor, EndColor;
+    float      MidLife;
+    math::vec2 StartScale, MidScale, EndScale;
+    float      StartGlow,  MidGlow,  EndGlow;
+    math::vec4 StartColor, MidColor, EndColor;
     bool       BlendAdd;
     int        SubSamplingLevel;
     TexturePtr Texture;
@@ -50,9 +51,10 @@ class SWIFT_DLL SpriteParticleSystemComponent : public ParticleSystemComponent {
   };
 
   // ---------------------------------------------------------------- properties
-  Vec2            StartScale, EndScale;
-  Float           StartGlow,  EndGlow;
-  ColorProperty   StartColor, EndColor;
+  Float           MidLife;
+  Vec2            StartScale, MidScale, EndScale;
+  Float           StartGlow,  MidGlow,  EndGlow;
+  ColorProperty   StartColor, MidColor, EndColor;
   Bool            BlendAdd;
   Int32           SubSamplingLevel;
   TextureProperty Texture;

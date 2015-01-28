@@ -170,6 +170,25 @@ ShaderIncludes::ShaderIncludes() {
   )");
 
   // ---------------------------------------------------------------------------
+  add_include("three_way_mix", R"(
+    vec4 three_way_mix(vec4 a, vec4 b, vec4 c, float mid, float alpha) {
+      return (alpha < mid ? mix(a, b, alpha/(mid+0.0001)) : mix(b, c, (alpha-mid)/(1.0-mid+0.0001)));
+    }
+
+    vec3 three_way_mix(vec3 a, vec3 b, vec3 c, float mid, float alpha) {
+      return (alpha < mid ? mix(a, b, alpha/(mid+0.0001)) : mix(b, c, (alpha-mid)/(1.0-mid+0.0001)));
+    }
+
+    vec2 three_way_mix(vec2 a, vec2 b, vec2 c, float mid, float alpha) {
+      return (alpha < mid ? mix(a, b, alpha/(mid+0.0001)) : mix(b, c, (alpha-mid)/(1.0-mid+0.0001)));
+    }
+
+    float three_way_mix(float a, float b, float c, float mid, float alpha) {
+      return (alpha < mid ? mix(a, b, alpha/(mid+0.0001)) : mix(b, c, (alpha-mid)/(1.0-mid+0.0001)));
+    }
+  )");
+
+  // ---------------------------------------------------------------------------
   add_include("emit_quad", R"(
     void emit_quad(vec2 position, vec2 scale, float rotation) {
       const float yo[2] = float[2](0.5, -0.5);

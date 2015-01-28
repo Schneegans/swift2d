@@ -151,18 +151,18 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
     }
 
     NoiseTexture::get().bind(ctx, 0);
-    shader.noise_tex.        Set(0);
-    math::vec2 time       (frame_time * 1000.0, ctx.pipeline->get_total_time() * 1000.0);
-    math::vec2 life       (system.Life,            system.LifeVariance);
-    math::vec3 dir_pos_rot_variance  (system.Rotation, system.PositionVariance,       system.RotationVariance);
-    math::vec2 velocity   (system.Velocity,        system.VelocityVariance);
-    math::vec2 rotation   (system.AngularVelocity, system.AngularVelocityVariance);
+    shader.noise_tex.Set(0);
+    math::vec2 time         (frame_time * 1000.0, ctx.pipeline->get_total_time() * 1000.0);
+    math::vec2 life         (system.Life,            system.LifeVariance);
+    math::vec2 velocity     (system.Velocity,        system.VelocityVariance);
+    math::vec2 rotation     (system.AngularVelocity, system.AngularVelocityVariance);
+    math::vec3 dir_pos_rot_variance(system.Rotation, system.PositionVariance, system.RotationVariance);
 
     shader.time.             Set(time);
     shader.life.             Set(life);
-    shader.dir_pos_rot_variance. Set(dir_pos_rot_variance);
     shader.velocity.         Set(velocity);
     shader.rotation.         Set(rotation);
+    shader.dir_pos_rot_variance.Set(dir_pos_rot_variance);
 
     // spawn new particles -----------------------------------------------------
     int index(0);
