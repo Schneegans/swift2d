@@ -151,18 +151,16 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
     }
 
     NoiseTexture::get().bind(ctx, 0);
-    shader.noise_tex.Set(0);
-    math::vec2 time         (frame_time * 1000.0, ctx.pipeline->get_total_time() * 1000.0);
-    math::vec2 life         (system.Life,            system.LifeVariance);
-    math::vec2 velocity     (system.Velocity,        system.VelocityVariance);
-    math::vec2 rotation     (system.AngularVelocity, system.AngularVelocityVariance);
-    math::vec3 dir_pos_rot_variance(system.Rotation, system.PositionVariance, system.RotationVariance);
+    math::vec2 time(frame_time * 1000.0, ctx.pipeline->get_total_time() * 1000.0);
+    math::vec3 life_pos_var(system.Life, system.LifeVariance, system.PositionVariance);
+    math::vec4 lin_ang_velocity(system.Velocity, system.VelocityVariance, system.AngularVelocity, system.AngularVelocityVariance);
+    math::vec4 direction_rotation(system.Direction, system.DirectionVariance, system.Rotation, system.RotationVariance);
 
-    shader.time.             Set(time);
-    shader.life.             Set(life);
-    shader.velocity.         Set(velocity);
-    shader.rotation.         Set(rotation);
-    shader.dir_pos_rot_variance.Set(dir_pos_rot_variance);
+    shader.noise_tex.Set(0);
+    shader.time.Set(time);
+    shader.life_pos_var.Set(life_pos_var);
+    shader.lin_ang_velocity.Set(lin_ang_velocity);
+    shader.direction_rotation.Set(direction_rotation);
 
     // spawn new particles -----------------------------------------------------
     int index(0);
@@ -170,7 +168,7 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
     while (index < spawn_positions.size()) {
       int count(std::min(50, (int)spawn_positions.size()-index));
       shader.spawn_count_it.Set(math::vec2i(count, index));
-      shader.transform.Set(std::vector<math::vec3>(spawn_positions.begin() + index, spawn_positions.begin() + index + count));
+      shader.position.Set(std::vector<math::vec3>(spawn_positions.begin() + index, spawn_positions.begin() + index + count));
       ogl::Context::DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       index += count;
     }
@@ -184,8 +182,8 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
     math::vec3 dynamics(system.Mass, system.LinearDamping, system.AngularDamping);
 
     shader.gravity_map.Set(0);
-    shader.projection. Set(ctx.projection_matrix);
-    shader.dynamics.   Set(dynamics);
+    shader.projection.Set(ctx.projection_matrix);
+    shader.dynamics.Set(dynamics);
 
     ogl::Context::DrawTransformFeedback(
       ogl::PrimitiveType::Points, transform_feedbacks_[current_vb()]

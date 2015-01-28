@@ -26,8 +26,10 @@ ParticleSystemComponent::ParticleSystemComponent()
   , AngularVelocity         (0.f)
   , AngularVelocityVariance (0.f)
   , AngularDamping          (0.f)
+  , Direction               (0.0f)
+  , DirectionVariance       (0.0f)
   , Rotation                (0.0f)
-  , RotationVariance        (0.3f)
+  , RotationVariance        (0.0f)
   , PositionVariance        (0.0f)
   , particle_system_(ParticleSystem::create(MaxCount())) {
 
@@ -74,8 +76,12 @@ void ParticleSystemComponent::serialize(ParticleSystemComponent::Serialized& ser
   serialized.AngularVelocityVariance = AngularVelocityVariance();
   serialized.AngularDamping = AngularDamping();
 
+  serialized.Direction = Direction();
+  serialized.DirectionVariance = DirectionVariance();
+
   serialized.Rotation = Rotation();
   serialized.RotationVariance = RotationVariance();
+
   serialized.PositionVariance = PositionVariance();
 
   serialized.System = particle_system_;
@@ -92,6 +98,8 @@ void ParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("AngularDamping",            AngularDamping);
   visitor.add_member("Life",                      Life);
   visitor.add_member("LifeVariance",              LifeVariance);
+  visitor.add_member("Direction",                 Direction);
+  visitor.add_member("DirectionVariance",         DirectionVariance);
   visitor.add_member("Rotation",                  Rotation);
   visitor.add_member("RotationVariance",          RotationVariance);
   visitor.add_member("Velocity",                  Velocity);

@@ -56,11 +56,10 @@ ParticleUpdateShader::ParticleUpdateShader()
       // spawn uniforms
       uniform sampler2D noise_tex;
       uniform ivec2     spawn_count_it;
-      uniform vec3      transform[50];  // xy: pos        z: rot
-      uniform vec2      life;           // x: life        y: life variance   [sec]
-      uniform vec2      velocity;       // x: velocity    y: velocity variance
-      uniform vec2      rotation;       // x: rotation    y: rotation variance
-      uniform vec3      dir_pos_rot_variance;
+      uniform vec3      position[50];       // xy: pos        z: rot
+      uniform vec3      life_pos_var;       // x: life        y: life variance [sec]  z: position variance
+      uniform vec4      lin_ang_velocity;   // x: lin vel     y: lin vel variance     z: ang vel     w: ang vel variance
+      uniform vec4      direction_rotation; // x: direction   y: direction variance   z: rotation    w: rotation variance
 
       // update uniforms
       uniform sampler2D gravity_map;
@@ -88,15 +87,16 @@ ParticleUpdateShader::ParticleUpdateShader()
             vec3 random1 = get_random(vec2((delta+spawn_count_it.y+1) * time.y, (delta+spawn_count_it.y+1) * time.x));
             vec3 random2 = get_random(vec2((delta+spawn_count_it.y+2) * time.y, (delta+spawn_count_it.y+2) * time.x));
 
-            float l = max(0, life.x  + random1.x * life.y);
-            float d = transform[i].z + random1.y * dir_pos_rot_variance.z + dir_pos_rot_variance.x;
-            float v = velocity.x  + random1.z * velocity.y;
-            float r = rotation.x  + random1.z * rotation.y;
+            float l = max(0, life_pos_var.x  + random1.x * life_pos_var.y);
+            float d = position[i].z + direction_rotation.x + random1.y * direction_rotation.y;
+            float r = d + position[i].z + direction_rotation.z + random1.x * direction_rotation.w;
+            float v = lin_ang_velocity.x  + random1.z * lin_ang_velocity.y;
+            float a = lin_ang_velocity.z  + random2.z * lin_ang_velocity.w;
 
-            out_position = transform[i].xy + random2.xy*dir_pos_rot_variance.y;
+            out_position = position[i].xy + random2.xy*life_pos_var.z;
             out_life     = vec2(0, l*1000.0);
             out_velocity = vec2(cos(d), sin(d)) * v;
-            out_rotation = vec2(d, r);
+            out_rotation = vec2(r, a);
 
             EmitVertex(); EndPrimitive();
           }
@@ -130,11 +130,10 @@ ParticleUpdateShader::ParticleUpdateShader()
   , time(get_uniform<math::vec2>("time"))
   , noise_tex(get_uniform<int>("noise_tex"))
   , spawn_count_it(get_uniform<math::vec2i>("spawn_count_it"))
-  , transform(get_uniform<math::vec3>("transform"))
-  , life(get_uniform<math::vec2>("life"))
-  , dir_pos_rot_variance(get_uniform<math::vec3>("dir_pos_rot_variance"))
-  , velocity(get_uniform<math::vec2>("velocity"))
-  , rotation(get_uniform<math::vec2>("rotation"))
+  , position(get_uniform<math::vec3>("position"))
+  , life_pos_var(get_uniform<math::vec3>("life_pos_var"))
+  , lin_ang_velocity(get_uniform<math::vec4>("lin_ang_velocity"))
+  , direction_rotation(get_uniform<math::vec4>("direction_rotation"))
   , gravity_map(get_uniform<int>("gravity_map"))
   , projection(get_uniform<math::mat3>("projection"))
   , dynamics(get_uniform<math::vec3>("dynamics")) {}
