@@ -25,6 +25,7 @@ TrailEmitterComponent::TrailEmitterComponent()
   , MaxSpawnGap(10.f)
   , Life(1.0f)
   , StartAge(0.f)
+  , Paused(false)
   , time_since_last_spawn_(0.f)
   , time_since_prev_1_spawn_(0.f)
   , time_since_prev_2_spawn_(0.f)
@@ -127,7 +128,9 @@ void TrailEmitterComponent::spawn_segment() {
     time_since_prev_1_spawn_ = time_since_last_spawn_;
     time_since_last_spawn_   = 0.f;
 
-    TrailSystem()->spawn(make_end_segment());
+    if (!Paused()) {
+      TrailSystem()->spawn(make_end_segment());
+    }
   }
 }
 

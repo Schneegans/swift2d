@@ -57,6 +57,8 @@ class SWIFT_DLL TrailEmitterComponent : public TransformableComponent {
   Float Life;
   Float StartAge;
 
+  Bool  Paused;
+
   // ----------------------------------------------------- contruction interface
   TrailEmitterComponent();
   ~TrailEmitterComponent();

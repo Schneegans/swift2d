@@ -82,7 +82,9 @@ void TrailSystemComponent::serialize(SerializedScenePtr& scene) const {
   std::vector<TrailSegment> end_segments(emitters_.size());
 
   for (auto const& emitter: emitters_) {
-    end_segments.push_back(emitter->make_end_segment());
+    if (!emitter->Paused()) {
+      end_segments.push_back(emitter->make_end_segment());
+    }
   }
 
   trail_system_->spawn(end_segments, new_segments_);
