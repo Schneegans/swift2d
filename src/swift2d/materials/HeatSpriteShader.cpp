@@ -17,7 +17,7 @@ HeatSpriteShader::HeatSpriteShader()
   : Shader(
     R"(
       // vertex shader ---------------------------------------------------------
-      @include "shifted_instanced_quad_vertex_shader"
+      @include "shifted_instanced_texcoords_quad_vertex_shader"
     )",
     R"(
       // fragment shader -------------------------------------------------------
