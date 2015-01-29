@@ -84,7 +84,7 @@ ShaderIncludes::ShaderIncludes() {
     @include "camera_uniforms"
     uniform mat3  transform[100];
     uniform float depth;
-    uniform vec4  texcoord_offset_scale;
+    uniform vec4  texcoord_offset_scale[100];
 
     // varyings
     out vec2 texcoords;
@@ -92,7 +92,7 @@ ShaderIncludes::ShaderIncludes() {
 
     void main(void) {
       vec3 pos    = projection * transform[gl_InstanceID] * vec3(position, 1.0) * pow(parallax, depth);
-      texcoords   = (vec2(position.x + 1.0, 1.0 - position.y) * 0.5 + texcoord_offset_scale.xy) * texcoord_offset_scale.zw;
+      texcoords   = (vec2(position.x + 1.0, 1.0 - position.y) * 0.5 + texcoord_offset_scale[gl_InstanceID].xy) * texcoord_offset_scale[gl_InstanceID].zw;
       instance_id = gl_InstanceID;
       gl_Position = vec4(pos.xy, 0.0, 1.0);
     }
