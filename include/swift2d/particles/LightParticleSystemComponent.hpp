@@ -35,8 +35,9 @@ class SWIFT_DLL LightParticleSystemComponent : public ParticleSystemComponent {
 
   // ------------------------------------------------------------- inner classes
   struct Serialized : public ParticleSystemComponent::Serialized {
-    float      StartScale, EndScale;
-    math::vec4 StartColor, EndColor;
+    float      MidLife;
+    float      StartScale, MidScale, EndScale;
+    math::vec4 StartColor, MidColor, EndColor;
     TexturePtr Texture;
   };
 
@@ -46,8 +47,9 @@ class SWIFT_DLL LightParticleSystemComponent : public ParticleSystemComponent {
   };
 
   // ---------------------------------------------------------------- properties
-  Float           StartScale, EndScale;
-  ColorProperty   StartColor, EndColor;
+  Float           MidLife;
+  Float           StartScale, MidScale, EndScale;
+  ColorProperty   StartColor, MidColor, EndColor;
   TextureProperty Texture;
 
   // ----------------------------------------------------- contruction interface

@@ -20,10 +20,10 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 PointParticleSystemComponent::PointParticleSystemComponent()
-  : ParticleSystemComponent()
+  : MidLife(0.5f)
   , Scale(1.f)
-  , StartGlow(0.f),                EndGlow(0.f)
-  , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 0))
+  , StartGlow(0.f),                MidGlow(0.f),  EndGlow(0.f)
+  , StartColor(Color(1, 1, 1, 1)), MidColor(Color(1, 1, 1, 0.5)), EndColor(Color(1, 1, 1, 0))
   , BlendAdd(false) {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -33,10 +33,13 @@ void PointParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
 
   ParticleSystemComponent::serialize(s);
 
+  s.MidLife     = MidLife();
   s.Scale = Scale();
   s.StartGlow = StartGlow();
+  s.MidGlow = MidGlow();
   s.EndGlow = EndGlow();
   s.StartColor = StartColor().vec4();
+  s.MidColor = MidColor().vec4();
   s.EndColor = EndColor().vec4();
   s.BlendAdd = BlendAdd();
 
@@ -47,10 +50,13 @@ void PointParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
 
 void PointParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   ParticleSystemComponent::accept(visitor);
+  visitor.add_member("MidLife",     MidLife);
   visitor.add_member("Scale",       Scale);
   visitor.add_member("StartGlow",   StartGlow);
+  visitor.add_member("MidGlow",     MidGlow);
   visitor.add_member("EndGlow",     EndGlow);
   visitor.add_member("StartColor",  StartColor);
+  visitor.add_member("MidColor",    MidColor);
   visitor.add_member("EndColor",    EndColor);
   visitor.add_member("BlendAdd",    BlendAdd);
 }
@@ -85,8 +91,9 @@ void PointParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int 
       shader.use(ctx);
       shader.projection. Set(ctx.projection_matrix);
       shader.start_color.Set(o.StartColor);
+      shader.mid_color.  Set(o.MidColor);
       shader.end_color.  Set(o.EndColor);
-      shader.glow.       Set(math::vec2(o.StartGlow, o.EndGlow));
+      shader.glow_mid_life.Set(math::vec4(o.StartGlow, o.MidGlow, o.EndGlow, o.MidLife));
 
       o.System->draw_particles(ctx);
 

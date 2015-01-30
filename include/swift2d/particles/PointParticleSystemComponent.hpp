@@ -35,9 +35,10 @@ class SWIFT_DLL PointParticleSystemComponent : public ParticleSystemComponent {
 
   // ------------------------------------------------------------- inner classes
   struct Serialized : public ParticleSystemComponent::Serialized {
+    float      MidLife;
     float      Scale;
-    float      StartGlow,  EndGlow;
-    math::vec4 StartColor, EndColor;
+    float      StartGlow,  MidGlow,  EndGlow;
+    math::vec4 StartColor, MidColor, EndColor;
     bool       BlendAdd;
   };
 
@@ -47,9 +48,10 @@ class SWIFT_DLL PointParticleSystemComponent : public ParticleSystemComponent {
   };
 
   // ---------------------------------------------------------------- properties
+  Float         MidLife;
   Float         Scale;
-  Float         StartGlow,  EndGlow;
-  ColorProperty StartColor, EndColor;
+  Float         StartGlow,  MidGlow,  EndGlow;
+  ColorProperty StartColor, MidColor, EndColor;
   Bool          BlendAdd;
 
   // ----------------------------------------------------- contruction interface

@@ -43,14 +43,16 @@ PointParticleShader::PointParticleShader()
       in float age;
 
       uniform vec4 start_color;
+      uniform vec4 mid_color;
       uniform vec4 end_color;
-      uniform vec2 glow;
+      uniform vec4 glow_mid_life;
 
       @include "write_gbuffer"
+      @include "three_way_mix"
 
       void main(void) {
-        vec4  c = mix(start_color, end_color, age);
-        float g = mix(glow.x,      glow.y,    age);
+        vec4  c = three_way_mix(start_color, mid_color, end_color, glow_mid_life.w, age);
+        float g = three_way_mix(glow_mid_life.x, glow_mid_life.y, glow_mid_life.z, glow_mid_life.w, age);
 
         write_gbuffer(c, g);
       }
@@ -58,8 +60,9 @@ PointParticleShader::PointParticleShader()
   )
   , projection(get_uniform<math::mat3>("projection"))
   , start_color(get_uniform<math::vec4>("start_color"))
+  , mid_color(get_uniform<math::vec4>("mid_color"))
   , end_color(get_uniform<math::vec4>("end_color"))
-  , glow(get_uniform<math::vec2>("glow")) {}
+  , glow_mid_life(get_uniform<math::vec4>("glow_mid_life")) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 

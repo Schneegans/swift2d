@@ -18,8 +18,9 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 HeatParticleSystemComponent::HeatParticleSystemComponent()
-  : StartScale(1.f),    EndScale(1.f)
-  , StartOpacity(1.f),  EndOpacity(0.f) {}
+  : MidLife(0.5f)
+  , StartScale(1.f),    MidScale(1.f),    EndScale(1.f)
+  , StartOpacity(1.f),  MidOpacity(0.5f), EndOpacity(0.f) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -28,9 +29,12 @@ void HeatParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
 
   ParticleSystemComponent::serialize(s);
 
+  s.MidLife       = MidLife();
   s.StartScale    = StartScale();
+  s.MidScale      = MidScale();
   s.EndScale      = EndScale();
   s.StartOpacity  = StartOpacity();
+  s.MidOpacity    = MidOpacity();
   s.EndOpacity    = EndOpacity();
   s.Texture       = Texture();
 
@@ -41,10 +45,13 @@ void HeatParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
 
 void HeatParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   ParticleSystemComponent::accept(visitor);
-  visitor.add_member("StartScale",        StartScale);
-  visitor.add_member("EndScale",          EndScale);
-  visitor.add_member("StartOpacity",      StartOpacity);
-  visitor.add_member("EndOpacity",        EndOpacity);
+  visitor.add_member("MidLife",        MidLife);
+  visitor.add_member("StartScale",     StartScale);
+  visitor.add_member("MidScale",       MidScale);
+  visitor.add_member("EndScale",       EndScale);
+  visitor.add_member("StartOpacity",   StartOpacity);
+  visitor.add_member("MidOpacity",     MidOpacity);
+  visitor.add_member("EndOpacity",     EndOpacity);
   visitor.add_object_property("Texture",  Texture);
 }
 
@@ -72,10 +79,10 @@ void HeatParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int s
 
       auto& shader(HeatParticleShader::get());
       shader.use(ctx);
-      shader.projection. Set(ctx.projection_matrix);
-      shader.diffuse.    Set(0);
-      shader.scale.      Set(math::vec2(o.StartScale, o.EndScale));
-      shader.opacity.    Set(math::vec2(o.StartOpacity, o.EndOpacity));
+      shader.projection.    Set(ctx.projection_matrix);
+      shader.diffuse.       Set(0);
+      shader.scale_mid_life.Set(math::vec4(o.StartScale, o.MidScale, o.EndScale, o.MidLife));
+      shader.opacity.       Set(math::vec3(o.StartOpacity, o.MidOpacity, o.EndOpacity));
 
       o.System->draw_particles(ctx);
     }

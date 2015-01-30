@@ -40,12 +40,15 @@ HeatParticleShader::HeatParticleShader()
       in vec2  texcoords;
 
       uniform sampler2D diffuse;
-      uniform vec2      opacity;
+      uniform vec3      opacity;
+      uniform vec4      scale_mid_life;
 
       layout (location = 0) out vec4 fragColor;
 
+      @include "three_way_mix"
+
       void main(void) {
-        float o = mix(opacity.x, opacity.y, age);
+        float o = three_way_mix(opacity.x, opacity.y, opacity.z, scale_mid_life.w, age);
         fragColor = texture(diffuse, texcoords) * vec4(1, 1, 1, o);
       }
     )",
@@ -61,15 +64,16 @@ HeatParticleShader::HeatParticleShader()
       in float varying_age[];
 
       @include "camera_uniforms"
-      uniform vec2 scale;
+      uniform vec4 scale_mid_life;
 
       out float age;
       out vec2  texcoords;
 
       @include "emit_quad"
+      @include "three_way_mix"
 
       void main(void) {
-        float scale = mix(scale.x, scale.y, varying_age[0]);
+        float scale = three_way_mix(scale_mid_life.x, scale_mid_life.y, scale_mid_life.z, scale_mid_life.w, varying_age[0]);
         emit_quad(gl_in[0].gl_Position.xy, vec2(scale));
       }
     )",
@@ -77,8 +81,8 @@ HeatParticleShader::HeatParticleShader()
   )
   , projection(get_uniform<math::mat3>("projection"))
   , diffuse(get_uniform<int>("diffuse"))
-  , scale(get_uniform<math::vec2>("scale"))
-  , opacity(get_uniform<math::vec2>("opacity")) {}
+  , scale_mid_life(get_uniform<math::vec4>("scale_mid_life"))
+  , opacity(get_uniform<math::vec3>("opacity")) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -29,8 +29,9 @@ class LightParticleShader : public Shader,
   // ------------------------------------------------------------------ uniforms
   oglplus::Lazy<oglplus::Uniform<math::mat3>>  projection;
   oglplus::Lazy<oglplus::Uniform<int>>         diffuse;
-  oglplus::Lazy<oglplus::Uniform<math::vec2>>  scale;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  scale_mid_life;
   oglplus::Lazy<oglplus::Uniform<math::vec4>>  start_color;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  mid_color;
   oglplus::Lazy<oglplus::Uniform<math::vec4>>  end_color;
   oglplus::Lazy<oglplus::Uniform<math::vec2i>> screen_size;
   oglplus::Lazy<oglplus::Uniform<int>>         g_buffer_normal;

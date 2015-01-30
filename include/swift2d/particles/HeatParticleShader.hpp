@@ -29,8 +29,8 @@ class HeatParticleShader : public Shader,
   // ------------------------------------------------------------------ uniforms
   oglplus::Lazy<oglplus::Uniform<math::mat3>>  projection;
   oglplus::Lazy<oglplus::Uniform<int>>         diffuse;
-  oglplus::Lazy<oglplus::Uniform<math::vec2>>  scale;
-  oglplus::Lazy<oglplus::Uniform<math::vec2>>  opacity;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  scale_mid_life;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>>  opacity;
 
   friend class Singleton<HeatParticleShader>;
 

@@ -63,6 +63,11 @@ class Property {
     value_ = value;
   }
 
+  void touch() {
+    before_change_.emit(value_);
+    on_change_.emit(value_);
+  }
+
   virtual T const& get() const { return value_; }
 
   virtual void connect_from(Property<T> const& source) {
