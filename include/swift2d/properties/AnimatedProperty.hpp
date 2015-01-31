@@ -94,7 +94,7 @@ class AnimatedProperty : public Property<T>,
   }
 
   void set(T const& value) {
-    start_ = this->get();
+    start_ = value;
     end_ = value;
     duration = 0.0;
     state_ = -1.0;
@@ -165,6 +165,8 @@ class AnimatedProperty : public Property<T>,
     visitor.add_member("Delay",     delay);
     visitor.add_member("Start",     start_);
     visitor.add_member("End",       end_);
+
+    this->set_with_no_emit(start_);
   };
 
  ///////////////////////////////////////////////////////////////////////////////

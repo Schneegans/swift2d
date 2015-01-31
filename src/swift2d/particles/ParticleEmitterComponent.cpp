@@ -62,7 +62,7 @@ void ParticleEmitterComponent::update(double time) {
 void ParticleEmitterComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
   visitor.add_member("ParticleSystemLabel", ParticleSystemLabel);
-  visitor.add_member("Density", Density);
+  visitor.add_object("Density", Density);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

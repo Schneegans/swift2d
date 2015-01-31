@@ -150,7 +150,7 @@ class SWIFT_DLL SceneObject : public SavableObject {
 
     for (auto const& component: components_) {
       auto casted(std::dynamic_pointer_cast<T>(component));
-      if (casted) {
+      if (casted && !casted->remove_flag_) {
         result.push_back(casted);
       }
     }
@@ -162,7 +162,7 @@ class SWIFT_DLL SceneObject : public SavableObject {
   std::shared_ptr<T> get_component() const {
     for (auto const& component: components_) {
       auto casted(std::dynamic_pointer_cast<T>(component));
-      if (casted) {
+      if (casted && !casted->remove_flag_) {
         return casted;
       }
     }
@@ -182,7 +182,7 @@ class SWIFT_DLL SceneObject : public SavableObject {
     for (auto const& component: components_) {
       if (component->Label() == label) {
         auto casted(std::dynamic_pointer_cast<T>(component));
-        if (casted) {
+        if (casted && !casted->remove_flag_) {
           return casted;
         }
       }
@@ -197,7 +197,7 @@ class SWIFT_DLL SceneObject : public SavableObject {
       for (auto const& component: components_) {
         if (component->Label() == path[0]) {
           auto casted(std::dynamic_pointer_cast<T>(component));
-          if (casted) {
+          if (casted && !casted->remove_flag_) {
             return casted;
           }
         }
@@ -208,7 +208,7 @@ class SWIFT_DLL SceneObject : public SavableObject {
         for (auto const& component: object->components_) {
           if (component->Label() == path.back()) {
             auto casted(std::dynamic_pointer_cast<T>(component));
-            if (casted) {
+            if (casted && !casted->remove_flag_) {
               return casted;
             }
           }

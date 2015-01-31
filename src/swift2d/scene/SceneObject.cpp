@@ -125,7 +125,11 @@ SceneObjectPtr SceneObject::get_object(
     for (auto& ptr: objects_) {
       if (ptr->Label() == *path_start) {
         if (path_start+1 == path_end) {
-          return ptr;
+          if (!ptr->remove_flag_) {
+            return ptr;
+          } else {
+            return SceneObjectPtr();
+          }
         } else {
           return get_object(path_start+1, path_end);
         }

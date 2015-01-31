@@ -12,6 +12,7 @@
 #include <swift2d/graphics/RendererPool.hpp>
 #include <swift2d/particles/ParticleSystem.hpp>
 #include <swift2d/particles/HeatParticleShader.hpp>
+#include <swift2d/textures/DefaultTexture.hpp>
 
 namespace swift {
 
@@ -75,7 +76,11 @@ void HeatParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int s
 
     if (o.System->get_particle_count() > 0) {
 
-      o.Texture->bind(ctx, 0);
+      if (o.Texture) {
+        o.Texture->bind(ctx, 0);
+      } else {
+        DefaultTexture::get().bind(ctx, 0);
+      }
 
       auto& shader(HeatParticleShader::get());
       shader.use(ctx);

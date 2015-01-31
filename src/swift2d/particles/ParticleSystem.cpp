@@ -37,12 +37,15 @@ ParticleSystem::ParticleSystem(int max_count)
   , particle_buffers_()
   , ping_(true)
   , update_max_count_(max_count)
-  , count_(0) {}
+  , count_(0)
+  , query_(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 ParticleSystem::~ParticleSystem() {
-  delete query_;
+  if (query_) {
+    delete query_;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
