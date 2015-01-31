@@ -23,6 +23,14 @@ Component::Component()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+Component::Component(Component const& to_copy)
+  : Enabled(to_copy.Enabled())
+  , user_(nullptr)
+  , remove_flag_(to_copy.remove_flag_)
+  , initialized_(to_copy.initialized_) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Component::detach(bool force) {
   if (user_) {
     user_->remove(this, force);

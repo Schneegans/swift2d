@@ -40,6 +40,21 @@ class SWIFT_DLL NetworkPositionUpdateComponent : public Component {
   // ----------------------------------------------------- contruction interface
   NetworkPositionUpdateComponent();
 
+  // Creates a new component and returns a shared pointer.
+  template <typename... Args>
+  static NetworkPositionUpdateComponentPtr create(Args&& ... a) {
+    return std::make_shared<NetworkPositionUpdateComponent>(a...);
+  }
+
+  // creates a copy from this
+  NetworkPositionUpdateComponentPtr create_copy() const {
+    return std::make_shared<NetworkPositionUpdateComponent>(*this);
+  }
+
+  ComponentPtr create_base_copy() const {
+    return create_copy();
+  }
+
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "NetworkPositionUpdateComponent"; }

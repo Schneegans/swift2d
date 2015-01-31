@@ -55,7 +55,12 @@ class SWIFT_DLL SceneObject : public SavableObject {
 
   static SceneObjectPtr create_from_file(std::string const& path);
 
+  SceneObjectPtr create_copy() {
+    return std::make_shared<SceneObject>(*this);
+  }
+
   SceneObject();
+  SceneObject(SceneObject const& to_copy);
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }

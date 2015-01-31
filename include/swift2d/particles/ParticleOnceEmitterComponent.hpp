@@ -43,6 +43,21 @@ class SWIFT_DLL ParticleOnceEmitterComponent : public TransformableComponent {
   // ----------------------------------------------------- contruction interface
   ParticleOnceEmitterComponent();
 
+  // Creates a new component and returns a shared pointer.
+  template <typename... Args>
+  static ParticleOnceEmitterComponentPtr create(Args&& ... a) {
+    return std::make_shared<ParticleOnceEmitterComponent>(a...);
+  }
+
+  // creates a copy from this
+  ParticleOnceEmitterComponentPtr create_copy() const {
+    return std::make_shared<ParticleOnceEmitterComponent>(*this);
+  }
+
+  ComponentPtr create_base_copy() const {
+    return create_copy();
+  }
+
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "ParticleOnceEmitterComponent"; }

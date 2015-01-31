@@ -64,6 +64,10 @@ class SWIFT_DLL PointLightComponent : public TransformableComponent,
     return std::make_shared<PointLightComponent>(*this);
   }
 
+  ComponentPtr create_base_copy() const {
+    return create_copy();
+  }
+
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "PointLightComponent"; }

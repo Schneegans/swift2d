@@ -24,12 +24,36 @@ namespace swift {
 
 SceneObject::SceneObject()
   : Parent(nullptr)
-  , Enabled(true)
+  , Label("")
   , Depth(0)
   , WorldDepth(0)
-  , Label("")
+  , Transform()
+  , WorldTransform()
+  , Enabled(true)
   , remove_flag_(false)
   , initialized_(false) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObject::SceneObject(SceneObject const& to_copy)
+  : Parent(nullptr)
+  , Label(to_copy.Label())
+  , Depth(to_copy.Depth())
+  , Transform(to_copy.Transform())
+  , WorldTransform(to_copy.WorldTransform)
+  , WorldDepth(to_copy.WorldDepth())
+  , Enabled(to_copy.Enabled())
+  , remove_flag_(to_copy.remove_flag_)
+  , initialized_(to_copy.initialized_) {
+
+  for (auto const& o:to_copy.objects_) {
+    add_object(o->create_copy());
+  }
+
+  for (auto const& c:to_copy.components_) {
+    add(c->create_base_copy());
+  }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

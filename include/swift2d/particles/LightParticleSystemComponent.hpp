@@ -66,6 +66,10 @@ class SWIFT_DLL LightParticleSystemComponent : public ParticleSystemComponent {
     return std::make_shared<LightParticleSystemComponent>(*this);
   }
 
+  ComponentPtr create_base_copy() const {
+    return create_copy();
+  }
+
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "LightParticleSystemComponent"; }

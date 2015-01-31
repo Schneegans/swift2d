@@ -58,6 +58,8 @@ class SWIFT_DLL Component : public SavableObject {
   // Contstructor is protected --- do not instantiate this class directly
   virtual ~Component() {}
 
+  virtual ComponentPtr create_base_copy() const = 0;
+
   // ------------------------------------------------------------ public methods
   // removes this component from its user - if not forced it will be
   // removed in the next frame
@@ -88,6 +90,7 @@ class SWIFT_DLL Component : public SavableObject {
  // -------------------------------------------------------- protected interface
  protected:
   Component();
+  Component(Component const& to_copy);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
