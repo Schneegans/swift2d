@@ -25,6 +25,7 @@ Component::Component()
 
 Component::Component(Component const& to_copy)
   : Enabled(to_copy.Enabled())
+  , Label(to_copy.Label())
   , user_(nullptr)
   , remove_flag_(to_copy.remove_flag_)
   , initialized_(to_copy.initialized_) {}

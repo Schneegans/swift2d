@@ -81,13 +81,19 @@ void ParticleSystem::upload_to(RenderContext const& ctx) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void ParticleSystem::spawn(math::vec3 const& pos_rot, unsigned count) {
-  new_particles_.push(pos_rot, count);
+  new_particles_.push(std::make_pair(pos_rot, math::vec2()), count);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystem::spawn(std::vector<math::vec3> const& pos_rots) {
-  new_particles_.push(pos_rots);
+void ParticleSystem::spawn(math::vec3 const& pos_rot, math::vec2 const& vel, unsigned count) {
+  new_particles_.push(std::make_pair(pos_rot, vel), count);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ParticleSystem::spawn(std::vector<std::pair<math::vec3, math::vec2>> const& pos_rot_vel) {
+  new_particles_.push(pos_rot_vel);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -140,8 +146,11 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
   }
 
   std::vector<math::vec3> spawn_positions;
+  std::vector<math::vec2> spawn_velocities;
   while(!new_particles_.empty()) {
-    spawn_positions.push_back(new_particles_.pop());
+    auto new_one(new_particles_.pop());
+    spawn_positions.push_back(new_one.first);
+    spawn_velocities.push_back(new_one.second);
   }
 
   ogl::Query::Activator qrya(*query_, ose::PrimitivesGenerated());
@@ -172,6 +181,7 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
       int count(std::min(50, (int)spawn_positions.size()-index));
       shader.spawn_count_it.Set(math::vec2i(count, index));
       shader.position.Set(std::vector<math::vec3>(spawn_positions.begin() + index, spawn_positions.begin() + index + count));
+      shader.emitter_velocity.Set(std::vector<math::vec2>(spawn_velocities.begin() + index, spawn_velocities.begin() + index + count));
       ogl::Context::DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       index += count;
     }

@@ -161,6 +161,12 @@ ShaderIncludes::ShaderIncludes() {
       fragNormal  = vec4(0.5, 0.5, 0, 0);
       fragLight   = vec4(1.0, 0.0, 0.0, color.a);
     }
+
+    void write_gbuffer_premultiplied(vec4 color, float emit, float glow) {
+      fragColor   = color;
+      fragNormal  = vec4(0, 0, 0, 0);
+      fragLight   = vec4(emit, 0.0, glow, 0);
+    }
   )");
 
   // ---------------------------------------------------------------------------

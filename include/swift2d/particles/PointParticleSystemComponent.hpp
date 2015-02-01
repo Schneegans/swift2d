@@ -38,8 +38,8 @@ class SWIFT_DLL PointParticleSystemComponent : public ParticleSystemComponent {
     float      MidLife;
     float      Scale;
     float      StartGlow,  MidGlow,  EndGlow;
+    float      StartBurn,  MidBurn,  EndBurn;
     math::vec4 StartColor, MidColor, EndColor;
-    bool       BlendAdd;
   };
 
   class Renderer : public ResourceRenderer<PointParticleSystemComponent> {
@@ -51,8 +51,8 @@ class SWIFT_DLL PointParticleSystemComponent : public ParticleSystemComponent {
   Float         MidLife;
   Float         Scale;
   Float         StartGlow,  MidGlow,  EndGlow;
+  Float         StartBurn,  MidBurn,  EndBurn;
   ColorProperty StartColor, MidColor, EndColor;
-  Bool          BlendAdd;
 
   // ----------------------------------------------------- contruction interface
   PointParticleSystemComponent();

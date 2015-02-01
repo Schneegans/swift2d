@@ -37,6 +37,7 @@ class SWIFT_DLL ParticleEmitterComponent : public TransformableComponent {
   ParticleSystemComponentPtr ParticleSystem;
   String                     ParticleSystemLabel;
   AnimatedFloat              Density;
+  Vec2                       Velocity;
 
   // ----------------------------------------------------- contruction interface
   ParticleEmitterComponent();

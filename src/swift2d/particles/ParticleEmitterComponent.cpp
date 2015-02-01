@@ -51,7 +51,7 @@ void ParticleEmitterComponent::update(double time) {
 
       for (int i(0); i<count; ++i) {
         auto p = pos + 1.f*i/count*(last_spawn_position-pos);
-        ParticleSystem->spawn(math::vec3(p.x(), p.y(), rot));
+        ParticleSystem->spawn(math::vec3(p.x(), p.y(), rot), Velocity());
       }
     }
   }
@@ -62,6 +62,7 @@ void ParticleEmitterComponent::update(double time) {
 void ParticleEmitterComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
   visitor.add_member("ParticleSystemLabel", ParticleSystemLabel);
+  visitor.add_member("Velocity", Velocity);
   visitor.add_object("Density", Density);
 }
 

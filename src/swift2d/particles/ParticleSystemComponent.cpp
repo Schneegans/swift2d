@@ -16,12 +16,12 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 ParticleSystemComponent::ParticleSystemComponent()
-  : MaxCount                (1000)
+  : MaxCount                (5000)
   , Mass                    (0.f)
-  , Life                    (10.f)
-  , LifeVariance            (3.f)
-  , Velocity                (0.3f)
-  , VelocityVariance        (0.3f)
+  , Life                    (1.f)
+  , LifeVariance            (0.f)
+  , Velocity                (0.f)
+  , VelocityVariance        (0.f)
   , LinearDamping           (0.f)
   , AngularVelocity         (0.f)
   , AngularVelocityVariance (0.f)
@@ -54,8 +54,14 @@ void ParticleSystemComponent::spawn(math::vec3 const& pos_rot, unsigned count) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystemComponent::spawn(std::vector<math::vec3> const& pos_rots) {
-  particle_system_->spawn(pos_rots);
+void ParticleSystemComponent::spawn(math::vec3 const& pos_rot, math::vec2 const& vel, unsigned count) {
+  particle_system_->spawn(pos_rot, vel, count);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ParticleSystemComponent::spawn(std::vector<std::pair<math::vec3, math::vec2>> const& pos_rot_vel) {
+  particle_system_->spawn(pos_rot_vel);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

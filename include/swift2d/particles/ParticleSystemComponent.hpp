@@ -92,7 +92,8 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
 
   // ------------------------------------------------------------ public methods
   void spawn(math::vec3 const& pos_rot, unsigned count = 1);
-  void spawn(std::vector<math::vec3> const& pos_rots);
+  void spawn(math::vec3 const& pos_rot, math::vec2 const& vel , unsigned count = 1);
+  void spawn(std::vector<std::pair<math::vec3, math::vec2>> const& pos_rot_vel);
 
   virtual void update(double time);
   virtual void serialize(ParticleSystemComponent::Serialized& serialized) const;

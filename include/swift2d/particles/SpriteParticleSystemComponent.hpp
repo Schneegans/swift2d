@@ -39,8 +39,8 @@ class SWIFT_DLL SpriteParticleSystemComponent : public ParticleSystemComponent {
     float      MidLife;
     math::vec2 StartScale, MidScale, EndScale;
     float      StartGlow,  MidGlow,  EndGlow;
+    float      StartBurn,  MidBurn,  EndBurn;
     math::vec4 StartColor, MidColor, EndColor;
-    bool       BlendAdd;
     int        SubSamplingLevel;
     TexturePtr Texture;
   };
@@ -54,8 +54,8 @@ class SWIFT_DLL SpriteParticleSystemComponent : public ParticleSystemComponent {
   Float           MidLife;
   Vec2            StartScale, MidScale, EndScale;
   Float           StartGlow,  MidGlow,  EndGlow;
+  Float           StartBurn,  MidBurn,  EndBurn;
   ColorProperty   StartColor, MidColor, EndColor;
-  Bool            BlendAdd;
   Int32           SubSamplingLevel;
   TextureProperty Texture;
 

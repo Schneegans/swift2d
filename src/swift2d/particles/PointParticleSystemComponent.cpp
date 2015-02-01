@@ -23,8 +23,8 @@ PointParticleSystemComponent::PointParticleSystemComponent()
   : MidLife(0.5f)
   , Scale(1.f)
   , StartGlow(0.f),                MidGlow(0.f),  EndGlow(0.f)
-  , StartColor(Color(1, 1, 1, 1)), MidColor(Color(1, 1, 1, 0.5)), EndColor(Color(1, 1, 1, 0))
-  , BlendAdd(false) {}
+  , StartBurn(0.f),                MidBurn(0.f),  EndBurn(0.f)
+  , StartColor(Color(1, 1, 1, 1)), MidColor(Color(1, 1, 1, 0.5)), EndColor(Color(1, 1, 1, 0)) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -34,14 +34,16 @@ void PointParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
   ParticleSystemComponent::serialize(s);
 
   s.MidLife     = MidLife();
-  s.Scale = Scale();
-  s.StartGlow = StartGlow();
-  s.MidGlow = MidGlow();
-  s.EndGlow = EndGlow();
-  s.StartColor = StartColor().vec4();
-  s.MidColor = MidColor().vec4();
-  s.EndColor = EndColor().vec4();
-  s.BlendAdd = BlendAdd();
+  s.Scale       = Scale();
+  s.StartGlow   = StartGlow();
+  s.MidGlow     = MidGlow();
+  s.EndGlow     = EndGlow();
+  s.StartBurn   = StartBurn();
+  s.MidBurn     = MidBurn();
+  s.EndBurn     = EndBurn();
+  s.StartColor  = StartColor().vec4();
+  s.MidColor    = MidColor().vec4();
+  s.EndColor    = EndColor().vec4();
 
   scene->renderers().point_particle_systems.add(std::move(s));
 }
@@ -55,10 +57,12 @@ void PointParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("StartGlow",   StartGlow);
   visitor.add_member("MidGlow",     MidGlow);
   visitor.add_member("EndGlow",     EndGlow);
+  visitor.add_member("StartBurn",   StartBurn);
+  visitor.add_member("MidBurn",     MidBurn);
+  visitor.add_member("EndBurn",     EndBurn);
   visitor.add_member("StartColor",  StartColor);
   visitor.add_member("MidColor",    MidColor);
   visitor.add_member("EndColor",    EndColor);
-  visitor.add_member("BlendAdd",    BlendAdd);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,9 +87,7 @@ void PointParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int 
 
       ogl::Context::Rasterization::PointSize(o.Scale);
 
-      if (o.BlendAdd) {
-        ogl::Context::BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::One);
-      }
+      ogl::Context::BlendFunc(ose::One(), ose::OneMinusSrcAlpha());
 
       auto& shader(PointParticleShader::get());
       shader.use(ctx);
@@ -94,12 +96,11 @@ void PointParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int 
       shader.mid_color.  Set(o.MidColor);
       shader.end_color.  Set(o.EndColor);
       shader.glow_mid_life.Set(math::vec4(o.StartGlow, o.MidGlow, o.EndGlow, o.MidLife));
+      shader.burn.       Set(math::vec3(o.StartBurn, o.MidBurn, o.EndBurn));
 
       o.System->draw_particles(ctx);
 
-      if (o.BlendAdd) {
-        ogl::Context::BlendFunc(ogl::BlendFunction::SrcAlpha, ogl::BlendFunction::OneMinusSrcAlpha);
-      }
+      ogl::Context::BlendFunc(ose::SrcAlpha(), ose::OneMinusSrcAlpha());
     }
 
     SWIFT_POP_GL_RANGE();
