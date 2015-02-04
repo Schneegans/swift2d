@@ -225,7 +225,7 @@ void GuiComponent::call_javascript_impl(std::string const& method, std::vector<s
   for (auto const& arg: args) {
     j_args.Push(Awesomium::JSValue(Awesomium::ToWebString(arg)));
   }
-  js_window_->ToObject().Invoke(Awesomium::ToWebString(method), j_args);
+  js_window_->ToObject().InvokeAsync(Awesomium::ToWebString(method), j_args);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -12,6 +12,7 @@
 #include <swift2d/materials/HeatSpriteShader.hpp>
 #include <swift2d/graphics/RendererPool.hpp>
 #include <swift2d/geometries/Quad.hpp>
+#include <swift2d/databases/TextureDatabase.hpp>
 
 namespace swift {
 
@@ -19,7 +20,13 @@ namespace swift {
 
 HeatSpriteComponent::HeatSpriteComponent()
   : Opacity(1.f)
-  , TexcoordScale(math::vec2(1.f, 1.f)) {}
+  , TexcoordScale(math::vec2(1.f, 1.f)) {
+
+  TextureName.on_change().connect([this](std::string const& val) {
+    Texture = TextureDatabase::get().lookup_or_load(val);
+    return true;
+  });
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -46,6 +53,7 @@ void HeatSpriteComponent::serialize(SerializedScenePtr& scene) const {
 void HeatSpriteComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
   DepthComponent::accept(visitor);
+  visitor.add_member("TextureName", TextureName);
   visitor.add_object_property("Texture", Texture);
   visitor.add_member("TexcoordOffset", TexcoordOffset);
   visitor.add_member("TexcoordScale", TexcoordScale);

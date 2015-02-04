@@ -49,6 +49,7 @@ class SWIFT_DLL HeatSpriteComponent : public TransformableComponent,
   };
 
   // ---------------------------------------------------------------- properties
+  String          TextureName;
   TextureProperty Texture;
   Vec2            TexcoordOffset;
   Vec2            TexcoordScale;

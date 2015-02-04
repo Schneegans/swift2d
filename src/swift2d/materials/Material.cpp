@@ -10,6 +10,7 @@
 #include <swift2d/materials/Material.hpp>
 
 #include <swift2d/geometries/Quad.hpp>
+#include <swift2d/databases/TextureDatabase.hpp>
 #include <swift2d/materials/MaterialShaderFactory.hpp>
 
 namespace swift {
@@ -37,33 +38,54 @@ Material::Material()
   , current_shader_dirty_(true)
   , current_shader_(nullptr) {
 
-  AnimatedDiffuseTexture.on_change().connect([&](TexturePtr const& val){
+  AnimatedDiffuseTexture.on_change().connect([this](TexturePtr const& val){
     current_shader_dirty_ = true;
     return true;
   });
 
-  DiffuseTexture.on_change().connect([&](TexturePtr const& val){
+  DiffuseTexture.on_change().connect([this](TexturePtr const& val){
     current_shader_dirty_ = true;
     return true;
   });
 
-  NormalTexture.on_change().connect([&](TexturePtr const& val){
+  NormalTexture.on_change().connect([this](TexturePtr const& val){
     current_shader_dirty_ = true;
     return true;
   });
 
-  EmitTexture.on_change().connect([&](TexturePtr const& val){
+  EmitTexture.on_change().connect([this](TexturePtr const& val){
     current_shader_dirty_ = true;
     return true;
   });
 
-  GlowTexture.on_change().connect([&](TexturePtr const& val){
+  GlowTexture.on_change().connect([this](TexturePtr const& val){
     current_shader_dirty_ = true;
     return true;
   });
 
-  ShinynessTexture.on_change().connect([&](TexturePtr const& val){
+  ShinynessTexture.on_change().connect([this](TexturePtr const& val){
     current_shader_dirty_ = true;
+    return true;
+  });
+
+  DiffuseTextureName.on_change().connect([this](std::string const& val) {
+    DiffuseTexture = TextureDatabase::get().lookup_or_load(val);
+    return true;
+  });
+  NormalTextureName.on_change().connect([this](std::string const& val) {
+    NormalTexture = TextureDatabase::get().lookup_or_load(val);
+    return true;
+  });
+  EmitTextureName.on_change().connect([this](std::string const& val) {
+    EmitTexture = TextureDatabase::get().lookup_or_load(val);
+    return true;
+  });
+  GlowTextureName.on_change().connect([this](std::string const& val) {
+    GlowTexture = TextureDatabase::get().lookup_or_load(val);
+    return true;
+  });
+  ShinynessTextureName.on_change().connect([this](std::string const& val) {
+    ShinynessTexture = TextureDatabase::get().lookup_or_load(val);
     return true;
   });
 }
@@ -93,13 +115,18 @@ void Material::draw_fullscreen_quad(RenderContext const& ctx, float time) {
 void Material::accept(SavableObjectVisitor& visitor) {
   visitor.add_object_property("AnimatedDiffuseTexture", AnimatedDiffuseTexture);
   visitor.add_object_property("DiffuseTexture", DiffuseTexture);
+  visitor.add_member("DiffuseTextureName", DiffuseTextureName);
   visitor.add_member("Diffuse", Diffuse);
+  visitor.add_member("NormalTextureName", NormalTextureName);
   visitor.add_object_property("NormalTexture", NormalTexture);
   visitor.add_object_property("EmitTexture", EmitTexture);
+  visitor.add_member("EmitTextureName", EmitTextureName);
   visitor.add_member("Emit", Emit);
   visitor.add_object_property("GlowTexture", GlowTexture);
+  visitor.add_member("GlowTextureName", GlowTextureName);
   visitor.add_member("Glow", Glow);
   visitor.add_object_property("ShinynessTexture", ShinynessTexture);
+  visitor.add_member("ShinynessTextureName", ShinynessTextureName);
   visitor.add_member("Shinyness", Shinyness);
   visitor.add_member("BlendAdditive", BlendAdditive);
   visitor.add_member("TexcoordOffset", TexcoordOffset);

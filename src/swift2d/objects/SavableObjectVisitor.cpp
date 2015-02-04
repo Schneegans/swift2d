@@ -53,6 +53,7 @@ void SavableObjectVisitor::read_from_file(std::string const& path) {
     loaded_object_raw_ = loaded_object_.get();
 
     loaded_object_->accept(*this);
+    loaded_object_->on_loaded();
   } catch(...) {}
 }
 
@@ -65,6 +66,7 @@ void SavableObjectVisitor::read_from_file(std::string const& path, SavableObject
     if (json_.get<std::string>("Type") == target->get_type_name()) {
       loaded_object_raw_ = target;
       target->accept(*this);
+      target->on_loaded();
     }
 
   } catch(...) {}
@@ -84,6 +86,7 @@ void SavableObjectVisitor::read_from_buffer(std::string const& buffer) {
     loaded_object_raw_ = loaded_object_.get();
 
     loaded_object_->accept(*this);
+    loaded_object_->on_loaded();
   } catch(...) {}
 }
 
@@ -97,6 +100,7 @@ void SavableObjectVisitor::read_from_buffer(std::string const& buffer, SavableOb
     if (json_.get<std::string>("Type") == target->get_type_name()) {
       loaded_object_raw_ = target;
       target->accept(*this);
+      target->on_loaded();
     }
 
   } catch(...) {}
@@ -114,6 +118,7 @@ void SavableObjectVisitor::read_json(boost::property_tree::ptree const& json) {
   loaded_object_raw_ = loaded_object_.get();
 
   loaded_object_->accept(*this);
+  loaded_object_->on_loaded();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
