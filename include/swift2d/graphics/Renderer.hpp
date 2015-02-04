@@ -73,7 +73,7 @@ class SWIFT_DLL Renderer {
   Scheduler scheduler_;
   Timer     timer_;
 
-  bool running_;
+  bool running_, application_finished_;
   boost::thread forever_;
   std::mutex              copy_mutex_;
   std::condition_variable copy_available_;

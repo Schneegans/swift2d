@@ -55,10 +55,11 @@ void Application::init(int argc, char** argv) {
 void Application::start() {
   pipeline_ = Pipeline::create();
   pipeline_->set_output_window(WindowManager::get().current());
-  renderer_ = Renderer::create(*pipeline_);
 
   AppFPS.start();
   RenderFPS.start();
+
+  renderer_ = Renderer::create(*pipeline_);
 
   MainLoop::get().start();
 }

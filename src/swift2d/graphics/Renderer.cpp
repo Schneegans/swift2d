@@ -19,7 +19,7 @@
 
 #define MULTITHREADED_RENDERING 1
 #define RENDERING_WAIT_FOR_UPDATE 0
-#define APPLICATION_FPS 60.f
+#define APPLICATION_FPS 59.f
 
 namespace swift {
 
@@ -37,6 +37,7 @@ Renderer::Renderer(Pipeline& pipeline)
   , updating_scene_()
   , updated_scene_()
   , running_(true)
+  , application_finished_(false)
   {
 
   application_step();
@@ -47,6 +48,8 @@ Renderer::Renderer(Pipeline& pipeline)
         render_step();
       }
     });
+  #else
+    render_step();
   #endif
 }
 
@@ -61,12 +64,15 @@ void Renderer::stop() {
 
 void Renderer::render_step() {
   {
+
     #if MULTITHREADED_RENDERING
       std::unique_lock<std::mutex> lock(copy_mutex_);
+
       while (!updated_scene_) {
         copy_available_.wait(lock);
       }
     #endif
+
 
     last_rendered_scene_ = rendered_scene_;
     rendered_scene_ = updated_scene_;
@@ -75,6 +81,15 @@ void Renderer::render_step() {
       updated_scene_ = nullptr;
     #endif
   }
+
+  #if MULTITHREADED_RENDERING
+    // if (application_finished_) {
+    //   application_finished_ = false;
+      scheduler_.execute_delayed(0, [this]() {
+        application_step();
+      });
+    // }
+  #endif
 
   Application::get().RenderFPS.step();
   pipeline_.draw(rendered_scene_);
@@ -88,11 +103,6 @@ void Renderer::application_step() {
   }
 
   double frame_time(timer_.reset());
-  double wait_time(1.0 / APPLICATION_FPS);
-
-  scheduler_.execute_delayed(wait_time, [this]() {
-    application_step();
-  });
 
   Application::get().AppFPS.step();
   Application::get().on_frame.emit(frame_time);
@@ -111,11 +121,17 @@ void Renderer::application_step() {
 
   pipeline_.update();
 
-  #if !MULTITHREADED_RENDERING
-    render_step();
-  #else
+  #if MULTITHREADED_RENDERING
     copy_available_.notify_one();
+  #else
+    scheduler_.execute_delayed(1.f / APPLICATION_FPS, [this]() {
+      application_step();
+      render_step();
+    });
   #endif
+
+
+  application_finished_ = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

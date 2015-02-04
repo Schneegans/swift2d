@@ -11,6 +11,7 @@
 
 // includes  ------------------------------------------------------------------
 #include <swift2d/events/MainLoop.hpp>
+#include <mutex>
 #include <map>
 
 #include <boost/asio/deadline_timer.hpp>
@@ -24,6 +25,9 @@ class SWIFT_DLL Scheduler {
  // ----------------------------------------------------------- public interface
  public:
   Scheduler();
+
+  // copy constructor creates new Scheduler
+  Scheduler(Scheduler const& to_copy);
   ~Scheduler();
 
   // ------------------------------------------------------------ public methods
@@ -37,6 +41,7 @@ class SWIFT_DLL Scheduler {
 
    std::map<int, std::pair<boost::asio::deadline_timer*, std::function<void()>>> tasks_;
    int current_id_;
+   std::mutex mutex_;
 };
 
 // -----------------------------------------------------------------------------

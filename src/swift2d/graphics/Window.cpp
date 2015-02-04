@@ -150,6 +150,10 @@ void Window::update_context() {
       int rev   = glfwGetWindowAttrib(window_, GLFW_CONTEXT_REVISION);
       LOG_MESSAGE << "Initialized OpenGL context " << major << "." << minor
                   << "." << rev << " successfully." << std::endl;
+
+      GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+      const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+      LOG_MESSAGE << "Refresh rate " <<  mode->refreshRate << " Hz" << std::endl;
     }
 
     glGetError();
