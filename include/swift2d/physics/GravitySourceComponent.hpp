@@ -34,6 +34,7 @@ class SWIFT_DLL GravitySourceComponent : public TransformableComponent {
 
   // ---------------------------------------------------------------- properties
   Float Mass;
+  Float CollisionRadius;
 
   // ---------------------------------------------------- construction interface
   GravitySourceComponent();

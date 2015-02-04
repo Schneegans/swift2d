@@ -56,8 +56,8 @@ class SWIFT_DLL CameraComponent : public TransformableComponent {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "CameraComponent"; }
 
-  math::vec2 pixel_to_world(math::vec2 const& pixel_pos) const;
-  math::vec2 world_to_pixel(math::vec2 const& world_pos) const;
+  math::vec2 pixel_to_world(math::vec2 const& pixel_pos, bool with_translation = true) const;
+  math::vec2 world_to_pixel(math::vec2 const& world_pos, bool with_translation = true) const;
 
   virtual void accept(SavableObjectVisitor& visitor);
 };

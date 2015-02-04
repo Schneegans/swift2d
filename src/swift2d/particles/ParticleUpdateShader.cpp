@@ -113,11 +113,15 @@ ParticleUpdateShader::ParticleUpdateShader()
             float clip_dist = 0.3;
 
             if (texcoords.x > -clip_dist && texcoords.y > -clip_dist && texcoords.x < 1+clip_dist && texcoords.y < 1+clip_dist) {
-              vec2 gravity = (texture(gravity_map, texcoords).rg - 0.5) * dynamics.x;
+              vec3 gravity_collision = texture(gravity_map, texcoords).rgb;
+              vec2 gravity = (gravity_collision.xy - 0.5) * dynamics.x;
+              float collides = gravity_collision.z;
 
-              out_position = varying_position[0] + varying_velocity[0] * time.x / 1000;
+              vec2 velocity = varying_velocity[0] * (1-collides) + collides*reflect(varying_velocity[0], normalize(gravity_collision.xy - 0.5));
+
+              out_position = varying_position[0] + velocity * (collides+1) * time.x / 1000;
               out_life     = vec2(varying_life[0].x + time.x/varying_life[0].y, varying_life[0].y);
-              out_velocity = (varying_velocity[0] + gravity*time.x*0.1) - 0.01 * varying_velocity[0] * dynamics.y * time.x;
+              out_velocity = (velocity + gravity*time.x*0.1) - 0.01 * velocity * dynamics.y * time.x;
               out_rotation = vec2(varying_rotation[0].x + varying_rotation[0].y * time.x / 1000, varying_rotation[0].y - 0.01 * varying_rotation[0].y * dynamics.z * time.x);
 
               EmitVertex(); EndPrimitive();

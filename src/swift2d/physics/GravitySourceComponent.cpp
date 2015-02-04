@@ -16,7 +16,8 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 GravitySourceComponent::GravitySourceComponent()
-  : Mass(10.f) {
+  : Mass(10.f)
+  , CollisionRadius(0.f) {
 
   Physics::get().add(this);
 }
@@ -38,6 +39,7 @@ void GravitySourceComponent::serialize(SerializedScenePtr& scene) const {
 void GravitySourceComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
   visitor.add_member("Mass", Mass);
+  visitor.add_member("CollisionRadius", CollisionRadius);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
