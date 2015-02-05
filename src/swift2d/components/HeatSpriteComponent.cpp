@@ -23,7 +23,7 @@ HeatSpriteComponent::HeatSpriteComponent()
   , TexcoordScale(math::vec2(1.f, 1.f)) {
 
   TextureName.on_change().connect([this](std::string const& val) {
-    Texture = TextureDatabase::get().lookup_or_load(val);
+    this->Texture = TextureDatabase::get().lookup_or_load(val);
     return true;
   });
 }
