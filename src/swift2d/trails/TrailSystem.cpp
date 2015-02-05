@@ -178,14 +178,14 @@ void TrailSystem::update_trails(
     int index(0);
 
     while (index < positions0.size()) {
-      int count(std::min(50, (int)positions0.size()-index));
+      std::size_t count(std::min(50, (int)positions0.size()-index));
 
       shader.spawn_count.     Set(count);
-      shader.times.           Set(std::vector<math::vec4>(times.begin()      + index, times.begin()      + index + count));
-      shader.position.        Set(std::vector<math::vec2>(positions0.begin() + index, positions0.begin() + index + count));
-      shader.prev_1_position. Set(std::vector<math::vec2>(positions1.begin() + index, positions1.begin() + index + count));
-      shader.prev_2_position. Set(std::vector<math::vec2>(positions2.begin() + index, positions2.begin() + index + count));
-      shader.prev_3_position. Set(std::vector<math::vec2>(positions3.begin() + index, positions3.begin() + index + count));
+      shader.times.           Set(count, (const math::vec4*)&times[index]);
+      shader.position.        Set(count, (const math::vec2*)&positions0[index]);
+      shader.prev_1_position. Set(count, (const math::vec2*)&positions1[index]);
+      shader.prev_2_position. Set(count, (const math::vec2*)&positions2[index]);
+      shader.prev_3_position. Set(count, (const math::vec2*)&positions3[index]);
 
       ogl::Context::DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       index += count;

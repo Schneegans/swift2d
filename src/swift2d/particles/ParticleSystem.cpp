@@ -178,10 +178,10 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
     int index(0);
 
     while (index < spawn_positions.size()) {
-      int count(std::min(50, (int)spawn_positions.size()-index));
+      std::size_t count(std::min(50, (int)spawn_positions.size()-index));
       shader.spawn_count_it.Set(math::vec2i(count, index));
-      shader.position.Set(std::vector<math::vec3>(spawn_positions.begin() + index, spawn_positions.begin() + index + count));
-      shader.emitter_velocity.Set(std::vector<math::vec2>(spawn_velocities.begin() + index, spawn_velocities.begin() + index + count));
+      shader.position.Set(count, (const math::vec3*)&spawn_positions[index]);
+      shader.emitter_velocity.Set(count, (const math::vec2*)&spawn_velocities[index]);
       ogl::Context::DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       index += count;
     }
