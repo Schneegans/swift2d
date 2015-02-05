@@ -21,7 +21,7 @@ ParticleEmitterComponent::ParticleEmitterComponent()
   , particles_to_spawn_(0.f) {
 
   ParticleSystemLabel.on_change().connect([this](std::string const&) {
-    ParticleSystem = nullptr;
+    this->ParticleSystem = nullptr;
     return true;
   });
 }

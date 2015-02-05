@@ -23,7 +23,7 @@ ParticleOnceEmitterComponent::ParticleOnceEmitterComponent()
   , age_(0.0) {
 
   ParticleSystemLabel.on_change().connect([this](std::string const&) {
-    ParticleSystem = nullptr;
+    this->ParticleSystem = nullptr;
     return true;
   });
 }
