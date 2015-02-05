@@ -40,6 +40,21 @@ class SWIFT_DLL RespawnComponent : public Component {
   // ----------------------------------------------------- contruction interface
   RespawnComponent();
 
+  // Creates a new component and returns a shared pointer.
+  template <typename... Args>
+  static RespawnComponentPtr create(Args&& ... a) {
+    return std::make_shared<RespawnComponent>(a...);
+  }
+
+  // creates a copy from this
+  RespawnComponentPtr create_copy() const {
+    return std::make_shared<RespawnComponent>(*this);
+  }
+
+  ComponentPtr create_base_copy() const {
+    return create_copy();
+  }
+
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "RespawnComponent"; }

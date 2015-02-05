@@ -29,12 +29,12 @@ class ParticleUpdateShader : public Shader,
   // ------------------------------------------------------------------ uniforms
   oglplus::Lazy<oglplus::Uniform<math::vec2>>   time;
   oglplus::Lazy<oglplus::Uniform<int>>          noise_tex;
-  oglplus::Lazy<oglplus::Uniform<int>>          spawn_count;
-  oglplus::Lazy<oglplus::Uniform<math::vec3>>   transform;
-  oglplus::Lazy<oglplus::Uniform<math::vec2>>   life;
-  oglplus::Lazy<oglplus::Uniform<math::vec2>>   pos_rot_variance;
-  oglplus::Lazy<oglplus::Uniform<math::vec2>>   velocity;
-  oglplus::Lazy<oglplus::Uniform<math::vec2>>   rotation;
+  oglplus::Lazy<oglplus::Uniform<math::vec2i>>  spawn_count_it;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>>   position;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>   emitter_velocity;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>>   life_pos_var;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>   lin_ang_velocity;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>   direction_rotation;
   oglplus::Lazy<oglplus::Uniform<int>>          gravity_map;
   oglplus::Lazy<oglplus::Uniform<math::mat3>>   projection;
   oglplus::Lazy<oglplus::Uniform<math::vec3>>   dynamics;

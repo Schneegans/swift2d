@@ -65,6 +65,10 @@ class SWIFT_DLL TangiblePointerComponent : public Component,
     return std::make_shared<TangiblePointerComponent>(*this);
   }
 
+  ComponentPtr create_base_copy() const {
+    return create_copy();
+  }
+
   // ------------------------------------------------------------ public methods
   virtual void update(double time);
 

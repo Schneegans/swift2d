@@ -36,6 +36,8 @@ class SWIFT_DLL Physics : public Singleton<Physics> {
  // ----------------------------------------------------------- public interface
  public:
 
+  Vec2 Gravity;
+
   void update(double time);
 
   b2Body* add(DynamicBodyComponent* body);
@@ -52,6 +54,11 @@ class SWIFT_DLL Physics : public Singleton<Physics> {
   void update_gravity_map(ConstSerializedScenePtr const& scene, RenderContext const& ctx);
   void bind_gravity_map  (RenderContext const& ctx, int location);
 
+  bool ray_cast(math::vec2 const& start, math::vec2 const& end,
+                std::vector<DynamicBodyComponent*>& hits,
+                std::vector<math::vec2>& hit_points,
+                std::vector<math::vec2>& hit_normals) const;
+
   friend class Singleton<Physics>;
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -63,7 +70,7 @@ class SWIFT_DLL Physics : public Singleton<Physics> {
 
   std::unordered_set<GravitySourceComponent const*> gravity_sources_;
   b2World* world_;
-  SwiftContactListener* contact_listener_;;
+  SwiftContactListener* contact_listener_;
 
   GravityMap* gravity_map_;
   std::vector<math::vec4> shock_waves_;

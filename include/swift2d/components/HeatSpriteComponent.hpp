@@ -39,6 +39,8 @@ class SWIFT_DLL HeatSpriteComponent : public TransformableComponent,
   struct Serialized : public SerializedComponent {
     math::mat3 Transform;
     TexturePtr Texture;
+    math::vec2 TexcoordOffset;
+    math::vec2 TexcoordScale;
     float      Opacity;
   };
 
@@ -47,7 +49,10 @@ class SWIFT_DLL HeatSpriteComponent : public TransformableComponent,
   };
 
   // ---------------------------------------------------------------- properties
+  String          TextureName;
   TextureProperty Texture;
+  Vec2            TexcoordOffset;
+  Vec2            TexcoordScale;
   Float           Opacity;
 
   // ----------------------------------------------------- contruction interface
@@ -62,6 +67,10 @@ class SWIFT_DLL HeatSpriteComponent : public TransformableComponent,
   // creates a copy from this
   HeatSpriteComponentPtr create_copy() const {
     return std::make_shared<HeatSpriteComponent>(*this);
+  }
+
+  ComponentPtr create_base_copy() const {
+    return create_copy();
   }
 
   // ------------------------------------------------------------ public methods

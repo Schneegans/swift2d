@@ -35,8 +35,9 @@ class SWIFT_DLL HeatParticleSystemComponent: public ParticleSystemComponent{
 
   // ------------------------------------------------------------- inner classes
   struct Serialized : public ParticleSystemComponent::Serialized {
-    float StartScale, EndScale;
-    float StartOpacity,  EndOpacity;
+    float MidLife;
+    float StartScale,   MidScale,   EndScale;
+    float StartOpacity, MidOpacity, EndOpacity;
     TexturePtr Texture;
   };
 
@@ -46,8 +47,9 @@ class SWIFT_DLL HeatParticleSystemComponent: public ParticleSystemComponent{
   };
 
   // ---------------------------------------------------------------- properties
-  Float           StartScale,   EndScale;
-  Float           StartOpacity, EndOpacity;
+  Float           MidLife;
+  Float           StartScale,   MidScale,   EndScale;
+  Float           StartOpacity, MidOpacity, EndOpacity;
   TextureProperty Texture;
 
   // ----------------------------------------------------- contruction interface
@@ -62,6 +64,10 @@ class SWIFT_DLL HeatParticleSystemComponent: public ParticleSystemComponent{
   // creates a copy from this
   HeatParticleSystemComponentPtr create_copy() const {
     return std::make_shared<HeatParticleSystemComponent>(*this);
+  }
+
+  ComponentPtr create_base_copy() const {
+    return create_copy();
   }
 
   // ------------------------------------------------------------ public methods

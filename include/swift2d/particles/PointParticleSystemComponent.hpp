@@ -35,10 +35,11 @@ class SWIFT_DLL PointParticleSystemComponent : public ParticleSystemComponent {
 
   // ------------------------------------------------------------- inner classes
   struct Serialized : public ParticleSystemComponent::Serialized {
+    float      MidLife;
     float      Scale;
-    float      StartGlow,  EndGlow;
-    math::vec4 StartColor, EndColor;
-    bool       BlendAdd;
+    float      StartGlow,  MidGlow,  EndGlow;
+    float      StartBurn,  MidBurn,  EndBurn;
+    math::vec4 StartColor, MidColor, EndColor;
   };
 
   class Renderer : public ResourceRenderer<PointParticleSystemComponent> {
@@ -47,10 +48,11 @@ class SWIFT_DLL PointParticleSystemComponent : public ParticleSystemComponent {
   };
 
   // ---------------------------------------------------------------- properties
+  Float         MidLife;
   Float         Scale;
-  Float         StartGlow,  EndGlow;
-  ColorProperty StartColor, EndColor;
-  Bool          BlendAdd;
+  Float         StartGlow,  MidGlow,  EndGlow;
+  Float         StartBurn,  MidBurn,  EndBurn;
+  ColorProperty StartColor, MidColor, EndColor;
 
   // ----------------------------------------------------- contruction interface
   PointParticleSystemComponent();
@@ -64,6 +66,10 @@ class SWIFT_DLL PointParticleSystemComponent : public ParticleSystemComponent {
   // creates a copy from this
   PointParticleSystemComponentPtr create_copy() const {
     return std::make_shared<PointParticleSystemComponent>(*this);
+  }
+
+  ComponentPtr create_base_copy() const {
+    return create_copy();
   }
 
   // ------------------------------------------------------------ public methods

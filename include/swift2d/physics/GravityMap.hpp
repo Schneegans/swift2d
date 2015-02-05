@@ -36,8 +36,9 @@ class GravityMap {
   oglplus::Texture      gravity_map_;
   Shader                gravity_shader_;
 
-  oglplus::Lazy<oglplus::Uniform<math::vec3>>  gravity_sources_;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  gravity_sources_;
   oglplus::Lazy<oglplus::Uniform<math::vec2i>> screen_size_;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>  world_gravity_;
   oglplus::Lazy<oglplus::Uniform<int>>         gravity_source_count_;
 };
 

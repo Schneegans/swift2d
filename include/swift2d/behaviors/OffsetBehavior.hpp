@@ -58,6 +58,10 @@ class SWIFT_DLL OffsetBehavior : public Component {
     return std::make_shared<OffsetBehavior>(*this);
   }
 
+  ComponentPtr create_base_copy() const {
+    return create_copy();
+  }
+
   void set_transform_offset(math::vec2 const& offset) {
     TranslationOffsetX.set(offset.x());
     TranslationOffsetY.set(offset.y());

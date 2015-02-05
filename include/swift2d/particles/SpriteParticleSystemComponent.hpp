@@ -36,10 +36,11 @@ class SWIFT_DLL SpriteParticleSystemComponent : public ParticleSystemComponent {
 
   // ------------------------------------------------------------- inner classes
   struct Serialized : public ParticleSystemComponent::Serialized {
-    math::vec2 StartScale, EndScale;
-    float      StartGlow,  EndGlow;
-    math::vec4 StartColor, EndColor;
-    bool       BlendAdd;
+    float      MidLife;
+    math::vec2 StartScale, MidScale, EndScale;
+    float      StartGlow,  MidGlow,  EndGlow;
+    float      StartBurn,  MidBurn,  EndBurn;
+    math::vec4 StartColor, MidColor, EndColor;
     int        SubSamplingLevel;
     TexturePtr Texture;
   };
@@ -50,10 +51,11 @@ class SWIFT_DLL SpriteParticleSystemComponent : public ParticleSystemComponent {
   };
 
   // ---------------------------------------------------------------- properties
-  Vec2            StartScale, EndScale;
-  Float           StartGlow,  EndGlow;
-  ColorProperty   StartColor, EndColor;
-  Bool            BlendAdd;
+  Float           MidLife;
+  Vec2            StartScale, MidScale, EndScale;
+  Float           StartGlow,  MidGlow,  EndGlow;
+  Float           StartBurn,  MidBurn,  EndBurn;
+  ColorProperty   StartColor, MidColor, EndColor;
   Int32           SubSamplingLevel;
   TextureProperty Texture;
 
@@ -69,6 +71,10 @@ class SWIFT_DLL SpriteParticleSystemComponent : public ParticleSystemComponent {
   // creates a copy from this
   SpriteParticleSystemComponentPtr create_copy() const {
     return std::make_shared<SpriteParticleSystemComponent>(*this);
+  }
+
+  ComponentPtr create_base_copy() const {
+    return create_copy();
   }
 
   // ------------------------------------------------------------ public methods

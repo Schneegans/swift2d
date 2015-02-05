@@ -28,8 +28,8 @@ class SubSampler {
   // ----------------------------------------------------- contruction interface
   SubSampler(RenderContext const& ctx, int level);
 
-  void bind(RenderContext const& context, bool additive);
-  void draw(RenderContext const& context, bool additive);
+  void bind(RenderContext const& context);
+  void draw(RenderContext const& context);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

@@ -38,6 +38,21 @@ class SWIFT_DLL DealDamageComponent : public Component {
   // ----------------------------------------------------- contruction interface
   DealDamageComponent();
 
+  // Creates a new component and returns a shared pointer.
+  template <typename... Args>
+  static DealDamageComponentPtr create(Args&& ... a) {
+    return std::make_shared<DealDamageComponent>(a...);
+  }
+
+  // creates a copy from this
+  DealDamageComponentPtr create_copy() const {
+    return std::make_shared<DealDamageComponent>(*this);
+  }
+
+  ComponentPtr create_base_copy() const {
+    return create_copy();
+  }
+
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "DealDamageComponent"; }

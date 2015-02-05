@@ -40,19 +40,24 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
  public:
   struct Serialized : public SerializedComponent {
     float Mass;
+    float LinearDamping;
+    float AngularDamping;
 
     float Life;
     float LifeVariance;
 
     float Velocity;
     float VelocityVariance;
-    float LinearDamping;
 
     float AngularVelocity;
     float AngularVelocityVariance;
-    float AngularDamping;
 
+    float Direction;
+    float DirectionVariance;
+
+    float Rotation;
     float RotationVariance;
+
     float PositionVariance;
 
     ParticleSystemPtr System;
@@ -60,20 +65,26 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
 
   // ---------------------------------------------------------------- properties
   Int32 MaxCount;
+
   Float Mass;
+  Float LinearDamping;
+  Float AngularDamping;
 
   Float Life;
   Float LifeVariance;
 
   Float Velocity;
   Float VelocityVariance;
-  Float LinearDamping;
 
   Float AngularVelocity;
   Float AngularVelocityVariance;
-  Float AngularDamping;
 
+  Float Direction;
+  Float DirectionVariance;
+
+  Float Rotation;
   Float RotationVariance;
+
   Float PositionVariance;
 
   // ----------------------------------------------------- contruction interface
@@ -81,7 +92,8 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
 
   // ------------------------------------------------------------ public methods
   void spawn(math::vec3 const& pos_rot, unsigned count = 1);
-  void spawn(std::vector<math::vec3> const& pos_rots);
+  void spawn(math::vec3 const& pos_rot, math::vec2 const& vel , unsigned count = 1);
+  void spawn(std::vector<std::pair<math::vec3, math::vec2>> const& pos_rot_vel);
 
   virtual void update(double time);
   virtual void serialize(ParticleSystemComponent::Serialized& serialized) const;

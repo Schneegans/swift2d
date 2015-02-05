@@ -34,6 +34,7 @@ class SWIFT_DLL GravitySourceComponent : public TransformableComponent {
 
   // ---------------------------------------------------------------- properties
   Float Mass;
+  Float CollisionRadius;
 
   // ---------------------------------------------------- construction interface
   GravitySourceComponent();
@@ -48,6 +49,10 @@ class SWIFT_DLL GravitySourceComponent : public TransformableComponent {
   // creates a copy from this
   GravitySourceComponentPtr create_copy() const {
     return std::make_shared<GravitySourceComponent>(*this);
+  }
+
+  ComponentPtr create_base_copy() const {
+    return create_copy();
   }
 
   // ------------------------------------------------------------ public methods

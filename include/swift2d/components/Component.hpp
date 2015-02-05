@@ -58,6 +58,8 @@ class SWIFT_DLL Component : public SavableObject {
   // Contstructor is protected --- do not instantiate this class directly
   virtual ~Component() {}
 
+  virtual ComponentPtr create_base_copy() const = 0;
+
   // ------------------------------------------------------------ public methods
   // removes this component from its user - if not forced it will be
   // removed in the next frame
@@ -71,11 +73,16 @@ class SWIFT_DLL Component : public SavableObject {
   virtual void on_init() {}
 
   virtual void update(double time) {}
-  virtual void serialize(SerializedScenePtr& scene) const {};
-  virtual void accept(SavableObjectVisitor& visitor);
 
   void         set_user(SceneObject* u) { user_ = u; }
   SceneObject* get_user() const { return user_; }
+
+  // gets the root object of the current user of this component
+  SceneObject const* get_root() const;
+  SceneObject*       get_root();
+
+  virtual void serialize(SerializedScenePtr& scene) const {};
+  virtual void accept(SavableObjectVisitor& visitor);
 
   friend class SceneObject;
 
@@ -83,6 +90,7 @@ class SWIFT_DLL Component : public SavableObject {
  // -------------------------------------------------------- protected interface
  protected:
   Component();
+  Component(Component const& to_copy);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

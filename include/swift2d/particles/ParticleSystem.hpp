@@ -50,7 +50,8 @@ class ParticleSystem {
   void set_max_count(int max_count);
 
   void spawn(math::vec3 const& pos_rot, unsigned count = 1);
-  void spawn(std::vector<math::vec3> const& pos_rots);
+  void spawn(math::vec3 const& pos_rot, math::vec2 const& vel, unsigned count = 1);
+  void spawn(std::vector<std::pair<math::vec3, math::vec2>> const& pos_rot_vel);
 
   int update_particles(
     ParticleSystemComponent::Serialized const& system,
@@ -74,7 +75,7 @@ class ParticleSystem {
 
   ogl::Query* query_;
 
-  Queue<math::vec3> new_particles_;
+  Queue<std::pair<math::vec3, math::vec2>> new_particles_;
 
   bool   ping_;
   int    update_max_count_;
