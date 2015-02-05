@@ -81,6 +81,8 @@ class SWIFT_DLL Texture : public SavableObject {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "Texture"; }
 
+  std::string get_file_name() const;
+
   // Binds the texture on the given context to the given location.
   virtual void bind(RenderContext const& context, unsigned location) const;
   virtual void accept(SavableObjectVisitor& visitor);

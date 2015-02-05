@@ -94,7 +94,7 @@ class AnimatedProperty : public Property<T>,
   }
 
   void set(T const& value) {
-    start_ = this->get();
+    start_ = value;
     end_ = value;
     duration = 0.0;
     state_ = -1.0;
@@ -148,6 +148,7 @@ class AnimatedProperty : public Property<T>,
     }
   }
 
+  inline void     restart()     { Property<T>::set(start_); set(end_, duration); }
   inline T const& start() const { return start_; }
   inline T const& end()   const { return end_; }
 
@@ -164,6 +165,8 @@ class AnimatedProperty : public Property<T>,
     visitor.add_member("Delay",     delay);
     visitor.add_member("Start",     start_);
     visitor.add_member("End",       end_);
+
+    this->set_with_no_emit(start_);
   };
 
  ///////////////////////////////////////////////////////////////////////////////
@@ -198,6 +201,7 @@ class AnimatedProperty : public Property<T>,
 class AnimatedFloat : public AnimatedProperty<float> {
  public:
   AnimatedFloat() : AnimatedProperty<float>(0.f) {}
+  AnimatedFloat(float val) : AnimatedProperty<float>(val) {}
   AnimatedFloat(float const& start, float const& end, double duration = 1.0,
     Direction direction = DIR_IN_OUT, Loop loop = NONE, double exponent = 0.0)
     : AnimatedProperty<float>(start, end, duration, direction, loop, exponent) {}
@@ -223,7 +227,8 @@ class AnimatedFloat : public AnimatedProperty<float> {
 
 class AnimatedDouble : public AnimatedProperty<double> {
  public:
-  AnimatedDouble() : AnimatedProperty<double>(0) {}
+  AnimatedDouble() : AnimatedProperty<double>(0.0) {}
+  AnimatedDouble(double val) : AnimatedProperty<double>(val) {}
   AnimatedDouble(double const& start, double const& end, double duration = 1.0,
     Direction direction = DIR_IN_OUT, Loop loop = NONE, double exponent = 0.0)
     : AnimatedProperty<double>(start, end, duration, direction, loop, exponent) {}

@@ -24,12 +24,36 @@ namespace swift {
 
 SceneObject::SceneObject()
   : Parent(nullptr)
-  , Enabled(true)
+  , Label("")
   , Depth(0)
   , WorldDepth(0)
-  , Label("")
+  , Transform()
+  , WorldTransform()
+  , Enabled(true)
   , remove_flag_(false)
   , initialized_(false) {}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObject::SceneObject(SceneObject const& to_copy)
+  : Parent(nullptr)
+  , Label(to_copy.Label())
+  , Depth(to_copy.Depth())
+  , Transform(to_copy.Transform())
+  , WorldTransform(to_copy.WorldTransform)
+  , WorldDepth(to_copy.WorldDepth())
+  , Enabled(to_copy.Enabled())
+  , remove_flag_(to_copy.remove_flag_)
+  , initialized_(to_copy.initialized_) {
+
+  for (auto const& o:to_copy.objects_) {
+    add_object(o->create_copy());
+  }
+
+  for (auto const& c:to_copy.components_) {
+    add(c->create_base_copy());
+  }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -97,6 +121,67 @@ SceneObjectPtr const& SceneObject::add_at_root(SceneObjectPtr const& object) {
 
 std::unordered_set<SceneObjectPtr> const& SceneObject::get_objects() const {
   return objects_;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObjectPtr SceneObject::get_object(std::string const& label) const {
+  if (label[0] == '/') {
+    return get_root()->get_object(split_string(label.substr(1), '/'));
+  }
+
+  return get_object(split_string(label, '/'));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObjectPtr SceneObject::get_object(std::vector<std::string> const& path) const {
+  return get_object(path.begin(), path.end());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObjectPtr SceneObject::get_object(
+                          std::vector<std::string>::const_iterator const& path_start,
+                          std::vector<std::string>::const_iterator const& path_end) const {
+
+  if (path_start != path_end) {
+    for (auto& ptr: objects_) {
+      if (ptr->Label() == *path_start) {
+        if (path_start+1 == path_end) {
+          if (!ptr->remove_flag_) {
+            return ptr;
+          } else {
+            return SceneObjectPtr();
+          }
+        } else {
+          return get_object(path_start+1, path_end);
+        }
+      }
+    }
+  }
+
+  return SceneObjectPtr();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObject const* SceneObject::get_root() const {
+  if (Parent()) {
+    return Parent()->get_root();
+  } else {
+    return this;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SceneObject* SceneObject::get_root() {
+  if (Parent()) {
+    return Parent()->get_root();
+  } else {
+    return this;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -241,33 +326,50 @@ void SceneObject::update(double time) {
       WorldDepth     = Depth.get();
     }
 
-    for (auto current(components_.begin()), next(current);
-         current != components_.end(); current = next) {
-      ++next;
-      if (!(*current)->initialized_) {
-        (*current)->initialized_ = true;
-        (*current)->on_init();
-      }
-      if ((*current)->remove_flag_) {
-        (*current)->on_detach(time);
-        components_.erase(current);
-      } else if ((*current)->Enabled.get()) {
-        (*current)->update(time);
+    {
+      auto current(components_.begin());
+      bool last(current == components_.end());
+
+      while (!last) {
+        auto next(current+1);
+        last = (next == components_.end());
+
+        if (!(*current)->initialized_) {
+          (*current)->initialized_ = true;
+          (*current)->on_init();
+        }
+        if ((*current)->remove_flag_) {
+          (*current)->on_detach(time);
+          components_.erase(current);
+        } else if ((*current)->Enabled.get()) {
+          (*current)->update(time);
+        }
+
+        current = next;
       }
     }
 
-    for (auto current(objects_.begin()), next(current);
-         current != objects_.end(); current = next) {
-      ++next;
-      if (!(*current)->initialized_) {
-        (*current)->initialized_ = true;
-        (*current)->on_init();
-      }
-      if ((*current)->remove_flag_) {
-        (*current)->on_detach(time);
-        objects_.erase(current);
-      } else {
-        (*current)->update(time);
+    {
+      auto current(objects_.begin());
+      bool last(current == objects_.end());
+
+      while (!last) {
+        auto next = current;
+        ++next;
+        last = (next == objects_.end());
+
+        if (!(*current)->initialized_) {
+          (*current)->initialized_ = true;
+          (*current)->on_init();
+        }
+        if ((*current)->remove_flag_) {
+          (*current)->on_detach(time);
+          objects_.erase(current);
+        } else {
+          (*current)->update(time);
+        }
+
+        current = next;
       }
     }
   }

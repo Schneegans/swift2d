@@ -16,17 +16,20 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 ParticleSystemComponent::ParticleSystemComponent()
-  : MaxCount                (1000)
+  : MaxCount                (5000)
   , Mass                    (0.f)
+  , Life                    (1.f)
+  , LifeVariance            (0.f)
+  , Velocity                (0.f)
+  , VelocityVariance        (0.f)
   , LinearDamping           (0.f)
-  , AngularDamping          (0.f)
-  , Life                    (10.f)
-  , LifeVariance            (3.f)
-  , RotationVariance        (0.3f)
-  , Velocity                (0.3f)
-  , VelocityVariance        (0.3f)
   , AngularVelocity         (0.f)
   , AngularVelocityVariance (0.f)
+  , AngularDamping          (0.f)
+  , Direction               (0.0f)
+  , DirectionVariance       (0.0f)
+  , Rotation                (0.0f)
+  , RotationVariance        (0.0f)
   , PositionVariance        (0.0f)
   , particle_system_(ParticleSystem::create(MaxCount())) {
 
@@ -51,8 +54,14 @@ void ParticleSystemComponent::spawn(math::vec3 const& pos_rot, unsigned count) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystemComponent::spawn(std::vector<math::vec3> const& pos_rots) {
-  particle_system_->spawn(pos_rots);
+void ParticleSystemComponent::spawn(math::vec3 const& pos_rot, math::vec2 const& vel, unsigned count) {
+  particle_system_->spawn(pos_rot, vel, count);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ParticleSystemComponent::spawn(std::vector<std::pair<math::vec3, math::vec2>> const& pos_rot_vel) {
+  particle_system_->spawn(pos_rot_vel);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +82,12 @@ void ParticleSystemComponent::serialize(ParticleSystemComponent::Serialized& ser
   serialized.AngularVelocityVariance = AngularVelocityVariance();
   serialized.AngularDamping = AngularDamping();
 
+  serialized.Direction = Direction();
+  serialized.DirectionVariance = DirectionVariance();
+
+  serialized.Rotation = Rotation();
   serialized.RotationVariance = RotationVariance();
+
   serialized.PositionVariance = PositionVariance();
 
   serialized.System = particle_system_;
@@ -90,6 +104,9 @@ void ParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("AngularDamping",            AngularDamping);
   visitor.add_member("Life",                      Life);
   visitor.add_member("LifeVariance",              LifeVariance);
+  visitor.add_member("Direction",                 Direction);
+  visitor.add_member("DirectionVariance",         DirectionVariance);
+  visitor.add_member("Rotation",                  Rotation);
   visitor.add_member("RotationVariance",          RotationVariance);
   visitor.add_member("Velocity",                  Velocity);
   visitor.add_member("VelocityVariance",          VelocityVariance);

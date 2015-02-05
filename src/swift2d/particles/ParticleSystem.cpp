@@ -37,12 +37,15 @@ ParticleSystem::ParticleSystem(int max_count)
   , particle_buffers_()
   , ping_(true)
   , update_max_count_(max_count)
-  , count_(0) {}
+  , count_(0)
+  , query_(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 ParticleSystem::~ParticleSystem() {
-  delete query_;
+  if (query_) {
+    delete query_;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -78,13 +81,19 @@ void ParticleSystem::upload_to(RenderContext const& ctx) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void ParticleSystem::spawn(math::vec3 const& pos_rot, unsigned count) {
-  new_particles_.push(pos_rot, count);
+  new_particles_.push(std::make_pair(pos_rot, math::vec2()), count);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystem::spawn(std::vector<math::vec3> const& pos_rots) {
-  new_particles_.push(pos_rots);
+void ParticleSystem::spawn(math::vec3 const& pos_rot, math::vec2 const& vel, unsigned count) {
+  new_particles_.push(std::make_pair(pos_rot, vel), count);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ParticleSystem::spawn(std::vector<std::pair<math::vec3, math::vec2>> const& pos_rot_vel) {
+  new_particles_.push(pos_rot_vel);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -137,8 +146,11 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
   }
 
   std::vector<math::vec3> spawn_positions;
+  std::vector<math::vec2> spawn_velocities;
   while(!new_particles_.empty()) {
-    spawn_positions.push_back(new_particles_.pop());
+    auto new_one(new_particles_.pop());
+    spawn_positions.push_back(new_one.first);
+    spawn_velocities.push_back(new_one.second);
   }
 
   ogl::Query::Activator qrya(*query_, ose::PrimitivesGenerated());
@@ -151,32 +163,31 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
     }
 
     NoiseTexture::get().bind(ctx, 0);
-    shader.noise_tex.        Set(0);
-    math::vec2 time       (frame_time * 1000.0, ctx.pipeline->get_total_time() * 1000.0);
-    math::vec2 life       (system.Life,            system.LifeVariance);
-    math::vec2 pos_rot_variance  (system.PositionVariance,       system.RotationVariance);
-    math::vec2 velocity   (system.Velocity,        system.VelocityVariance);
-    math::vec2 rotation   (system.AngularVelocity, system.AngularVelocityVariance);
+    math::vec2 time(frame_time * 1000.0, ctx.pipeline->get_total_time() * 1000.0);
+    math::vec3 life_pos_var(system.Life, system.LifeVariance, system.PositionVariance);
+    math::vec4 lin_ang_velocity(system.Velocity, system.VelocityVariance, system.AngularVelocity, system.AngularVelocityVariance);
+    math::vec4 direction_rotation(system.Direction, system.DirectionVariance, system.Rotation, system.RotationVariance);
 
-    shader.time.             Set(time);
-    shader.life.             Set(life);
-    shader.pos_rot_variance. Set(pos_rot_variance);
-    shader.velocity.         Set(velocity);
-    shader.rotation.         Set(rotation);
+    shader.noise_tex.Set(0);
+    shader.time.Set(time);
+    shader.life_pos_var.Set(life_pos_var);
+    shader.lin_ang_velocity.Set(lin_ang_velocity);
+    shader.direction_rotation.Set(direction_rotation);
 
     // spawn new particles -----------------------------------------------------
     int index(0);
 
     while (index < spawn_positions.size()) {
       int count(std::min(50, (int)spawn_positions.size()-index));
-      shader.spawn_count.Set(count);
-      shader.transform.Set(std::vector<math::vec3>(spawn_positions.begin() + index, spawn_positions.begin() + index + count));
+      shader.spawn_count_it.Set(math::vec2i(count, index));
+      shader.position.Set(std::vector<math::vec3>(spawn_positions.begin() + index, spawn_positions.begin() + index + count));
+      shader.emitter_velocity.Set(std::vector<math::vec2>(spawn_velocities.begin() + index, spawn_velocities.begin() + index + count));
       ogl::Context::DrawArrays(ogl::PrimitiveType::Points, 0, 1);
       index += count;
     }
   }
 
-  shader.spawn_count.Set(-1);
+  shader.spawn_count_it.Set(math::vec2i(-1, 0));
 
   // update existing particles -----------------------------------------------
   if (!first_draw) {
@@ -184,8 +195,8 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
     math::vec3 dynamics(system.Mass, system.LinearDamping, system.AngularDamping);
 
     shader.gravity_map.Set(0);
-    shader.projection. Set(ctx.projection_matrix);
-    shader.dynamics.   Set(dynamics);
+    shader.projection.Set(ctx.projection_matrix);
+    shader.dynamics.Set(dynamics);
 
     ogl::Context::DrawTransformFeedback(
       ogl::PrimitiveType::Points, transform_feedbacks_[current_vb()]

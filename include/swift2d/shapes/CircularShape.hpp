@@ -35,6 +35,21 @@ class SWIFT_DLL CircularShape : public TransformableComponent {
  // ----------------------------------------------------------- public interface
  public:
 
+  // Creates a new component and returns a shared pointer.
+  template <typename... Args>
+  static CircularShapePtr create(Args&& ... a) {
+    return std::make_shared<CircularShape>(a...);
+  }
+
+  // creates a copy from this
+  CircularShapePtr create_copy() const {
+    return std::make_shared<CircularShape>(*this);
+  }
+
+  ComponentPtr create_base_copy() const {
+    return create_copy();
+  }
+
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "CircularShape"; }

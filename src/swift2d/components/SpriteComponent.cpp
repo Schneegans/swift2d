@@ -15,7 +15,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 SpriteComponent::SpriteComponent()
-  : Material(nullptr)
+  : Material(Material::create())
   , CustomMaterial(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ void SpriteComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
   s.Depth       = WorldDepth();
   s.Transform   = WorldTransform();
-  s.Material    = Material() ? Material() : CustomMaterial();
+  s.Material    = CustomMaterial() ? CustomMaterial() : Material();
   scene->renderers().sprites.add(std::move(s));
 }
 

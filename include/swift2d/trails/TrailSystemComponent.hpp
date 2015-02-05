@@ -79,6 +79,15 @@ class SWIFT_DLL TrailSystemComponent : public Component,
     return std::make_shared<TrailSystemComponent>(a...);
   }
 
+  // creates a copy from this
+  TrailSystemComponentPtr create_copy() const {
+    return std::make_shared<TrailSystemComponent>(*this);
+  }
+
+  ComponentPtr create_base_copy() const {
+    return create_copy();
+  }
+
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "TrailSystemComponent"; }

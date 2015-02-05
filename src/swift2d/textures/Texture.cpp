@@ -121,6 +121,16 @@ Texture::~Texture() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+std::string Texture::get_file_name() const {
+  if (layers_.size() > 0) {
+    return layers_[0].FileName;
+  }
+
+  return "";
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Texture::bind(RenderContext const& ctx, unsigned location) const {
 
   if (!texture_ && !AsyncLoading()) {

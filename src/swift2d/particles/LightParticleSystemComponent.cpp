@@ -12,14 +12,16 @@
 #include <swift2d/particles/LightParticleShader.hpp>
 #include <swift2d/particles/ParticleSystem.hpp>
 #include <swift2d/graphics/RendererPool.hpp>
+#include <swift2d/textures/DefaultTexture.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
 LightParticleSystemComponent::LightParticleSystemComponent()
-  : StartScale(1.f),               EndScale(1.f)
-  , StartColor(Color(1, 1, 1, 1)), EndColor(Color(1, 1, 1, 0)) {}
+  : MidLife(0.5f)
+  , StartScale(1.f),               MidScale(1.f),                 EndScale(1.f)
+  , StartColor(Color(1, 1, 1, 1)), MidColor(Color(1, 1, 1, 0.5)), EndColor(Color(1, 1, 1, 0)) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -28,9 +30,12 @@ void LightParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
 
   ParticleSystemComponent::serialize(s);
 
+  s.MidLife = MidLife();
   s.StartScale = StartScale();
+  s.MidScale = MidScale();
   s.EndScale = EndScale();
   s.StartColor = StartColor().vec4();
+  s.MidColor = MidColor().vec4();
   s.EndColor = EndColor().vec4();
   s.Texture = Texture();
 
@@ -41,10 +46,13 @@ void LightParticleSystemComponent::serialize(SerializedScenePtr& scene) const {
 
 void LightParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   ParticleSystemComponent::accept(visitor);
-  visitor.add_member("StartScale",  StartScale);
-  visitor.add_member("EndScale",    EndScale);
-  visitor.add_member("StartColor",  StartColor);
-  visitor.add_member("EndColor",    EndColor);
+  visitor.add_member("MidLife",    MidLife);
+  visitor.add_member("StartScale", StartScale);
+  visitor.add_member("MidScale",   MidScale);
+  visitor.add_member("EndScale",   EndScale);
+  visitor.add_member("StartColor", StartColor);
+  visitor.add_member("MidColor",   MidColor);
+  visitor.add_member("EndColor",   EndColor);
   visitor.add_object_property("Texture",     Texture);
 }
 
@@ -68,7 +76,11 @@ void LightParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int 
 
     if (o.System->get_particle_count() > 0) {
 
-      o.Texture->bind(ctx, 3);
+      if (o.Texture) {
+        o.Texture->bind(ctx, 3);
+      } else {
+        DefaultTexture::get().bind(ctx, 3);
+      }
 
       ogl::Context::BlendFunc(
         oglplus::BlendFunction::One,
@@ -79,8 +91,9 @@ void LightParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int 
       shader.use(ctx);
       shader.projection.       Set(ctx.projection_matrix);
       shader.diffuse.          Set(3);
-      shader.scale.            Set(math::vec2(o.StartScale, o.EndScale));
+      shader.scale_mid_life.   Set(math::vec4(o.StartScale, o.MidScale, o.EndScale, o.MidLife));
       shader.start_color.      Set(o.StartColor);
+      shader.mid_color.        Set(o.MidColor);
       shader.end_color.        Set(o.EndColor);
       shader.screen_size.      Set(ctx.g_buffer_size/(ctx.light_sub_sampling ? 2 : 1));
       shader.g_buffer_normal.  Set(1);

@@ -12,13 +12,21 @@
 #include <swift2d/materials/HeatSpriteShader.hpp>
 #include <swift2d/graphics/RendererPool.hpp>
 #include <swift2d/geometries/Quad.hpp>
+#include <swift2d/databases/TextureDatabase.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
 HeatSpriteComponent::HeatSpriteComponent()
-  : Opacity(1.f) {}
+  : Opacity(1.f)
+  , TexcoordScale(math::vec2(1.f, 1.f)) {
+
+  TextureName.on_change().connect([this](std::string const& val) {
+    Texture = TextureDatabase::get().lookup_or_load(val);
+    return true;
+  });
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -31,10 +39,12 @@ void HeatSpriteComponent::update(double time) {
 
 void HeatSpriteComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
-  s.Depth       = WorldDepth();
-  s.Transform   = WorldTransform();
-  s.Texture     = Texture();
-  s.Opacity     = Opacity();
+  s.Depth         = WorldDepth();
+  s.Transform     = WorldTransform();
+  s.Texture       = Texture();
+  s.TexcoordOffset = TexcoordOffset();
+  s.TexcoordScale  = TexcoordScale();
+  s.Opacity       = Opacity();
   scene->renderers().heat_sprites.add(std::move(s));
 }
 
@@ -43,7 +53,10 @@ void HeatSpriteComponent::serialize(SerializedScenePtr& scene) const {
 void HeatSpriteComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
   DepthComponent::accept(visitor);
+  visitor.add_member("TextureName", TextureName);
   visitor.add_object_property("Texture", Texture);
+  visitor.add_member("TexcoordOffset", TexcoordOffset);
+  visitor.add_member("TexcoordScale", TexcoordScale);
   visitor.add_member("Opacity", Opacity);
 }
 
@@ -63,12 +76,19 @@ void HeatSpriteComponent::Renderer::draw(RenderContext const& ctx, int start, in
     SWIFT_PUSH_GL_RANGE("Draw HeatSprites");
 
     std::vector<math::mat3> transform;
+    std::vector<math::vec4> texcoord_offset_scale;
     std::vector<math::mat3> heat_transform;
     std::vector<float>      opacity;
 
     while (start < end && objects[start].Texture == tex) {
       transform.push_back(objects[start].Transform);
       heat_transform.push_back(math::make_rotation(math::get_rotation(objects[start].Transform)));
+      texcoord_offset_scale.push_back(math::vec4(
+        objects[start].TexcoordOffset.x(),
+        objects[start].TexcoordOffset.y(),
+        objects[start].TexcoordScale.x(),
+        objects[start].TexcoordScale.y()
+      ));
       opacity.push_back(objects[start].Opacity);
       ++start;
     }
@@ -89,6 +109,7 @@ void HeatSpriteComponent::Renderer::draw(RenderContext const& ctx, int start, in
       int count(std::min(100, (int)transform.size()-index));
 
       shader.transform.Set(std::vector<math::mat3>(transform.begin() + index, transform.begin() + index + count));
+      shader.texcoord_offset_scale.Set(std::vector<math::vec4>(texcoord_offset_scale.begin() + index, texcoord_offset_scale.begin() + index + count));
       shader.heat_transform.Set(std::vector<math::mat3>(heat_transform.begin() + index, heat_transform.begin() + index + count));
       shader.opacity.Set(std::vector<float>(opacity.begin() + index, opacity.begin() + index + count));
 

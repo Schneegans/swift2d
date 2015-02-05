@@ -30,12 +30,21 @@ void TransformableComponent::update_world_transform() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+float TransformableComponent::get_rotation() const {
+  return math::get_rotation(Transform.get());
+}
+float TransformableComponent::get_world_rotation() const {
+  return math::get_rotation(WorldTransform.get());
+}
+math::vec2 TransformableComponent::get_direction() const {
+  return (Transform.get() * math::vec3(1, 0, 0)).xy();
+}
+math::vec2 TransformableComponent::get_world_direction() const {
+  return (WorldTransform.get() * math::vec3(1, 0, 0)).xy();
+}
 math::vec2 TransformableComponent::get_position() const {
   return math::get_translation(Transform.get());
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
 math::vec2 TransformableComponent::get_world_position() const {
   return math::get_translation(WorldTransform.get());
 }

@@ -57,9 +57,25 @@ class SWIFT_DLL TrailEmitterComponent : public TransformableComponent {
   Float Life;
   Float StartAge;
 
+  Bool  Paused;
+
   // ----------------------------------------------------- contruction interface
   TrailEmitterComponent();
   ~TrailEmitterComponent();
+
+  template <typename... Args>
+  static TrailEmitterComponentPtr create(Args&& ... a) {
+    return std::make_shared<TrailEmitterComponent>(a...);
+  }
+
+  // creates a copy from this
+  TrailEmitterComponentPtr create_copy() const {
+    return std::make_shared<TrailEmitterComponent>(*this);
+  }
+
+  ComponentPtr create_base_copy() const {
+    return create_copy();
+  }
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }

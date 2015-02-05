@@ -7,39 +7,29 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/physics/GravitySourceComponent.hpp>
-
-#include <swift2d/physics/Physics.hpp>
+#include <swift2d/utils/stl_helpers.hpp>
 
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GravitySourceComponent::GravitySourceComponent()
-  : Mass(10.f)
-  , CollisionRadius(0.f) {
+std::vector<std::string> split_string(std::string const& s, char delim) {
+  std::vector<std::string> elems;
 
-  Physics::get().add(this);
+  std::stringstream ss(s);
+  std::string item;
+
+  while (std::getline(ss, item, delim)) {
+    elems.push_back(item);
+  }
+
+  return elems;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GravitySourceComponent::~GravitySourceComponent() {
-  Physics::get().remove(this);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void GravitySourceComponent::serialize(SerializedScenePtr& scene) const {
-  scene->gravity_sources.push_back(create_copy());
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void GravitySourceComponent::accept(SavableObjectVisitor& visitor) {
-  TransformableComponent::accept(visitor);
-  visitor.add_member("Mass", Mass);
-  visitor.add_member("CollisionRadius", CollisionRadius);
+bool string_contains(std::string const& s, char c) {
+  return s.find(c) != std::string::npos;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -76,6 +76,7 @@ namespace {
       Object::init<NetworkPositionUpdateComponent>();
       Object::init<OffsetBehavior>();
       Object::init<ParticleEmitterComponent>();
+      Object::init<ParticleOnceEmitterComponent>();
       Object::init<PointLightComponent>();
       Object::init<PointParticleSystemComponent>();
       Object::init<PolygonCollisionShape>();

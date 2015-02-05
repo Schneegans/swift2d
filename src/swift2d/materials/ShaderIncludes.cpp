@@ -99,6 +99,31 @@ ShaderIncludes::ShaderIncludes() {
   )");
 
   // ---------------------------------------------------------------------------
+  add_include("shifted_instanced_texcoords_quad_vertex_shader", R"(
+    @include "version"
+
+    // input
+    layout(location=0) in vec2 position;
+
+    // uniforms
+    @include "camera_uniforms"
+    uniform mat3  transform[100];
+    uniform float depth;
+    uniform vec4  texcoord_offset_scale[100];
+
+    // varyings
+    out vec2 texcoords;
+    flat out int instance_id;
+
+    void main(void) {
+      vec3 pos    = projection * transform[gl_InstanceID] * vec3(position, 1.0) * pow(parallax, depth);
+      texcoords   = (vec2(position.x + 1.0, 1.0 - position.y) * 0.5 + texcoord_offset_scale[gl_InstanceID].xy) * texcoord_offset_scale[gl_InstanceID].zw;
+      instance_id = gl_InstanceID;
+      gl_Position = vec4(pos.xy, 0.0, 1.0);
+    }
+  )");
+
+  // ---------------------------------------------------------------------------
   add_include("fullscreen_quad_vertex_shader", R"(
     @include "version"
 
@@ -136,6 +161,12 @@ ShaderIncludes::ShaderIncludes() {
       fragNormal  = vec4(0.5, 0.5, 0, 0);
       fragLight   = vec4(1.0, 0.0, 0.0, color.a);
     }
+
+    void write_gbuffer_premultiplied(vec4 color, float emit, float glow) {
+      fragColor   = color;
+      fragNormal  = vec4(0, 0, 0, 0);
+      fragLight   = vec4(emit, 0.0, glow, 0);
+    }
   )");
 
   // ---------------------------------------------------------------------------
@@ -166,6 +197,25 @@ ShaderIncludes::ShaderIncludes() {
       float diffuse     = max(0, dot(dir, normal));
       vec3  light       = diffuse * color.rgb;
       return (1.0-emit) * attenuation * vec4(light, specular) * color.a;
+    }
+  )");
+
+  // ---------------------------------------------------------------------------
+  add_include("three_way_mix", R"(
+    vec4 three_way_mix(vec4 a, vec4 b, vec4 c, float mid, float alpha) {
+      return (alpha < mid ? mix(a, b, alpha/(mid+0.0001)) : mix(b, c, (alpha-mid)/(1.0-mid+0.0001)));
+    }
+
+    vec3 three_way_mix(vec3 a, vec3 b, vec3 c, float mid, float alpha) {
+      return (alpha < mid ? mix(a, b, alpha/(mid+0.0001)) : mix(b, c, (alpha-mid)/(1.0-mid+0.0001)));
+    }
+
+    vec2 three_way_mix(vec2 a, vec2 b, vec2 c, float mid, float alpha) {
+      return (alpha < mid ? mix(a, b, alpha/(mid+0.0001)) : mix(b, c, (alpha-mid)/(1.0-mid+0.0001)));
+    }
+
+    float three_way_mix(float a, float b, float c, float mid, float alpha) {
+      return (alpha < mid ? mix(a, b, alpha/(mid+0.0001)) : mix(b, c, (alpha-mid)/(1.0-mid+0.0001)));
     }
   )");
 
