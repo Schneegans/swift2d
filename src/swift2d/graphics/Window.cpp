@@ -52,7 +52,7 @@ Window::Window(bool debug)
   });
 
   SettingsWrapper::get().Settings->WindowSize.on_change().connect([this](math::vec2i const& val) {
-    if (val.x() > 0 && val.y() > 0) {
+    if (val.x() > 50 && val.y() > 50) {
       Minimized = false;
     } else {
       Minimized = true;
@@ -244,6 +244,7 @@ void Window::open() {
         break;
     }
 
+    SettingsWrapper::get().Settings->WindowSize = size_;
     render_context_.window_size = size_;
 
     WindowManager::get().glfw_windows[window_] = this;
@@ -253,7 +254,6 @@ void Window::open() {
     });
 
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
-      std::cout << "fire" << std::endl;
       SettingsWrapper::get().Settings->WindowSize = math::vec2i(width, height);
     });
 

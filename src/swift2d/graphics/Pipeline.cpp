@@ -98,11 +98,14 @@ void Pipeline::update() {
 void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   // create & update window
-  window_->set_active(true);
-  window_->update_context();
+  if (window_->Minimized()) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  } else {
+    window_->set_active(true);
 
-  if (!window_->Minimized()) {
     SWIFT_PUSH_GL_RANGE("Frame");
+
+    window_->update_context();
 
     if (window_->get_context().window_size != old_size_) {
       old_size_ = window_->get_context().window_size;
@@ -123,7 +126,6 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
       if (compositor_) {
         delete compositor_;
-        compositor_ = nullptr;
       }
 
       compositor_ = new Compositor(window_->get_context());
