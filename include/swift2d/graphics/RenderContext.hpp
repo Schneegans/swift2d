@@ -25,11 +25,11 @@ struct RenderContext {
 
   float time;
 
-  math::vec2ui window_size;
-  math::vec2ui g_buffer_size;
-  math::mat3   projection_matrix;
-  float        projection_parallax;
-  bool         ready;
+  math::vec2i window_size;
+  math::vec2i g_buffer_size;
+  math::mat3  projection_matrix;
+  float       projection_parallax;
+  bool        ready;
 
   bool sub_sampling;
   bool dynamic_lighting;
