@@ -34,7 +34,7 @@ Window::Window(bool debug)
                            JoystickButtonId::JOYSTICK_BUTTON_NUM)))
   , vsync_dirty_(true)
   , mode_dirty_(false)
-  , size_dirty_(true)
+  , size_dirty_(false)
   , init_glew_(true)
   // , debugger_(nullptr)
   // , log_sink_(nullptr)
@@ -51,7 +51,7 @@ Window::Window(bool debug)
     return true;
   });
 
-  SettingsWrapper::get().Settings->WindowSize.on_change().connect([this](math::vec2ui const& val) {
+  SettingsWrapper::get().Settings->WindowSize.on_change().connect([this](math::vec2i const& val) {
     if (val.x() > 0 && val.y() > 0) {
       Minimized = false;
     } else {
@@ -253,7 +253,8 @@ void Window::open() {
     });
 
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
-      SettingsWrapper::get().Settings->WindowSize = math::vec2ui(width, height);
+      std::cout << "fire" << std::endl;
+      SettingsWrapper::get().Settings->WindowSize = math::vec2i(width, height);
     });
 
     glfwSetKeyCallback(window_, [](GLFWwindow* w, int key, int scancode, int action, int mods) {

@@ -33,7 +33,7 @@ class SWIFT_DLL EngineSettings : public SavableObject {
   Bool  VSync;
 
   Property<Window::Mode> WindowMode;
-  Vec2ui WindowSize;
+  Vec2i  WindowSize;
 
   Bool   SubSampling;
   Bool   DynamicLighting;

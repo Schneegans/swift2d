@@ -18,7 +18,7 @@ namespace swift {
 EngineSettings::EngineSettings()
   : VSync(true)
   , WindowMode(Window::Mode::WINDOWED_FULLSCREEN)
-  , WindowSize(math::vec2ui(1024, 768))
+  , WindowSize(math::vec2i(1024, 768))
   , DynamicLighting(true)
   , SubSampling(false)
   , LightSubSampling(false)
