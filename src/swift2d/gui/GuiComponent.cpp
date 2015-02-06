@@ -187,8 +187,8 @@ void GuiComponent::Renderer::draw(RenderContext const& ctx, int start, int end) 
       );
 
       math::vec3 offset(
-        (2.0 * o.Offset.x() + o.Anchor.x() * (ctx.window_size.x() - o.Size.x()))/ctx.window_size.x(),
-        (2.0 * o.Offset.y() + o.Anchor.y() * (ctx.window_size.y() - o.Size.y()))/ctx.window_size.y(),
+        (2.0 * o.Offset.x() + o.Anchor.x() * ((int)ctx.window_size.x() - o.Size.x()))/ctx.window_size.x(),
+        (2.0 * o.Offset.y() + o.Anchor.y() * ((int)ctx.window_size.y() - o.Size.y()))/ctx.window_size.y(),
         0
       );
 
@@ -271,7 +271,7 @@ void GuiComponent::accept(SavableObjectVisitor& visitor) {
 
 void GuiComponent::update_mouse_position(math::vec2 const& pos) const {
   if (interactive_) {
-    auto size(WindowManager::get().current()->get_context().window_size);
+    math::vec2i size(WindowManager::get().current()->get_context().window_size);
 
     math::vec2 corner(
       (size.x() - Size().x() + Anchor().x() * (size.x() - Size().x()))*0.5 + Offset().x(),

@@ -94,10 +94,10 @@ void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, in
     int index(0);
 
     while (index < transforms.size()) {
-      int count(std::min(100, (int)transforms.size()-index));
+      std::size_t count(std::min(100, (int)transforms.size()-index));
 
-      shader.transform.Set(std::vector<math::mat3>(transforms.begin() + index, transforms.begin() + index + count));
-      shader.light_color.Set(std::vector<math::vec4>(colors.begin() + index, colors.begin() + index + count));
+      shader.transform.Set(count, (const math::mat3*)&transforms[index]);
+      shader.light_color.Set(count, (const math::vec4*)&colors[index]);
 
       Quad::get().draw(ctx, count);
 

@@ -106,12 +106,12 @@ void HeatSpriteComponent::Renderer::draw(RenderContext const& ctx, int start, in
     int index(0);
 
     while (index < transform.size()) {
-      int count(std::min(100, (int)transform.size()-index));
+      std::size_t count(std::min(100, (int)transform.size()-index));
 
-      shader.transform.Set(std::vector<math::mat3>(transform.begin() + index, transform.begin() + index + count));
-      shader.texcoord_offset_scale.Set(std::vector<math::vec4>(texcoord_offset_scale.begin() + index, texcoord_offset_scale.begin() + index + count));
-      shader.heat_transform.Set(std::vector<math::mat3>(heat_transform.begin() + index, heat_transform.begin() + index + count));
-      shader.opacity.Set(std::vector<float>(opacity.begin() + index, opacity.begin() + index + count));
+      shader.transform.Set(count, (const math::mat3*)&transform[index]);
+      shader.texcoord_offset_scale.Set(count, (const math::vec4*)&texcoord_offset_scale[index]);
+      shader.heat_transform.Set(count, (const math::mat3*)&heat_transform[index]);
+      shader.opacity.Set(count, (const float*)&opacity[index]);
 
       Quad::get().draw(ctx, count);
 

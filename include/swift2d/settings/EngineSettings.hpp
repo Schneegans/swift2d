@@ -12,6 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/objects/SavableObject.hpp>
 #include <swift2d/properties.hpp>
+#include <swift2d/graphics/Window.hpp>
 
 namespace swift {
 
@@ -30,14 +31,16 @@ class SWIFT_DLL EngineSettings : public SavableObject {
  // ----------------------------------------------------------- public interface
  public:
   Bool  VSync;
-  Bool  Fullscreen;
 
-  Bool  SubSampling;
-  Bool  DynamicLighting;
-  Bool  LightSubSampling;
-  Bool  LensFlares;
-  Bool  HeatEffect;
-  Float Gamma;
+  Property<Window::Mode> WindowMode;
+  Vec2ui WindowSize;
+
+  Bool   SubSampling;
+  Bool   DynamicLighting;
+  Bool   LightSubSampling;
+  Bool   LensFlares;
+  Bool   HeatEffect;
+  Float  Gamma;
 
   // ----------------------------------------------------- contruction interface
   template <typename... Args>

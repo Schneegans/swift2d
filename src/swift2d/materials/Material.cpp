@@ -278,11 +278,11 @@ void Material::draw_quad_impl(RenderContext const& ctx,
   int index(0);
 
   while (index < transforms.size()) {
-    int count(std::min(100, (int)transforms.size()-index));
+    std::size_t count(std::min(100, (int)transforms.size()-index));
 
-    current_shader_->transform.Set(std::vector<math::mat3>(transforms.begin() + index, transforms.begin() + index + count));
+    current_shader_->transform.Set(count, &transforms[index]);
     if (needs_time) {
-      current_shader_->time.Set(std::vector<float>(times.begin() + index, times.begin() + index + count));
+      current_shader_->time.Set(count, &times[index]);
     }
 
     Quad::get().draw(ctx, count);

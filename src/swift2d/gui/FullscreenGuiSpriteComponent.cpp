@@ -13,6 +13,7 @@
 #include <swift2d/graphics/WindowManager.hpp>
 #include <swift2d/graphics/RendererPool.hpp>
 #include <swift2d/graphics/Pipeline.hpp>
+#include <swift2d/settings.hpp>
 
 namespace swift {
 
@@ -63,7 +64,7 @@ void FullscreenGuiSpriteComponent::serialize(SerializedScenePtr& scene) const {
   Serialized s;
   s.Depth    = WorldDepth();
   s.Opacity  = Opacity();
-  s.Size     = WindowManager::get().current()->get_size();
+  s.Size     = SettingsWrapper::get().Settings->WindowSize();
   s.Anchor   = math::vec2(0.f, 0.f);
   s.Offset   = math::vec2(0.f, 0.f);
   s.Texture  = Texture();

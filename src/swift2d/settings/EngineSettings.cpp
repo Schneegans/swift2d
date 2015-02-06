@@ -17,7 +17,8 @@ namespace swift {
 
 EngineSettings::EngineSettings()
   : VSync(true)
-  , Fullscreen(false)
+  , WindowMode(Window::Mode::WINDOWED_FULLSCREEN)
+  , WindowSize(math::vec2ui(1024, 768))
   , DynamicLighting(true)
   , SubSampling(false)
   , LightSubSampling(false)
@@ -29,7 +30,8 @@ EngineSettings::EngineSettings()
 
 void EngineSettings::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("VSync", VSync);
-  visitor.add_member("Fullscreen", Fullscreen);
+  visitor.add_member("WindowMode", WindowMode);
+  visitor.add_member("WindowSize", WindowSize);
   visitor.add_member("DynamicLighting", DynamicLighting);
   visitor.add_member("SubSampling", SubSampling);
   visitor.add_member("LightSubSampling", LightSubSampling);
