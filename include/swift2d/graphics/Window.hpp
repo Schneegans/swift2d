@@ -39,6 +39,12 @@ class SWIFT_DLL Window {
  // ----------------------------------------------------------- public interface
  public:
 
+  enum class Mode {
+    WINDOWED,
+    WINDOWED_FULLSCREEN,
+    FULLSCREEN
+  };
+
   // ---------------------------------------------------------------- properties
   Bool   Minimized;
   Bool   HideCursor;
@@ -46,7 +52,6 @@ class SWIFT_DLL Window {
 
   // ------------------------------------------------------------------- signals
   Signal<>                                    on_close;
-  Signal<math::vec2i>                         on_size_change;
 
   Signal<Key, int, int, int>                  on_key_press;
   Signal<unsigned>                            on_char;
@@ -74,9 +79,6 @@ class SWIFT_DLL Window {
   void set_active(bool active);
   void display();
 
-  void set_size(math::vec2i const& size);
-  math::vec2i const& get_size() const;
-
   bool key_pressed(Key key) const;
   math::vec2 get_cursor_pos() const;
 
@@ -98,15 +100,19 @@ class SWIFT_DLL Window {
   std::vector<std::vector<int>>   joystick_button_cache_;
 
   bool vsync_dirty_;
-  bool fullscreen_dirty_;
+  bool mode_dirty_;
+  bool size_dirty_;
   bool init_glew_;
   bool debug_;
 
-  math::vec2i size_;
+  math::vec2ui size_;
 
-  //ogl::Debug*           debugger_;
-  //ogl::Debug::LogSink*  log_sink_;
+  // oglplus::Debug*           debugger_;
+  // oglplus::Debug::LogSink*  log_sink_;
 };
+
+std::ostream& operator << (std::ostream& os, Window::Mode const& obj);
+std::istream& operator >> (std::istream& is, Window::Mode& obj);
 
 }
 

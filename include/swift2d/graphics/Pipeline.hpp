@@ -63,7 +63,7 @@ class SWIFT_DLL Pipeline {
  // ---------------------------------------------------------- private interface
  private:
     WindowPtr window_;
-    math::vec2i old_size_;
+    math::vec2ui old_size_;
 
     Compositor* compositor_;
 
