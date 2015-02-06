@@ -64,6 +64,7 @@ class SWIFT_DLL Pipeline {
  private:
     WindowPtr window_;
     math::vec2i old_size_;
+    unsigned size_update_wait_;
 
     Compositor* compositor_;
 

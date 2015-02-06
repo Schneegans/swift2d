@@ -33,7 +33,8 @@ Pipeline::Pipeline()
   , current_load_amount_(0)
   , needs_reload_(true)
   , frame_time_(0)
-  , total_time_(0) {
+  , total_time_(0)
+  , size_update_wait_(0) {
 
   SettingsWrapper::get().Settings->DynamicLighting.on_change().connect([this](int) {
     needs_reload_ = true;
@@ -55,10 +56,6 @@ Pipeline::Pipeline()
     needs_reload_ = true;
     return true;
   });
-  //SettingsWrapper::get().Settings->Fullscreen.on_change().connect([this](bool) {
-  //  needs_reload_ = true;
-  //  return true;
-  //});
 
   timer_.start();
 }
@@ -108,8 +105,13 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
     window_->update_context();
 
     if (window_->get_context().window_size != old_size_) {
-      old_size_ = window_->get_context().window_size;
-      needs_reload_ = true;
+      if (size_update_wait_ > 0) {
+        size_update_wait_ -= 1;
+      } else {
+        old_size_ = window_->get_context().window_size;
+        needs_reload_ = true;
+        size_update_wait_ = 10;
+      }
     }
 
     // update window size
@@ -118,9 +120,9 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
       window_->get_context().pipeline = this;
 
       if (window_->get_context().sub_sampling) {
-        window_->get_context().g_buffer_size = window_->get_context().window_size / 2;
+        window_->get_context().g_buffer_size = old_size_ / 2;
       } else {
-        window_->get_context().g_buffer_size = window_->get_context().window_size;
+        window_->get_context().g_buffer_size = old_size_;
       }
       Physics::get().create_gravity_map(window_->get_context());
 
