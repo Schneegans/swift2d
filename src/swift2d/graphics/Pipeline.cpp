@@ -80,11 +80,6 @@ Pipeline::~Pipeline() {
 
 void Pipeline::set_output_window(WindowPtr const& window) {
   window_ = window;
-
-  window_->on_size_change.connect([this](math::vec2i){
-    needs_reload_ = true;
-    return true;
-  });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -108,6 +103,11 @@ void Pipeline::draw(ConstSerializedScenePtr const& scene) {
 
   if (!window_->Minimized()) {
     SWIFT_PUSH_GL_RANGE("Frame");
+
+    if (window_->get_context().window_size != old_size_) {
+      old_size_ = window_->get_context().window_size;
+      needs_reload_ = true;
+    }
 
     // update window size
     if (needs_reload_) {

@@ -28,8 +28,11 @@ typedef SWIFT_DLL Property<math::uint32>   UInt32;
 typedef SWIFT_DLL Property<math::uint64>   UInt64;
 
 typedef SWIFT_DLL Property<math::vec3>     Vec3;
-typedef SWIFT_DLL Property<math::vec2i>    Vec2i;
+typedef SWIFT_DLL Property<math::vec3i>    Vec3i;
+typedef SWIFT_DLL Property<math::vec3ui>   Vec3ui;
 typedef SWIFT_DLL Property<math::vec2>     Vec2;
+typedef SWIFT_DLL Property<math::vec2i>    Vec2i;
+typedef SWIFT_DLL Property<math::vec2ui>   Vec2ui;
 typedef SWIFT_DLL Property<math::mat3>     Mat3;
 
 typedef SWIFT_DLL Property<bool>           Bool;

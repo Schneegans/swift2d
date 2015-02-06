@@ -33,20 +33,31 @@ Window::Window(bool debug)
                            static_cast<int>(
                            JoystickButtonId::JOYSTICK_BUTTON_NUM)))
   , vsync_dirty_(true)
-  , fullscreen_dirty_(false)
+  , mode_dirty_(false)
+  , size_dirty_(true)
   , init_glew_(true)
-  //, debugger_(nullptr)
-  //, log_sink_(nullptr)
+  // , debugger_(nullptr)
+  // , log_sink_(nullptr)
   , debug_(debug)
-  , size_(math::vec2i(1024, 768)) {
+  , size_(math::vec2ui(1024, 768)) {
 
   SettingsWrapper::get().Settings->VSync.on_change().connect([this](bool) {
     vsync_dirty_ = true;
     return true;
   });
 
-  SettingsWrapper::get().Settings->Fullscreen.on_change().connect([this](bool) {
-    fullscreen_dirty_ = true;
+  SettingsWrapper::get().Settings->WindowMode.on_change().connect([this](Mode) {
+    mode_dirty_ = true;
+    return true;
+  });
+
+  SettingsWrapper::get().Settings->WindowSize.on_change().connect([this](math::vec2ui const& val) {
+    if (val.x() > 0 && val.y() > 0) {
+      Minimized = false;
+    } else {
+      Minimized = true;
+    }
+    size_dirty_ = true;
     return true;
   });
 }
@@ -101,18 +112,6 @@ void Window::display() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Window::set_size(math::vec2i const& size) {
-  size_ = size;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-math::vec2i const& Window::get_size() const {
-  return size_;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 bool Window::key_pressed(Key key) const {
   if (!window_) {
     return false;
@@ -150,44 +149,40 @@ void Window::update_context() {
       int rev   = glfwGetWindowAttrib(window_, GLFW_CONTEXT_REVISION);
       LOG_MESSAGE << "Initialized OpenGL context " << major << "." << minor
                   << "." << rev << " successfully." << std::endl;
-
-      GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-      const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-      LOG_MESSAGE << "Refresh rate " <<  mode->refreshRate << " Hz" << std::endl;
     }
 
     glGetError();
 
     if (debug_) {
-      /*debugger_ = new ogl::Debug();
+      // debugger_ = new ogl::Debug();
 
-      log_sink_ = new ogl::Debug::LogSink([](ogl::Debug::CallbackData const& data) {
-        if (data.id != 131185 && data.id != 131204 && data.id != 131184 && data.id != 131076) {
-          switch (data.severity) {
-          case ogl::Debug::Severity::High:
-            LOG_ERROR << "[" << data.id << "] " << data.message << std::endl;
-            break;
-          case ogl::Debug::Severity::Medium:
-            LOG_WARNING << "[" << data.id << "] " << data.message << std::endl;
-            break;
-          case ogl::Debug::Severity::Low:
-            LOG_MESSAGE << "[" << data.id << "] " << data.message << std::endl;
-            break;
-          case ogl::Debug::Severity::Notification:
-            LOG_DEBUG << "[" << data.id << "] " << data.message << std::endl;
-            break;
-          default:
-            LOG_TRACE << "[" << data.id << "] " << data.message << std::endl;
-          }
-        }
-      });
+      // log_sink_ = new ogl::Debug::LogSink([](ogl::Debug::CallbackData const& data) {
+      //   if (data.id != 131185 && data.id != 131204 && data.id != 131184 && data.id != 131076) {
+      //     switch (data.severity) {
+      //     case ogl::Debug::Severity::High:
+      //       LOG_ERROR << "[" << data.id << "] " << data.message << std::endl;
+      //       break;
+      //     case ogl::Debug::Severity::Medium:
+      //       LOG_WARNING << "[" << data.id << "] " << data.message << std::endl;
+      //       break;
+      //     case ogl::Debug::Severity::Low:
+      //       LOG_MESSAGE << "[" << data.id << "] " << data.message << std::endl;
+      //       break;
+      //     case ogl::Debug::Severity::Notification:
+      //       LOG_DEBUG << "[" << data.id << "] " << data.message << std::endl;
+      //       break;
+      //     default:
+      //       LOG_TRACE << "[" << data.id << "] " << data.message << std::endl;
+      //     }
+      //   }
+      // });
 
-      debugger_->MessageControl(
-        ogl::Debug::Source::DontCare,
-        ogl::Debug::Type::DontCare,
-        ogl::Debug::Severity::Low,
-        true
-      );*/
+      // debugger_->MessageControl(
+      //   ogl::Debug::Source::DontCare,
+      //   ogl::Debug::Type::DontCare,
+      //   ogl::Debug::Severity::Low,
+      //   true
+      // );
     }
 
     ogl::Context::Disable(ogl::Capability::DepthTest);
@@ -197,18 +192,17 @@ void Window::update_context() {
     render_context_.ready = true;
   }
 
-  if (size_.x() > 0 && size_.y() > 0) {
-    Minimized = false;
-  } else {
-    Minimized = true;
+  if (size_dirty_) {
+    size_dirty_ = false;
+    size_ = SettingsWrapper::get().Settings->WindowSize();
   }
 
-  render_context_.window_size = size_;
-  render_context_.sub_sampling = SettingsWrapper::get().Settings->SubSampling();
-  render_context_.dynamic_lighting = SettingsWrapper::get().Settings->DynamicLighting();
-  render_context_.light_sub_sampling = SettingsWrapper::get().Settings->LightSubSampling();
-  render_context_.lens_flares = SettingsWrapper::get().Settings->LensFlares();
-  render_context_.heat_effect = SettingsWrapper::get().Settings->HeatEffect();
+  render_context_.window_size         = size_;
+  render_context_.sub_sampling        = SettingsWrapper::get().Settings->SubSampling();
+  render_context_.dynamic_lighting    = SettingsWrapper::get().Settings->DynamicLighting();
+  render_context_.light_sub_sampling  = SettingsWrapper::get().Settings->LightSubSampling();
+  render_context_.lens_flares         = SettingsWrapper::get().Settings->LensFlares();
+  render_context_.heat_effect         = SettingsWrapper::get().Settings->HeatEffect();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -217,17 +211,6 @@ void Window::open() {
 
   if (!window_) {
 
-    bool fullscreen = SettingsWrapper::get().Settings->Fullscreen();
-
-    if (fullscreen) {
-      auto desktop_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-      int desktop_height = desktop_mode->height;
-      int desktop_width = desktop_mode->width;
-      size_ = math::vec2i(desktop_width, desktop_height);
-    }
-
-    render_context_.window_size = size_;
-
     //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
@@ -235,9 +218,33 @@ void Window::open() {
       glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     }
 
-    window_ = glfwCreateWindow(
-      render_context_.window_size.x(), render_context_.window_size.y(),
-      Title().c_str(), fullscreen ? glfwGetPrimaryMonitor() : nullptr, nullptr);
+    auto desktop_mode  = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    int desktop_height = desktop_mode->height;
+    int desktop_width  = desktop_mode->width;
+
+    switch(SettingsWrapper::get().Settings->WindowMode()) {
+      case Mode::WINDOWED:
+        size_ = SettingsWrapper::get().Settings->WindowSize();
+        window_ = glfwCreateWindow(
+          size_.x(), size_.y(), Title().c_str(), nullptr, nullptr);
+        break;
+      case Mode::WINDOWED_FULLSCREEN:
+        size_ = math::vec2i(desktop_width, desktop_height);
+        glfwWindowHint(GLFW_RED_BITS, desktop_mode->redBits);
+        glfwWindowHint(GLFW_GREEN_BITS, desktop_mode->greenBits);
+        glfwWindowHint(GLFW_BLUE_BITS, desktop_mode->blueBits);
+        glfwWindowHint(GLFW_REFRESH_RATE, desktop_mode->refreshRate);
+        window_ = glfwCreateWindow(
+          size_.x(), size_.y(), Title().c_str(), glfwGetPrimaryMonitor(), nullptr);
+        break;
+      case Mode::FULLSCREEN:
+        size_ = math::vec2i(desktop_width, desktop_height);
+        window_ = glfwCreateWindow(
+          size_.x(), size_.y(), Title().c_str(), glfwGetPrimaryMonitor(), nullptr);
+        break;
+    }
+
+    render_context_.window_size = size_;
 
     WindowManager::get().glfw_windows[window_] = this;
 
@@ -246,9 +253,7 @@ void Window::open() {
     });
 
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
-      math::vec2i size(math::vec2i(width, height));
-      WindowManager::get().glfw_windows[w]->size_ = size;
-      WindowManager::get().glfw_windows[w]->on_size_change.emit(size);
+      SettingsWrapper::get().Settings->WindowSize = math::vec2ui(width, height);
     });
 
     glfwSetKeyCallback(window_, [](GLFWwindow* w, int key, int scancode, int action, int mods) {
@@ -332,6 +337,22 @@ void Window::update_joysticks() {
       }
     }
   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator << (std::ostream& os, Window::Mode const& obj) {
+  os << static_cast<int>(obj);
+  return os;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::istream& operator >> (std::istream& is, Window::Mode& obj) {
+  int tmp(0);
+  is >> tmp;
+  obj = static_cast<Window::Mode>(tmp);
+  return is;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
