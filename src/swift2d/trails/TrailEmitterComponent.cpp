@@ -48,6 +48,11 @@ TrailEmitterComponent::TrailEmitterComponent()
     }
     return true;
   });
+
+  TrailSystemLabel.on_change().connect([this](std::string const&) {
+    this->TrailSystem = nullptr;
+    return true;
+  });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,6 +76,10 @@ void TrailEmitterComponent::update(double time) {
 
   TransformableComponent::update(time);
 
+  if (!TrailSystem()) {
+    TrailSystem = get_user()->get_component<TrailSystemComponent>(TrailSystemLabel());
+  }
+
   if (first_frame_) {
     prev_1_position_   = (WorldTransform() * math::vec3(0.0, 0.0, 1)).xy();
     prev_4_position_ = prev_1_position_;
@@ -90,19 +99,15 @@ void TrailEmitterComponent::update(double time) {
   auto l1(p1_to_p2.Length());
   auto l2(p1_to_p0.Length());
 
-  bool spawned(false);
-
   if (l2 > MinSpawnGap() && l1 > 0.0) {
     float angle = std::abs(math::dot(p1_to_p0 / l2, p1_to_p2 / l1));
     if (angle < 0.9999) {
       spawn_segment();
-      spawned = true;
     }
   }
 
-  if ((!spawned) && (l2 > MaxSpawnGap())) {
+  if (time_since_last_spawn_ > 0.f && (l2 > MaxSpawnGap())) {
     spawn_segment();
-    spawned = true;
   }
 }
 
@@ -110,6 +115,7 @@ void TrailEmitterComponent::update(double time) {
 
 void TrailEmitterComponent::accept(SavableObjectVisitor& visitor) {
   TransformableComponent::accept(visitor);
+  visitor.add_member("TrailSystemLabel",  TrailSystemLabel);
   visitor.add_member("MinSpawnGap",  MinSpawnGap);
   visitor.add_member("MaxSpawnGap",  MaxSpawnGap);
   visitor.add_member("Life",         Life);

@@ -40,6 +40,17 @@ TrailSystemComponent::TrailSystemComponent()
 void TrailSystemComponent::update(double time) {
   Component::update(time);
   DepthComponent::update(time, get_user());
+
+  std::vector<TrailSegment> end_segments;
+
+  for (auto const& emitter: emitters_) {
+    if (!emitter->Paused()) {
+      end_segments.push_back(emitter->make_end_segment());
+    }
+  }
+
+  trail_system_->spawn(end_segments, new_segments_);
+  new_segments_.clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,29 +77,18 @@ void TrailSystemComponent::serialize(SerializedScenePtr& scene) const {
 
   Serialized s;
 
-  s.Depth = WorldDepth();
-  s.StartWidth = StartWidth();
-  s.EndWidth = EndWidth();
-  s.StartGlow = StartGlow();
-  s.EndGlow = EndGlow();
-  s.StartColor = StartColor().vec4();
-  s.EndColor = EndColor().vec4();
-  s.Texture = Texture();
-  s.TextureRepeat = TextureRepeat();
-  s.UseGlobalTexCoords = UseGlobalTexCoords();
-  s.BlendAdd = BlendAdd();
-  s.System = trail_system_;
-
-  std::vector<TrailSegment> end_segments(emitters_.size());
-
-  for (auto const& emitter: emitters_) {
-    if (!emitter->Paused()) {
-      end_segments.push_back(emitter->make_end_segment());
-    }
-  }
-
-  trail_system_->spawn(end_segments, new_segments_);
-  new_segments_.clear();
+  s.Depth               = WorldDepth();
+  s.StartWidth          = StartWidth();
+  s.EndWidth            = EndWidth();
+  s.StartGlow           = StartGlow();
+  s.EndGlow             = EndGlow();
+  s.StartColor          = StartColor().vec4();
+  s.EndColor            = EndColor().vec4();
+  s.Texture             = Texture();
+  s.TextureRepeat       = TextureRepeat();
+  s.UseGlobalTexCoords  = UseGlobalTexCoords();
+  s.BlendAdd            = BlendAdd();
+  s.System              = trail_system_;
 
   scene->renderers().trail_systems.add(std::move(s));
 }

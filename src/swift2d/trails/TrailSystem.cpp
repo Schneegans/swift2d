@@ -225,8 +225,11 @@ void TrailSystem::draw_trails(
     math::vec2 start_age(segment.StartAge / segment.Life, segment.StartAge / segment.Life);
     trail_point.life = math::vec2(start_age.x(), segment.Life * 1000.0);
 
+
     if (segment.Prev1Position != segment.Position) {
-      auto next_dir(segment.Prev1Position - segment.Prev2Position);
+
+      // create last segment
+      auto next_dir(segment.Position - segment.Prev1Position);
 
       trail_point.pos = segment.Position + next_dir;
 
@@ -248,6 +251,7 @@ void TrailSystem::draw_trails(
 
       segments.push_back(trail_point);
 
+      // create last but one segment
       if (system.UseGlobalTexCoords) {
         trail_point.prev_u_texcoords = 1.0/segment.Life *
                                        math::vec2(total_time -
@@ -267,10 +271,12 @@ void TrailSystem::draw_trails(
       trail_point.prev_3_pos = segment.Prev3Position;
 
       segments.push_back(trail_point);
-    } else {
-      auto next_dir(segment.Prev2Position - segment.Prev3Position);
 
-      trail_point.pos = segment.Position + next_dir;
+    } else {
+      // create only last segment
+      auto next_dir(segment.Prev1Position - segment.Prev2Position);
+
+      trail_point.pos = segment.Prev1Position + next_dir;
 
       if (system.UseGlobalTexCoords) {
         trail_point.prev_u_texcoords = 1.0/segment.Life *
@@ -284,7 +290,7 @@ void TrailSystem::draw_trails(
         trail_point.prev_u_texcoords += start_age;
       }
 
-      trail_point.prev_1_pos = segment.Position;
+      trail_point.prev_1_pos = segment.Prev1Position;
       trail_point.prev_2_pos = segment.Prev2Position;
       trail_point.prev_3_pos = segment.Prev3Position;
 

@@ -51,6 +51,7 @@ class SWIFT_DLL TrailEmitterComponent : public TransformableComponent {
 
   // ---------------------------------------------------------------- properties
   TrailSystemComponentProperty TrailSystem;
+  String                       TrailSystemLabel;
   Float MaxSpawnGap;
   Float MinSpawnGap;
 
