@@ -46,9 +46,9 @@ GravityMap::GravityMap(RenderContext const& ctx)
           vec2 dir = (gravity_sources[i].xy - pos);
           dir.x = dir.x * screen_size.x/screen_size.y;
           float dist = dir.x*dir.x + dir.y*dir.y;
-          dir = dir / dist / dist * gravity_sources[i].z * 0.001;
+          dir = dir / dist / dist * gravity_sources[i].z;
 
-          fragColor += vec3(dir, dist < gravity_sources[i].w);
+          fragColor += vec3(dir*0.0001, dist < gravity_sources[i].w);
         }
       }
   )")
