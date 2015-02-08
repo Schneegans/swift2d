@@ -29,7 +29,7 @@ class ParticleUpdateShader : public Shader,
   // ------------------------------------------------------------------ uniforms
   oglplus::Lazy<oglplus::Uniform<math::vec2>>   time;
   oglplus::Lazy<oglplus::Uniform<int>>          noise_tex;
-  oglplus::Lazy<oglplus::Uniform<math::vec2i>>  spawn_count_it;
+  oglplus::Lazy<oglplus::Uniform<math::vec2i>>  spawn_count_it_collision_mode;
   oglplus::Lazy<oglplus::Uniform<math::vec3>>   position;
   oglplus::Lazy<oglplus::Uniform<math::vec2>>   emitter_velocity;
   oglplus::Lazy<oglplus::Uniform<math::vec3>>   life_pos_var;

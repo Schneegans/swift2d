@@ -111,8 +111,8 @@ class SWIFT_DLL Window {
   // oglplus::Debug::LogSink*  log_sink_;
 };
 
-std::ostream& operator << (std::ostream& os, Window::Mode const& obj);
-std::istream& operator >> (std::istream& is, Window::Mode& obj);
+std::ostream& operator<<(std::ostream& os, Window::Mode const& obj);
+std::istream& operator>>(std::istream& is, Window::Mode& obj);
 
 }
 

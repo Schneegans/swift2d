@@ -36,8 +36,14 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
-
  public:
+
+  enum class CollisionModeEnum {
+    NO_COLLISION,
+    REFLECT_ON_COLLISION,
+    DIE_ON_COLLISION
+  };
+
   struct Serialized : public SerializedComponent {
     float Mass;
     float LinearDamping;
@@ -59,6 +65,8 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
     float RotationVariance;
 
     float PositionVariance;
+
+    CollisionModeEnum CollisionMode;
 
     ParticleSystemPtr System;
   };
@@ -87,6 +95,8 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
 
   Float PositionVariance;
 
+  Property<CollisionModeEnum> CollisionMode;
+
   // ----------------------------------------------------- contruction interface
   ParticleSystemComponent();
 
@@ -104,6 +114,9 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
  private:
   ParticleSystemPtr particle_system_;
 };
+
+std::ostream& operator<<(std::ostream& os, ParticleSystemComponent::CollisionModeEnum const& obj);
+std::istream& operator>>(std::istream& is, ParticleSystemComponent::CollisionModeEnum& obj);
 
 // -----------------------------------------------------------------------------
 

@@ -31,6 +31,7 @@ ParticleSystemComponent::ParticleSystemComponent()
   , Rotation                (0.0f)
   , RotationVariance        (0.0f)
   , PositionVariance        (0.0f)
+  , CollisionMode           (CollisionModeEnum::NO_COLLISION)
   , particle_system_(ParticleSystem::create(MaxCount())) {
 
   MaxCount.on_change().connect([&](int val){
@@ -90,6 +91,8 @@ void ParticleSystemComponent::serialize(ParticleSystemComponent::Serialized& ser
 
   serialized.PositionVariance = PositionVariance();
 
+  serialized.CollisionMode = CollisionMode();
+
   serialized.System = particle_system_;
 }
 
@@ -113,6 +116,23 @@ void ParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("AngularVelocity",           AngularVelocity);
   visitor.add_member("AngularVelocityVariance",   AngularVelocityVariance);
   visitor.add_member("PositionVariance",          PositionVariance);
+  visitor.add_member("CollisionMode",             CollisionMode);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<(std::ostream& os, ParticleSystemComponent::CollisionModeEnum const& obj) {
+  os << static_cast<int>(obj);
+  return os;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+std::istream& operator>>(std::istream& is, ParticleSystemComponent::CollisionModeEnum& obj) {
+  int tmp(0);
+  is >> tmp;
+  obj = static_cast<ParticleSystemComponent::CollisionModeEnum>(tmp);
+  return is;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

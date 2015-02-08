@@ -179,7 +179,7 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
 
     while (index < spawn_positions.size()) {
       std::size_t count(std::min(50, (int)spawn_positions.size()-index));
-      shader.spawn_count_it.Set(math::vec2i(count, index));
+      shader.spawn_count_it_collision_mode.Set(math::vec2i(count, index));
       shader.position.Set(count, (const math::vec3*)&spawn_positions[index]);
       shader.emitter_velocity.Set(count, (const math::vec2*)&spawn_velocities[index]);
       ogl::Context::DrawArrays(ogl::PrimitiveType::Points, 0, 1);
@@ -187,7 +187,7 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
     }
   }
 
-  shader.spawn_count_it.Set(math::vec2i(-1, 0));
+  shader.spawn_count_it_collision_mode.Set(math::vec2i(-1, static_cast<int>(system.CollisionMode)));
 
   // update existing particles -----------------------------------------------
   if (!first_draw) {

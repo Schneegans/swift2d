@@ -55,7 +55,7 @@ ParticleUpdateShader::ParticleUpdateShader()
 
       // spawn uniforms
       uniform sampler2D noise_tex;
-      uniform ivec2     spawn_count_it;
+      uniform ivec2     spawn_count_it_collision_mode; // x: spawn count y: call count / collision mode
       uniform vec3      position[50];       // xy: pos        z: rot
       uniform vec2      emitter_velocity[50];
       uniform vec3      life_pos_var;       // x: life        y: life variance [sec]  z: position variance
@@ -78,15 +78,15 @@ ParticleUpdateShader::ParticleUpdateShader()
 
       void main(void) {
 
-        if (spawn_count_it.x >= 0) {
+        if (spawn_count_it_collision_mode.x >= 0) {
 
           // spawn new particles -----------------------------------------------
 
-          for (int i=0; i<spawn_count_it.x; ++i) {
+          for (int i=0; i<spawn_count_it_collision_mode.x; ++i) {
 
-            float delta = 1.0*i/spawn_count_it.x;
-            vec3 random1 = get_random(vec2((delta+spawn_count_it.y+1) * time.y, (delta+spawn_count_it.y+1) * time.x));
-            vec3 random2 = get_random(vec2((delta+spawn_count_it.y+2) * time.y, (delta+spawn_count_it.y+2) * time.x));
+            float delta = 1.0*i/spawn_count_it_collision_mode.x;
+            vec3 random1 = get_random(vec2((delta+spawn_count_it_collision_mode.y+1) * time.y, (delta+spawn_count_it_collision_mode.y+1) * time.x));
+            vec3 random2 = get_random(vec2((delta+spawn_count_it_collision_mode.y+2) * time.y, (delta+spawn_count_it_collision_mode.y+2) * time.x));
 
             float l = max(0, life_pos_var.x  + random1.x * life_pos_var.y);
             float d = position[i].z + direction_rotation.x + random1.y * direction_rotation.y;
@@ -115,12 +115,13 @@ ParticleUpdateShader::ParticleUpdateShader()
             if (texcoords.x > -clip_dist && texcoords.y > -clip_dist && texcoords.x < 1+clip_dist && texcoords.y < 1+clip_dist) {
               vec3 gravity_collision = texture(gravity_map, texcoords).rgb;
               vec2 gravity = (gravity_collision.xy - 0.5) * dynamics.x;
-              float collides = gravity_collision.z;
+              float collides = gravity_collision.z * (spawn_count_it_collision_mode.y == 0 ? 0 : 1);
 
               vec2 velocity = varying_velocity[0] * (1-collides) + collides*reflect(varying_velocity[0], normalize(gravity_collision.xy - 0.5));
+              float die_on_collision = collides * (spawn_count_it_collision_mode.y == 2 ? 1 : 0);
 
               out_position = varying_position[0] + velocity * (collides+1) * time.x / 1000;
-              out_life     = vec2(varying_life[0].x + time.x/varying_life[0].y, varying_life[0].y);
+              out_life     = vec2(varying_life[0].x + time.x/varying_life[0].y + die_on_collision, varying_life[0].y);
               out_velocity = (velocity + gravity*time.x*0.1) - 0.01 * velocity * dynamics.y * time.x;
               out_rotation = vec2(varying_rotation[0].x + varying_rotation[0].y * time.x / 1000, varying_rotation[0].y - 0.01 * varying_rotation[0].y * dynamics.z * time.x);
 
@@ -134,7 +135,7 @@ ParticleUpdateShader::ParticleUpdateShader()
   )
   , time(get_uniform<math::vec2>("time"))
   , noise_tex(get_uniform<int>("noise_tex"))
-  , spawn_count_it(get_uniform<math::vec2i>("spawn_count_it"))
+  , spawn_count_it_collision_mode(get_uniform<math::vec2i>("spawn_count_it_collision_mode"))
   , position(get_uniform<math::vec3>("position"))
   , emitter_velocity(get_uniform<math::vec2>("emitter_velocity"))
   , life_pos_var(get_uniform<math::vec3>("life_pos_var"))

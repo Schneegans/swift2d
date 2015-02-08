@@ -342,14 +342,14 @@ void Window::update_joysticks() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator << (std::ostream& os, Window::Mode const& obj) {
+std::ostream& operator<<(std::ostream& os, Window::Mode const& obj) {
   os << static_cast<int>(obj);
   return os;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::istream& operator >> (std::istream& is, Window::Mode& obj) {
+std::istream& operator>>(std::istream& is, Window::Mode& obj) {
   int tmp(0);
   is >> tmp;
   obj = static_cast<Window::Mode>(tmp);
