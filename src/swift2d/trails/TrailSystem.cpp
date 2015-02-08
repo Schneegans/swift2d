@@ -58,7 +58,7 @@ void TrailSystem::spawn(
   std::unique_lock<std::mutex> lock(mutex_);
 
   new_segments_.insert(new_segments_.begin(), new_segments.begin(), new_segments.end());
-  end_segments_ = end_segments;
+  end_segments_ping_ = end_segments;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -173,6 +173,7 @@ void TrailSystem::update_trails(
       }
 
       new_segments_.clear();
+      end_segments_pong_ = end_segments_ping_;
     }
 
     int index(0);
@@ -216,85 +217,87 @@ void TrailSystem::draw_trails(
   std::vector<GPUTrailSegment> segments;
   double total_time(ctx.pipeline->get_total_time());
 
-  std::unique_lock<std::mutex> lock(mutex_);
+  {
+    std::unique_lock<std::mutex> lock(mutex_);
 
-  for (auto const& segment : end_segments_) {
+    for (auto const& segment : end_segments_pong_) {
 
-    GPUTrailSegment trail_point;
+      GPUTrailSegment trail_point;
 
-    math::vec2 start_age(segment.StartAge / segment.Life, segment.StartAge / segment.Life);
-    trail_point.life = math::vec2(start_age.x(), segment.Life * 1000.0);
+      math::vec2 start_age(segment.StartAge / segment.Life, segment.StartAge / segment.Life);
+      trail_point.life = math::vec2(start_age.x(), segment.Life * 1000.0);
 
 
-    if (segment.Prev1Position != segment.Position) {
+      if (segment.Prev1Position != segment.Position) {
 
-      // create last segment
-      auto next_dir(segment.Position - segment.Prev1Position);
+        // create last segment
+        auto next_dir(segment.Position - segment.Prev1Position);
 
-      trail_point.pos = segment.Position + next_dir;
+        trail_point.pos = segment.Position + next_dir;
 
-      if (system.UseGlobalTexCoords) {
-        trail_point.prev_u_texcoords = 1.0/segment.Life *
-                                       math::vec2(total_time,
-                                                  total_time -
-                                                  segment.TimeSinceLastSpawn);
-        trail_point.prev_u_texcoords -= start_age;
+        if (system.UseGlobalTexCoords) {
+          trail_point.prev_u_texcoords = 1.0/segment.Life *
+                                         math::vec2(total_time,
+                                                    total_time -
+                                                    segment.TimeSinceLastSpawn);
+          trail_point.prev_u_texcoords -= start_age;
+        } else {
+          trail_point.prev_u_texcoords = 1.0/segment.Life *
+                                         math::vec2(0.0, segment.TimeSinceLastSpawn);
+          trail_point.prev_u_texcoords += start_age;
+        }
+
+        trail_point.prev_1_pos = segment.Position;
+        trail_point.prev_2_pos = segment.Prev1Position;
+        trail_point.prev_3_pos = segment.Prev2Position;
+
+        segments.push_back(trail_point);
+
+        // create last but one segment
+        if (system.UseGlobalTexCoords) {
+          trail_point.prev_u_texcoords = 1.0/segment.Life *
+                                         math::vec2(total_time -
+                                                    segment.TimeSinceLastSpawn,
+                                                    total_time -
+                                                    segment.TimeSincePrev1Spawn);
+          trail_point.prev_u_texcoords -= start_age;
+        } else {
+          trail_point.prev_u_texcoords = 1.0/segment.Life *
+                                         math::vec2(segment.TimeSinceLastSpawn,
+                                                    segment.TimeSincePrev1Spawn);
+          trail_point.prev_u_texcoords += start_age;
+        }
+        trail_point.pos = segment.Position;
+        trail_point.prev_1_pos = segment.Prev1Position;
+        trail_point.prev_2_pos = segment.Prev2Position;
+        trail_point.prev_3_pos = segment.Prev3Position;
+
+        segments.push_back(trail_point);
+
       } else {
-        trail_point.prev_u_texcoords = 1.0/segment.Life *
-                                       math::vec2(0.0, segment.TimeSinceLastSpawn);
-        trail_point.prev_u_texcoords += start_age;
+        // create only last segment
+        auto next_dir(segment.Prev1Position - segment.Prev2Position);
+
+        trail_point.pos = segment.Prev1Position + next_dir;
+
+        if (system.UseGlobalTexCoords) {
+          trail_point.prev_u_texcoords = 1.0/segment.Life *
+                                         math::vec2(total_time,
+                                                    total_time -
+                                                    segment.TimeSincePrev1Spawn);
+          trail_point.prev_u_texcoords -= start_age;
+        } else {
+          trail_point.prev_u_texcoords = 1.0/segment.Life *
+                                         math::vec2(0.0, segment.TimeSincePrev1Spawn);
+          trail_point.prev_u_texcoords += start_age;
+        }
+
+        trail_point.prev_1_pos = segment.Prev1Position;
+        trail_point.prev_2_pos = segment.Prev2Position;
+        trail_point.prev_3_pos = segment.Prev3Position;
+
+        segments.push_back(trail_point);
       }
-
-      trail_point.prev_1_pos = segment.Position;
-      trail_point.prev_2_pos = segment.Prev1Position;
-      trail_point.prev_3_pos = segment.Prev2Position;
-
-      segments.push_back(trail_point);
-
-      // create last but one segment
-      if (system.UseGlobalTexCoords) {
-        trail_point.prev_u_texcoords = 1.0/segment.Life *
-                                       math::vec2(total_time -
-                                                  segment.TimeSinceLastSpawn,
-                                                  total_time -
-                                                  segment.TimeSincePrev1Spawn);
-        trail_point.prev_u_texcoords -= start_age;
-      } else {
-        trail_point.prev_u_texcoords = 1.0/segment.Life *
-                                       math::vec2(segment.TimeSinceLastSpawn,
-                                                  segment.TimeSincePrev1Spawn);
-        trail_point.prev_u_texcoords += start_age;
-      }
-      trail_point.pos = segment.Position;
-      trail_point.prev_1_pos = segment.Prev1Position;
-      trail_point.prev_2_pos = segment.Prev2Position;
-      trail_point.prev_3_pos = segment.Prev3Position;
-
-      segments.push_back(trail_point);
-
-    } else {
-      // create only last segment
-      auto next_dir(segment.Prev1Position - segment.Prev2Position);
-
-      trail_point.pos = segment.Prev1Position + next_dir;
-
-      if (system.UseGlobalTexCoords) {
-        trail_point.prev_u_texcoords = 1.0/segment.Life *
-                                       math::vec2(total_time,
-                                                  total_time -
-                                                  segment.TimeSincePrev1Spawn);
-        trail_point.prev_u_texcoords -= start_age;
-      } else {
-        trail_point.prev_u_texcoords = 1.0/segment.Life *
-                                       math::vec2(0.0, segment.TimeSincePrev1Spawn);
-        trail_point.prev_u_texcoords += start_age;
-      }
-
-      trail_point.prev_1_pos = segment.Prev1Position;
-      trail_point.prev_2_pos = segment.Prev2Position;
-      trail_point.prev_3_pos = segment.Prev3Position;
-
-      segments.push_back(trail_point);
     }
   }
 

@@ -78,7 +78,8 @@ class TrailSystem {
   int    update_max_trail_points_;
 
   std::vector<TrailSegment> new_segments_;
-  std::vector<TrailSegment> end_segments_;
+  std::vector<TrailSegment> end_segments_ping_;
+  std::vector<TrailSegment> end_segments_pong_;
   mutable std::mutex mutex_;
 };
 
