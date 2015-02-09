@@ -32,8 +32,11 @@ class SWIFT_DLL MoveBehavior : public Component {
  public:
 
   // ---------------------------------------------------------------- properties
-  Float LinearSpeed;
+  Vec2 LinearSpeed;
+  Float LinearDamping;
+
   Float AngularSpeed;
+  Float AngularDamping;
 
   // ----------------------------------------------------- constrution interface
   MoveBehavior();

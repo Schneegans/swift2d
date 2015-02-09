@@ -32,6 +32,7 @@ class SWIFT_DLL LifeComponent : public Component {
  public:
 
   Signal<math::uint64> on_killed;
+  Signal<float> on_life_change;
 
   // ---------------------------------------------------------------- properties
   Float Life;

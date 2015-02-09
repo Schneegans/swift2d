@@ -36,7 +36,7 @@ void AnimatedSpriteComponent::serialize(SerializedScenePtr& scene) const {
   s.Depth       = WorldDepth();
   s.Time        = Time();
   s.UseRenderThreadTime = UseRenderThreadTime();
-  s.Material    = Material() ? Material() : CustomMaterial();
+  s.Material    = CustomMaterial() ? CustomMaterial() : Material();
   scene->renderers().animated_sprites.add(std::move(s));
 }
 

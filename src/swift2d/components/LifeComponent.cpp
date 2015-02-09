@@ -25,6 +25,7 @@ LifeComponent::LifeComponent()
 void LifeComponent::increase(float amount) {
   if (!Invulnerable()) {
     Life = std::min(Life() + amount, MaxLife());
+    on_life_change.emit(amount);
 
     if (dead_ && Life() > 0.f) {
       dead_ = false;
@@ -37,6 +38,7 @@ void LifeComponent::increase(float amount) {
 void LifeComponent::decrease(float amount) {
   if (!Invulnerable()) {
     Life = std::max(Life() - amount, 0.f);
+    on_life_change.emit(-amount);
   }
 }
 
@@ -45,6 +47,7 @@ void LifeComponent::decrease(float amount) {
 void LifeComponent::decrease(float amount, math::uint64 source) {
   if (!Invulnerable()) {
     Life = std::max(Life() - amount, 0.f);
+    on_life_change.emit(-amount);
     damage_source_ = source;
     reset_time_ = DamageSourceResetTime();
   }

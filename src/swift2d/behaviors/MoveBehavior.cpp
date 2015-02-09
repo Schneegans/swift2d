@@ -15,16 +15,21 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 MoveBehavior::MoveBehavior()
-  : LinearSpeed(0)
-  , AngularSpeed(0) {}
+  : LinearSpeed(math::vec2(1, 0))
+  , LinearDamping(0)
+  , AngularSpeed(0)
+  , AngularDamping(0) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void MoveBehavior::update(double time) {
   auto user_transform(get_user()->Transform.get());
   math::rotate(user_transform, AngularSpeed.get() * time);
-  math::translate(user_transform, LinearSpeed.get() * time, 0);
+  math::translate(user_transform, LinearSpeed.get() * time);
   get_user()->Transform.set(user_transform);
+
+  LinearSpeed = LinearSpeed() - LinearSpeed()*time*LinearDamping();
+  AngularSpeed = AngularSpeed() - AngularSpeed()*time*AngularDamping();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,7 +37,9 @@ void MoveBehavior::update(double time) {
 void MoveBehavior::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
   visitor.add_member("LinearSpeed", LinearSpeed);
+  visitor.add_member("LinearDamping", LinearDamping);
   visitor.add_member("AngularSpeed", AngularSpeed);
+  visitor.add_member("AngularDamping", AngularDamping);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
