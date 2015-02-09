@@ -32,11 +32,12 @@ class SWIFT_DLL LifeComponent : public Component {
  public:
 
   Signal<math::uint64> on_killed;
-  Signal<float> on_life_change;
+  Signal<float, math::vec2> on_life_change;
 
   // ---------------------------------------------------------------- properties
   Float Life;
   Float MaxLife;
+  Float AccumulationDelay;
 
   Float DamageSourceResetTime;
 
@@ -64,10 +65,10 @@ class SWIFT_DLL LifeComponent : public Component {
   virtual std::string get_type_name() const {  return get_type_name_static(); }
   static  std::string get_type_name_static() { return "LifeComponent"; }
 
-  void increase(float amount);
+  void increase(float amount, math::vec2 const& direction = math::vec2());
 
-  void decrease(float amount);
-  void decrease(float amount, math::uint64 source);
+  void decrease(float amount, math::vec2 const& direction = math::vec2());
+  void decrease(float amount, math::uint64 source, math::vec2 const& direction = math::vec2());
 
   void reset();
 
@@ -82,6 +83,11 @@ class SWIFT_DLL LifeComponent : public Component {
   math::uint64 damage_source_;
   float        reset_time_;
   bool         dead_;
+
+  float       accumulation_time_;
+  float       accumulated_damage_;
+  float       accumulated_abs_damage_;
+  math::vec2  accumulated_direction_;
 };
 
 }
