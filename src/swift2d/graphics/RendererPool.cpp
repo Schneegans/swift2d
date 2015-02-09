@@ -21,6 +21,7 @@ RendererPool::RendererPool()
       &fullscreen_sprites,
       &animated_sprites,
       &sprite_particle_systems,
+      &number_particle_systems,
       &point_particle_systems,
       &trail_systems
     })

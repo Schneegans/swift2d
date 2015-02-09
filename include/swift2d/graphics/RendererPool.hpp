@@ -18,6 +18,7 @@
 #include <swift2d/components/HeatSpriteComponent.hpp>
 
 #include <swift2d/particles/SpriteParticleSystemComponent.hpp>
+#include <swift2d/particles/NumberParticleSystemComponent.hpp>
 #include <swift2d/particles/PointParticleSystemComponent.hpp>
 #include <swift2d/particles/HeatParticleSystemComponent.hpp>
 #include <swift2d/particles/LightParticleSystemComponent.hpp>
@@ -47,6 +48,7 @@ class SWIFT_DLL RendererPool {
   AnimatedSpriteComponent::       Renderer animated_sprites;
 
   SpriteParticleSystemComponent:: Renderer sprite_particle_systems;
+  NumberParticleSystemComponent:: Renderer number_particle_systems;
   PointParticleSystemComponent::  Renderer point_particle_systems;
 
   TrailSystemComponent::          Renderer trail_systems;

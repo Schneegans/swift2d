@@ -30,6 +30,7 @@ ParticleSystemComponent::ParticleSystemComponent()
   , DirectionVariance       (0.0f)
   , Rotation                (0.0f)
   , RotationVariance        (0.0f)
+  , RotateToSpawnDirection  (1.0f)
   , PositionVariance        (0.0f)
   , CollisionMode           (CollisionModeEnum::NO_COLLISION)
   , particle_system_(ParticleSystem::create(MaxCount())) {
@@ -89,6 +90,7 @@ void ParticleSystemComponent::serialize(ParticleSystemComponent::Serialized& ser
   serialized.Rotation = Rotation();
   serialized.RotationVariance = RotationVariance();
 
+  serialized.RotateToSpawnDirection = RotateToSpawnDirection();
   serialized.PositionVariance = PositionVariance();
 
   serialized.CollisionMode = CollisionMode();
@@ -115,6 +117,7 @@ void ParticleSystemComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("VelocityVariance",          VelocityVariance);
   visitor.add_member("AngularVelocity",           AngularVelocity);
   visitor.add_member("AngularVelocityVariance",   AngularVelocityVariance);
+  visitor.add_member("RotateToSpawnDirection",    RotateToSpawnDirection);
   visitor.add_member("PositionVariance",          PositionVariance);
   visitor.add_member("CollisionMode",             CollisionMode);
 }

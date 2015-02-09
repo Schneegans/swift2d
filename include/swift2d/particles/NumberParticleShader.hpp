@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_PARTICLE_UPDATE_SHADER_HPP
-#define SWIFT2D_PARTICLE_UPDATE_SHADER_HPP
+#ifndef SWIFT2D_NUMBER_PARTICLE_SHADER_HPP
+#define SWIFT2D_NUMBER_PARTICLE_SHADER_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Shader.hpp>
@@ -19,38 +19,38 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class ParticleUpdateShader : public Shader,
-                             public Singleton<ParticleUpdateShader> {
+class NumberParticleShader : public Shader,
+                             public Singleton<NumberParticleShader> {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ------------------------------------------------------------------ uniforms
-  oglplus::Lazy<oglplus::Uniform<math::vec2>>   time;
-  oglplus::Lazy<oglplus::Uniform<int>>          noise_tex;
-  oglplus::Lazy<oglplus::Uniform<math::vec2i>>  spawn_count_it_collision_mode;
-  oglplus::Lazy<oglplus::Uniform<math::vec3>>   position;
-  oglplus::Lazy<oglplus::Uniform<math::vec2>>   emitter_velocity;
-  oglplus::Lazy<oglplus::Uniform<math::vec4>>   life_pos_var_rotate_to_spawn_dir;
-  oglplus::Lazy<oglplus::Uniform<math::vec4>>   lin_ang_velocity;
-  oglplus::Lazy<oglplus::Uniform<math::vec4>>   direction_rotation;
-  oglplus::Lazy<oglplus::Uniform<int>>          gravity_map;
-  oglplus::Lazy<oglplus::Uniform<math::mat3>>   projection;
-  oglplus::Lazy<oglplus::Uniform<math::vec3>>   dynamics;
+  oglplus::Lazy<oglplus::Uniform<math::mat3>>  projection;
+  oglplus::Lazy<oglplus::Uniform<int>>         font;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>>  scale;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  p_start_color;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  p_mid_color;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  p_end_color;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  n_start_color;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  n_mid_color;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  n_end_color;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  glow_mid_life;
+  oglplus::Lazy<oglplus::Uniform<math::vec3>>  burn;
 
-  friend class Singleton<ParticleUpdateShader>;
+  friend class Singleton<NumberParticleShader>;
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   // this class is a Singleton --- private c'tor and d'tor
-  ParticleUpdateShader();
-  ~ParticleUpdateShader() {};
+  NumberParticleShader();
+  ~NumberParticleShader() {};
 };
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif // SWIFT2D_PARTICLE_UPDATE_SHADER_HPP
+#endif // SWIFT2D_NUMBER_PARTICLE_SHADER_HPP

@@ -64,6 +64,7 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
     float Rotation;
     float RotationVariance;
 
+    float RotateToSpawnDirection;
     float PositionVariance;
 
     CollisionModeEnum CollisionMode;
@@ -93,6 +94,7 @@ class SWIFT_DLL ParticleSystemComponent : public Component,
   Float Rotation;
   Float RotationVariance;
 
+  Float RotateToSpawnDirection;
   Float PositionVariance;
 
   Property<CollisionModeEnum> CollisionMode;

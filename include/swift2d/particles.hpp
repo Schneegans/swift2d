@@ -16,5 +16,6 @@
 #include <swift2d/particles/PointParticleSystemComponent.hpp>
 #include <swift2d/particles/LightParticleSystemComponent.hpp>
 #include <swift2d/particles/HeatParticleSystemComponent.hpp>
+#include <swift2d/particles/NumberParticleSystemComponent.hpp>
 
 #endif  // SWIFT2D_INCLUDE_PARTICLES_HPP

@@ -86,6 +86,7 @@ namespace {
       Object::init<Sound>();
       Object::init<SpriteComponent>();
       Object::init<SpriteParticleSystemComponent>();
+      Object::init<NumberParticleSystemComponent>();
       Object::init<StaticBodyComponent>();
       Object::init<Texture3D>();
       Object::init<Texture::Layer>();
