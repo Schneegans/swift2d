@@ -104,7 +104,7 @@ void LifeComponent::update(double time) {
   if (accumulation_time_ > 0.f) {
     accumulation_time_ -= time;
 
-    if (accumulation_time_ <= 0.f) {
+    if (accumulation_time_ <= 0.f || Life() <= 0.f) {
       accumulation_time_ = -1.f;
       on_life_change.emit(accumulated_damage_, accumulated_direction_);
       accumulated_damage_ = 0;
