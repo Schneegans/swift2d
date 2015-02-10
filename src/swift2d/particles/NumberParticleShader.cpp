@@ -113,7 +113,8 @@ NumberParticleShader::NumberParticleShader()
       @include "camera_uniforms"
 
       uniform vec4 glow_mid_life;
-      uniform vec3 scale;
+      uniform vec4 scale_boost;
+      uniform vec2 boost_limits;
 
       flat out int number;
 
@@ -124,16 +125,22 @@ NumberParticleShader::NumberParticleShader()
       @include "three_way_mix"
 
       void main(void) {
-        float scale = three_way_mix(scale.x, scale.y, scale.z, glow_mid_life.w, varying_age[0]);
+        float scale = three_way_mix(scale_boost.x, scale_boost.y, scale_boost.z, glow_mid_life.w, varying_age[0]);
         number = int(varying_number[0]);
-        emit_quad(gl_in[0].gl_Position.xy, vec2(1.0, 0.135) * scale, 0);
+
+        float min = boost_limits.x;
+        float max = boost_limits.y;
+        float boost = (clamp((abs(varying_number[0]) - min)/(max-min), 0.0, 1.0)) * scale_boost.w + 1;
+
+        emit_quad(gl_in[0].gl_Position.xy, vec2(1.0, 0.135) * scale * boost, 0);
       }
     )",
     {}
   )
   , projection(get_uniform<math::mat3>("projection"))
   , font(get_uniform<int>("font"))
-  , scale(get_uniform<math::vec3>("scale"))
+  , boost_limits(get_uniform<math::vec2>("boost_limits"))
+  , scale_boost(get_uniform<math::vec4>("scale_boost"))
   , p_start_color(get_uniform<math::vec4>("p_start_color"))
   , p_mid_color(get_uniform<math::vec4>("p_mid_color"))
   , p_end_color(get_uniform<math::vec4>("p_end_color"))

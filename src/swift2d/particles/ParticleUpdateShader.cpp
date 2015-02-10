@@ -89,8 +89,9 @@ ParticleUpdateShader::ParticleUpdateShader()
             vec3 random2 = get_random(vec2((delta+spawn_count_it_collision_mode.y+2) * time.y, (delta+spawn_count_it_collision_mode.y+2) * time.x));
 
             float l = max(0, life_pos_var_rotate_to_spawn_dir.x  + random1.x * life_pos_var_rotate_to_spawn_dir.y);
-            float d = position[i].z + direction_rotation.x + random1.y * direction_rotation.y;
-            float r = d*life_pos_var_rotate_to_spawn_dir.w + direction_rotation.z + random1.x * direction_rotation.w;
+            float d = direction_rotation.x + random1.y * direction_rotation.y;
+            float r = d*life_pos_var_rotate_to_spawn_dir.w + position[i].z + direction_rotation.z + random1.x * direction_rotation.w;
+            d += life_pos_var_rotate_to_spawn_dir.w*position[i].z;
             float v = lin_ang_velocity.x  + random1.z * lin_ang_velocity.y;
             float a = lin_ang_velocity.z  + random2.z * lin_ang_velocity.w;
 

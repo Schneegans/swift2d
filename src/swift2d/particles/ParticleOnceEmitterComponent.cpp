@@ -54,7 +54,7 @@ void ParticleOnceEmitterComponent::update(double time) {
       auto pos(get_world_position());
       auto rot(get_world_rotation());
 
-      ParticleSystem->spawn(math::vec3(pos.x(), pos.y(), rot), Amount());
+      ParticleSystem->spawn(pos, rot, Amount());
 
       if (DetachOnEmmission()) {
         detach();

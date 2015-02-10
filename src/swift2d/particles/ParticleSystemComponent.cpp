@@ -50,14 +50,14 @@ void ParticleSystemComponent::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystemComponent::spawn(math::vec3 const& pos_rot, unsigned count) {
-  particle_system_->spawn(pos_rot, count);
+void ParticleSystemComponent::spawn(math::vec2 const& pos, float rot, unsigned count) {
+  particle_system_->spawn(math::vec3(pos.x(), pos.y(), rot), count);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ParticleSystemComponent::spawn(math::vec3 const& pos_rot, math::vec2 const& vel, unsigned count) {
-  particle_system_->spawn(pos_rot, vel, count);
+void ParticleSystemComponent::spawn(math::vec2 const& pos, float rot, math::vec2 const& vel, unsigned count) {
+  particle_system_->spawn(math::vec3(pos.x(), pos.y(), rot), vel, count);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -29,7 +29,8 @@ class NumberParticleShader : public Shader,
   // ------------------------------------------------------------------ uniforms
   oglplus::Lazy<oglplus::Uniform<math::mat3>>  projection;
   oglplus::Lazy<oglplus::Uniform<int>>         font;
-  oglplus::Lazy<oglplus::Uniform<math::vec3>>  scale;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>>  boost_limits;
+  oglplus::Lazy<oglplus::Uniform<math::vec4>>  scale_boost;
   oglplus::Lazy<oglplus::Uniform<math::vec4>>  p_start_color;
   oglplus::Lazy<oglplus::Uniform<math::vec4>>  p_mid_color;
   oglplus::Lazy<oglplus::Uniform<math::vec4>>  p_end_color;

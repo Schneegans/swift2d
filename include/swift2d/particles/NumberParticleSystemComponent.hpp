@@ -36,13 +36,15 @@ class SWIFT_DLL NumberParticleSystemComponent : public ParticleSystemComponent {
 
   // ------------------------------------------------------------- inner classes
   struct Serialized : public ParticleSystemComponent::Serialized {
-    float      MidLife;
-    float      StartScale, MidScale, EndScale;
-    float      StartGlow,  MidGlow,  EndGlow;
-    float      StartBurn,  MidBurn,  EndBurn;
-    math::vec4 PositiveStartColor, PositiveMidColor, PositiveEndColor;
-    math::vec4 NegativeStartColor, NegativeMidColor, NegativeEndColor;
-    TexturePtr Font;
+    float       MidLife;
+    float       StartScale, MidScale, EndScale;
+    float       StartGlow,  MidGlow,  EndGlow;
+    float       StartBurn,  MidBurn,  EndBurn;
+    float       ScaleBoost;
+    math::int32 LowerBoostLimit, UpperBoostLimit;
+    math::vec4  PositiveStartColor, PositiveMidColor, PositiveEndColor;
+    math::vec4  NegativeStartColor, NegativeMidColor, NegativeEndColor;
+    TexturePtr  Font;
   };
 
   class Renderer : public ResourceRenderer<NumberParticleSystemComponent> {
@@ -55,6 +57,8 @@ class SWIFT_DLL NumberParticleSystemComponent : public ParticleSystemComponent {
   Float           StartScale, MidScale, EndScale;
   Float           StartGlow,  MidGlow,  EndGlow;
   Float           StartBurn,  MidBurn,  EndBurn;
+  Float           ScaleBoost;
+  Int32           LowerBoostLimit, UpperBoostLimit;
   ColorProperty   PositiveStartColor, PositiveMidColor, PositiveEndColor;
   ColorProperty   NegativeStartColor, NegativeMidColor, NegativeEndColor;
   TextureProperty Font;

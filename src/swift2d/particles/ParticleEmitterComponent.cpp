@@ -51,7 +51,7 @@ void ParticleEmitterComponent::update(double time) {
 
       for (int i(0); i<count; ++i) {
         auto p = pos + 1.f*i/count*(last_spawn_position-pos);
-        ParticleSystem->spawn(math::vec3(p.x(), p.y(), rot), Velocity());
+        ParticleSystem->spawn(p, rot, Velocity());
       }
     }
   }
