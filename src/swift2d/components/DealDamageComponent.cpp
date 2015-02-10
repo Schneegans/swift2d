@@ -26,12 +26,12 @@ DealDamageComponent::DealDamageComponent()
 void DealDamageComponent::on_init() {
   auto body(get_user()->get_component<DynamicBodyComponent>());
   if (body) {
-    body->start_contact_with_dynamic.connect([this](DynamicBodyComponent* other, math::vec2 const&) {
+    body->start_contact_with_dynamic.connect([this](DynamicBodyComponent* self, DynamicBodyComponent* other, math::vec2 const&) {
       auto net_object(dynamic_cast<NetworkObject*>(other->get_user()));
       if (!net_object || net_object->is_local()) {
         auto life = other->get_user()->get_component<LifeComponent>();
         if (life) {
-          life->decrease(Amount(), DamageSourceID());
+          life->decrease(Amount(), DamageSourceID(), self->get_linear_velocity()*0.5);
         }
       }
 

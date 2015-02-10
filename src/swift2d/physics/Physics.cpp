@@ -34,22 +34,22 @@ class SwiftContactListener : public b2ContactListener {
       auto b = static_cast<StaticBodyComponent*>(body_b->GetUserData());
 
 
-      a->start_contact_with_static.emit(b, point);
-      b->start_contact_with_dynamic.emit(a, point);
+      a->start_contact_with_static.emit(a, b, point);
+      b->start_contact_with_dynamic.emit(b, a, point);
 
     } else if (body_b->GetType() == b2_dynamicBody && body_a->GetType() == b2_staticBody) {
       auto a = static_cast<DynamicBodyComponent*>(body_b->GetUserData());
       auto b = static_cast<StaticBodyComponent*>(body_a->GetUserData());
 
-      a->start_contact_with_static.emit(b, point);
-      b->start_contact_with_dynamic.emit(a, point);
+      a->start_contact_with_static.emit(a, b, point);
+      b->start_contact_with_dynamic.emit(b, a, point);
 
     } else if (body_b->GetType() == b2_dynamicBody && body_a->GetType() == b2_dynamicBody) {
       auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
       auto b = static_cast<DynamicBodyComponent*>(body_b->GetUserData());
 
-      a->start_contact_with_dynamic.emit(b, point);
-      b->start_contact_with_dynamic.emit(a, point);
+      a->start_contact_with_dynamic.emit(a, b, point);
+      b->start_contact_with_dynamic.emit(b, a, point);
 
     }
 
@@ -67,16 +67,16 @@ class SwiftContactListener : public b2ContactListener {
       auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
       auto b = static_cast<StaticBodyComponent*>(body_b->GetUserData());
 
-      a->end_contact_with_static.emit(b, point);
-      b->end_contact_with_dynamic.emit(a, point);
+      a->end_contact_with_static.emit(a, b, point);
+      b->end_contact_with_dynamic.emit(b, a, point);
     }
 
     else if (body_b->GetType() == b2_dynamicBody && body_a->GetType() == b2_dynamicBody) {
       auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
       auto b = static_cast<DynamicBodyComponent*>(body_b->GetUserData());
 
-      a->end_contact_with_dynamic.emit(b, point);
-      b->end_contact_with_dynamic.emit(a, point);
+      a->end_contact_with_dynamic.emit(a, b, point);
+      b->end_contact_with_dynamic.emit(b, a, point);
     }
 
   }

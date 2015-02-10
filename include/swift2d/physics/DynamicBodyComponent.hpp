@@ -52,10 +52,10 @@ class SWIFT_DLL DynamicBodyComponent : public Component {
   UInt16                  Category;
 
   // ------------------------------------------------------------------- signals
-  Signal<StaticBodyComponent*, math::vec2>  start_contact_with_static;
-  Signal<StaticBodyComponent*, math::vec2>  end_contact_with_static;
-  Signal<DynamicBodyComponent*, math::vec2> start_contact_with_dynamic;
-  Signal<DynamicBodyComponent*, math::vec2> end_contact_with_dynamic;
+  Signal<DynamicBodyComponent*, StaticBodyComponent*, math::vec2>  start_contact_with_static;
+  Signal<DynamicBodyComponent*, StaticBodyComponent*, math::vec2>  end_contact_with_static;
+  Signal<DynamicBodyComponent*, DynamicBodyComponent*, math::vec2> start_contact_with_dynamic;
+  Signal<DynamicBodyComponent*, DynamicBodyComponent*, math::vec2> end_contact_with_dynamic;
 
   // ---------------------------------------------------- construction interface
   DynamicBodyComponent();
