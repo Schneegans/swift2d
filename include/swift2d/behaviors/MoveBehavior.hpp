@@ -38,6 +38,8 @@ class SWIFT_DLL MoveBehavior : public Component {
   Float AngularSpeed;
   Float AngularDamping;
 
+  Bool IgnoreParentRotation;
+
   // ----------------------------------------------------- constrution interface
   MoveBehavior();
 
@@ -61,8 +63,12 @@ class SWIFT_DLL MoveBehavior : public Component {
   static  std::string get_type_name_static() { return "MoveBehavior"; }
 
   virtual void update(double time);
-
   virtual void accept(SavableObjectVisitor& visitor);
+
+ ///////////////////////////////////////////////////////////////////////////////
+ // ---------------------------------------------------------- private interface
+ private:
+  float rotation_;
 };
 
 }
