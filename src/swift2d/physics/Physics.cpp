@@ -155,17 +155,17 @@ void Physics::update(double time) {
       }
 
       for (auto const& shock: shock_waves_) {
-        b2Vec2 dist(body_pos - b2Vec2(shock.x(), shock.y()));
+        b2Vec2 dist(body_pos - b2Vec2(shock.location.x(), shock.location.y()));
         float length(dist.LengthSquared());
-        if (length > 0 && length < shock.w()*shock.w()) {
-          dist *= shock.z()/(length+1.f);
+        if (length > 0 && length < shock.radius*shock.radius) {
+          dist *= shock.strength/(length+1.f)*2;
           body->ApplyLinearImpulse(dist, body_pos, true);
 
           auto b(static_cast<DynamicBodyComponent*>(body->GetUserData()));
           auto life = b->get_user()->get_component<LifeComponent>();
           if (life) {
-            float damage((1.f - std::sqrt(length)/shock.w()) * shock.z());
-            life->decrease(damage);
+            float damage((1.f - std::sqrt(length)/shock.radius) * shock.damage);
+            life->decrease(damage, shock.damage_source, math::vec2(dist.x, dist.y)*shock.strength*0.1f);
           }
         }
       }
@@ -272,8 +272,14 @@ void Physics::add(GravitySourceComponent* source) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Physics::add_shock_wave(math::vec2 const& location, float damage, float radius) {
-  shock_waves_.push_back(math::vec4(location.x(), location.y(), damage, radius));
+void Physics::add_shock_wave(math::uint64 damage_source, math::vec2 const& location, float damage, float radius, float strength) {
+  ShockWave s;
+  s.damage_source = damage_source;
+  s.location = location;
+  s.damage = damage;
+  s.radius = radius;
+  s.strength = strength;
+  shock_waves_.push_back(s);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

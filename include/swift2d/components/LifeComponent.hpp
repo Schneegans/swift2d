@@ -32,12 +32,13 @@ class SWIFT_DLL LifeComponent : public Component {
  public:
 
   Signal<math::uint64> on_killed;
-  Signal<float, math::vec2> on_life_change;
+  Signal<math::uint64, float, math::vec2> on_life_change;
 
   // ---------------------------------------------------------------- properties
   Float Life;
   Float MaxLife;
   Float AccumulationDelay;
+  Float AccumulationThreshold;
 
   Float DamageSourceResetTime;
 
@@ -80,6 +81,9 @@ class SWIFT_DLL LifeComponent : public Component {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  void accumulate_damage(float amount, math::vec2 const& direction);
+  void emit_accumulated_damage();
+
   math::uint64 damage_source_;
   float        reset_time_;
   bool         dead_;

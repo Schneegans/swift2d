@@ -36,6 +36,14 @@ class SWIFT_DLL Physics : public Singleton<Physics> {
  // ----------------------------------------------------------- public interface
  public:
 
+  struct ShockWave {
+    math::uint64 damage_source;
+    math::vec2   location;
+    float        damage;
+    float        radius;
+    float        strength;
+  };
+
   Vec2 Gravity;
 
   void update(double time);
@@ -44,7 +52,7 @@ class SWIFT_DLL Physics : public Singleton<Physics> {
   b2Body* add(StaticBodyComponent* body);
   void    add(GravitySourceComponent* source);
 
-  void    add_shock_wave(math::vec2 const& location, float damage, float radius);
+  void    add_shock_wave(math::uint64 damage_source, math::vec2 const& location, float damage, float radius, float strength);
 
   void    remove(b2Body* body);
   void    remove(GravitySourceComponent* source);
@@ -73,7 +81,7 @@ class SWIFT_DLL Physics : public Singleton<Physics> {
   SwiftContactListener* contact_listener_;
 
   GravityMap* gravity_map_;
-  std::vector<math::vec4> shock_waves_;
+  std::vector<ShockWave> shock_waves_;
 };
 
 // -----------------------------------------------------------------------------

@@ -16,6 +16,7 @@ LifeComponent::LifeComponent()
   : Life(100)
   , MaxLife(100)
   , AccumulationDelay(0.1)
+  , AccumulationThreshold(10)
   , DamageSourceResetTime(1)
   , Invulnerable(false)
   , damage_source_(0)
@@ -34,12 +35,7 @@ void LifeComponent::increase(float amount, math::vec2 const& direction) {
       dead_ = false;
     }
 
-    accumulated_damage_ += amount;
-    accumulated_abs_damage_ += std::abs(amount);
-    accumulated_direction_ += direction * (accumulated_abs_damage_ > 0 ? std::min(1.f, std::abs(amount)/accumulated_abs_damage_) : 1);
-    if (accumulation_time_ < 0) {
-      accumulation_time_ = AccumulationDelay();
-    }
+    accumulate_damage(amount, direction);
   }
 }
 
@@ -48,13 +44,7 @@ void LifeComponent::increase(float amount, math::vec2 const& direction) {
 void LifeComponent::decrease(float amount, math::vec2 const& direction) {
   if (!Invulnerable()) {
     Life = std::max(Life() - amount, 0.f);
-
-    accumulated_damage_ -= amount;
-    accumulated_abs_damage_ += std::abs(amount);
-    accumulated_direction_ += direction * (accumulated_abs_damage_ > 0 ? std::min(1.f, std::abs(amount)/accumulated_abs_damage_) : 1);
-    if (accumulation_time_ < 0) {
-      accumulation_time_ = AccumulationDelay();
-    }
+    accumulate_damage(-amount, direction);
   }
 }
 
@@ -63,15 +53,15 @@ void LifeComponent::decrease(float amount, math::vec2 const& direction) {
 void LifeComponent::decrease(float amount, math::uint64 source, math::vec2 const& direction) {
   if (!Invulnerable()) {
     Life = std::max(Life() - amount, 0.f);
+
+    if (accumulated_damage_ > 0 && damage_source_ != source) {
+      emit_accumulated_damage();
+    }
+
     damage_source_ = source;
     reset_time_ = DamageSourceResetTime();
 
-    accumulated_damage_ -= amount;
-    accumulated_abs_damage_ += std::abs(amount);
-    accumulated_direction_ += direction * (accumulated_abs_damage_ > 0 ? std::min(1.f, std::abs(amount)/accumulated_abs_damage_) : 1);
-    if (accumulation_time_ < 0) {
-      accumulation_time_ = AccumulationDelay();
-    }
+    accumulate_damage(-amount, direction);
   }
 }
 
@@ -101,15 +91,11 @@ void LifeComponent::update(double time) {
     }
   }
 
-  if (accumulation_time_ > 0.f) {
+  if (accumulation_time_ >= 0.f) {
     accumulation_time_ -= time;
 
     if (accumulation_time_ <= 0.f || Life() <= 0.f) {
-      accumulation_time_ = -1.f;
-      on_life_change.emit(accumulated_damage_, accumulated_direction_);
-      accumulated_damage_ = 0;
-      accumulated_abs_damage_ = 0;
-      accumulated_direction_ = math::vec2();
+      emit_accumulated_damage();
     }
   }
 
@@ -126,7 +112,32 @@ void LifeComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("MaxLife", MaxLife);
   visitor.add_member("DamageSourceResetTime", DamageSourceResetTime);
   visitor.add_member("AccumulationDelay", AccumulationDelay);
+  visitor.add_member("AccumulationThreshold", AccumulationThreshold);
   visitor.add_member("Invulnerable", Invulnerable);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void LifeComponent::accumulate_damage(float amount, math::vec2 const& dir) {
+  accumulated_damage_ += amount;
+  accumulated_abs_damage_ += std::abs(amount);
+  accumulated_direction_ += dir * (accumulated_abs_damage_ > 0 ? std::min(1.f, std::abs(amount)/accumulated_abs_damage_) : 1);
+  if (accumulated_abs_damage_ >= AccumulationThreshold()) {
+    accumulation_time_ = 0.f;
+  }
+  if (accumulation_time_ < 0) {
+    accumulation_time_ = AccumulationDelay();
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void LifeComponent::emit_accumulated_damage() {
+  accumulation_time_ = -1.f;
+  on_life_change.emit(damage_source_, accumulated_damage_, accumulated_direction_);
+  accumulated_damage_ = 0;
+  accumulated_abs_damage_ = 0;
+  accumulated_direction_ = math::vec2();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
