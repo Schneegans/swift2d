@@ -36,6 +36,7 @@ class SWIFT_DLL TransformableComponent : public Component {
   Mat3 WorldTransform;
 
   // ------------------------------------------------------------ public methods
+  virtual void on_init();
   virtual void update(double time);
   virtual void update_world_transform();
 

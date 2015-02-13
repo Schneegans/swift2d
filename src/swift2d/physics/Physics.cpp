@@ -29,30 +29,11 @@ class SwiftContactListener : public b2ContactListener {
     contact->GetWorldManifold(&p);
     math::vec2 point(p.points[0].x, p.points[0].y);
 
-    if (body_b->GetType() == b2_staticBody && body_a->GetType() == b2_dynamicBody) {
-      auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
-      auto b = static_cast<StaticBodyComponent*>(body_b->GetUserData());
+    auto a = static_cast<PhysicsBodyComponent*>(body_a->GetUserData());
+    auto b = static_cast<PhysicsBodyComponent*>(body_b->GetUserData());
 
-
-      a->start_contact_with_static.emit(a, b, point);
-      b->start_contact_with_dynamic.emit(b, a, point);
-
-    } else if (body_b->GetType() == b2_dynamicBody && body_a->GetType() == b2_staticBody) {
-      auto a = static_cast<DynamicBodyComponent*>(body_b->GetUserData());
-      auto b = static_cast<StaticBodyComponent*>(body_a->GetUserData());
-
-      a->start_contact_with_static.emit(a, b, point);
-      b->start_contact_with_dynamic.emit(b, a, point);
-
-    } else if (body_b->GetType() == b2_dynamicBody && body_a->GetType() == b2_dynamicBody) {
-      auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
-      auto b = static_cast<DynamicBodyComponent*>(body_b->GetUserData());
-
-      a->start_contact_with_dynamic.emit(a, b, point);
-      b->start_contact_with_dynamic.emit(b, a, point);
-
-    }
-
+    a->start_contact.emit(a, b, point);
+    b->start_contact.emit(b, a, point);
   }
 
   void EndContact(b2Contact* contact) {
@@ -63,22 +44,11 @@ class SwiftContactListener : public b2ContactListener {
     contact->GetWorldManifold(&p);
     math::vec2 point(p.points[0].x, p.points[0].y);
 
-    if (body_b->GetType() == b2_staticBody && body_a->GetType() == b2_dynamicBody) {
-      auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
-      auto b = static_cast<StaticBodyComponent*>(body_b->GetUserData());
+    auto a = static_cast<PhysicsBodyComponent*>(body_a->GetUserData());
+    auto b = static_cast<PhysicsBodyComponent*>(body_b->GetUserData());
 
-      a->end_contact_with_static.emit(a, b, point);
-      b->end_contact_with_dynamic.emit(b, a, point);
-    }
-
-    else if (body_b->GetType() == b2_dynamicBody && body_a->GetType() == b2_dynamicBody) {
-      auto a = static_cast<DynamicBodyComponent*>(body_a->GetUserData());
-      auto b = static_cast<DynamicBodyComponent*>(body_b->GetUserData());
-
-      a->end_contact_with_dynamic.emit(a, b, point);
-      b->end_contact_with_dynamic.emit(b, a, point);
-    }
-
+    a->end_contact.emit(a, b, point);
+    b->end_contact.emit(b, a, point);
   }
   void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) {}
   void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {}
@@ -89,14 +59,14 @@ class SwiftContactListener : public b2ContactListener {
 class SwiftRayCastCallback : public b2RayCastCallback {
 
  public:
-  std::vector<DynamicBodyComponent*> hits;
+  std::vector<PhysicsBodyComponent*> hits;
   std::vector<math::vec2>            hit_points;
   std::vector<math::vec2>            hit_normals;
 
   virtual float ReportFixture (b2Fixture* fixture, b2Vec2 const& point,
                                b2Vec2 const& normal, float fraction) {
 
-    hits.push_back(static_cast<DynamicBodyComponent*>(fixture->GetBody()->GetUserData()));
+    hits.push_back(static_cast<PhysicsBodyComponent*>(fixture->GetBody()->GetUserData()));
     hit_points.push_back(math::vec2(point.x, point.y));
     hit_normals.push_back(math::vec2(normal.x, normal.y));
 
@@ -148,7 +118,7 @@ void Physics::update(double time) {
         math::vec2 direction(pos - math::vec2(body_pos.x, body_pos.y));
         float distance(math::get_length(direction));
         if (distance > 1.f) {
-          auto b(static_cast<DynamicBodyComponent*>(body->GetUserData()));
+          auto b(static_cast<PhysicsBodyComponent*>(body->GetUserData()));
           direction = direction * mass * b->GravityScale() / (distance*distance*distance);
           b->apply_global_force(direction, false);
         }
@@ -161,7 +131,7 @@ void Physics::update(double time) {
           dist *= shock.strength/(length+1.f)*2;
           body->ApplyLinearImpulse(dist, body_pos, true);
 
-          auto b(static_cast<DynamicBodyComponent*>(body->GetUserData()));
+          auto b(static_cast<PhysicsBodyComponent*>(body->GetUserData()));
           auto life = b->get_user()->get_component<LifeComponent>();
           if (life) {
             float damage((1.f - std::sqrt(length)/shock.radius) * shock.damage);
@@ -181,83 +151,44 @@ void Physics::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-b2Body* Physics::add(DynamicBodyComponent* body) {
+b2Body* Physics::add(PhysicsBodyComponent* body) {
   auto transform(body->get_user()->WorldTransform());
   math::vec2 pos(math::get_translation(transform));
   math::vec2 scale(math::get_scale(transform));
+  float      rot(math::get_rotation(transform));
+
+  b2BodyDef bodyDef;
+  bodyDef.type = static_cast<b2BodyType>(body->BodyType());
+  bodyDef.position.Set(pos.x(), pos.y());
+  bodyDef.angle = rot;
+  bodyDef.awake = !body->Sleep();
+  b2Body* result = world_->CreateBody(&bodyDef);
 
   b2FixtureDef fixtureDef;
-
-  b2Shape* shape;
-  if (!body->Shape()) {
-    LOG_WARNING << "Failed to add DynamicBodyComponent: "
-                        << "No CollisionShape attached!" << std::endl;
-    shape = new b2CircleShape();
-  } else {
-    shape = body->Shape()->get_shape(transform);
-  }
   fixtureDef.density = body->Mass() / scale.x() / scale.y();
   fixtureDef.friction = body->Friction();
   fixtureDef.restitution = body->Restitution();
   fixtureDef.filter.groupIndex = body->Group();
   fixtureDef.filter.maskBits = body->Mask();
   fixtureDef.filter.categoryBits = body->Category();
-  fixtureDef.shape = shape;
-
-  b2BodyDef bodyDef;
-  bodyDef.type = b2_dynamicBody;
-  bodyDef.awake = !body->Sleep();
-  bodyDef.position.Set(pos.x(), pos.y());
-  bodyDef.angle = math::get_rotation(transform);
-
-  b2Body* result = world_->CreateBody(&bodyDef);
-
-  result->SetBullet(body->IsBullet());
-  result->SetFixedRotation(body->FixedRotation());
-  result->SetUserData(body);
-  result->CreateFixture(&fixtureDef);
-  result->SetLinearDamping(body->LinearDamping());
-  result->SetAngularDamping(body->AngularDamping());
-
-  delete shape;
-
-  return result;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-b2Body* Physics::add(StaticBodyComponent* body) {
-  auto transform(body->get_user()->WorldTransform());
-  math::vec2 pos(math::get_translation(transform));
-  float rot(math::get_rotation(transform));
-
-  b2BodyDef bodyDef;
-  bodyDef.type = b2_staticBody;
-  bodyDef.position.Set(pos.x(), pos.y());
-  bodyDef.angle = rot;
-  b2Body* result = world_->CreateBody(&bodyDef);
-
-  result->SetUserData(body);
-
-  b2FixtureDef fixtureDef;
-  fixtureDef.friction = body->Friction();
-  fixtureDef.restitution = body->Restitution();
-  fixtureDef.filter.groupIndex = body->Group();
-  fixtureDef.filter.maskBits = body->Mask();
-  fixtureDef.filter.categoryBits = body->Category();
 
   b2Shape* shape;
-
   if (!body->Shape()) {
-    LOG_WARNING << "Failed to add DynamicBodyComponent: "
+    LOG_WARNING << "Failed to add PhysicsBodyComponent: "
                         << "No CollisionShape attached!" << std::endl;
     shape = new b2CircleShape();
   } else {
     shape = body->Shape()->get_shape(transform);
   }
   fixtureDef.shape = shape;
-
   result->CreateFixture(&fixtureDef);
+
+  result->SetBullet(body->IsBullet());
+  result->SetFixedRotation(body->FixedRotation());
+  result->SetLinearDamping(body->LinearDamping());
+  result->SetAngularDamping(body->AngularDamping());
+  result->SetActive(body->Enabled());
+  result->SetUserData(body);
 
   delete shape;
 
@@ -317,7 +248,7 @@ void Physics::bind_gravity_map(RenderContext const& ctx, int location) {
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Physics::ray_cast(math::vec2 const& start, math::vec2 const& end,
-                       std::vector<DynamicBodyComponent*>& hits,
+                       std::vector<PhysicsBodyComponent*>& hits,
                        std::vector<math::vec2>& hit_points,
                        std::vector<math::vec2>& hit_normals) const {
 

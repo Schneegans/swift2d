@@ -58,7 +58,7 @@ namespace {
       Object::init<DeleteOnLeaveBehavior>();
       Object::init<DirectionalLightComponent>();
       Object::init<DealDamageComponent>();
-      Object::init<DynamicBodyComponent>();
+      Object::init<PhysicsBodyComponent>();
       Object::init<EngineSettings>();
       Object::init<FullscreenGuiSpriteComponent>();
       Object::init<FullscreenSpriteComponent>();
@@ -87,7 +87,6 @@ namespace {
       Object::init<SpriteComponent>();
       Object::init<SpriteParticleSystemComponent>();
       Object::init<NumberParticleSystemComponent>();
-      Object::init<StaticBodyComponent>();
       Object::init<Texture3D>();
       Object::init<Texture::Layer>();
       Object::init<Texture>();

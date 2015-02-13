@@ -69,7 +69,8 @@ class SWIFT_DLL Component : public SavableObject {
   // it's called instead of update, so the frame time is passed to this method
   virtual void on_detach(double time) {}
 
-  // called before the very first update
+  // called before the very first update. this base class implementation does
+  // nothing, so you do not have to call it from your implementation
   virtual void on_init() {}
 
   virtual void update(double time) {}

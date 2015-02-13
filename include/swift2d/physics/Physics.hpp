@@ -10,8 +10,7 @@
 #define SWIFT2D_PHYSICS_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/physics/DynamicBodyComponent.hpp>
-#include <swift2d/physics/StaticBodyComponent.hpp>
+#include <swift2d/physics/PhysicsBodyComponent.hpp>
 #include <swift2d/physics/GravitySourceComponent.hpp>
 #include <swift2d/physics/GravityMap.hpp>
 #include <swift2d/utils/Singleton.hpp>
@@ -48,8 +47,7 @@ class SWIFT_DLL Physics : public Singleton<Physics> {
 
   void update(double time);
 
-  b2Body* add(DynamicBodyComponent* body);
-  b2Body* add(StaticBodyComponent* body);
+  b2Body* add(PhysicsBodyComponent* body);
   void    add(GravitySourceComponent* source);
 
   void    add_shock_wave(math::uint64 damage_source, math::vec2 const& location, float damage, float radius, float strength);
@@ -63,7 +61,7 @@ class SWIFT_DLL Physics : public Singleton<Physics> {
   void bind_gravity_map  (RenderContext const& ctx, int location);
 
   bool ray_cast(math::vec2 const& start, math::vec2 const& end,
-                std::vector<DynamicBodyComponent*>& hits,
+                std::vector<PhysicsBodyComponent*>& hits,
                 std::vector<math::vec2>& hit_points,
                 std::vector<math::vec2>& hit_normals) const;
 

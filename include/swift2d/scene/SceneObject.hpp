@@ -74,8 +74,10 @@ class SWIFT_DLL SceneObject : public SavableObject {
   // it's called instead of update, so the frame time is passed to this method
   virtual void on_detach(double time);
 
-  // called before the very first update
-  virtual void on_init() {}
+  // called before the very first update. This base class implementation
+  // updates the WorldTransform and calls on_init recursively on all attached
+  // Components and SceneObjects. Be sure to extend this method only!
+  virtual void on_init();
 
   // calls update() on all components and objects
   virtual void update(double time);

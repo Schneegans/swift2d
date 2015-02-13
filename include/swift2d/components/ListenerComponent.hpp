@@ -58,7 +58,6 @@ class SWIFT_DLL ListenerComponent : public TransformableComponent {
   static  std::string get_type_name_static() { return "ListenerComponent"; }
 
   virtual void update(double time);
-
   virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////

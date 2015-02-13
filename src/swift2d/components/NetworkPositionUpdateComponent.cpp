@@ -24,10 +24,10 @@ NetworkPositionUpdateComponent::NetworkPositionUpdateComponent()
 
 void NetworkPositionUpdateComponent::init(bool is_local) {
   is_local_ = is_local;
-  body_ = get_user()->get_component<DynamicBodyComponent>();
+  body_ = get_user()->get_component<PhysicsBodyComponent>();
 
   if (!body_) {
-    LOG_WARNING << "Failed to initialize NetworkPositionUpdateComponent: No DynamicBodyComponent found!" << std::endl;
+    LOG_WARNING << "Failed to initialize NetworkPositionUpdateComponent: No PhysicsBodyComponent found!" << std::endl;
   }
 
   if (!is_local_) {

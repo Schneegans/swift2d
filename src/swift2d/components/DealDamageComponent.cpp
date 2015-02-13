@@ -10,7 +10,7 @@
 
 #include <swift2d/components/LifeComponent.hpp>
 #include <swift2d/scene/SceneObject.hpp>
-#include <swift2d/physics/DynamicBodyComponent.hpp>
+#include <swift2d/physics/PhysicsBodyComponent.hpp>
 #include <swift2d/network/NetworkObject.hpp>
 
 namespace swift {
@@ -24,9 +24,9 @@ DealDamageComponent::DealDamageComponent()
 ////////////////////////////////////////////////////////////////////////////////
 
 void DealDamageComponent::on_init() {
-  auto body(get_user()->get_component<DynamicBodyComponent>());
+  auto body(get_user()->get_component<PhysicsBodyComponent>());
   if (body) {
-    body->start_contact_with_dynamic.connect([this](DynamicBodyComponent* self, DynamicBodyComponent* other, math::vec2 const&) {
+    body->start_contact.connect([this](PhysicsBodyComponent* self, PhysicsBodyComponent* other, math::vec2 const&) {
       auto net_object(dynamic_cast<NetworkObject*>(other->get_user()));
       if (!net_object || net_object->is_local()) {
         auto life = other->get_user()->get_component<LifeComponent>();
@@ -38,7 +38,7 @@ void DealDamageComponent::on_init() {
       return true;
     });
   } else {
-    LOG_WARNING << "Failed to initialize DealDamageComponent: No DynamicBodyComponent found!" << std::endl;
+    LOG_WARNING << "Failed to initialize DealDamageComponent: No PhysicsBodyComponent found!" << std::endl;
   }
 }
 

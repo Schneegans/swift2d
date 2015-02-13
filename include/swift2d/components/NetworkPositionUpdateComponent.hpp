@@ -12,7 +12,7 @@
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
 #include <swift2d/events/Scheduler.hpp>
-#include <swift2d/physics/DynamicBodyComponent.hpp>
+#include <swift2d/physics/PhysicsBodyComponent.hpp>
 #include <swift2d/math.hpp>
 
 namespace swift {
@@ -74,7 +74,7 @@ class SWIFT_DLL NetworkPositionUpdateComponent : public Component {
 
   bool is_local_;
 
-  DynamicBodyComponentPtr body_;
+  PhysicsBodyComponentPtr body_;
 };
 
 }

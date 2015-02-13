@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_STATIC_BODY_COMPONENT_HPP
-#define SWIFT2D_STATIC_BODY_COMPONENT_HPP
+#ifndef SWIFT2D_PHYSICS_BODY_COMPONENT_HPP
+#define SWIFT2D_PHYSICS_BODY_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
@@ -18,49 +18,64 @@ class b2Body;
 
 namespace swift {
 
-class DynamicBodyComponent;
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class StaticBodyComponent;
-typedef std::shared_ptr<StaticBodyComponent>       StaticBodyComponentPtr;
-typedef std::shared_ptr<const StaticBodyComponent> ConstStaticBodyComponentPtr;
+class PhysicsBodyComponent;
+typedef std::shared_ptr<PhysicsBodyComponent>       PhysicsBodyComponentPtr;
+typedef std::shared_ptr<const PhysicsBodyComponent> ConstPhysicsBodyComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL StaticBodyComponent : public Component {
+class SWIFT_DLL PhysicsBodyComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
+  enum class BodyTypeEnum {
+    STATIC = 0,
+    KINEMATIC,
+    DYNAMIC
+  };
+
   // ---------------------------------------------------------------- properties
+  Property<BodyTypeEnum>  BodyType;
   CollisionShapeProperty  Shape;
+  Float                   Mass;
   Float                   Friction;
   Float                   Restitution;
+  Bool                    FixedRotation;
 
   Int16                   Group;
   UInt16                  Mask;
   UInt16                  Category;
 
+  // dynamic body properties
+  Float                   LinearDamping;
+  Float                   AngularDamping;
+  Float                   GravityScale;
+  Bool                    IsBullet;
+  Bool                    Sleep;
+
+
   // ------------------------------------------------------------------- signals
-  Signal<StaticBodyComponent*, DynamicBodyComponent*, math::vec2> start_contact_with_dynamic;
-  Signal<StaticBodyComponent*, DynamicBodyComponent*, math::vec2> end_contact_with_dynamic;
+  Signal<PhysicsBodyComponent*, PhysicsBodyComponent*, math::vec2> start_contact;
+  Signal<PhysicsBodyComponent*, PhysicsBodyComponent*, math::vec2> end_contact;
 
   // ---------------------------------------------------- construction interface
-  StaticBodyComponent();
-  ~StaticBodyComponent();
+  PhysicsBodyComponent();
+  ~PhysicsBodyComponent();
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static StaticBodyComponentPtr create(Args&& ... a) {
-    return std::make_shared<StaticBodyComponent>(a...);
+  static PhysicsBodyComponentPtr create(Args&& ... a) {
+    return std::make_shared<PhysicsBodyComponent>(a...);
   }
 
   // creates a copy from this
-  StaticBodyComponentPtr create_copy() const {
-    return std::make_shared<StaticBodyComponent>(*this);
+  PhysicsBodyComponentPtr create_copy() const {
+    return std::make_shared<PhysicsBodyComponent>(*this);
   }
 
   ComponentPtr create_base_copy() const {
@@ -69,20 +84,40 @@ class SWIFT_DLL StaticBodyComponent : public Component {
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "StaticBodyComponent"; }
+  static  std::string get_type_name_static() { return "PhysicsBodyComponent"; }
 
+  virtual void on_detach(double time);
+  virtual void on_init();
   virtual void update(double time);
-
   virtual void accept(SavableObjectVisitor& visitor);
+
+  // call these methods only after on_init has been called!
+  void       apply_global_force(math::vec2 const& val, bool wake_up = true);
+  void       apply_local_force(math::vec2 const& val, bool wake_up = true);
+  void       apply_torque(float val, bool wake_up = true);
+  void       apply_local_linear_impulse(math::vec2 const& val, bool wake_up = true);
+  void       apply_global_linear_impulse(math::vec2 const& val, bool wake_up = true);
+  void       apply_angular_impulse(float val, bool wake_up = true);
+  void       set_linear_velocity(math::vec2 const& val);
+  math::vec2 get_linear_velocity();
+  float      get_speed();
+  void       set_angular_velocity(float val);
+  float      get_angular_velocity();
+  void       set_transform(math::vec2 const& pos, float rot);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  b2Body* body_;
+  mutable b2Body* body_;
 };
+
+// -----------------------------------------------------------------------------
+
+std::ostream& operator<<(std::ostream& os, PhysicsBodyComponent::BodyTypeEnum const& obj);
+std::istream& operator>>(std::istream& is, PhysicsBodyComponent::BodyTypeEnum& obj);
 
 // -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_STATIC_BODY_COMPONENT_HPP
+#endif  // SWIFT2D_PHYSICS_BODY_COMPONENT_HPP

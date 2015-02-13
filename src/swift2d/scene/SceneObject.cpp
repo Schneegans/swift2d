@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 // This file is part of Swift2D.                                              //
 //                                                                            //
@@ -315,16 +315,51 @@ void SceneObject::serialize(SerializedScenePtr& scene) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void SceneObject::on_init() {
+  update_world_transform();
+
+  {
+    auto current(components_.begin());
+    bool last(current == components_.end());
+
+    while (!last) {
+      auto next(current+1);
+      last = (next == components_.end());
+
+      if (!(*current)->initialized_) {
+        (*current)->initialized_ = true;
+        (*current)->on_init();
+      }
+
+      current = next;
+    }
+  }
+
+  {
+    auto current(objects_.begin());
+    bool last(current == objects_.end());
+
+    while (!last) {
+      auto next = current;
+      ++next;
+      last = (next == objects_.end());
+
+      if (!(*current)->initialized_) {
+        (*current)->initialized_ = true;
+        (*current)->on_init();
+      }
+
+      current = next;
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void SceneObject::update(double time) {
 
   if (Enabled()) {
-    if (Parent.get()) {
-      WorldTransform = Parent.get()->WorldTransform.get() * Transform.get();
-      WorldDepth     = Parent.get()->WorldDepth.get() + Depth.get();
-    } else {
-      WorldTransform = Transform.get();
-      WorldDepth     = Depth.get();
-    }
+    update_world_transform();
 
     {
       auto current(components_.begin());
