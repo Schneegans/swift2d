@@ -138,6 +138,8 @@ void Window::update_context() {
   if (init_glew_) {
     init_glew_ = false;
 
+    // glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+
     // init glew... seems a bit hacky, but works this way
     glewExperimental = GL_TRUE;
     auto e = glewInit();

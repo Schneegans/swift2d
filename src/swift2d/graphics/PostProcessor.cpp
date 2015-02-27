@@ -132,9 +132,21 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       // lbuffer sampling ------------------------------------------------------
       uniform sampler2D l_buffer;
 
-      vec3 get_lighting(vec2 texcoords) {
-        vec4 light = texture(l_buffer, texcoords);
-        return light.rgb * texture(g_buffer_diffuse, texcoords).rgb + light.a * light.rgb;
+      vec3 get_lighting(vec2 texcoords, vec2 offset) {
+
+        vec2 texcoords_r = (texcoords + offset * 1.0 - 0.5) * 1.000 + 0.5;
+        vec2 texcoords_g = (texcoords + offset * 0.6 - 0.5) * 0.995 + 0.5;
+        vec2 texcoords_b = (texcoords + offset * 0.2 - 0.5) * 0.990 + 0.5;
+
+        vec2 light_r = texture(l_buffer, texcoords_r).ra;
+        vec2 light_g = texture(l_buffer, texcoords_g).ga;
+        vec2 light_b = texture(l_buffer, texcoords_b).ba;
+
+        return vec3(
+          light_r.x * texture(g_buffer_diffuse, texcoords_r).r + light_r.y * light_r.x,
+          light_g.x * texture(g_buffer_diffuse, texcoords_g).g + light_g.y * light_g.x,
+          light_b.x * texture(g_buffer_diffuse, texcoords_b).b + light_b.y * light_b.x
+        );
       }
     )";
   // }
@@ -152,7 +164,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   } else if (!ctx.lens_flares) {
     f_source << R"(
       vec3 get_color(vec2 texcoords) {
-        return get_lighting(texcoords);
+        return get_lighting(texcoords, vec2(0));
       }
 
       vec3 apply_glow(vec3 color_in, float vignetting) {
@@ -170,12 +182,11 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       uniform bool      use_heat;
 
       vec3 get_color(vec2 texcoords) {
-        vec2 shifted_texcoords = texcoords;
+        vec2 offset = vec2(0);
         if (use_heat) {
-          vec2 offset = (texture(heat_buffer, texcoords).rg - 0.5) * 0.2;
-          shifted_texcoords   += offset;
+          offset = (texture(heat_buffer, texcoords).rg - 0.5) * 0.2;
         }
-        return get_lighting(shifted_texcoords);
+        return get_lighting(texcoords, offset);
       }
 
       vec3 apply_glow(vec3 color_in, float vignetting) {
@@ -192,11 +203,8 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       float vignetting = get_vignette();
 
       result = apply_glow(result, vignetting);
-
       result = apply_color_grading(result);
-
       result = mix(vignette_color.rgb, result, vignetting);
-
       result = apply_gamma(result);
 
       fragColor = result;
