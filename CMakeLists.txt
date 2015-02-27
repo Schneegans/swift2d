@@ -18,18 +18,22 @@ ENABLE_LANGUAGE(C)
 # Configure and find libraries
 ################################################################
 
+set(Python_ADDITIONAL_VERSIONS 3.4)
 set(BOOST_ROOT "D:\\boost_1_56_0" CACHE STRING "")
 set(BOOST_LIBRARYDIR "D:\\boost_1_56_0\\lib32-msvc-12.0" CACHE STRING "")
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost REQUIRED COMPONENTS thread system filesystem)
+find_package(Boost REQUIRED COMPONENTS thread python-py34 system filesystem)
+
+find_package(PythonLibs)
 
 set(SWIFT_INCLUDE_DIRS
   "third_party/include"
   "$(AWE_DIR)include"
   ${CMAKE_CURRENT_SOURCE_DIR}/src/raknet
   ${CMAKE_CURRENT_SOURCE_DIR}/src/glew
+  ${PYTHON_INCLUDE_DIRS}
 )
 
 macro(SwiftLoadSystemLib LIB_NAME)

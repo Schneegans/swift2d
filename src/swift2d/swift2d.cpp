@@ -133,6 +133,7 @@ namespace {
       Application::destroy_instance();
       Paths::destroy_instance();
       SceneManager::destroy_instance();
+      PythonConsole::destroy_instance();
 
       // Physics::destroy_instance();
       // Interface::destroy_instance();
