@@ -6,19 +6,20 @@ text="//////////////////////////////////////////////////////////////////////////
 //                                                                            //
 // This file is part of Swift2D.                                              //
 //                                                                            //
-// Copyright: (c) 2011-2014 Simon Schneegans & Felix Lauer                    //
+// Copyright: (c) 2011-2015 Simon Schneegans & Felix Lauer                    //
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////"
 
-types=( 
-    ".cpp" 
-    ".hpp" 
+types=(
+    ".cpp"
+    ".hpp"
+    ".ipp"
 )
 
-folders=( 
-    "../include" 
-    "../src" 
-    "../examples" 
+folders=(
+    "../include"
+    "../src"
+    "../examples"
 )
 
 for folder in "${folders[@]}"
