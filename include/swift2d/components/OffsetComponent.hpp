@@ -6,8 +6,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_OFFSET_BEHAVIOR_HPP
-#define SWIFT2D_OFFSET_BEHAVIOR_HPP
+#ifndef SWIFT2D_OFFSET_COMPONENT_HPP
+#define SWIFT2D_OFFSET_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
@@ -20,12 +20,12 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class OffsetBehavior;
-typedef std::shared_ptr<OffsetBehavior>       OffsetBehaviorPtr;
-typedef std::shared_ptr<const OffsetBehavior> ConstOffsetBehaviorPtr;
+class OffsetComponent;
+typedef std::shared_ptr<OffsetComponent>       OffsetComponentPtr;
+typedef std::shared_ptr<const OffsetComponent> ConstOffsetComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL OffsetBehavior : public Component {
+class SWIFT_DLL OffsetComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
@@ -37,7 +37,7 @@ class SWIFT_DLL OffsetBehavior : public Component {
   AnimatedFloat RotationOffset;
 
   // ----------------------------------------------------- constrution interface
-  OffsetBehavior()
+  OffsetComponent()
     : TranslationOffsetX()
     , TranslationOffsetY()
     , RotationOffset() {
@@ -49,13 +49,13 @@ class SWIFT_DLL OffsetBehavior : public Component {
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static OffsetBehaviorPtr create(Args&& ... a) {
-    return std::make_shared<OffsetBehavior>(a...);
+  static OffsetComponentPtr create(Args&& ... a) {
+    return std::make_shared<OffsetComponent>(a...);
   }
 
   // creates a copy from this
-  OffsetBehaviorPtr create_copy() const {
-    return std::make_shared<OffsetBehavior>(*this);
+  OffsetComponentPtr create_copy() const {
+    return std::make_shared<OffsetComponent>(*this);
   }
 
   ComponentPtr create_base_copy() const {
@@ -76,7 +76,7 @@ class SWIFT_DLL OffsetBehavior : public Component {
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "OffsetBehavior"; }
+  static  std::string get_type_name_static() { return "OffsetComponent"; }
 
   virtual void update(double time) {
 
@@ -103,4 +103,4 @@ class SWIFT_DLL OffsetBehavior : public Component {
 
 }
 
-#endif  // SWIFT2D_OFFSET_BEHAVIOR_HPP
+#endif  // SWIFT2D_OFFSET_COMPONENT_HPP

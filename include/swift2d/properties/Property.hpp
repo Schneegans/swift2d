@@ -9,19 +9,32 @@
 #ifndef SWIFT2D_EVENTS_PROPERTY_HPP
 #define SWIFT2D_EVENTS_PROPERTY_HPP
 
+// includes  -------------------------------------------------------------------
 #include <swift2d/events/Signal.hpp>
 #include <swift2d/utils/platform.hpp>
-
 #include <swift2d/math/types.hpp>
 
 namespace swift {
 
+// -----------------------------------------------------------------------------
+
+////////////////////////////////////////////////////////////////////////////////
+// A Property is a encpsulates a value and may inform you on any changes      //
+// applied to this value.                                                     //
+////////////////////////////////////////////////////////////////////////////////
+
 template <typename T>
 class Property {
 
+ ///////////////////////////////////////////////////////////////////////////////
+ // ----------------------------------------------------------- public interface
  public:
   typedef T value_type;
 
+  // ---------------------------------------------------- construction interface
+
+  // Properties for built-in types are automatically initialized to 0. See
+  // template spezialisations at the bottom of this file
   Property()
     : connection_(nullptr)
     , connection_id_(-1) {}
@@ -48,9 +61,18 @@ class Property {
 
   virtual ~Property() {}
 
-  virtual Signal<T> const& on_change() const { return on_change_; }
+  // ------------------------------------------------------------ public methods
+
+  // returns a Signal which is fired when the internal value will be changed.
+  // The old value is passed as parameter.
   virtual Signal<T> const& before_change() const { return before_change_; }
 
+  // returns a Signal which is fired when the internal value has been changed.
+  // The new value is passed as parameter.
+  virtual Signal<T> const& on_change() const { return on_change_; }
+
+  // sets the Property to a new value. before_change() and on_change() will be
+  // emitted.
   virtual void set(T const& value) {
     if (value != value_) {
       before_change_.emit(value_);
@@ -59,21 +81,25 @@ class Property {
     }
   }
 
+  // sets the Property to a new value. before_change() and on_change() will not
+  // be emitted
   void set_with_no_emit(T const& value) {
     value_ = value;
   }
 
+  // emits before_change() and on_change() even if the value did not change
   void touch() {
     before_change_.emit(value_);
     on_change_.emit(value_);
   }
 
+  // returns the internal value
   virtual T const& get() const { return value_; }
 
+  // connects two Properties to each other. If the source's value is changed,
+  // this' value will be changed as well
   virtual void connect_from(Property<T> const& source) {
-    if (connection_) {
-      connection_->on_change().disconnect(connection_id_);
-    }
+    disconnect();
     connection_ = &source;
     connection_id_ = source.on_change().connect([&](T const& value){
       set(value);
@@ -82,6 +108,7 @@ class Property {
     set(source.get());
   }
 
+  // if this Property is connected from another property, it will e disconnected
   virtual void disconnect() {
     if (connection_) {
       connection_->on_change().disconnect(connection_id_);
@@ -90,37 +117,45 @@ class Property {
     }
   }
 
+  // if there are any Properties connected to this Property, they won't be
+  // notified of any further changes
   virtual void disconnect_auditors() {
     on_change_.disconnect_all();
     before_change_.disconnect_all();
   }
 
+  // ----------------------------------------------------------------- operators
+
+  // assigns the value of another Property
   virtual Property<T>& operator=(Property<T> const& rhs) {
     set(rhs.value_);
     return *this;
   }
 
+  // assigns a new value to this Property
   virtual Property<T>& operator=(T const& rhs) {
     set(rhs);
     return *this;
   }
 
+  // compares the values of two Properties
   bool operator==(Property<T> const& rhs) const {
     return Property<T>::get() == rhs.get();
   }
-
-  bool operator==(T const& rhs) const { return Property<T>::get() == rhs; }
-
   bool operator!=(Property<T> const& rhs) const {
     return Property<T>::get() != rhs.get();
   }
 
+  // compares the values of the Property to another value
+  bool operator==(T const& rhs) const { return Property<T>::get() == rhs; }
   bool operator!=(T const& rhs) const { return Property<T>::get() != rhs; }
 
+  // returns the value of this Property
   T const& operator()() const { return Property<T>::get(); }
 
+ ///////////////////////////////////////////////////////////////////////////////
+ // ---------------------------------------------------------- private interface
  private:
-
   T value_;
   Signal<T> on_change_;
   Signal<T> before_change_;
@@ -177,6 +212,8 @@ std::istream& operator>>(std::istream& in_stream, Property<T>& val) {
   val.set(tmp);
   return in_stream;
 }
+
+// -----------------------------------------------------------------------------
 
 }
 

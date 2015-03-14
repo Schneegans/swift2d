@@ -82,7 +82,7 @@ void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, in
     auto& shader(PointLightShader::get());
 
     object.Texture->bind(ctx, 3);
-    shader.use(ctx);
+    shader.use();
     shader.projection.Set(ctx.projection_matrix);
     shader.depth.Set(object.Depth);
     shader.parallax.Set(ctx.projection_parallax);
@@ -99,7 +99,7 @@ void PointLightComponent::Renderer::draw(RenderContext const& ctx, int start, in
       shader.transform.Set(count, (const math::mat3*)&transforms[index]);
       shader.light_color.Set(count, (const math::vec4*)&colors[index]);
 
-      Quad::get().draw(ctx, count);
+      Quad::get().draw(count);
 
       index += count;
     }

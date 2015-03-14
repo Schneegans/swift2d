@@ -16,6 +16,10 @@
 
 namespace swift {
 
+////////////////////////////////////////////////////////////////////////////////
+// A class which can be used to measure time intervals.                       //
+////////////////////////////////////////////////////////////////////////////////
+
 // -----------------------------------------------------------------------------
 class SWIFT_DLL Timer {
 
@@ -26,7 +30,7 @@ class SWIFT_DLL Timer {
   // ------------------------------------------------------------ public methods
   Timer();
 
-  void start();
+  void   start();
   double reset();
 
   double get_elapsed() const;

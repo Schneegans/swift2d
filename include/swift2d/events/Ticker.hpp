@@ -22,6 +22,10 @@ class Ticker;
 typedef std::shared_ptr<Ticker>       TickerPtr;
 typedef std::shared_ptr<const Ticker> ConstTickerPtr;
 
+////////////////////////////////////////////////////////////////////////////////
+// A class which can be used to call a method at given intervals.             //
+////////////////////////////////////////////////////////////////////////////////
+
 // -----------------------------------------------------------------------------
 class SWIFT_DLL Ticker : public std::enable_shared_from_this<Ticker> {
 
@@ -30,6 +34,8 @@ class SWIFT_DLL Ticker : public std::enable_shared_from_this<Ticker> {
  public:
 
   // ------------------------------------------------------------------- signals
+
+  // this Signal is emitted every tick_time seconds
   Signal<> on_tick;
 
   // ---------------------------------------------------- construction interface
@@ -38,10 +44,11 @@ class SWIFT_DLL Ticker : public std::enable_shared_from_this<Ticker> {
     return std::make_shared<Ticker>(a...);
   }
 
+  // tick_time is in seconds
   Ticker(double tick_time);
   ~Ticker();
 
-  void set_tick_time(double tick_time);
+  void   set_tick_time(double tick_time);
   double get_tick_time() const;
 
   void start();

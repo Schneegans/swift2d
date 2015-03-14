@@ -142,7 +142,7 @@ void Texture::bind(RenderContext const& ctx, unsigned location) const {
     ogl::Context::Bind(ose::_2D(), *texture_);
   } else {
     upload_to(ctx);
-    DefaultTexture::get().bind(ctx, location);
+    DefaultTexture::get().bind(location);
   }
 }
 

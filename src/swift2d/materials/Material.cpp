@@ -188,7 +188,7 @@ void Material::draw_quad_impl(RenderContext const& ctx,
     current_shader_ = MaterialShaderFactory::get().get_shader(capabilities);
   }
 
-  current_shader_->use(ctx);
+  current_shader_->use();
   current_shader_->projection.Set(projection);
   current_shader_->depth.Set(depth);
   current_shader_->parallax.Set(ctx.projection_parallax);
@@ -285,7 +285,7 @@ void Material::draw_quad_impl(RenderContext const& ctx,
       current_shader_->time.Set(count, &times[index]);
     }
 
-    Quad::get().draw(ctx, count);
+    Quad::get().draw(count);
     index += count;
   }
 

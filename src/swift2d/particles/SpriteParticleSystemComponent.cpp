@@ -104,11 +104,11 @@ void SpriteParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int
       if (o.Texture) {
         o.Texture->bind(ctx, 0);
       } else {
-        DefaultTexture::get().bind(ctx, 0);
+        DefaultTexture::get().bind(0);
       }
 
       auto& shader(SpriteParticleShader::get());
-      shader.use(ctx);
+      shader.use();
       shader.projection.     Set(ctx.projection_matrix);
       shader.diffuse.        Set(0);
       shader.start_mid_scale.Set(math::vec4(o.StartScale.x(), o.StartScale.y(), o.MidScale.x(), o.MidScale.y()));

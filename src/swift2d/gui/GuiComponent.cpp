@@ -179,7 +179,7 @@ void GuiComponent::Renderer::draw(RenderContext const& ctx, int start, int end) 
     auto& o(objects[i]);
 
     if (Interface::get().bind(o.Self->view_, ctx, 0)) {
-      GuiShader::get().use(ctx);
+      GuiShader::get().use();
 
       math::vec2 size(
         1.0 * o.Size.x() / ctx.window_size.x(),
@@ -196,7 +196,7 @@ void GuiComponent::Renderer::draw(RenderContext const& ctx, int start, int end) 
       GuiShader::get().opacity.Set(o.Opacity);
       GuiShader::get().offset_rot.Set(offset);
       GuiShader::get().diffuse.Set(0);
-      Quad::get().draw(ctx);
+      Quad::get().draw();
     }
   }
 }

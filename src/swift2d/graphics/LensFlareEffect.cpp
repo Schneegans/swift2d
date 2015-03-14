@@ -152,10 +152,10 @@ void LensFlareEffect::process(RenderContext const& ctx) {
 
   fbo_.Bind(ogl::Framebuffer::Target::Draw);
 
-  mix_shader_.use(ctx);
+  mix_shader_.use();
   inputs_.Set(units);
 
-  Quad::get().draw(ctx);
+  Quad::get().draw();
 
   SWIFT_POP_GL_RANGE();
 }
@@ -178,12 +178,12 @@ void LensFlareEffect::generate_threshold_buffer(RenderContext const& ctx) {
   fbo_.Bind(oglplus::Framebuffer::Target::Draw);
   ogl::Context::DrawBuffer(oglplus::FramebufferColorAttachment::_0);
 
-  threshold_shader_.use(ctx);
+  threshold_shader_.use();
   g_buffer_diffuse_.Set(0);
   g_buffer_light_.Set(1);
   screen_size_.Set(size / GBUFFER_FRACTION);
 
-  Quad::get().draw(ctx);
+  Quad::get().draw();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

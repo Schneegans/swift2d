@@ -6,12 +6,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_MOVE_BEHAVIOR_HPP
-#define SWIFT2D_MOVE_BEHAVIOR_HPP
+#ifndef SWIFT2D_TIMED_DELETE_COMPONENT_HPP
+#define SWIFT2D_TIMED_DELETE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
-#include <swift2d/math.hpp>
 
 namespace swift {
 
@@ -20,38 +19,33 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class MoveBehavior;
-typedef std::shared_ptr<MoveBehavior>       MoveBehaviorPtr;
-typedef std::shared_ptr<const MoveBehavior> ConstMoveBehaviorPtr;
+class TimedDeleteComponent;
+typedef std::shared_ptr<TimedDeleteComponent>       TimedDeleteComponentPtr;
+typedef std::shared_ptr<const TimedDeleteComponent> ConstTimedDeleteComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL MoveBehavior : public Component {
+class SWIFT_DLL TimedDeleteComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ---------------------------------------------------------------- properties
-  Vec2 LinearSpeed;
-  Float LinearDamping;
-
-  Float AngularSpeed;
-  Float AngularDamping;
-
-  Bool IgnoreParentRotation;
+  Float Life;
+  Signal<> on_delete;
 
   // ----------------------------------------------------- constrution interface
-  MoveBehavior();
+  TimedDeleteComponent();
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static MoveBehaviorPtr create(Args&& ... a) {
-    return std::make_shared<MoveBehavior>(a...);
+  static TimedDeleteComponentPtr create(Args&& ... a) {
+    return std::make_shared<TimedDeleteComponent>(a...);
   }
 
   // creates a copy from this
-  MoveBehaviorPtr create_copy() const {
-    return std::make_shared<MoveBehavior>(*this);
+  TimedDeleteComponentPtr create_copy() const {
+    return std::make_shared<TimedDeleteComponent>(*this);
   }
 
   ComponentPtr create_base_copy() const {
@@ -60,17 +54,13 @@ class SWIFT_DLL MoveBehavior : public Component {
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "MoveBehavior"; }
+  static  std::string get_type_name_static() { return "TimedDeleteComponent"; }
 
   virtual void update(double time);
-  virtual void accept(SavableObjectVisitor& visitor);
 
- ///////////////////////////////////////////////////////////////////////////////
- // ---------------------------------------------------------- private interface
- private:
-  float rotation_;
+  virtual void accept(SavableObjectVisitor& visitor);
 };
 
 }
 
-#endif  // SWIFT2D_MOVE_BEHAVIOR_HPP
+#endif  // SWIFT2D_TIMED_DELETE_COMPONENT_HPP

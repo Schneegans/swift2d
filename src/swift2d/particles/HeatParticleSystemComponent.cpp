@@ -79,11 +79,11 @@ void HeatParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int s
       if (o.Texture) {
         o.Texture->bind(ctx, 0);
       } else {
-        DefaultTexture::get().bind(ctx, 0);
+        DefaultTexture::get().bind(0);
       }
 
       auto& shader(HeatParticleShader::get());
-      shader.use(ctx);
+      shader.use();
       shader.projection.    Set(ctx.projection_matrix);
       shader.diffuse.       Set(0);
       shader.scale_mid_life.Set(math::vec4(o.StartScale, o.MidScale, o.EndScale, o.MidLife));

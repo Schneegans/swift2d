@@ -44,7 +44,7 @@ void Texture3D::bind(RenderContext const& ctx, unsigned location) const {
     ogl::Context::Bind(ose::_3D(), *texture_);
   } else {
     upload_to(ctx, false);
-    DefaultTexture3D::get().bind(ctx, location);
+    DefaultTexture3D::get().bind(location);
   }
 }
 

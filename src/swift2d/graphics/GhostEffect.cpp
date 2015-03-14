@@ -171,7 +171,7 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
   fbo_.Bind(ogl::Framebuffer::Target::Draw);
 
   // blurring ------------------------------------------------------------------
-  blur_shader_.use(ctx);
+  blur_shader_.use();
   input_tex_.Set(4);
   ogl::Texture::Active(4);
 
@@ -181,7 +181,7 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
     ogl::Context::DrawBuffer(output);
     ogl::Context::Bind(ose::_2D(), input);
     step_.Set(step);
-    Quad::get().draw(ctx);
+    Quad::get().draw();
   };
 
   math::vec2 radius(2.0/(ctx.g_buffer_size.x()/GBUFFER_FRACTION), 2.0/(ctx.g_buffer_size.y()/GBUFFER_FRACTION));
@@ -194,7 +194,7 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
   // ghosting ------------------------------------------------------------------
   ogl::Context::DrawBuffer(ogl::FramebufferColorAttachment::_2);
 
-  ghost_shader_.use(ctx);
+  ghost_shader_.use();
 
   ogl::Texture::Active(4);
   ogl::Context::Bind(ose::_2D(), blur_buffer_);
@@ -215,7 +215,7 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
   colors_.Set(math::vec3(0.8, 0.5, 0.5));
   scalar_.Set(math::vec4(-4.0, 3.0, -2.0, 0.3));
 
-  Quad::get().draw(ctx);
+  Quad::get().draw();
 
 
   ogl::Context::DrawBuffer(ogl::FramebufferColorAttachment::_3);
@@ -236,7 +236,7 @@ void GhostEffect::process(RenderContext const& ctx, ogl::Texture const& threshol
   colors_.Set(colors);
   scalar_.Set(math::vec4(3.6, 2.0, 0.9, -0.55));
 
-  Quad::get().draw(ctx);
+  Quad::get().draw();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

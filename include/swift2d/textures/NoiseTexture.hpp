@@ -28,7 +28,7 @@ class SWIFT_DLL NoiseTexture : public Singleton<NoiseTexture> {
  public:
 
   // Binds the texture on the given context to the given location.
-  void bind(RenderContext const& context, unsigned location) const;
+  void bind(unsigned location) const;
 
   friend class Singleton<NoiseTexture>;
 
@@ -40,7 +40,7 @@ class SWIFT_DLL NoiseTexture : public Singleton<NoiseTexture> {
   NoiseTexture();
   ~NoiseTexture();
 
-  void upload_to(RenderContext const& context) const;
+  void upload() const;
 
   mutable oglplus::Texture* texture_;
 };

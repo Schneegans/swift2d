@@ -19,14 +19,16 @@ DefaultTexture3D::DefaultTexture3D()
 ////////////////////////////////////////////////////////////////////////////////
 
 DefaultTexture3D::~DefaultTexture3D() {
-  delete texture_;
+  if (texture_) {
+    delete texture_;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DefaultTexture3D::bind(RenderContext const& ctx, unsigned location) const {
+void DefaultTexture3D::bind(unsigned location) const {
   if (!texture_) {
-    upload_to(ctx);
+    upload();
   }
 
   texture_->Active(location);
@@ -35,7 +37,7 @@ void DefaultTexture3D::bind(RenderContext const& ctx, unsigned location) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DefaultTexture3D::upload_to(RenderContext const& ctx) const {
+void DefaultTexture3D::upload() const {
 
   texture_ = new oglplus::Texture();
 

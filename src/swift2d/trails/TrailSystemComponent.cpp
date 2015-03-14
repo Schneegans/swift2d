@@ -138,7 +138,7 @@ void TrailSystemComponent::Renderer::draw(RenderContext const& ctx, int start, i
 
     if (o.Texture) {
       auto& shader(TexturedTrailShader::get());
-      shader.use(ctx);
+      shader.use();
       o.Texture->bind(ctx, 0);
       shader.texture.Set(0);
       shader.texture_repeat.        Set(o.TextureRepeat);
@@ -152,7 +152,7 @@ void TrailSystemComponent::Renderer::draw(RenderContext const& ctx, int start, i
       shader.total_time.            Set(total_time * 1000.0);
     } else {
       auto& shader(ColoredTrailShader::get());
-      shader.use(ctx);
+      shader.use();
       shader.projection.            Set(ctx.projection_matrix);
       shader.start_width.           Set(o.StartWidth);
       shader.end_width.             Set(o.EndWidth);

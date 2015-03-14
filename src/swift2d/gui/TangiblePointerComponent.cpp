@@ -39,7 +39,7 @@ void TangiblePointerComponent::Renderer::draw(RenderContext const& ctx, int star
     auto& o(objects[i]);
 
     o.Texture->bind(ctx, 0);
-    GuiShader::get().use(ctx);
+    GuiShader::get().use();
 
     math::vec2 size(
       1.0 * o.Size.x() / ctx.window_size.x(),
@@ -67,7 +67,7 @@ void TangiblePointerComponent::Renderer::draw(RenderContext const& ctx, int star
       GuiShader::get().opacity.Set(opacity);
       GuiShader::get().offset_rot.Set(math::vec3(screen_space_pos.x(), screen_space_pos.y(), rot));
       GuiShader::get().diffuse.Set(0);
-      Quad::get().draw(ctx);
+      Quad::get().draw();
     }
   }
 }

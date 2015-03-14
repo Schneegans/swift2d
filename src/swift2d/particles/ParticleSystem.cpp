@@ -138,7 +138,7 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
   particle_buffers_   [current_tf()].BindBase(ose::TransformFeedback(), 0);
 
   auto& shader(ParticleUpdateShader::get());
-  shader.use(ctx);
+  shader.use();
 
   count_ = 0;
   if (!first_draw) {
@@ -162,7 +162,7 @@ int ParticleSystem::update_particles(ParticleSystemComponent::Serialized const& 
       count_ = spawn_positions.size();
     }
 
-    NoiseTexture::get().bind(ctx, 0);
+    NoiseTexture::get().bind(0);
     math::vec2 time(frame_time * 1000.0, ctx.pipeline->get_total_time() * 1000.0);
     math::vec4 life_pos_var_rotate_to_spawn_dir(system.Life, system.LifeVariance, system.PositionVariance, system.RotateToSpawnDirection);
     math::vec4 lin_ang_velocity(system.Velocity, system.VelocityVariance, system.AngularVelocity, system.AngularVelocityVariance);

@@ -29,7 +29,7 @@ void AnimatedGuiSpriteComponent::Renderer::draw(RenderContext const& ctx, int st
     auto& o(objects[i]);
 
     o.Texture->bind(ctx, 0);
-    AnimatedGuiShader::get().use(ctx);
+    AnimatedGuiShader::get().use();
 
     math::vec2 size(
       1.0 * o.Size.x() / ctx.window_size.x(),
@@ -50,7 +50,7 @@ void AnimatedGuiSpriteComponent::Renderer::draw(RenderContext const& ctx, int st
     AnimatedGuiShader::get().opacity.Set(o.Opacity);
     AnimatedGuiShader::get().offset.Set(offset);
     AnimatedGuiShader::get().diffuse.Set(0);
-    Quad::get().draw(ctx);
+    Quad::get().draw();
   }
 }
 

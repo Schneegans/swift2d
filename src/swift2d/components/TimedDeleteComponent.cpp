@@ -6,7 +6,7 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <swift2d/behaviors/TimedDeleteBehavior.hpp>
+#include <swift2d/components/TimedDeleteComponent.hpp>
 
 #include <swift2d/scene/SceneObject.hpp>
 
@@ -14,12 +14,12 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TimedDeleteBehavior::TimedDeleteBehavior()
+TimedDeleteComponent::TimedDeleteComponent()
   : Life(1.0f) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TimedDeleteBehavior::update(double time) {
+void TimedDeleteComponent::update(double time) {
   Life.set(Life.get()-time);
   if (Life.get() <= 0) {
     on_delete.emit();
@@ -29,7 +29,7 @@ void TimedDeleteBehavior::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TimedDeleteBehavior::accept(SavableObjectVisitor& visitor) {
+void TimedDeleteComponent::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
   visitor.add_member("Life", Life);
 }

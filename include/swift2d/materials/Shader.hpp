@@ -52,7 +52,7 @@ class SWIFT_DLL Shader {
          std::vector<std::string> const& transform_feedback_varyings = {});
 
   // uses the Shader on the given context.
-  void use(RenderContext const& ctx) const;
+  void use() const;
 
   template<typename T>
   void set_uniform(std::string name, T const& val) {
@@ -72,7 +72,7 @@ class SWIFT_DLL Shader {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  void upload_to(RenderContext const& ctx) const;
+  void upload() const;
 
   mutable oglplus::VertexShader     v_shader_;
   mutable oglplus::FragmentShader   f_shader_;

@@ -10,11 +10,11 @@
 #define SWIFT2D_INCLUDE_GUI_HPP
 
 // includes  -------------------------------------------------------------------
-#include <swift2d/gui/Interface.hpp>
+#include <swift2d/gui/AnimatedGuiSpriteComponent.hpp>
+#include <swift2d/gui/FullscreenGuiSpriteComponent.hpp>
 #include <swift2d/gui/GuiComponent.hpp>
 #include <swift2d/gui/GuiSpriteComponent.hpp>
-#include <swift2d/gui/FullscreenGuiSpriteComponent.hpp>
-#include <swift2d/gui/AnimatedGuiSpriteComponent.hpp>
+#include <swift2d/gui/Interface.hpp>
 #include <swift2d/gui/TangiblePointerComponent.hpp>
 
 #endif // SWIFT2D_INCLUDE_GUI_HPP

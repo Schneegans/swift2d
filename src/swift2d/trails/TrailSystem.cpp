@@ -142,7 +142,7 @@ void TrailSystem::update_trails(
   trail_buffers_      [current_tf()].BindBase(ose::TransformFeedback(), 0);
 
   auto& shader(TrailUpdateShader::get());
-  shader.use(ctx);
+  shader.use();
   shader.time.                   Set(math::vec2(frame_time, total_time)*1000.0);
   shader.use_global_texcoords.   Set(system.UseGlobalTexCoords ? 1 : 0);
 

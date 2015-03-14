@@ -64,7 +64,7 @@ void DirectionalLightComponent::Renderer::draw(RenderContext const& ctx, int sta
   ogl::Context::Disable(oglplus::Capability::Blend);
 
   auto& shader(DirectionalLightShader::get());
-  shader.use(ctx);
+  shader.use();
 
   if (light_dirs.size() > 0) {
     shader.light_dirs.Set(light_dirs);
@@ -74,7 +74,7 @@ void DirectionalLightComponent::Renderer::draw(RenderContext const& ctx, int sta
   shader.g_buffer_normal.Set(1);
   shader.g_buffer_light.Set(2);
 
-  Quad::get().draw(ctx);
+  Quad::get().draw();
 
   ogl::Context::Enable(oglplus::Capability::Blend);
 

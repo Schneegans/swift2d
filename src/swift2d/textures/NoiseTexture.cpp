@@ -26,9 +26,9 @@ NoiseTexture::~NoiseTexture() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void NoiseTexture::bind(RenderContext const& ctx, unsigned location) const {
+void NoiseTexture::bind(unsigned location) const {
   if (!texture_) {
-    upload_to(ctx);
+    upload();
   }
 
   texture_->Active(location);
@@ -37,7 +37,7 @@ void NoiseTexture::bind(RenderContext const& ctx, unsigned location) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void NoiseTexture::upload_to(RenderContext const& ctx) const {
+void NoiseTexture::upload() const {
 
   texture_ = new oglplus::Texture();
 

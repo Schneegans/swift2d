@@ -27,8 +27,8 @@ class SWIFT_DLL DefaultTexture3D : public Singleton<DefaultTexture3D> {
  // ----------------------------------------------------------- public interface
  public:
 
-  // Binds the texture on the given context to the given location.
-  void bind(RenderContext const& context, unsigned location) const;
+  // Binds the texture to the given location.
+  void bind(unsigned location) const;
 
   friend class Singleton<DefaultTexture3D>;
 
@@ -40,7 +40,7 @@ class SWIFT_DLL DefaultTexture3D : public Singleton<DefaultTexture3D> {
   DefaultTexture3D();
   ~DefaultTexture3D();
 
-  void upload_to(RenderContext const& context) const;
+  void upload() const;
 
   mutable oglplus::Texture* texture_;
 };

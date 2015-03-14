@@ -90,7 +90,7 @@ void PointParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int 
       ogl::Context::BlendFunc(ose::One(), ose::OneMinusSrcAlpha());
 
       auto& shader(PointParticleShader::get());
-      shader.use(ctx);
+      shader.use();
       shader.projection. Set(ctx.projection_matrix);
       shader.start_color.Set(o.StartColor);
       shader.mid_color.  Set(o.MidColor);

@@ -32,7 +32,7 @@ Quad::~Quad() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Quad::upload_to(RenderContext const& ctx) const {
+void Quad::upload() const {
 
     std::vector<float> rect = {
       -1.0f, -1.0f,
@@ -60,10 +60,10 @@ void Quad::upload_to(RenderContext const& ctx) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Quad::draw(RenderContext const& ctx) const {
+void Quad::draw() const {
   // upload to GPU if neccessary
   if (!verts_) {
-    upload_to(ctx);
+    upload();
   }
 
   rectangle_->Bind();
@@ -74,11 +74,11 @@ void Quad::draw(RenderContext const& ctx) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Quad::draw(RenderContext const& ctx, unsigned instance_count) const {
+void Quad::draw(unsigned instance_count) const {
 
   // upload to GPU if neccessary
   if (!verts_) {
-    upload_to(ctx);
+    upload();
   }
 
   rectangle_->Bind();

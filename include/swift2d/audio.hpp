@@ -11,9 +11,9 @@
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/openal.hpp>
-#include <swift2d/audio/Sound.hpp>
-#include <swift2d/audio/Music.hpp>
 #include <swift2d/audio/AudioComponent.hpp>
 #include <swift2d/audio/Jamendo.hpp>
+#include <swift2d/audio/Music.hpp>
+#include <swift2d/audio/Sound.hpp>
 
 #endif // SWIFT2D_INCLUDE_AUDIO_HPP

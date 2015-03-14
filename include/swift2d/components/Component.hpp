@@ -50,7 +50,8 @@ class SWIFT_DLL Component : public SavableObject {
  public:
 
   // ---------------------------------------------------------------- properties
-  // True, if this core should be processed in the serialization and traversal.
+  // True, if this component should be processed in the serialization and
+  // traversal
   Bool Enabled;
   String Label;
 
@@ -73,9 +74,11 @@ class SWIFT_DLL Component : public SavableObject {
   // nothing, so you do not have to call it from your implementation
   virtual void on_init() {}
 
+  // called by the component's user when its own update is called. Usually this
+  // happens once each frame its usually a bad idea to call this method directly
   virtual void update(double time) {}
 
-  void         set_user(SceneObject* u) { user_ = u; }
+  // returns the SceneObject the component is currently attached to
   SceneObject* get_user() const { return user_; }
 
   // gets the root object of the current user of this component
@@ -92,6 +95,9 @@ class SWIFT_DLL Component : public SavableObject {
  protected:
   Component();
   Component(Component const& to_copy);
+
+  // called automatically when the component is attached to a SceneObject
+  void set_user(SceneObject* u) { user_ = u; }
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

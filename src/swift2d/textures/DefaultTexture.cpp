@@ -19,14 +19,16 @@ DefaultTexture::DefaultTexture()
 ////////////////////////////////////////////////////////////////////////////////
 
 DefaultTexture::~DefaultTexture() {
-  delete texture_;
+  if (texture_) {
+    delete texture_;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DefaultTexture::bind(RenderContext const& ctx, unsigned location) const {
+void DefaultTexture::bind(unsigned location) const {
   if (!texture_) {
-    upload_to(ctx);
+    upload();
   }
 
   texture_->Active(location);
@@ -35,7 +37,7 @@ void DefaultTexture::bind(RenderContext const& ctx, unsigned location) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DefaultTexture::upload_to(RenderContext const& ctx) const {
+void DefaultTexture::upload() const {
 
   texture_ = new oglplus::Texture();
 

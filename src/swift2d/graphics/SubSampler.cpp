@@ -62,11 +62,11 @@ void SubSampler::draw(RenderContext const& ctx) {
   buffer_.bind_diffuse(10);
   buffer_.bind_light(11);
 
-  shader_.use(ctx);
+  shader_.use();
   shader_.set_uniform("g_buffer_diffuse", 10);
   shader_.set_uniform("g_buffer_light", 11);
 
-  Quad::get().draw(ctx);
+  Quad::get().draw();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

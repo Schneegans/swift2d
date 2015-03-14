@@ -220,7 +220,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
                             GBuffer* g_buffer, LBuffer* l_buffer) {
 
   auto use_postfx_shader = [&]() {
-    post_fx_shader_.use(ctx);
+    post_fx_shader_.use();
     vignette_softness_.Set(scene->vignette_softness);
     vignette_coverage_.Set(scene->vignette_coverage);
     vignette_color_.Set(scene->vignette_color);
@@ -258,7 +258,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
     g_buffer_diffuse_.Set(0);
     gamma_.Set(SettingsWrapper::get().Settings->Gamma());
-    Quad::get().draw(ctx);
+    Quad::get().draw();
 
     SWIFT_POP_GL_RANGE();
 
@@ -320,7 +320,7 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
       glow_opacity_.Set(scene->glow_opacity);
     }
 
-    Quad::get().draw(ctx);
+    Quad::get().draw();
 
     SWIFT_POP_GL_RANGE();
 

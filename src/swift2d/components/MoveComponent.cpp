@@ -6,7 +6,7 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <swift2d/behaviors/MoveBehavior.hpp>
+#include <swift2d/components/MoveComponent.hpp>
 
 #include <swift2d/scene/SceneObject.hpp>
 
@@ -14,7 +14,7 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-MoveBehavior::MoveBehavior()
+MoveComponent::MoveComponent()
   : LinearSpeed(math::vec2(0.f, 0.f))
   , LinearDamping(0)
   , AngularSpeed(0)
@@ -24,7 +24,7 @@ MoveBehavior::MoveBehavior()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void MoveBehavior::update(double time) {
+void MoveComponent::update(double time) {
   auto user_transform(get_user()->Transform.get());
 
   if (IgnoreParentRotation() && get_user()->Parent()) {
@@ -42,7 +42,7 @@ void MoveBehavior::update(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void MoveBehavior::accept(SavableObjectVisitor& visitor) {
+void MoveComponent::accept(SavableObjectVisitor& visitor) {
   Component::accept(visitor);
   visitor.add_member("LinearSpeed", LinearSpeed);
   visitor.add_member("LinearDamping", LinearDamping);

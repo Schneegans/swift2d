@@ -18,8 +18,8 @@
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
-// Stores geometry data. A mesh can be loaded from an Assimp mesh and the     //
-// draw onto a context.                                                       //
+// Stores geometry data of a quad. It can be drawn with OpenGL but any shader //
+// must be made active before.                                                //
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
@@ -29,9 +29,12 @@ class SWIFT_DLL Quad: public Singleton<Quad> {
  // ----------------------------------------------------------- public interface
  public:
 
-  // Draws the Quad to the given context.
-  void draw(RenderContext const& context) const;
-  void draw(RenderContext const& context, unsigned instance_count) const;
+  // Draws the Quad. Uses glDrawArrays internally
+  void draw() const;
+
+  // Draws the Quad multiple times. Uses
+  // glDrawArraysInstanced internally
+  void draw(unsigned instance_count) const;
 
   friend class Singleton<Quad>;
 
@@ -42,7 +45,7 @@ class SWIFT_DLL Quad: public Singleton<Quad> {
   Quad();
   ~Quad();
 
-  void upload_to(RenderContext const& context) const;
+  void upload() const;
 
   mutable oglplus::VertexArray* rectangle_;
   mutable oglplus::Buffer*      verts_;

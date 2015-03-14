@@ -102,7 +102,7 @@ void GravityMap::process(ConstSerializedScenePtr const& scene, RenderContext con
     sources.push_back(math::vec4(pos.x(), pos.y(), source->Mass(), radius*radius));
   }
 
-  gravity_shader_.use(ctx);
+  gravity_shader_.use();
   screen_size_.Set(ctx.window_size / 16);
   gravity_source_count_.Set((int)sources.size());
   world_gravity_.Set(Physics::get().Gravity());
@@ -111,7 +111,7 @@ void GravityMap::process(ConstSerializedScenePtr const& scene, RenderContext con
     gravity_sources_.Set(sources);
   }
 
-  Quad::get().draw(ctx);
+  Quad::get().draw();
 
   ogl::Context::Enable(oglplus::Capability::Blend);
 }

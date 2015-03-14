@@ -13,22 +13,22 @@
 #include <swift2d/openal.hpp>
 
 // singletons which are not included by default
+#include <swift2d/gui/GuiShader.hpp>
+#include <swift2d/materials/MaterialShaderFactory.hpp>
 #include <swift2d/materials/PointLightShader.hpp>
 #include <swift2d/materials/ShaderIncludes.hpp>
-#include <swift2d/materials/MaterialShaderFactory.hpp>
-#include <swift2d/gui/GuiShader.hpp>
 #include <swift2d/particles/HeatParticleShader.hpp>
-#include <swift2d/particles/PointParticleShader.hpp>
 #include <swift2d/particles/LightParticleShader.hpp>
 #include <swift2d/particles/ParticleUpdateShader.hpp>
+#include <swift2d/particles/PointParticleShader.hpp>
 #include <swift2d/particles/SpriteParticleShader.hpp>
-#include <swift2d/trails/TrailUpdateShader.hpp>
-#include <swift2d/trails/TexturedTrailShader.hpp>
-#include <swift2d/trails/ColoredTrailShader.hpp>
-#include <swift2d/textures/NoiseTexture.hpp>
+#include <swift2d/properties/AnimatedProperty.hpp>
 #include <swift2d/textures/DefaultTexture.hpp>
 #include <swift2d/textures/DefaultTexture3D.hpp>
-#include <swift2d/properties/AnimatedProperty.hpp>
+#include <swift2d/textures/NoiseTexture.hpp>
+#include <swift2d/trails/ColoredTrailShader.hpp>
+#include <swift2d/trails/TexturedTrailShader.hpp>
+#include <swift2d/trails/TrailUpdateShader.hpp>
 
 #include <GLFW/glfw3.h>
 
@@ -55,10 +55,9 @@ namespace {
       Object::init<CameraComponent>();
       Object::init<CircleCollisionShape>();
       Object::init<CircularShape>();
-      Object::init<DeleteOnLeaveBehavior>();
-      Object::init<DirectionalLightComponent>();
       Object::init<DealDamageComponent>();
-      Object::init<PhysicsBodyComponent>();
+      Object::init<DeleteOnLeaveComponent>();
+      Object::init<DirectionalLightComponent>();
       Object::init<EngineSettings>();
       Object::init<FullscreenGuiSpriteComponent>();
       Object::init<FullscreenSpriteComponent>();
@@ -71,12 +70,14 @@ namespace {
       Object::init<LightParticleSystemComponent>();
       Object::init<ListenerComponent>();
       Object::init<Material>();
-      Object::init<MoveBehavior>();
+      Object::init<MoveComponent>();
       Object::init<Music>();
       Object::init<NetworkPositionUpdateComponent>();
-      Object::init<OffsetBehavior>();
+      Object::init<NumberParticleSystemComponent>();
+      Object::init<OffsetComponent>();
       Object::init<ParticleEmitterComponent>();
       Object::init<ParticleOnceEmitterComponent>();
+      Object::init<PhysicsBodyComponent>();
       Object::init<PointLightComponent>();
       Object::init<PointParticleSystemComponent>();
       Object::init<PolygonCollisionShape>();
@@ -86,11 +87,10 @@ namespace {
       Object::init<Sound>();
       Object::init<SpriteComponent>();
       Object::init<SpriteParticleSystemComponent>();
-      Object::init<NumberParticleSystemComponent>();
       Object::init<Texture3D>();
       Object::init<Texture::Layer>();
       Object::init<Texture>();
-      Object::init<TimedDeleteBehavior>();
+      Object::init<TimedDeleteComponent>();
       Object::init<TrailEmitterComponent>();
       Object::init<TrailSystemComponent>();
 

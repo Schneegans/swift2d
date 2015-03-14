@@ -79,7 +79,7 @@ void LightParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int 
       if (o.Texture) {
         o.Texture->bind(ctx, 3);
       } else {
-        DefaultTexture::get().bind(ctx, 3);
+        DefaultTexture::get().bind(3);
       }
 
       ogl::Context::BlendFunc(
@@ -88,7 +88,7 @@ void LightParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int 
       );
 
       auto& shader(LightParticleShader::get());
-      shader.use(ctx);
+      shader.use();
       shader.projection.       Set(ctx.projection_matrix);
       shader.diffuse.          Set(3);
       shader.scale_mid_life.   Set(math::vec4(o.StartScale, o.MidScale, o.EndScale, o.MidLife));

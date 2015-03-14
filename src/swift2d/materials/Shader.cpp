@@ -41,7 +41,7 @@ void Shader::set_sources(std::string const& v_source,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Shader::upload_to(RenderContext const& ctx) const {
+void Shader::upload() const {
 
   dirty_ = false;
 
@@ -105,11 +105,11 @@ void Shader::upload_to(RenderContext const& ctx) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Shader::use(RenderContext const& ctx) const {
+void Shader::use() const {
 
   // upload to GPU if neccessary
   if (dirty_) {
-    upload_to(ctx);
+    upload();
   }
 
   program_.Use();

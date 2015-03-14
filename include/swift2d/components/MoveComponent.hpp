@@ -6,12 +6,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_DELETE_ON_LEAVE_BEHAVIOR_HPP
-#define SWIFT2D_DELETE_ON_LEAVE_BEHAVIOR_HPP
+#ifndef SWIFT2D_MOVE_COMPONENT_HPP
+#define SWIFT2D_MOVE_COMPONENT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/components/Component.hpp>
-#include <swift2d/triggers/ShapeTrigger.hpp>
+#include <swift2d/math.hpp>
 
 namespace swift {
 
@@ -20,40 +20,38 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // shared pointer type definition ----------------------------------------------
-class DeleteOnLeaveBehavior;
-typedef std::shared_ptr<DeleteOnLeaveBehavior>       DeleteOnLeaveBehaviorPtr;
-typedef std::shared_ptr<const DeleteOnLeaveBehavior> ConstDeleteOnLeaveBehaviorPtr;
+class MoveComponent;
+typedef std::shared_ptr<MoveComponent>       MoveComponentPtr;
+typedef std::shared_ptr<const MoveComponent> ConstMoveComponentPtr;
 
 // -----------------------------------------------------------------------------
-class SWIFT_DLL DeleteOnLeaveBehavior : public Component {
+class SWIFT_DLL MoveComponent : public Component {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
-  Signal<> on_delete;
+  // ---------------------------------------------------------------- properties
+  Vec2 LinearSpeed;
+  Float LinearDamping;
+
+  Float AngularSpeed;
+  Float AngularDamping;
+
+  Bool IgnoreParentRotation;
 
   // ----------------------------------------------------- constrution interface
-  DeleteOnLeaveBehavior() {
-    trigger_.on_leave.connect([&](){
-      if (get_user()) {
-        on_delete.emit();
-        get_user()->detach();
-      }
-
-      return false;
-    });
-  }
+  MoveComponent();
 
   // Creates a new component and returns a shared pointer.
   template <typename... Args>
-  static DeleteOnLeaveBehaviorPtr create(Args&& ... a) {
-    return std::make_shared<DeleteOnLeaveBehavior>(a...);
+  static MoveComponentPtr create(Args&& ... a) {
+    return std::make_shared<MoveComponent>(a...);
   }
 
   // creates a copy from this
-  DeleteOnLeaveBehaviorPtr create_copy() const {
-    return std::make_shared<DeleteOnLeaveBehavior>(*this);
+  MoveComponentPtr create_copy() const {
+    return std::make_shared<MoveComponent>(*this);
   }
 
   ComponentPtr create_base_copy() const {
@@ -62,19 +60,17 @@ class SWIFT_DLL DeleteOnLeaveBehavior : public Component {
 
   // ------------------------------------------------------------ public methods
   virtual std::string get_type_name() const {  return get_type_name_static(); }
-  static  std::string get_type_name_static() { return "DeleteOnLeaveBehavior"; }
+  static  std::string get_type_name_static() { return "MoveComponent"; }
 
-  void set_shapes(CircularShapePtr const& a, CircularShapePtr const& b) {
-    trigger_.set_shapes(a, b);
-  }
+  virtual void update(double time);
+  virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  ShapeTrigger trigger_;
-
+  float rotation_;
 };
 
 }
 
-#endif  // SWIFT2D_DELETE_ON_LEAVE_BEHAVIOR_HPP
+#endif  // SWIFT2D_MOVE_COMPONENT_HPP

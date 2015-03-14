@@ -115,11 +115,11 @@ void NumberParticleSystemComponent::Renderer::draw(RenderContext const& ctx, int
       if (o.Font) {
         o.Font->bind(ctx, 0);
       } else {
-        DefaultTexture::get().bind(ctx, 0);
+        DefaultTexture::get().bind(0);
       }
 
       auto& shader(NumberParticleShader::get());
-      shader.use(ctx);
+      shader.use();
       shader.projection.     Set(ctx.projection_matrix);
       shader.font.           Set(0);
       shader.boost_limits.   Set(math::vec2(o.LowerBoostLimit, o.UpperBoostLimit));

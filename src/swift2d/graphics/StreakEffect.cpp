@@ -177,7 +177,7 @@ void StreakEffect::process(RenderContext const& ctx, ogl::Texture const& thresho
 
   streak_fbo_.Bind(ogl::Framebuffer::Target::Draw);
   const float DEC = 0.96;
-  streak_shader_.use(ctx);
+  streak_shader_.use();
   input_tex_.Set(4);
   ogl::Texture::Active(4);
 
@@ -191,7 +191,7 @@ void StreakEffect::process(RenderContext const& ctx, ogl::Texture const& thresho
     colors_.Set(colors_in);
     step_.Set(step_dir);
 
-    Quad::get().draw(ctx);
+    Quad::get().draw();
   };
 
   math::vec2 step_dir(0.9*4.0/ctx.g_buffer_size.x(), 0.0);

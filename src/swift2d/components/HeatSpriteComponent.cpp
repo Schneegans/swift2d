@@ -97,7 +97,7 @@ void HeatSpriteComponent::Renderer::draw(RenderContext const& ctx, int start, in
 
     object.Texture->bind(ctx, 0);
 
-    shader.use(ctx);
+    shader.use();
     shader.diffuse.    Set(0);
     shader.projection. Set(ctx.projection_matrix);
     shader.depth.      Set(object.Depth);
@@ -113,7 +113,7 @@ void HeatSpriteComponent::Renderer::draw(RenderContext const& ctx, int start, in
       shader.heat_transform.Set(count, (const math::mat3*)&heat_transform[index]);
       shader.opacity.Set(count, (const float*)&opacity[index]);
 
-      Quad::get().draw(ctx, count);
+      Quad::get().draw(count);
 
       index += count;
     }
