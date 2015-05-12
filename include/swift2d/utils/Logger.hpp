@@ -17,23 +17,32 @@
 
 namespace swift {
 
+////////////////////////////////////////////////////////////////////////////////
+// Prints beautiful messages to the console output.                           //
+////////////////////////////////////////////////////////////////////////////////
+
 class SWIFT_DLL Logger {
 
+ ///////////////////////////////////////////////////////////////////////////////
+ // ----------------------------------------------------------- public interface
  public:
 
+  // If any of these is set to false, the corresponding messages are discarded.
   static bool enable_trace;
   static bool enable_debug;
   static bool enable_message;
   static bool enable_warning;
   static bool enable_error;
 
-  static std::ostream& trace_impl(const char* file, int line);
-  static std::ostream& debug_impl(const char* file, int line);
+  static std::ostream& trace_impl  (const char* file, int line);
+  static std::ostream& debug_impl  (const char* file, int line);
   static std::ostream& message_impl(const char* file, int line);
   static std::ostream& warning_impl(const char* file, int line);
-  static std::ostream& error_impl(const char* file, int line);
+  static std::ostream& error_impl  (const char* file, int line);
 };
 
+// Use these macros in your code like this:
+//   LOG_MESSAGE << "hello world" << std::endl;
 #define LOG_TRACE   Logger::trace_impl  (__FILE__, __LINE__)
 #define LOG_DEBUG   Logger::debug_impl  (__FILE__, __LINE__)
 #define LOG_MESSAGE Logger::message_impl(__FILE__, __LINE__)

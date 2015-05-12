@@ -24,7 +24,17 @@ class SWIFT_DLL FPSCounter {
  // ----------------------------------------------------------- public interface
  public:
 
+  // ---------------------------------------------------------------- properties
+
+  // This property contains the current frames per seconds.
+  Float Fps;
+
+  // ----------------------------------------------------- contruction interface
+
+  // Every t frames the Fps property is updated.
   FPSCounter(unsigned t = 10);
+
+  // ------------------------------------------------------------ public methods
 
   // Call this after creation of this counter.
   void start();
@@ -32,13 +42,9 @@ class SWIFT_DLL FPSCounter {
   // Call this once a frame.
   void step();
 
-  // This property contains the current frames per seconds.
-  Float fps;
-
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-
   unsigned frame_count;
   Timer    timer;
   unsigned delay;

@@ -17,7 +17,7 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 FPSCounter::FPSCounter(unsigned t)
-  : fps(0.0f)
+  : Fps(0.0f)
   , frame_count(0)
   , timer()
   , delay(t) {}
@@ -32,7 +32,7 @@ void FPSCounter::start() {
 
 void FPSCounter::step() {
   if (++frame_count == delay) {
-    fps = 1.f * delay / float(timer.get_elapsed());
+    Fps = 1.f * delay / float(timer.get_elapsed());
     timer.reset();
     frame_count = 0;
   }

@@ -20,6 +20,8 @@
 namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
+// Downloads binary data to file on disk.  Downloading happens in an extra    //
+// thread.                                                                    //
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
@@ -29,18 +31,30 @@ class SWIFT_DLL Downloader {
  // ----------------------------------------------------------- public interface
  public:
 
+  // ------------------------------------------------------------------- signals
   Signal<std::string> on_error;
 
+  // ---------------------------------------------------------------- properties
   Int32 ProgressBytes;
   Float ProgressPercent;
 
+  // ----------------------------------------------------- contruction interface
   Downloader();
 
+  // ------------------------------------------------------------ public methods
+
+  // Downloads the resource at uri to a temporary file. Access the resulting
+  // file name with result_file()
   void download(std::string const& uri);
+
+  // Downloads the resource at uri to the given file.
   void download(std::string const& uri, std::string const& result_file);
 
+  // Call this method regularily from your main thread. It will updated the
+  // progress properties and emit on_error if an error occured.
   void update();
 
+  // Returns the file name to which a file is downloaded.
   std::string const& result_file() const { return result_; }
 
  ///////////////////////////////////////////////////////////////////////////////
