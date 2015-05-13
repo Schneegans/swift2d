@@ -21,12 +21,16 @@ namespace swift {
 
 void SettingsWrapper::set_settings_type(std::string const& type) {
   settings_type_ = type;
+
+  Settings = std::dynamic_pointer_cast<EngineSettings>(Object::create(settings_type_));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 SettingsWrapper::SettingsWrapper()
   : settings_type_("EngineSettings") {
+
+  Settings = EngineSettings::create();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
