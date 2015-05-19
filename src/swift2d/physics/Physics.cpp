@@ -53,7 +53,21 @@ class SwiftContactListener : public b2ContactListener {
     a->end_contact.emit(a, b, point);
     b->end_contact.emit(b, a, point);
   }
-  void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) {}
+
+  void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) {
+    auto body_a(contact->GetFixtureA()->GetBody());
+    auto body_b(contact->GetFixtureB()->GetBody());
+
+    auto a = static_cast<PhysicsBodyComponent*>(body_a->GetUserData());
+    auto b = static_cast<PhysicsBodyComponent*>(body_b->GetUserData());
+
+    bool enabled = true;
+    a->pre_solve.emit(a, b, enabled);
+    b->pre_solve.emit(b, a, enabled);
+
+    contact->SetEnabled(enabled);
+  }
+
   void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {}
 };
 
@@ -113,6 +127,7 @@ void Physics::update(double time) {
     auto body_pos = body->GetWorldCenter();
 
     if (body->IsAwake() && body->GetType() == b2_dynamicBody) {
+      auto b(static_cast<PhysicsBodyComponent*>(body->GetUserData()));
       for (auto source: gravity_sources_) {
         auto transform(source->get_user()->WorldTransform());
         auto pos(math::get_translation(transform));
@@ -121,7 +136,6 @@ void Physics::update(double time) {
         math::vec2 direction(pos - math::vec2(body_pos.x, body_pos.y));
         float distance(math::get_length(direction));
         if (distance > 1.f) {
-          auto b(static_cast<PhysicsBodyComponent*>(body->GetUserData()));
           direction = direction * mass * b->GravityScale() / (distance*distance*distance);
           b->apply_global_force(direction, false);
         }
@@ -131,7 +145,7 @@ void Physics::update(double time) {
         b2Vec2 dist(body_pos - b2Vec2(shock.location.x(), shock.location.y()));
         float length(dist.LengthSquared());
         if (length > 0 && length < shock.radius*shock.radius) {
-          dist *= shock.strength/(length+1.f)*2;
+          dist *= shock.strength/(length+1.f)*b->GravityScale();
           body->ApplyLinearImpulse(dist, body_pos, true);
 
           auto b(static_cast<PhysicsBodyComponent*>(body->GetUserData()));
@@ -171,6 +185,7 @@ b2Body* Physics::add(PhysicsBodyComponent* body) {
   fixtureDef.density = body->Mass() / scale.x() / scale.y();
   fixtureDef.friction = body->Friction();
   fixtureDef.restitution = body->Restitution();
+  fixtureDef.isSensor = body->IsSensor();
   fixtureDef.filter.groupIndex = body->Group();
   fixtureDef.filter.maskBits = body->Mask();
   fixtureDef.filter.categoryBits = body->Category();

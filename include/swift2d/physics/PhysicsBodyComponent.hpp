@@ -49,6 +49,7 @@ class SWIFT_DLL PhysicsBodyComponent : public Component {
   Float                   Friction;
   Float                   Restitution;
   Bool                    FixedRotation;
+  Bool                    IsSensor;
 
   Int16                   Group;
   UInt16                  Mask;
@@ -65,6 +66,8 @@ class SWIFT_DLL PhysicsBodyComponent : public Component {
   // ------------------------------------------------------------------- signals
   Signal<PhysicsBodyComponent*, PhysicsBodyComponent*, math::vec2> start_contact;
   Signal<PhysicsBodyComponent*, PhysicsBodyComponent*, math::vec2> end_contact;
+
+  Signal<PhysicsBodyComponent*, PhysicsBodyComponent*, bool&> pre_solve;
 
   // ---------------------------------------------------- construction interface
   PhysicsBodyComponent();

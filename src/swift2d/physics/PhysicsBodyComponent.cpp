@@ -32,6 +32,7 @@ PhysicsBodyComponent::PhysicsBodyComponent()
   , GravityScale(1.f)
   , IsBullet(false)
   , FixedRotation(false)
+  , IsSensor(false)
   , Sleep(false)
   , Group(0)
   , Mask(-1)
@@ -91,6 +92,12 @@ void PhysicsBodyComponent::on_init() {
     });
     FixedRotation.on_change().connect([&](bool val){
       body_->SetFixedRotation(val);
+      return true;
+    });
+    IsSensor.on_change().connect([&](bool val){
+      if (body_) {
+        LOG_WARNING << "IsSensor cannot be set on initialized bodies!" << std::endl;
+      }
       return true;
     });
     Sleep.on_change().connect([&](bool val){
@@ -270,6 +277,7 @@ void PhysicsBodyComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Group", Group);
   visitor.add_member("IsBullet", IsBullet);
   visitor.add_member("FixedRotation", FixedRotation);
+  visitor.add_member("IsSensor", IsSensor);
   visitor.add_member("Sleep", Sleep);
   visitor.add_member("Mask", Mask);
   visitor.add_member("Category", Category);
