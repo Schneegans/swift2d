@@ -137,9 +137,9 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
 
       vec3 get_lighting(vec2 texcoords, vec2 offset) {
 
-        vec2 texcoords_r = (texcoords + offset * 1.0 - 0.5) * 1.000 + 0.5;
-        vec2 texcoords_g = (texcoords + offset * 0.6 - 0.5) * 0.995 + 0.5;
-        vec2 texcoords_b = (texcoords + offset * 0.2 - 0.5) * 0.990 + 0.5;
+        vec2 texcoords_r = (texcoords + offset * 1.0 - 0.5) * 1.0000 + 0.5;
+        vec2 texcoords_g = (texcoords + offset * 0.6 - 0.5) * 0.9975 + 0.5;
+        vec2 texcoords_b = (texcoords + offset * 0.2 - 0.5) * 0.9950 + 0.5;
 
         vec2 light_r = texture(l_buffer, texcoords_r).ra;
         vec2 light_g = texture(l_buffer, texcoords_g).ga;

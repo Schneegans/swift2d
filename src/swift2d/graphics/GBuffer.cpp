@@ -19,18 +19,18 @@ namespace swift {
 GBuffer::GBuffer(RenderContext const& ctx) {
 
   auto create_texture = [&](
-    oglplus::Texture& tex, int width, int height,
-    oglplus::enums::PixelDataInternalFormat i_format,
-    oglplus::enums::PixelDataFormat         p_format) {
+    ogl::Texture& tex, int width, int height,
+    ogl::enums::PixelDataInternalFormat i_format,
+    ogl::enums::PixelDataFormat         p_format) {
 
-    ogl::Context::Bound(oglplus::Texture::Target::_2D, tex)
+    ogl::Context::Bound(ogl::Texture::Target::_2D, tex)
       .Image2D(0, i_format, width, height,
-        0, p_format, oglplus::PixelDataType::UnsignedByte, nullptr)
+        0, p_format, ogl::PixelDataType::UnsignedByte, nullptr)
       .MaxLevel(0)
-      .MinFilter(ctx.sub_sampling ? oglplus::TextureMinFilter::Linear : oglplus::TextureMinFilter::Nearest)
-      .MagFilter(ctx.sub_sampling ? oglplus::TextureMagFilter::Linear : oglplus::TextureMagFilter::Nearest)
-      .WrapS(oglplus::TextureWrap::MirroredRepeat)
-      .WrapT(oglplus::TextureWrap::MirroredRepeat);
+      .MinFilter(ctx.sub_sampling ? ogl::TextureMinFilter::Linear : ogl::TextureMinFilter::Nearest)
+      .MagFilter(ctx.sub_sampling ? ogl::TextureMagFilter::Linear : ogl::TextureMagFilter::Nearest)
+      .WrapS(ogl::TextureWrap::MirroredRepeat)
+      .WrapT(ogl::TextureWrap::MirroredRepeat);
   };
 
   auto size(ctx.g_buffer_size);
@@ -38,36 +38,36 @@ GBuffer::GBuffer(RenderContext const& ctx) {
   // create textures -----------------------------------------------------------
   create_texture(
     diffuse_, size.x(), size.y(),
-    oglplus::PixelDataInternalFormat::RGB8,
-    oglplus::PixelDataFormat::RGB
+    ogl::PixelDataInternalFormat::RGB8,
+    ogl::PixelDataFormat::RGB
   );
 
   if (ctx.dynamic_lighting) {
     create_texture(
       normal_, size.x(), size.y(),
-      oglplus::PixelDataInternalFormat::RGB8,
-      oglplus::PixelDataFormat::RGB
+      ogl::PixelDataInternalFormat::RGB8,
+      ogl::PixelDataFormat::RGB
     );
     create_texture(
       light_, size.x(), size.y(),
-      oglplus::PixelDataInternalFormat::RGB8,
-      oglplus::PixelDataFormat::RGB
+      ogl::PixelDataInternalFormat::RGB8,
+      ogl::PixelDataFormat::RGB
     );
   }
 
   // create framebuffer object -------------------------------------------------
-  fbo_.Bind(oglplus::Framebuffer::Target::Draw);
+  fbo_.Bind(ogl::Framebuffer::Target::Draw);
 
-  oglplus::Framebuffer::AttachColorTexture(
-    oglplus::Framebuffer::Target::Draw, 0, diffuse_, 0
+  ogl::Framebuffer::AttachColorTexture(
+    ogl::Framebuffer::Target::Draw, 0, diffuse_, 0
   );
 
   if (ctx.dynamic_lighting) {
-    oglplus::Framebuffer::AttachColorTexture(
-      oglplus::Framebuffer::Target::Draw, 1, normal_, 0
+    ogl::Framebuffer::AttachColorTexture(
+      ogl::Framebuffer::Target::Draw, 1, normal_, 0
     );
-    oglplus::Framebuffer::AttachColorTexture(
-      oglplus::Framebuffer::Target::Draw, 2, light_, 0
+    ogl::Framebuffer::AttachColorTexture(
+      ogl::Framebuffer::Target::Draw, 2, light_, 0
     );
   }
 }
@@ -80,19 +80,19 @@ void GBuffer::bind_for_drawing(RenderContext const& ctx) {
   ogl::Context::Viewport(size.x(), size.y());
 
   if (ctx.dynamic_lighting) {
-    fbo_.Bind(oglplus::Framebuffer::Target::Draw);
+    fbo_.Bind(ogl::Framebuffer::Target::Draw);
 
-    oglplus::Context::ColorBuffer draw_buffs[3] =  {
-      oglplus::FramebufferColorAttachment::_0,
-      oglplus::FramebufferColorAttachment::_1,
-      oglplus::FramebufferColorAttachment::_2
+    ogl::Context::ColorBuffer draw_buffs[3] =  {
+      ogl::FramebufferColorAttachment::_0,
+      ogl::FramebufferColorAttachment::_1,
+      ogl::FramebufferColorAttachment::_2
     };
     ogl::Context::DrawBuffers(draw_buffs);
   } else {
-    fbo_.Bind(oglplus::Framebuffer::Target::Draw);
+    fbo_.Bind(ogl::Framebuffer::Target::Draw);
 
-    oglplus::Context::ColorBuffer draw_buffs[1] =  {
-      oglplus::FramebufferColorAttachment::_0
+    ogl::Context::ColorBuffer draw_buffs[1] =  {
+      ogl::FramebufferColorAttachment::_0
     };
     ogl::Context::DrawBuffers(draw_buffs);
   }
@@ -101,22 +101,22 @@ void GBuffer::bind_for_drawing(RenderContext const& ctx) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void GBuffer::bind_diffuse(int location) {
-  oglplus::Texture::Active(location);
-  diffuse_.Bind(oglplus::Texture::Target::_2D);
+  ogl::Texture::Active(location);
+  diffuse_.Bind(ogl::Texture::Target::_2D);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void GBuffer::bind_normal(int location) {
-  oglplus::Texture::Active(location);
-  normal_.Bind(oglplus::Texture::Target::_2D);
+  ogl::Texture::Active(location);
+  normal_.Bind(ogl::Texture::Target::_2D);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void GBuffer::bind_light(int location) {
-  oglplus::Texture::Active(location);
-  light_.Bind(oglplus::Texture::Target::_2D);
+  ogl::Texture::Active(location);
+  light_.Bind(ogl::Texture::Target::_2D);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -85,17 +85,17 @@ Steam::Steam()
     current_room_ = result->m_ulSteamIDLobby;
     std::string name(SteamMatchmaking()->GetLobbyData(current_room_, "name"));
 
-    on_message.emit(MessageType::MSG_JOIN, get_user_id(), "joined " + name);
+    on_joined_room.emit(current_room_);
 
     set_user_data("internal_ip", Network::get().get_internal_address());
     set_user_data("external_ip", Network::get().get_external_address());
     set_user_data("network_id",  std::to_string(Network::get().get_network_id()));
 
-    int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
-    for (int i(0); i<user_count; ++i) {
-      auto user = SteamMatchmaking()->GetLobbyMemberByIndex(current_room_, i);
-      on_message.emit(MessageType::MSG_CHAT_UPDATE, user.ConvertToUint64(), "exist");
-    }
+    // int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
+    // for (int i(0); i<user_count; ++i) {
+    //   auto user = SteamMatchmaking()->GetLobbyMemberByIndex(current_room_, i);
+    //   on_message.emit(MessageType::MSG_CHAT_UPDATE, user.ConvertToUint64(), "exist");
+    // }
   });
 
   // persona state change ------------------------------------------------------
@@ -267,12 +267,14 @@ void Steam::join_room(math::uint64 id) {
 
 void Steam::leave_room() {
   if (current_room_ != 0) {
-
     std::string name(SteamMatchmaking()->GetLobbyData(current_room_, "name"));
-    on_message.emit(MessageType::MSG_LEAVE, get_user_id(), "left " + name);
-
     SteamMatchmaking()->LeaveLobby(current_room_);
+
+    math::uint64 last_room(current_room_);
+
     current_room_ = 0;
+
+    on_left_room.emit(last_room);
 
   } else {
     LOG_WARNING << "Not in a room" << std::endl;

@@ -39,10 +39,8 @@ class SWIFT_DLL Steam : public Singleton<Steam> {
   enum MessageType {
     MSG_CHAT          = 0,
     MSG_CHAT_UPDATE   = 1,
-    MSG_LEAVE         = 2,
-    MSG_JOIN          = 3,
-    MSG_MESSAGE       = 4,
-    MSG_ERROR         = 5
+    MSG_MESSAGE       = 2,
+    MSG_ERROR         = 3
   };
 
   struct RoomData {
@@ -51,8 +49,13 @@ class SWIFT_DLL Steam : public Singleton<Steam> {
     int         current_players;
   };
 
-  Signal<std::unordered_map<math::uint64, RoomData>> on_updated_room_list;
-  Signal<MessageType, math::uint64, std::string>     on_message;
+  typedef std::unordered_map<math::uint64, RoomData> RoomList;
+
+  Signal<RoomList>                               on_updated_room_list;
+  Signal<MessageType, math::uint64, std::string> on_message;
+
+  Signal<math::uint64>                           on_joined_room;
+  Signal<math::uint64>                           on_left_room;
 
   bool init();
   void update();
