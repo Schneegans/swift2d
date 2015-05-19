@@ -91,11 +91,13 @@ Steam::Steam()
     set_user_data("external_ip", Network::get().get_external_address());
     set_user_data("network_id",  std::to_string(Network::get().get_network_id()));
 
-    // int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
-    // for (int i(0); i<user_count; ++i) {
-    //   auto user = SteamMatchmaking()->GetLobbyMemberByIndex(current_room_, i);
-    //   on_message.emit(MessageType::MSG_CHAT_UPDATE, user.ConvertToUint64(), "exist");
-    // }
+    int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
+    for (int i(0); i<user_count; ++i) {
+      auto user = SteamMatchmaking()->GetLobbyMemberByIndex(current_room_, i).ConvertToUint64();
+      if (user != get_user_id()) {
+        on_new_room_member.emit(user);
+      }
+    }
   });
 
   // persona state change ------------------------------------------------------

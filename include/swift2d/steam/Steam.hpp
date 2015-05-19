@@ -57,6 +57,8 @@ class SWIFT_DLL Steam : public Singleton<Steam> {
   Signal<math::uint64>                           on_joined_room;
   Signal<math::uint64>                           on_left_room;
 
+  Signal<math::uint64>                           on_new_room_member;
+
   bool init();
   void update();
 
