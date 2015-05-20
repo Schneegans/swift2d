@@ -59,6 +59,7 @@ class SWIFT_DLL PhysicsBodyComponent : public Component {
   Float                   LinearDamping;
   Float                   AngularDamping;
   Float                   GravityScale;
+  Float                   ShockWaveScale;
   Bool                    IsBullet;
   Bool                    Sleep;
 

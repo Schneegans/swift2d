@@ -42,7 +42,7 @@ unsigned int get_seed();
  */
  template<typename T>
 T get(T begin, T end) {
-    return static_cast<T>(std::rand()) * (end - begin) / RAND_MAX + begin;
+    return (double(std::rand()) / RAND_MAX) * (end-begin) + begin;
 }
 
 

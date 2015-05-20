@@ -30,6 +30,7 @@ PhysicsBodyComponent::PhysicsBodyComponent()
   , LinearDamping(0.5f)
   , AngularDamping(0.5f)
   , GravityScale(1.f)
+  , ShockWaveScale(1.f)
   , IsBullet(false)
   , FixedRotation(false)
   , IsSensor(false)
@@ -274,6 +275,7 @@ void PhysicsBodyComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("LinearDamping", LinearDamping);
   visitor.add_member("AngularDamping", AngularDamping);
   visitor.add_member("GravityScale", GravityScale);
+  visitor.add_member("ShockWaveScale", ShockWaveScale);
   visitor.add_member("Group", Group);
   visitor.add_member("IsBullet", IsBullet);
   visitor.add_member("FixedRotation", FixedRotation);

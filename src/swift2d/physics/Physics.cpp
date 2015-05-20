@@ -145,7 +145,7 @@ void Physics::update(double time) {
         b2Vec2 dist(body_pos - b2Vec2(shock.location.x(), shock.location.y()));
         float length(dist.LengthSquared());
         if (length > 0 && length < shock.radius*shock.radius) {
-          dist *= shock.strength/(length+1.f)*b->GravityScale();
+          dist *= shock.strength/(length+1.f)*b->ShockWaveScale();
           body->ApplyLinearImpulse(dist, body_pos, true);
 
           auto b(static_cast<PhysicsBodyComponent*>(body->GetUserData()));
