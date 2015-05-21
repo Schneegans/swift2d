@@ -38,6 +38,8 @@ void LifeComponent::increase(float amount, math::vec2 const& direction) {
       dead_ = false;
     }
 
+    damage_source_ = 0;
+
     accumulate_damage(amount, direction);
   }
 }
