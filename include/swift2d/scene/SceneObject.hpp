@@ -101,7 +101,21 @@ class SWIFT_DLL SceneObject : public SavableObject {
   SceneObjectPtr const& add_at_root(SceneObjectPtr const& object);
 
   // gets all children of this SceneObject
-  std::unordered_set<SceneObjectPtr> const& get_objects() const;
+  std::unordered_set<SceneObjectPtr> const& get_all_objects() const;
+
+  // get all objects of the given type
+  template<typename T>
+  std::vector<std::shared_ptr<T>> get_objects() const {
+    std::vector<std::shared_ptr<T>> result;
+
+    for (auto const& object: objects_) {
+      auto casted(std::dynamic_pointer_cast<T>(object));
+      if (casted && !casted->remove_flag_) {
+        result.push_back(casted);
+      }
+    }
+    return result;
+  }
 
   // gets the first child with the given label
   SceneObjectPtr      get_object(std::string const& label) const;

@@ -18,6 +18,7 @@
 
 // forward declares ------------------------------------------------------------
 class b2Body;
+class b2Joint;
 
 namespace swift {
 
@@ -112,10 +113,14 @@ class SWIFT_DLL PhysicsBodyComponent : public Component {
   float      get_angular_velocity();
   void       set_transform(math::vec2 const& pos, float rot);
 
+  void constrain_to(PhysicsBodyComponent* other, math::vec2 const& world_pos);
+  void release_constraint();
+
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
   mutable b2Body* body_;
+  b2Joint* constraint_;
 };
 
 // -----------------------------------------------------------------------------

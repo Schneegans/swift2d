@@ -221,6 +221,20 @@ void Physics::add(GravitySourceComponent* source) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+b2Joint* Physics::add_constraint(b2Body* a, b2Body* b, math::vec2 const& world_pos) {
+  b2WeldJointDef def;
+  def.Initialize(a, b, b2Vec2(world_pos.x(), world_pos.y()));
+  return world_->CreateJoint(&def);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Physics::remove_constraint(b2Joint* constraint) {
+  world_->DestroyJoint(constraint);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Physics::add_shock_wave(math::uint64 damage_source, math::vec2 const& location, float damage, float radius, float strength) {
   ShockWave s;
   s.damage_source = damage_source;

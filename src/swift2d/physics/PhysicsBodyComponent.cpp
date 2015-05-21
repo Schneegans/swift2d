@@ -38,11 +38,13 @@ PhysicsBodyComponent::PhysicsBodyComponent()
   , Group(0)
   , Mask(-1)
   , Category(0)
-  , body_(nullptr) {}
+  , body_(nullptr)
+  , constraint_(nullptr) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 PhysicsBodyComponent::~PhysicsBodyComponent() {
+  release_constraint();
   if (body_) {
     Physics::get().remove(body_);
   }
@@ -283,6 +285,22 @@ void PhysicsBodyComponent::accept(SavableObjectVisitor& visitor) {
   visitor.add_member("Sleep", Sleep);
   visitor.add_member("Mask", Mask);
   visitor.add_member("Category", Category);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void PhysicsBodyComponent::constrain_to(PhysicsBodyComponent* other, math::vec2 const& world_pos) {
+  release_constraint();
+  constraint_ = Physics::get().add_constraint(body_, other->body_, world_pos);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void PhysicsBodyComponent::release_constraint() {
+  if (constraint_) {
+    Physics::get().remove_constraint(constraint_);
+    constraint_ = nullptr;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

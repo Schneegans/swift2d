@@ -122,7 +122,7 @@ SceneObjectPtr const& SceneObject::add_at_root(SceneObjectPtr const& object) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::unordered_set<SceneObjectPtr> const& SceneObject::get_objects() const {
+std::unordered_set<SceneObjectPtr> const& SceneObject::get_all_objects() const {
   return objects_;
 }
 

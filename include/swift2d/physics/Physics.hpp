@@ -23,6 +23,7 @@
 // forward declares ------------------------------------------------------------
 class b2World;
 class b2Body;
+class b2Joint;
 
 namespace swift {
 
@@ -52,6 +53,9 @@ class SWIFT_DLL Physics : public Singleton<Physics> {
 
   b2Body* add(PhysicsBodyComponent* body);
   void    add(GravitySourceComponent* source);
+
+  b2Joint* add_constraint(b2Body* a, b2Body* b, math::vec2 const& world_pos);
+  void    remove_constraint(b2Joint* constraint);
 
   void    add_shock_wave(math::uint64 damage_source, math::vec2 const& location, float damage, float radius, float strength);
 
