@@ -49,6 +49,8 @@ SWIFT_DLL mat3 translated(mat3 const& mat, float x, float y);
 SWIFT_DLL mat3 inversed(mat3 const& mat);
 SWIFT_DLL mat3 transposed(mat3 const& mat);
 
+SWIFT_DLL vec2 rotated(vec2 const& vector, float angle);
+
 SWIFT_DLL vec2  get_translation(mat3 const& mat);
 SWIFT_DLL vec2  get_scale(mat3 const& mat);
 SWIFT_DLL float get_rotation(mat3 const& mat);
