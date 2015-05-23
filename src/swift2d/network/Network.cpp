@@ -149,7 +149,7 @@ void Network::update() {
           peer_->AdvertiseSystem("255.255.255.255", peer_->GetInternalID().GetPort(), 0, 0);
         } else {
           LOG_MESSAGE << "Successfully connected to " << packet->guid.ToString() << "." << std::endl;
-          on_connection_result.emit(packet->guid.ToString(), true);
+          on_connection_result.emit(packet->systemAddress.ToString(), true);
         }
 
         break;
