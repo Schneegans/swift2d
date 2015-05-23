@@ -49,7 +49,7 @@ class SWIFT_DLL Network : public Singleton<Network> {
   };
 
   // ------------------------------------------------------------------- signals
-  Signal<math::uint64, bool> on_connection_result;
+  Signal<std::string, bool> on_connection_result;
 
   // ------------------------------------------------------------ public methods
   void update();

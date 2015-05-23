@@ -85,7 +85,7 @@ Steam::Steam()
 
     set_user_data("internal_address", Network::get().get_internal_address());
     set_user_data("external_address", Network::get().get_external_address());
-    set_user_data("network_id",  std::to_string(Network::get().get_network_id()));
+    set_user_data("network_id", std::to_string(Network::get().get_network_id()));
 
     std::vector<math::uint64> users;
 
@@ -237,6 +237,20 @@ std::string Steam::get_user_data(std::string const& key, math::uint64 user) {
 
 math::uint64 Steam::get_room_owner_id() {
   return SteamMatchmaking()->GetLobbyOwner(current_room_).ConvertToUint64();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+math::uint64 Steam::get_user_with_address(std::string const& address) {
+  int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
+  for (int i(0); i<user_count; ++i) {
+    auto user = SteamMatchmaking()->GetLobbyMemberByIndex(current_room_, i).ConvertToUint64();
+    if (get_external_address(user) == address || get_internal_address(user) == address) {
+      return user;
+    }
+  }
+
+  return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

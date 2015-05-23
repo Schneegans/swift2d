@@ -59,14 +59,16 @@ Network::Network()
   sd.socketFamily = AF_INET;
   sd.port = 0;
 
-  RakNet::StartupResult sr = peer_->Startup(8, &sd, 1);
+  RakNet::StartupResult sr = peer_->Startup(50, &sd, 1);
 
   if (sr != RakNet::RAKNET_STARTED) {
     LOG_ERROR << "Failed to start peer!" << std::endl;
+  } else {
+    LOG_MESSAGE << "Started peer " << get_network_id() << std::endl;
   }
 
   peer_->SetMaximumIncomingConnections(8);
-  peer_->SetTimeoutTime(10000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+  peer_->SetTimeoutTime(3000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 
   RakNet::ConnectionAttemptResult car = peer_->Connect("natpunch.jenkinssoftware.com", 61111, 0, 0);
 }
@@ -111,7 +113,7 @@ void Network::connect(std::string const& other) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Network::natpunch(math::uint64 uuid) {
-  LOG_MESSAGE << "Connecting to " << uuid << " via NatPunch..." << std::endl;
+  LOG_MESSAGE << "Connecting to " << peer_->GetSystemAddressFromGuid(RakNet::RakNetGUID(uuid)).ToString() << " via NatPunch..." << std::endl;
   npt_->OpenNAT(RakNet::RakNetGUID(uuid), RakNet::SystemAddress(nat_server_address_.c_str()));
 }
 
@@ -147,7 +149,7 @@ void Network::update() {
           peer_->AdvertiseSystem("255.255.255.255", peer_->GetInternalID().GetPort(), 0, 0);
         } else {
           LOG_MESSAGE << "Successfully connected to " << packet->guid.ToString() << "." << std::endl;
-          on_connection_result.emit(packet->guid.g, true);
+          on_connection_result.emit(packet->guid.ToString(), true);
         }
 
         break;
@@ -170,8 +172,8 @@ void Network::update() {
 
       // -----------------------------------------------------------------------
       case ID_CONNECTION_ATTEMPT_FAILED:
-        LOG_MESSAGE << "Failed to connect to " << packet->guid.ToString() << "." << std::endl;
-        on_connection_result.emit(packet->guid.g, false);
+        LOG_MESSAGE << "Failed to connect to " << packet->systemAddress.ToString() << "." << std::endl;
+        on_connection_result.emit(packet->systemAddress.ToString(), false);
         break;
 
       // ################ NAT PUNCH THROUGH PACKETS ############################
