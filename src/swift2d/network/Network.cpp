@@ -39,14 +39,14 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 Network::Network()
-  : phase_(GETTING_EXTERNAL_IP)
-  , peer_             (RakNet::RakPeerInterface::GetInstance())
-  , npt_              (RakNet::NatPunchthroughClient::GetInstance())
-  , id_manager_       (new RakNet::NetworkIDManager())
-  , rpc_              (new RakNet::RPC3())
-  , replica_          (new ReplicationManager())
-  , internal_id_      ("")
-  , external_id_      ("") {
+  : phase_      (GETTING_EXTERNAL_IP)
+  , peer_       (RakNet::RakPeerInterface::GetInstance())
+  , npt_        (RakNet::NatPunchthroughClient::GetInstance())
+  , id_manager_ (new RakNet::NetworkIDManager())
+  , rpc_        (new RakNet::RPC3())
+  , replica_    (new ReplicationManager())
+  , internal_id_("")
+  , external_id_("") {
 
   peer_->AttachPlugin(npt_);
   peer_->AttachPlugin(replica_);
@@ -66,7 +66,7 @@ Network::Network()
   }
 
   peer_->SetMaximumIncomingConnections(8);
-  peer_->SetTimeoutTime(1000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+  peer_->SetTimeoutTime(10000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 
   RakNet::ConnectionAttemptResult car = peer_->Connect("natpunch.jenkinssoftware.com", 61111, 0, 0);
 }
@@ -83,10 +83,27 @@ Network::~Network() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Network::connect(std::string const& internal_address,
+                      std::string const& external_address,
+                      math::uint64 network_id) {
+
+  if (internal_address == "" || external_address == "") {
+    LOG_MESSAGE << "Cannot connect to peer!" << std::endl;
+    return;
+  }
+
+  if (is_in_same_network(external_address) || internal_address == external_address) {
+    connect(internal_address);
+  } else {
+    natpunch(network_id);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Network::connect(std::string const& other) {
   auto o(RakNet::SystemAddress(other.c_str()));
 
-  // phase_ = CONNECTING_TO_HOST;
   LOG_MESSAGE << "Connecting to " << o.ToString() << " via LAN..." << std::endl;
   peer_->Connect(o.ToString(false), o.GetPort(), 0, 0);
 }
@@ -94,16 +111,21 @@ void Network::connect(std::string const& other) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Network::natpunch(math::uint64 uuid) {
-  // phase_ = NAT_PUNCH_TO_HOST;
   LOG_MESSAGE << "Connecting to " << uuid << " via NatPunch..." << std::endl;
   npt_->OpenNAT(RakNet::RakNetGUID(uuid), RakNet::SystemAddress(nat_server_address_.c_str()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Network::disconnect(math::uint64 uuid) {
+  peer_->CloseConnection(RakNet::RakNetGUID(uuid), true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Network::update() {
 
-  for (RakNet::Packet* packet=peer_->Receive(); packet; peer_->DeallocatePacket(packet), packet=peer_->Receive()) {
+  for (RakNet::Packet* packet = peer_->Receive(); packet; peer_->DeallocatePacket(packet), packet=peer_->Receive()) {
     switch (packet->data[0]) {
 
       // ##################### BASIC PACKETS ###################################
@@ -115,7 +137,6 @@ void Network::update() {
           // the nat server accepted our connection
           LOG_MESSAGE << "Connected to NAT server." << std::endl;
           nat_server_address_ = packet->systemAddress.ToString();
-          // peer_->CloseConnection(packet->systemAddress, true);
 
           // save external ip
           external_id_ = peer_->GetExternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString();
@@ -124,7 +145,9 @@ void Network::update() {
           // broadcast on LAN to get internal ip
           phase_ = GETTING_INTERNAL_IP;
           peer_->AdvertiseSystem("255.255.255.255", peer_->GetInternalID().GetPort(), 0, 0);
-
+        } else {
+          LOG_MESSAGE << "Successfully connected to " << packet->guid.ToString() << "." << std::endl;
+          on_connection_result.emit(packet->guid.g, true);
         }
 
         break;
@@ -143,6 +166,12 @@ void Network::update() {
       // -----------------------------------------------------------------------
       case ID_DISCONNECTION_NOTIFICATION:
         LOG_MESSAGE << packet->guid.ToString() << " disconnected." << std::endl;
+        break;
+
+      // -----------------------------------------------------------------------
+      case ID_CONNECTION_ATTEMPT_FAILED:
+        LOG_MESSAGE << "Failed to connect to " << packet->guid.ToString() << "." << std::endl;
+        on_connection_result.emit(packet->guid.g, false);
         break;
 
       // ################ NAT PUNCH THROUGH PACKETS ############################
@@ -165,7 +194,7 @@ void Network::update() {
       case ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE:
       case ID_REPLICA_MANAGER_CONSTRUCTION:
         LOG_TRACE << "Got " << RakNet::PacketLogger::BaseIDTOString(packet->data[0])
-                            << " from " << packet->guid.ToString() << std::endl;
+                  << " from " << packet->guid.ToString() << std::endl;
         break;
 
       // ##################### OTHER PACKETS ###################################
@@ -213,6 +242,12 @@ std::string const& Network::get_external_address() const {
 
 math::uint64 Network::get_network_id() const {
   return peer_->GetMyGUID().g;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+int Network::get_average_ping(math::uint64 to_other) const {
+  return peer_->GetAveragePing(RakNet::RakNetGUID(to_other));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

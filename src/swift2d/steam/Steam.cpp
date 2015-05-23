@@ -82,22 +82,23 @@ Steam::Steam()
 
   // on lobby enter ------------------------------------------------------------
   lobby_enter_ = new SteamCallback<LobbyEnter_t>([this](LobbyEnter_t* result) {
-    current_room_ = result->m_ulSteamIDLobby;
-    std::string name(SteamMatchmaking()->GetLobbyData(current_room_, "name"));
 
-    on_joined_room.emit(current_room_);
-
-    set_user_data("internal_ip", Network::get().get_internal_address());
-    set_user_data("external_ip", Network::get().get_external_address());
+    set_user_data("internal_address", Network::get().get_internal_address());
+    set_user_data("external_address", Network::get().get_external_address());
     set_user_data("network_id",  std::to_string(Network::get().get_network_id()));
 
+    std::vector<math::uint64> users;
+
+    current_room_ = result->m_ulSteamIDLobby;
     int user_count = SteamMatchmaking()->GetNumLobbyMembers(current_room_);
     for (int i(0); i<user_count; ++i) {
       auto user = SteamMatchmaking()->GetLobbyMemberByIndex(current_room_, i).ConvertToUint64();
       if (user != get_user_id()) {
-        on_new_room_member.emit(user);
+        users.push_back(user);
       }
     }
+
+    on_joined_room.emit(current_room_, users);
   });
 
   // persona state change ------------------------------------------------------
@@ -240,14 +241,14 @@ math::uint64 Steam::get_room_owner_id() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::string Steam::get_internal_ip(math::uint64 user) {
-  return get_user_data("internal_ip", user);
+std::string Steam::get_internal_address(math::uint64 user) {
+  return get_user_data("internal_address", user);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::string Steam::get_external_ip(math::uint64 user) {
-  return get_user_data("external_ip", user);
+std::string Steam::get_external_address(math::uint64 user) {
+  return get_user_data("external_address", user);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -269,7 +270,6 @@ void Steam::join_room(math::uint64 id) {
 
 void Steam::leave_room() {
   if (current_room_ != 0) {
-    std::string name(SteamMatchmaking()->GetLobbyData(current_room_, "name"));
     SteamMatchmaking()->LeaveLobby(current_room_);
 
     math::uint64 last_room(current_room_);

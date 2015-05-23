@@ -48,14 +48,22 @@ class SWIFT_DLL Network : public Singleton<Network> {
     READY
   };
 
+  // ------------------------------------------------------------------- signals
+  Signal<math::uint64, bool> on_connection_result;
+
+  // ------------------------------------------------------------ public methods
   void update();
 
   template<typename T> void register_type(std::string const& type) {
     replica_->register_object(RakNet::RakString(type.c_str()), [](){ return new T(); });
   };
 
+  void connect(std::string const& internal_address,
+               std::string const& external_address,
+               math::uint64 network_id);
   void connect(std::string const& other);
   void natpunch(math::uint64 uuid);
+  void disconnect(math::uint64 uuid);
 
   void distribute_object(NetworkObjectBase* object);
 
@@ -72,6 +80,8 @@ class SWIFT_DLL Network : public Singleton<Network> {
   std::string const& get_internal_address() const;
   std::string const& get_external_address() const;
   math::uint64       get_network_id() const;
+
+  int                get_average_ping(math::uint64 to_other) const;
 
   bool is_in_same_network(std::string const& other) const;
 

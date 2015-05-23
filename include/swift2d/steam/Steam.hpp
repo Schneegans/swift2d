@@ -51,13 +51,11 @@ class SWIFT_DLL Steam : public Singleton<Steam> {
 
   typedef std::unordered_map<math::uint64, RoomData> RoomList;
 
-  Signal<RoomList>                               on_updated_room_list;
-  Signal<MessageType, math::uint64, std::string> on_message;
+  Signal<RoomList>                                on_updated_room_list;
+  Signal<MessageType, math::uint64, std::string>  on_message;
 
-  Signal<math::uint64>                           on_joined_room;
-  Signal<math::uint64>                           on_left_room;
-
-  Signal<math::uint64>                           on_new_room_member;
+  Signal<math::uint64, std::vector<math::uint64>> on_joined_room;
+  Signal<math::uint64>                            on_left_room;
 
   bool init();
   void update();
@@ -76,8 +74,8 @@ class SWIFT_DLL Steam : public Singleton<Steam> {
   std::string  get_user_data(std::string const& key, math::uint64 user);
 
   math::uint64 get_room_owner_id();
-  std::string  get_internal_ip(math::uint64 user);
-  std::string  get_external_ip(math::uint64 user);
+  std::string  get_internal_address(math::uint64 user);
+  std::string  get_external_address(math::uint64 user);
   math::uint64 get_network_id(math::uint64 user);
 
   void         send_chat_message(std::string const& message);
