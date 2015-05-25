@@ -90,15 +90,13 @@ class SWIFT_DLL SceneObject : public SavableObject {
 
   //----------------------------------------------------- scene object interface
 
-  // adds a new object to the scene and returns a shared pointer
-  SceneObjectPtr add_object();
-
-  // adds an existing object to the scene and returns a shared pointer
-  SceneObjectPtr const& add_object(SceneObjectPtr const& object);
+  // adds a new object or an existing object to the scene and returns a
+  // shared pointer
+  SceneObjectPtr const& add_object(SceneObjectPtr const& object = SceneObject::create());
 
   // adds an existing object to the top level node of the scene and
   // returns a shared pointer
-  SceneObjectPtr const& add_at_root(SceneObjectPtr const& object);
+  SceneObjectPtr const& add_object_at_root(SceneObjectPtr const& object = SceneObject::create());
 
   // gets all children of this SceneObject
   std::unordered_set<SceneObjectPtr> const& get_all_objects() const;

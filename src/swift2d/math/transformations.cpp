@@ -64,6 +64,19 @@ mat3 make_rotation (float angle) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+mat3 make_rotation (vec2 const& normalized_direction) {
+  float angle = std::acos(normalized_direction.x());
+  if (normalized_direction.y() < 0) {
+    angle = 2*M_PI - angle;
+  }
+
+  return mat3(std::cos(angle), -std::sin(angle), 0,
+              std::sin(angle),  std::cos(angle), 0,
+              0,                0,               1);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 mat3 make_translation (vec2 const& delta) {
   return make_translation(delta.x(), delta.y());
 }
@@ -255,6 +268,44 @@ float get_length_squared(vec2 const& vec) {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+float get_angle(vec2 const& normalized_a, vec2 const& normalized_b) {
+  return std::acos(dot(normalized_a, normalized_b));
+}
+
+float get_cw_angle(vec2 const& normalized_a, vec2 const& normalized_b) {
+  float angle(get_angle(normalized_a, normalized_b));
+  if (get_ccw(normalized_a, normalized_b)) {
+    angle = 2*M_PI - angle;
+  }
+  return angle;
+}
+
+float get_ccw_angle(vec2 const& normalized_a, vec2 const& normalized_b) {
+  float angle(get_angle(normalized_a, normalized_b));
+  if (get_cw(normalized_a, normalized_b)) {
+    angle = 2*M_PI - angle;
+  }
+  return angle;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+bool get_cw(vec2 const& a, vec2 const& b) {
+  return cross(vec3(a.x(), a.y(), 0), vec3(b.x(), b.y(), 0)).z() < 0;
+}
+
+bool get_ccw(vec2 const& a, vec2 const& b) {
+  return cross(vec3(a.x(), a.y(), 0), vec3(b.x(), b.y(), 0)).z() > 0;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 void set_translation(mat3& mat, vec2 const& val) {
   set_translation(mat, val.x(), val.y());
 }
@@ -313,6 +364,13 @@ float dot(vec2 const& a, vec2 const& b) {
 
 float dot(vec3 const& a, vec3 const& b) {
   return oglplus::Dot(a, b);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+vec3 cross(vec3 const& a, vec3 const& b) {
+  return oglplus::Cross(a, b);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

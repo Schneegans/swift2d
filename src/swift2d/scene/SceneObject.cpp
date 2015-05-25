@@ -90,15 +90,6 @@ void SceneObject::on_detach(double time) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SceneObjectPtr SceneObject::add_object() {
-  auto object(SceneObject::create());
-  objects_.insert(object);
-  object->Parent = this;
-  return object;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 SceneObjectPtr const& SceneObject::add_object(SceneObjectPtr const& object) {
   objects_.insert(object);
 
@@ -112,9 +103,9 @@ SceneObjectPtr const& SceneObject::add_object(SceneObjectPtr const& object) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SceneObjectPtr const& SceneObject::add_at_root(SceneObjectPtr const& object) {
+SceneObjectPtr const& SceneObject::add_object_at_root(SceneObjectPtr const& object) {
   if (Parent()) {
-    return Parent()->add_at_root(object);
+    return Parent()->add_object_at_root(object);
   } else {
     return add_object(object);
   }
