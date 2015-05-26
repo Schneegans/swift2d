@@ -83,6 +83,7 @@ class SWIFT_DLL Window {
   void display();
 
   bool key_pressed(Key key) const;
+  float joy_axis(int joy_stick, int axis);
   math::vec2 get_cursor_pos() const;
 
   RenderContext const& get_context() const { return render_context_; };

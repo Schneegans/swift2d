@@ -125,6 +125,18 @@ bool Window::key_pressed(Key key) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+float Window::joy_axis(int joy_stick, int axis) {
+  if (joy_stick >= JOYSTICK_NUM || axis >= JOYSTICK_AXIS_NUM) {
+    return 0;
+  }
+  if (!glfwJoystickPresent(joy_stick)) {
+    return 0;
+  }
+  return joystick_axis_cache_[joy_stick][axis];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 math::vec2 Window::get_cursor_pos() const {
   if (!window_) {
     return math::vec2(0.f, 0.f);
