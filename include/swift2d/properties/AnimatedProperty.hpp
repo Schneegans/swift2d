@@ -64,7 +64,7 @@ class AnimatedProperty : public Property<T>,
     , exponent(0.0)
     , delay(0.0) {}
 
-  AnimatedProperty(T const& val)
+  AnimatedProperty(T val)
     : Property<T>(val)
     , direction(DIR_IN_OUT)
     , start_(val)
@@ -74,7 +74,7 @@ class AnimatedProperty : public Property<T>,
     , exponent(0.0)
     , delay(0.0) {}
 
-  AnimatedProperty(T const& start, T const& end, double dur = 1.0,
+  AnimatedProperty(T start, T end, double dur = 1.0,
 	  Direction dir = DIR_IN_OUT, Loop looping = NONE,
                    double exp = 0.0)
     : Property<T>(start)
@@ -88,7 +88,7 @@ class AnimatedProperty : public Property<T>,
     , delay(0.0) {}
 
   // ------------------------------------------------------------ public methods
-  void set(T const& value, double dur, double del = 0.0) {
+  void set(T value, double dur, double del = 0.0) {
     start_ = this->get();
     end_ = value;
     duration = dur;
@@ -96,7 +96,7 @@ class AnimatedProperty : public Property<T>,
     delay = del;
   }
 
-  void set(T const& value) {
+  void set(T value) {
     start_ = value;
     end_ = value;
     duration = 0.0;
