@@ -150,7 +150,7 @@ void Network::update() {
         } else {
           LOG_MESSAGE << "Successfully connected to " << packet->guid.ToString() << "." << std::endl;
           on_connection_result.emit(packet->systemAddress.ToString(), true);
-        }
+        } 
 
         break;
 

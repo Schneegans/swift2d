@@ -320,15 +320,46 @@ void Window::close() {
 
 void Window::update_joysticks() {
 
+  float changed_threshold(0.01f);
+  const float min_threshold(0.15f);
+  const float max_threshold(0.9f);
+
   const int joystick_num(static_cast<int>(JoystickId::JOYSTICK_NUM));
   for (int joy(0); joy < joystick_num; ++joy) {
     if (glfwJoystickPresent(joy)) {
       JoystickId joy_id(static_cast<JoystickId>(joy));
       int axes_count(0);
       auto axes_array(glfwGetJoystickAxes(joy, &axes_count));
+      
       for (int axis(0); axis < axes_count; ++axis) {
         float axis_value(axes_array[axis]);
-        if (axis_value != joystick_axis_cache_[joy][axis]) {
+
+        // XBOX controller left and right trigger are both mapped to axis 2 on
+        // windows.
+        #if defined( _WIN32 )
+          if (axis == 2) {
+            if (axis_value < 0) {
+              axis = 5;
+              axis_value = -axis_value;
+            }
+          }
+        #else
+          if (axis == 2 || axis == 5) {
+            axis_value = (axis_value + 1)*0.5;
+          }
+        #endif
+
+        int sign(axis_value < 0.f ? -1 : 1);
+        axis_value = std::abs(axis_value);
+
+        axis_value = (axis_value - min_threshold) / (max_threshold - min_threshold);
+        axis_value = sign * std::min(1.f, std::max(0.f, axis_value));
+
+        if (axis_value == 0.f || axis_value == 1.f || axis_value == -1.f) {
+          changed_threshold = 0.f;
+        }
+
+        if (std::abs(axis_value - joystick_axis_cache_[joy][axis]) > changed_threshold) {
           JoystickAxisId axis_id(static_cast<JoystickAxisId>(axis));
           on_joystick_axis_changed.emit(joy_id, axis_id, axis_value);
           joystick_axis_cache_[joy][axis] = axis_value;
