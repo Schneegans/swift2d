@@ -31,9 +31,9 @@ class GBuffer {
   // ------------------------------------------------------------ public methods
   void bind_for_drawing(RenderContext const& ctx);
 
-  void bind_diffuse(int location);
-  void bind_normal (int location);
-  void bind_light  (int location);
+  int bind_diffuse(int location);
+  int bind_normal (int location);
+  int bind_light  (int location);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface

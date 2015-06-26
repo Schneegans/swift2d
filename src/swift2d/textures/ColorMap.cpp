@@ -113,14 +113,14 @@ void ColorMap::save_to_file(
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-void ColorMap::bind(RenderContext const& ctx, unsigned location) const {
+unsigned ColorMap::bind(RenderContext const& ctx, unsigned location) const {
   if (update_data_) {
     update_data_ = false;
     update_data();
     upload_to(ctx);
   }
 
-  Texture3D::bind(ctx, location);
+  return Texture3D::bind(ctx, location);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

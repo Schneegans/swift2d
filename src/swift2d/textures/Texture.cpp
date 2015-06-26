@@ -134,7 +134,7 @@ std::string Texture::get_file_name() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture::bind(RenderContext const& ctx, unsigned location) const {
+unsigned Texture::bind(RenderContext const& ctx, unsigned location) const {
 
   if (!texture_ && !AsyncLoading()) {
     upload_to(ctx);
@@ -147,6 +147,8 @@ void Texture::bind(RenderContext const& ctx, unsigned location) const {
     upload_to(ctx);
     DefaultTexture::get().bind(location);
   }
+
+  return location;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

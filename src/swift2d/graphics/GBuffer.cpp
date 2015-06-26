@@ -27,8 +27,8 @@ GBuffer::GBuffer(RenderContext const& ctx) {
       .Image2D(0, i_format, width, height,
         0, p_format, ogl::PixelDataType::UnsignedByte, nullptr)
       .MaxLevel(0)
-      .MinFilter(ctx.sub_sampling ? ogl::TextureMinFilter::Linear : ogl::TextureMinFilter::Nearest)
-      .MagFilter(ctx.sub_sampling ? ogl::TextureMagFilter::Linear : ogl::TextureMagFilter::Nearest)
+      .MinFilter(ogl::TextureMinFilter::Linear)
+      .MagFilter(ogl::TextureMagFilter::Linear)
       .WrapS(ogl::TextureWrap::MirroredRepeat)
       .WrapT(ogl::TextureWrap::MirroredRepeat);
   };
@@ -100,23 +100,26 @@ void GBuffer::bind_for_drawing(RenderContext const& ctx) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GBuffer::bind_diffuse(int location) {
+int GBuffer::bind_diffuse(int location) {
   ogl::Texture::Active(location);
   diffuse_.Bind(ogl::Texture::Target::_2D);
+  return location;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GBuffer::bind_normal(int location) {
+int GBuffer::bind_normal(int location) {
   ogl::Texture::Active(location);
   normal_.Bind(ogl::Texture::Target::_2D);
+  return location;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GBuffer::bind_light(int location) {
+int GBuffer::bind_light(int location) {
   ogl::Texture::Active(location);
   light_.Bind(ogl::Texture::Target::_2D);
+  return location;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

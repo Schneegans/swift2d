@@ -77,7 +77,7 @@ class SWIFT_DLL ColorMap : public Texture3D {
   static  std::string get_type_name_static() { return "ColorMap"; }
 
   // Binds the texture on the given context to the given location.
-  virtual void bind(RenderContext const& context, unsigned location) const;
+  virtual unsigned bind(RenderContext const& context, unsigned location) const;
 
   virtual void accept(SavableObjectVisitor& visitor);
 

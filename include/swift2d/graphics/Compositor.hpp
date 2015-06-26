@@ -29,7 +29,7 @@ class Compositor {
  public:
 
   // ---------------------------------------------------- construction interface
-  Compositor(RenderContext const& ctx);
+  Compositor(RenderContext& ctx);
   ~Compositor();
 
   // ------------------------------------------------------------ public methods

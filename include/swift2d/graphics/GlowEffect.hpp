@@ -9,14 +9,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SWIFT2D_LENS_FLARE_EFFECT_HPP
-#define SWIFT2D_LENS_FLARE_EFFECT_HPP
+#ifndef SWIFT2D_GLOW_EFFECT_HPP
+#define SWIFT2D_GLOW_EFFECT_HPP
 
 // includes  -------------------------------------------------------------------
 #include <swift2d/materials/Shader.hpp>
-#include <swift2d/graphics/StreakEffect.hpp>
-#include <swift2d/graphics/GhostEffect.hpp>
-#include <swift2d/graphics/GlowEffect.hpp>
+#include <swift2d/scene/SerializedScene.hpp>
 
 namespace swift {
 
@@ -25,39 +23,42 @@ namespace swift {
 ////////////////////////////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-class LensFlareEffect {
+class GlowEffect {
 
  ///////////////////////////////////////////////////////////////////////////////
  // ----------------------------------------------------------- public interface
  public:
 
   // ----------------------------------------------------- contruction interface
-  LensFlareEffect(RenderContext const& ctx);
+  GlowEffect(RenderContext const& ctx);
 
   void process(RenderContext const& ctx);
-  void bind_buffer(int location, RenderContext const& ctx);
+  int bind_buffers(int start, RenderContext const& ctx);
 
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
-  Shader mix_shader_;
-  Shader threshold_shader_;
 
-  oglplus::Lazy<oglplus::Uniform<int>>         inputs_;
-  oglplus::Lazy<oglplus::Uniform<math::vec2i>> screen_size_;
-  oglplus::Lazy<oglplus::Uniform<int>>         g_buffer_diffuse_;
-  oglplus::Lazy<oglplus::Uniform<int>>         g_buffer_light_;
+  Shader hdr_shader_;
+  Shader blur_shader_;
+  Shader downsample_shader_;
 
-  GlowEffect   glow_;
-  GhostEffect  ghosts_;
-  StreakEffect streaks_;
+  oglplus::Lazy<oglplus::Uniform<math::vec2>> blur_size_;
+  oglplus::Lazy<oglplus::Uniform<int>>        input_tex_;
+  oglplus::Lazy<oglplus::Uniform<int>>        blur_tex_;
+  oglplus::Lazy<oglplus::Uniform<int>>        hdr_tex_;
+  oglplus::Lazy<oglplus::Uniform<int>>        emit_tex_;
 
-  oglplus::Framebuffer fbo_;
-  oglplus::Texture     buffer_;
+  struct BlurData {
+    oglplus::Framebuffer fbo_;
+    oglplus::Texture     buffer_1_;
+    oglplus::Texture     buffer_2_;
+  };
+  std::vector<BlurData>  blur_data_;
 };
 
-  // -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 }
 
-#endif  // SWIFT2D_LENS_FLARE_EFFECT_HPP
+#endif  // SWIFT2D_GLOW_EFFECT_HPP

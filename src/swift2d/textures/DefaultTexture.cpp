@@ -29,13 +29,15 @@ DefaultTexture::~DefaultTexture() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DefaultTexture::bind(unsigned location) const {
+unsigned DefaultTexture::bind(unsigned location) const {
   if (!texture_) {
     upload();
   }
 
   texture_->Active(location);
   ogl::Context::Bind(ose::_2D(), *texture_);
+
+  return location;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

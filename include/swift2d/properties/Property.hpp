@@ -104,7 +104,7 @@ class Property {
   virtual void connect_from(Property<T> const& source) {
     disconnect();
     connection_ = &source;
-    connection_id_ = source.on_change().connect([&](T const& value){
+    connection_id_ = source.on_change().connect([this](T const& value){
       set(value);
       return true;
     });

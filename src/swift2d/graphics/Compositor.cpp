@@ -24,10 +24,14 @@ namespace swift {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Compositor::Compositor(RenderContext const& ctx)
+Compositor::Compositor(RenderContext& ctx)
   : g_buffer_         (new GBuffer(ctx))
   , l_buffer_         (new LBuffer(ctx))
-  , post_processor_   (new PostProcessor(ctx)) {}
+  , post_processor_   (new PostProcessor(ctx)) {
+
+  ctx.l_buffer = l_buffer_;
+  ctx.g_buffer = g_buffer_;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -87,7 +87,7 @@ class SWIFT_DLL Texture : public SavableObject {
   std::string get_file_name() const;
 
   // Binds the texture on the given context to the given location.
-  virtual void bind(RenderContext const& context, unsigned location) const;
+  virtual unsigned bind(RenderContext const& context, unsigned location) const;
   virtual void accept(SavableObjectVisitor& visitor);
 
  ///////////////////////////////////////////////////////////////////////////////

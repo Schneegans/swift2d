@@ -18,6 +18,8 @@
 namespace swift {
 
 class Pipeline;
+class GBuffer;
+class LBuffer;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Stores all relevant information on a OpenGL context.                       //
@@ -44,6 +46,8 @@ struct RenderContext {
   mutable int upload_remaining;
 
   Pipeline* pipeline;
+  GBuffer*  g_buffer;
+  LBuffer*  l_buffer;
 };
 
 }

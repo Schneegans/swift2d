@@ -31,7 +31,7 @@ class SWIFT_DLL DefaultTexture : public Singleton<DefaultTexture> {
  public:
 
   // Binds the texture to the given location.
-  void bind(unsigned location) const;
+  unsigned bind(unsigned location) const;
 
   friend class Singleton<DefaultTexture>;
 

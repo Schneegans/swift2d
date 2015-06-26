@@ -28,7 +28,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   , g_buffer_normal_(post_fx_shader_.get_uniform<int>("g_buffer_normal"))
   , screen_size_(post_fx_shader_.get_uniform<math::vec2i>("screen_size"))
   , l_buffer_(post_fx_shader_.get_uniform<int>("l_buffer"))
-  , glow_buffer_(post_fx_shader_.get_uniform<int>("glow_buffer"))
+  , glow_buffer_(post_fx_shader_.get_uniform<int>("glow_buffers"))
   , heat_buffer_(post_fx_shader_.get_uniform<int>("heat_buffer"))
   , dirt_tex_(post_fx_shader_.get_uniform<int>("dirt_tex"))
   , dirt_opacity_(post_fx_shader_.get_uniform<float>("dirt_opacity"))
@@ -43,7 +43,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   , color_grading_intensity_(post_fx_shader_.get_uniform<float>("color_grading_intensity"))
   , lens_flare_effect_(ctx)
   , heat_effect_(ctx)
-  , dirt_(Paths::get().resource("images", "dirt.jpg"))
+  , dirt_(Paths::get().resource("images", "dirt.png"))
  {
 
   std::string v_source(R"(
@@ -93,66 +93,27 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
     vec3 apply_gamma(vec3 color_in) {
       return pow(color_in, 1.0/vec3(gamma));
     }
+
+    // lbuffer sampling --------------------------------------------------------
+    uniform sampler2D l_buffer;
+
+    vec3 get_lighting(vec2 texcoords, vec2 offset) {
+
+      vec2 texcoords_r = (texcoords + offset * 1.0 - 0.5) * 1.0000 + 0.5;
+      vec2 texcoords_g = (texcoords + offset * 0.6 - 0.5) * 0.9975 + 0.5;
+      vec2 texcoords_b = (texcoords + offset * 0.2 - 0.5) * 0.9950 + 0.5;
+
+      vec2 light_r = texture(l_buffer, texcoords_r).ra;
+      vec2 light_g = texture(l_buffer, texcoords_g).ga;
+      vec2 light_b = texture(l_buffer, texcoords_b).ba;
+
+      return vec3(
+        light_r.x * texture(g_buffer_diffuse, texcoords_r).r + light_r.y * light_r.x,
+        light_g.x * texture(g_buffer_diffuse, texcoords_g).g + light_g.y * light_g.x,
+        light_b.x * texture(g_buffer_diffuse, texcoords_b).b + light_b.y * light_b.x
+      );
+    }
   )";
-
-  // if (ctx.light_sub_sampling) {
-  //   f_source << R"(
-  //     // lbuffer sampling ------------------------------------------------------
-  //     uniform sampler2D l_buffer;
-
-  //     vec3 get_lighting(vec2 texcoords) {
-
-  //       int level = 3;
-
-  //       vec2 coords = gl_FragCoord.xy;
-  //       vec2 light_coord_00 = (coords + vec2(-level, -level))/screen_size;
-  //       vec2 light_coord_01 = (coords + vec2(-level,  level))/screen_size;
-  //       vec2 light_coord_10 = (coords + vec2( level, -level))/screen_size;
-  //       vec2 light_coord_11 = (coords + vec2( level,  level))/screen_size;
-
-  //       vec3 normal    = get_normal(texcoords);
-  //       vec3 normal_00 = get_normal(light_coord_00);
-  //       vec3 normal_01 = get_normal(light_coord_01);
-  //       vec3 normal_10 = get_normal(light_coord_10);
-  //       vec3 normal_11 = get_normal(light_coord_11);
-
-  //       float fac_00 = max(0, dot(normal, normal_00));
-  //       float fac_01 = max(0, dot(normal, normal_01));
-  //       float fac_10 = max(0, dot(normal, normal_10));
-  //       float fac_11 = max(0, dot(normal, normal_11));
-
-  //       vec2 lookup = light_coord_00 * fac_00 + light_coord_01 * fac_01 +
-  //                     light_coord_10 * fac_10 + light_coord_11 * fac_11;
-
-  //       lookup = lookup / (fac_00 + fac_01 + fac_10 + fac_11);
-
-  //       vec4 light = texture(l_buffer, lookup*0.001 + texcoords);
-  //       return light.rgb * texture(g_buffer_diffuse, texcoords).rgb + light.a * light.rgb;
-  //     }
-  //   )";
-  // } else {
-    f_source << R"(
-      // lbuffer sampling ------------------------------------------------------
-      uniform sampler2D l_buffer;
-
-      vec3 get_lighting(vec2 texcoords, vec2 offset) {
-
-        vec2 texcoords_r = (texcoords + offset * 1.0 - 0.5) * 1.0000 + 0.5;
-        vec2 texcoords_g = (texcoords + offset * 0.6 - 0.5) * 0.9975 + 0.5;
-        vec2 texcoords_b = (texcoords + offset * 0.2 - 0.5) * 0.9950 + 0.5;
-
-        vec2 light_r = texture(l_buffer, texcoords_r).ra;
-        vec2 light_g = texture(l_buffer, texcoords_g).ga;
-        vec2 light_b = texture(l_buffer, texcoords_b).ba;
-
-        return vec3(
-          light_r.x * texture(g_buffer_diffuse, texcoords_r).r + light_r.y * light_r.x,
-          light_g.x * texture(g_buffer_diffuse, texcoords_g).g + light_g.y * light_g.x,
-          light_b.x * texture(g_buffer_diffuse, texcoords_b).b + light_b.y * light_b.x
-        );
-      }
-    )";
-  // }
 
   if (!ctx.dynamic_lighting) {
     f_source << R"(
@@ -177,7 +138,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   } else {
     f_source << R"(
 
-      uniform sampler2D glow_buffer;
+      uniform sampler2D glow_buffers[6];
       uniform sampler2D heat_buffer;
       uniform sampler2D dirt_tex;
       uniform float     dirt_opacity;
@@ -193,9 +154,40 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
       }
 
       vec3 apply_glow(vec3 color_in, float vignetting) {
-        vec3 glow = texture(glow_buffer, texcoords).rgb;
         vec3 dirt = texture(dirt_tex, texcoords).rgb;
-        return color_in + glow * dirt * glow_opacity + max(vec3(0), (1-vignetting) * dirt * (dirt_opacity+0.5) - 0.5);
+
+        vec3 glow_0 = texture(glow_buffers[0], texcoords).rgb;
+        vec3 glow_1 = texture(glow_buffers[1], texcoords).rgb;
+        vec3 glow_2 = texture(glow_buffers[2], texcoords).rgb;
+        vec3 glow_3 = texture(glow_buffers[3], texcoords).rgb;
+        vec3 glow_4 = texture(glow_buffers[4], texcoords).rgb;
+        vec3 glow_5 = texture(glow_buffers[5], texcoords).rgb;
+
+        vec3 bloom = glow_0 * 0.2f
+                   + glow_1 * 0.2f
+                   + glow_2 * 0.2f
+                   + glow_3 * 0.15f
+                   + glow_4 * 0.15f
+                   + glow_5 * 0.10f;
+
+        vec3 lens_bloom = glow_0 * 0.4f
+                        + glow_1 * 0.4f
+                        + glow_2 * 0.4f
+                        + glow_3 * 0.30f
+                        + glow_4 * 0.25f
+                        + glow_5 * 0.15f;
+
+        bloom.r = mix(bloom.r, lens_bloom.r, (clamp(dirt.r * dirt_opacity, 0.0, 1.0)));
+        bloom.g = mix(bloom.g, lens_bloom.g, (clamp(dirt.g * dirt_opacity, 0.0, 1.0)));
+        bloom.b = mix(bloom.b, lens_bloom.b, (clamp(dirt.b * dirt_opacity, 0.0, 1.0)));
+
+
+        return vec3(1) - (vec3(1) - bloom*glow_opacity)*(vec3(1) - color_in*vignetting);
+        // return bloom*glow_opacity + 0.001 * vignetting * color_in;
+
+        // return vignetting * color;
+        // return glow + dirt*0.001*vignetting*color_in*glow_opacity*dirt_opacity;
+        // return color_in + glow * dirt * glow_opacity + max(vec3(0), (1-vignetting) * dirt * (dirt_opacity+0.5) - 0.5);
       }
     )";
   }
@@ -255,11 +247,10 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     ogl::Context::Viewport(ctx.window_size.x(), ctx.window_size.y());
     oglplus::DefaultFramebuffer().Bind(oglplus::Framebuffer::Target::Draw);
 
-    g_buffer->bind_diffuse(0);
-
     use_postfx_shader();
 
-    g_buffer_diffuse_.Set(0);
+    g_buffer_diffuse_.Set(g_buffer->bind_diffuse(0));
+
     gamma_.Set(SettingsWrapper::get().Settings->Gamma());
     Quad::get().draw();
 
@@ -278,9 +269,9 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     ogl::Context::Disable(oglplus::Capability::Blend);
 
     g_buffer->bind_diffuse(0);
-    g_buffer->bind_light(1);
-    g_buffer->bind_normal(2);
-    l_buffer->bind(3);
+    g_buffer->bind_light  (1);
+    g_buffer->bind_normal (2);
+    l_buffer->bind        (3);
 
     if (ctx.lens_flares) {
       SWIFT_PUSH_GL_RANGE("Lens Flares");
@@ -296,18 +287,15 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
 
     g_buffer_diffuse_.Set(0);
 
-    if (ctx.light_sub_sampling) {
-      // g_buffer_normal_.Set(2);
-      // screen_size_.Set(ctx.window_size);
-    }
     l_buffer_.Set(3);
     gamma_.Set(SettingsWrapper::get().Settings->Gamma());
 
     if (ctx.lens_flares) {
       int start(4);
       lens_flare_effect_.bind_buffer(start, ctx);
-      glow_buffer_.Set(start);
-      ++start;
+      std::vector<int> units = { 4, 5, 6, 7, 8, 9 };
+      glow_buffer_.Set(units);
+      start += 6;
 
       if (ctx.heat_effect) {
         heat_buffer_.Set(start);
@@ -317,10 +305,11 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
         use_heat_.Set(0);
       }
 
-      dirt_.bind(ctx, start);
-      dirt_tex_.Set(start);
-      dirt_opacity_.Set(scene->dirt_opacity);
-      glow_opacity_.Set(scene->glow_opacity);
+      dirt_tex_.Set(dirt_.bind(ctx, start));
+      // dirt_opacity_.Set(scene->dirt_opacity);
+      // glow_opacity_.Set(scene->glow_opacity);
+      dirt_opacity_.Set(1);
+      glow_opacity_.Set(1);
     }
 
     Quad::get().draw();

@@ -36,7 +36,7 @@ Texture3D::Texture3D(std::string const& file_name, unsigned tiles_x, unsigned ti
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Texture3D::bind(RenderContext const& ctx, unsigned location) const {
+unsigned Texture3D::bind(RenderContext const& ctx, unsigned location) const {
 
   if (!texture_ && !AsyncLoading()) {
     upload_to(ctx, false);
@@ -49,6 +49,8 @@ void Texture3D::bind(RenderContext const& ctx, unsigned location) const {
     upload_to(ctx, false);
     DefaultTexture3D::get().bind(location);
   }
+
+  return location;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
