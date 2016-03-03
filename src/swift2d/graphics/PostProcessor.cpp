@@ -138,7 +138,7 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
   } else {
     f_source << R"(
 
-      uniform sampler2D glow_buffers[6];
+      uniform sampler2D glow_buffers[1];
       uniform sampler2D heat_buffer;
       uniform sampler2D dirt_tex;
       uniform float     dirt_opacity;
@@ -157,37 +157,33 @@ PostProcessor::PostProcessor(RenderContext const& ctx)
         vec3 dirt = texture(dirt_tex, texcoords).rgb;
 
         vec3 glow_0 = texture(glow_buffers[0], texcoords).rgb;
-        vec3 glow_1 = texture(glow_buffers[1], texcoords).rgb;
-        vec3 glow_2 = texture(glow_buffers[2], texcoords).rgb;
-        vec3 glow_3 = texture(glow_buffers[3], texcoords).rgb;
-        vec3 glow_4 = texture(glow_buffers[4], texcoords).rgb;
-        vec3 glow_5 = texture(glow_buffers[5], texcoords).rgb;
+        // vec3 glow_1 = texture(glow_buffers[1], texcoords).rgb;
+        // vec3 glow_2 = texture(glow_buffers[2], texcoords).rgb;
+        // vec3 glow_3 = texture(glow_buffers[3], texcoords).rgb;
+        // vec3 glow_4 = texture(glow_buffers[4], texcoords).rgb;
+        // vec3 glow_5 = texture(glow_buffers[5], texcoords).rgb;
 
-        vec3 bloom = glow_0 * 0.2f
-                   + glow_1 * 0.2f
-                   + glow_2 * 0.2f
-                   + glow_3 * 0.15f
-                   + glow_4 * 0.15f
-                   + glow_5 * 0.10f;
+        // vec3 bloom = glow_0 * 0.2f
+        //            + glow_1 * 0.2f
+        //            + glow_2 * 0.2f
+        //            + glow_3 * 0.15f
+        //            + glow_4 * 0.15f
+        //            + glow_5 * 0.10f;
 
-        vec3 lens_bloom = glow_0 * 0.4f
-                        + glow_1 * 0.4f
-                        + glow_2 * 0.4f
-                        + glow_3 * 0.30f
-                        + glow_4 * 0.25f
-                        + glow_5 * 0.15f;
+        // vec3 lens_bloom = glow_0 * 0.4f
+        //                 + glow_1 * 0.4f
+        //                 + glow_2 * 0.4f
+        //                 + glow_3 * 0.30f
+        //                 + glow_4 * 0.25f
+        //                 + glow_5 * 0.15f;
 
-        bloom.r = mix(bloom.r, lens_bloom.r, (clamp(dirt.r * dirt_opacity, 0.0, 1.0)));
-        bloom.g = mix(bloom.g, lens_bloom.g, (clamp(dirt.g * dirt_opacity, 0.0, 1.0)));
-        bloom.b = mix(bloom.b, lens_bloom.b, (clamp(dirt.b * dirt_opacity, 0.0, 1.0)));
+        // bloom.r = mix(bloom.r, lens_bloom.r, (clamp(dirt.r * dirt_opacity, 0.0, 1.0)));
+        // bloom.g = mix(bloom.g, lens_bloom.g, (clamp(dirt.g * dirt_opacity, 0.0, 1.0)));
+        // bloom.b = mix(bloom.b, lens_bloom.b, (clamp(dirt.b * dirt_opacity, 0.0, 1.0)));
 
+        // return vec3(1) - (vec3(1) - bloom*glow_opacity)*(vec3(1) - color_in*vignetting);
 
-        return vec3(1) - (vec3(1) - bloom*glow_opacity)*(vec3(1) - color_in*vignetting);
-        // return bloom*glow_opacity + 0.001 * vignetting * color_in;
-
-        // return vignetting * color;
-        // return glow + dirt*0.001*vignetting*color_in*glow_opacity*dirt_opacity;
-        // return color_in + glow * dirt * glow_opacity + max(vec3(0), (1-vignetting) * dirt * (dirt_opacity+0.5) - 0.5);
+        return color_in + glow_0 * dirt * glow_opacity + max(vec3(0), (1-vignetting) * dirt * (dirt_opacity+0.5) - 0.5);
       }
     )";
   }
@@ -293,9 +289,12 @@ void PostProcessor::process(ConstSerializedScenePtr const& scene, RenderContext 
     if (ctx.lens_flares) {
       int start(4);
       lens_flare_effect_.bind_buffer(start, ctx);
-      std::vector<int> units = { 4, 5, 6, 7, 8, 9 };
+      std::vector<int> units = { 4 };
+      start += 1;
+      // std::vector<int> units = { 4, 5, 6, 7, 8, 9 };
+      // start += 6;
+
       glow_buffer_.Set(units);
-      start += 6;
 
       if (ctx.heat_effect) {
         heat_buffer_.Set(start);

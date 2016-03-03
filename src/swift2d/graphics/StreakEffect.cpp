@@ -95,30 +95,6 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
     ogl::PixelDataFormat::RGB
   );
 
-  create_texture(
-    streak_buffer_3_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB8,
-    ogl::PixelDataFormat::RGB
-  );
-
-  create_texture(
-    streak_buffer_4_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB8,
-    ogl::PixelDataFormat::RGB
-  );
-
-  create_texture(
-    streak_buffer_5_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB8,
-    ogl::PixelDataFormat::RGB
-  );
-
-  create_texture(
-    streak_buffer_6_, size.x(), size.y(),
-    ogl::PixelDataInternalFormat::RGB8,
-    ogl::PixelDataFormat::RGB
-  );
-
   streak_fbo_.Bind(ogl::Framebuffer::Target::Draw);
   ogl::Framebuffer::AttachColorTexture(
     ogl::Framebuffer::Target::Draw, 0, streak_buffer_tmp_, 0
@@ -128,18 +104,6 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
   );
   ogl::Framebuffer::AttachColorTexture(
     ogl::Framebuffer::Target::Draw, 2, streak_buffer_2_, 0
-  );
-  ogl::Framebuffer::AttachColorTexture(
-    ogl::Framebuffer::Target::Draw, 3, streak_buffer_3_, 0
-  );
-  ogl::Framebuffer::AttachColorTexture(
-    ogl::Framebuffer::Target::Draw, 4, streak_buffer_4_, 0
-  );
-  ogl::Framebuffer::AttachColorTexture(
-    ogl::Framebuffer::Target::Draw, 5, streak_buffer_5_, 0
-  );
-  ogl::Framebuffer::AttachColorTexture(
-    ogl::Framebuffer::Target::Draw, 6, streak_buffer_6_, 0
   );
 
   math::vec3 c1(1.0, 1.0, 1.0);
@@ -151,25 +115,20 @@ StreakEffect::StreakEffect(RenderContext const& ctx)
   math::vec3 c6(0.5, 0.4, 0.7);
   math::vec3 c7(0.2, 0.2, 0.6);
 
-  streak_colors_1_.push_back(c1*0.9);
-  streak_colors_1_.push_back(c2*0.7);
-  streak_colors_1_.push_back(c3*0.5);
-  streak_colors_1_.push_back(c4*0.3);
+  streak_colors_1_.push_back(c1*1.0);
+  streak_colors_1_.push_back(c2*0.8);
+  streak_colors_1_.push_back(c3*0.6);
+  streak_colors_1_.push_back(c4*0.4);
 
-  streak_colors_2_.push_back(c2*0.25);
-  streak_colors_2_.push_back(c2*0.25);
-  streak_colors_2_.push_back(c3*0.25);
-  streak_colors_2_.push_back(c3*0.25);
+  streak_colors_2_.push_back(c2*0.3);
+  streak_colors_2_.push_back(c2*0.3);
+  streak_colors_2_.push_back(c3*0.3);
+  streak_colors_2_.push_back(c3*0.3);
 
   streak_colors_3_.push_back(c1*0.25);
   streak_colors_3_.push_back(c1*0.25);
   streak_colors_3_.push_back(c1*0.25);
   streak_colors_3_.push_back(c1*0.25);
-
-  streak_colors_4_.push_back(c1*0.5);
-  streak_colors_4_.push_back(c5*0.35);
-  streak_colors_4_.push_back(c6*0.2);
-  streak_colors_4_.push_back(c7*0.1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -208,22 +167,6 @@ void StreakEffect::process(RenderContext const& ctx, ogl::Texture const& thresho
   pass(step_dir*12, streak_buffer_tmp_, ogl::FramebufferColorAttachment::_2, streak_colors_2_);
   pass(step_dir*5,  streak_buffer_2_,   ogl::FramebufferColorAttachment::_0, streak_colors_3_);
   pass(step_dir*2,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_2, streak_colors_3_);
-
-  // step_dir = math::vec2(-0.7*4.0/ctx.g_buffer_size.x(), -0.9*4.0/ctx.g_buffer_size.y());
-  // pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
-  // pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_3, streak_colors_3_);
-
-  // step_dir = math::vec2(0.7*4.0/ctx.g_buffer_size.x(), -0.9*4.0/ctx.g_buffer_size.y());
-  // pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
-  // pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_4, streak_colors_3_);
-
-  // step_dir = math::vec2(-0.7*4.0/ctx.g_buffer_size.x(), 0.9*4.0/ctx.g_buffer_size.y());
-  // pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
-  // pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_5, streak_colors_3_);
-
-  // step_dir = math::vec2(0.7*4.0/ctx.g_buffer_size.x(), 0.9*4.0/ctx.g_buffer_size.y());
-  // pass(step_dir*7, threshold_buffer_,  ogl::FramebufferColorAttachment::_0, streak_colors_4_);
-  // pass(step_dir*3,  streak_buffer_tmp_, ogl::FramebufferColorAttachment::_6, streak_colors_3_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -235,20 +178,7 @@ int StreakEffect::bind_buffers(int start, RenderContext const& ctx) {
   ogl::Texture::Active(start + 1);
   ogl::Context::Bind(ose::_2D(), streak_buffer_2_);
 
-  // ogl::Texture::Active(start + 2);
-  // ogl::Context::Bind(ose::_2D(), streak_buffer_3_);
-
-  // ogl::Texture::Active(start + 3);
-  // ogl::Context::Bind(ose::_2D(), streak_buffer_4_);
-
-  // ogl::Texture::Active(start + 4);
-  // ogl::Context::Bind(ose::_2D(), streak_buffer_5_);
-
-  // ogl::Texture::Active(start + 5);
-  // ogl::Context::Bind(ose::_2D(), streak_buffer_6_);
-
   return start + 2;
-  // return start + 6;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

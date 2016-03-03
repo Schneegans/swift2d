@@ -132,48 +132,70 @@ LensFlareEffect::LensFlareEffect(RenderContext const& ctx)
 
 void LensFlareEffect::process(RenderContext const& ctx) {
   // thresholding
-  // SWIFT_PUSH_GL_RANGE("Thresholding");
-  // generate_threshold_buffer(ctx);
-  // SWIFT_POP_GL_RANGE();
-
-  // streaks
-  // SWIFT_PUSH_GL_RANGE("Streaks");
-  // streaks_.process(ctx, buffer_);
-  // SWIFT_POP_GL_RANGE();
-
-  // glow
-  SWIFT_PUSH_GL_RANGE("Glow");
-  glow_.process(ctx);
+  SWIFT_PUSH_GL_RANGE("Thresholding");
+  generate_threshold_buffer(ctx);
   SWIFT_POP_GL_RANGE();
 
-  // ghosts
-  // SWIFT_PUSH_GL_RANGE("Ghosts");
-  // ghosts_.process(ctx, buffer_);
+  // streaks
+  SWIFT_PUSH_GL_RANGE("Streaks");
+  streaks_.process(ctx, buffer_);
+  SWIFT_POP_GL_RANGE();
+
+  // glow
+  // SWIFT_PUSH_GL_RANGE("Glow");
+  // glow_.process(ctx);
   // SWIFT_POP_GL_RANGE();
+
+  // ghosts
+  SWIFT_PUSH_GL_RANGE("Ghosts");
+  ghosts_.process(ctx, buffer_);
+  SWIFT_POP_GL_RANGE();
 
   // SWIFT_PUSH_GL_RANGE("Combine");
-  // int start(4);
-  // start = streaks_.bind_buffers(start, ctx);
-  // start = ghosts_.bind_buffers(start, ctx);
-  // start = glow_.bind_buffers(start, ctx);
+  int start(4);
+  start = streaks_.bind_buffers(start, ctx);
+  start = ghosts_.bind_buffers(start, ctx);
+  start = glow_.bind_buffers(start, ctx);
 
-  // std::vector<int> units = { 4, 5, 6, 7, 8, 9, 10, 11 };
   // std::vector<int> units = { 4, 5 };
+  std::vector<int> units = { 4, 5, 6, 7 };
 
-  // fbo_.Bind(ogl::Framebuffer::Target::Draw);
+  fbo_.Bind(ogl::Framebuffer::Target::Draw);
 
-  // mix_shader_.use();
-  // inputs_.Set(units);
+  mix_shader_.use();
+  inputs_.Set(units);
 
-  // Quad::get().draw();
+  Quad::get().draw();
 
-  // SWIFT_POP_GL_RANGE();
+  SWIFT_POP_GL_RANGE();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void LensFlareEffect::bind_buffer(int location, RenderContext const& ctx) {
-  glow_.bind_buffers(location, ctx);
+  // glow_.bind_buffers(location, ctx);
+
+  ogl::Texture::Active(location);
+  ogl::Context::Bind(ose::_2D(), buffer_);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void LensFlareEffect::generate_threshold_buffer(RenderContext const& ctx) {
+
+  auto size(ctx.g_buffer_size);
+
+  ogl::Context::Viewport(size.x() / GBUFFER_FRACTION, size.y() / GBUFFER_FRACTION);
+
+  fbo_.Bind(oglplus::Framebuffer::Target::Draw);
+  ogl::Context::DrawBuffer(oglplus::FramebufferColorAttachment::_0);
+
+  threshold_shader_.use();
+  g_buffer_diffuse_.Set(0);
+  g_buffer_light_.Set(1);
+  screen_size_.Set(size / GBUFFER_FRACTION);
+
+  Quad::get().draw();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

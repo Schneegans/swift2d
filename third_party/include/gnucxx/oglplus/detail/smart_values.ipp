@@ -9,6 +9,7 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 //
+/*
 OGLPLUS_CONSTEXPR oglplus::smart_enums::A A;
 OGLPLUS_CONSTEXPR oglplus::smart_enums::API API;
 OGLPLUS_CONSTEXPR oglplus::smart_enums::AccumAdjacentPairs AccumAdjacentPairs;
@@ -935,3 +936,4 @@ OGLPLUS_CONSTEXPR oglplus::smart_enums::_6 _6;
 OGLPLUS_CONSTEXPR oglplus::smart_enums::_7 _7;
 OGLPLUS_CONSTEXPR oglplus::smart_enums::_8 _8;
 OGLPLUS_CONSTEXPR oglplus::smart_enums::_9 _9;
+*/

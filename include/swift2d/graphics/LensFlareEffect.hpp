@@ -40,6 +40,8 @@ class LensFlareEffect {
  ///////////////////////////////////////////////////////////////////////////////
  // ---------------------------------------------------------- private interface
  private:
+  void generate_threshold_buffer(RenderContext const& ctx);
+
   Shader mix_shader_;
   Shader threshold_shader_;
 

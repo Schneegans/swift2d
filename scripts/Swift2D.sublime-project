@@ -26,5 +26,15 @@
 			"follow_symlinks": true,
 			"path": ".."
 		}
-	]
+	],
+	"settings":
+	{
+		"cc_include_options":
+	    [
+	        "-I${project_path}/../include",
+	        "-isystem", "${project_path}/../third_party/include/",
+	        "-isystem", "${project_path}/../third_party/include/gnucxx",
+	        "-isystem", "${project_path}/../src/raknet"
+	    ]
+	}
 }

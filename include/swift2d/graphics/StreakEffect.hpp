@@ -49,15 +49,10 @@ class StreakEffect {
   oglplus::Texture     streak_buffer_tmp_;
   oglplus::Texture     streak_buffer_1_;
   oglplus::Texture     streak_buffer_2_;
-  oglplus::Texture     streak_buffer_3_;
-  oglplus::Texture     streak_buffer_4_;
-  oglplus::Texture     streak_buffer_5_;
-  oglplus::Texture     streak_buffer_6_;
 
   std::vector<math::vec3> streak_colors_1_;
   std::vector<math::vec3> streak_colors_2_;
   std::vector<math::vec3> streak_colors_3_;
-  std::vector<math::vec3> streak_colors_4_;
 };
 
 // -----------------------------------------------------------------------------
